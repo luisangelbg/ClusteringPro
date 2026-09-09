@@ -10,7 +10,11 @@ an automatic report.
 
 Developed as a teaching and research tool for biology, ecology, agronomy and related sciences.
 
-## How to open
+## Use it online
+
+**https://luisangelbg.github.io/ClusteringPro/** — nothing to install; the app runs in your browser and your data never leave your computer (the page is static: there is no server-side computation and nothing is uploaded).
+
+## How to open a local copy
 
 1. Right-click **`server.ps1`** → *Run with PowerShell* (or double-click `Open ClusteringPro.bat`). The browser opens at `http://localhost:8900`.
    If the port is busy: `powershell -ExecutionPolicy Bypass -File server.ps1 -Port 9001`
