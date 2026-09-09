@@ -1,0 +1,41 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "name": "ClusteringPro",
+  "description": "A self-contained web application that performs a complete cluster analysis entirely in the browser, with no installation and no server-side computation: clustering tendency, 39 similarity and dissimilarity coefficients for quantitative, binary, nominal, ordinal, mixed and ecological data, ten hierarchical linkage rules with an editable dendrogram studio and tanglegrams, k-means, PAM, CLARA, fuzzy c-means, Gaussian mixtures, DBSCAN and spectral clustering, thirteen criteria for the number of clusters, bootstrap stability, multiscale bootstrap support, external validation, cluster profiling with indicator species, discriminant analysis and classification rules, and an automatic report.",
+  "version": "1.0.0",
+  "dateCreated": "2026-09-09",
+  "datePublished": "2026-09-09",
+  "license": "https://spdx.org/licenses/GPL-3.0-or-later",
+  "codeRepository": "https://github.com/luisangelbg/ClusteringPro",
+  "programmingLanguage": [
+    {
+      "@type": "ComputerLanguage",
+      "name": "JavaScript"
+    }
+  ],
+  "runtimePlatform": "Web browser",
+  "operatingSystem": "Any (browser-based)",
+  "applicationCategory": "Statistics",
+  "developmentStatus": "active",
+  "keywords": [
+    "cluster analysis",
+    "hierarchical clustering",
+    "dendrogram",
+    "k-means",
+    "PAM",
+    "cluster validation",
+    "multivariate statistics",
+    "ecology",
+    "agronomy"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Luis Ángel",
+      "familyName": "Barrera-Guzmán",
+      "email": "lbarrerag@chapingo.mx",
+      "@id": "https://orcid.org/0000-0001-8057-2583"
+    }
+  ]
+}

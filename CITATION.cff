@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "ClusteringPro: an offline, browser-based platform for guided cluster analysis of every kind of data"
+abstract: >-
+  ClusteringPro is a self-contained web application that performs a complete cluster analysis
+  entirely in the browser, with no installation and no server-side computation. It guides the
+  user from the raw table to publication-ready dendrograms and cluster maps: exploratory
+  analysis and clustering tendency (Hopkins statistic, VAT), 39 similarity and dissimilarity
+  coefficients for quantitative, binary, nominal, ordinal, mixed and ecological data, ten
+  hierarchical linkage rules with an editable dendrogram studio and tanglegrams, k-means, PAM,
+  CLARA, fuzzy c-means, Gaussian mixtures, DBSCAN and spectral clustering, thirteen criteria
+  for the number of clusters with a consensus vote, bootstrap stability, multiscale bootstrap
+  support of tree clusters, external validation, cluster profiling with test values and
+  indicator species, discriminant analysis and classification rules, and an automatic report
+  with a ZIP package of data, tables and figures.
+type: software
+authors:
+  - given-names: "Luis Ángel"
+    family-names: "Barrera-Guzmán"
+    email: lbarrerag@chapingo.mx
+    orcid: "https://orcid.org/0000-0001-8057-2583"
+    country: MX
+version: 1.0.0
+date-released: "2026-09-09"
+license: GPL-3.0-or-later
+repository-code: "https://github.com/luisangelbg/ClusteringPro"
+keywords:
+  - cluster analysis
+  - hierarchical clustering
+  - dendrogram
+  - k-means
+  - PAM
+  - cluster validation
+  - multivariate statistics
+  - ecology
+  - agronomy
+  - JavaScript

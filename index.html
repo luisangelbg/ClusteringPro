@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClusteringPro — Cluster analysis for every kind of data</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="on-home">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand" id="brand" title="Home"><span id="brandLogo"></span>ClusteringPro <span class="brand-sub">· cluster analysis lab</span></div>
+    <nav class="stepper" id="stepper">
+      <button class="step-btn active" data-step="1"><span class="step-num">1</span> Home</button>
+      <button class="step-btn" data-step="2"><span class="step-num">2</span> Data &amp; EDA</button>
+      <button class="step-btn" data-step="3" disabled><span class="step-num">3</span> Distances</button>
+      <button class="step-btn" data-step="4" disabled><span class="step-num">4</span> Hierarchical</button>
+      <button class="step-btn" data-step="5" disabled><span class="step-num">5</span> Partitioning</button>
+      <button class="step-btn" data-step="6" disabled><span class="step-num">6</span> Optimal k &amp; validation</button>
+      <button class="step-btn" data-step="7" disabled><span class="step-num">7</span> Profiles</button>
+      <button class="step-btn" data-step="8"><span class="step-num">8</span> Report</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ==================== BLOCK 1 · HOME ==================== -->
+<section class="step-panel active" id="panel-1">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow">Unsupervised learning for biology, ecology and agronomy</div>
+        <h1>Find the <span class="accent">natural groups</span> hidden in your data</h1>
+        <p class="lead">From the raw table to a publication-ready dendrogram: check whether your data are <b>clusterable</b>,
+          pick the right <b>similarity coefficient</b> for quantitative, binary, categorical, mixed or ecological data,
+          compare <b>hierarchical and partitioning</b> methods, decide <b>how many clusters</b> to keep, validate them
+          and export <b>beautiful, fully editable figures</b>. No R or Python required.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" id="startBtn">Start with my data →</button>
+          <button class="btn btn-secondary btn-lg" id="playBtn">Try the live demo</button>
+          <button class="btn btn-ghost btn-lg" id="theoryBtn">Read the theory</button>
+        </div>
+        <div class="badge-row">
+          <span class="badge ok">Runs entirely in your browser</span>
+          <span class="badge ok">Your data never leave your computer</span>
+          <span class="badge ok">Figures up to 900 dpi · PNG, TIFF, SVG</span>
+          <span class="badge ok">Free for teaching and research</span>
+        </div>
+      </div>
+      <div class="hero-art" id="heroArt"></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">How it works</h2>
+  <p class="section-sub">A guided workflow. Every step explains the idea in plain language, checks your data and recommends what to do next; a dendrogram is the last step of the process, not the first.</p>
+  <div class="workflow">
+    <div class="wf-step"><div class="wf-n">STEP 1</div><div class="wf-t">Load &amp; explore</div><div class="wf-d">types, scaling, outliers, clustering tendency</div></div>
+    <div class="wf-step"><div class="wf-n">STEP 2</div><div class="wf-t">Measure similarity</div><div class="wf-d">the right coefficient for your data</div></div>
+    <div class="wf-step"><div class="wf-n">STEP 3</div><div class="wf-t">Cluster</div><div class="wf-d">hierarchical, partitioning, density, model-based</div></div>
+    <div class="wf-step"><div class="wf-n">STEP 4</div><div class="wf-t">Choose k</div><div class="wf-d">elbow, silhouette, gap, consensus</div></div>
+    <div class="wf-step"><div class="wf-n">STEP 5</div><div class="wf-t">Validate</div><div class="wf-d">internal, stability, external</div></div>
+    <div class="wf-step"><div class="wf-n">STEP 6</div><div class="wf-t">Interpret &amp; publish</div><div class="wf-d">profiles, prediction, editable figures, report</div></div>
+  </div>
+
+  <!-- ---------- Live playground ---------- -->
+  <h2 class="section-title" id="playground">Try it: k-means and a dendrogram on the same points</h2>
+  <p class="section-sub">Pick a dataset (or click inside the left panel to add points), choose <i>k</i> and a linkage rule, and watch k-means move its centres step by step while the tree on the right is recomputed from the very same points. Notice how the two moons and the ring defeat k-means but not single linkage.</p>
+  <div class="playground">
+    <div class="pg-controls">
+      <label class="inline-label">Dataset
+        <select id="pgDataset">
+          <option value="blobs3">Three round groups</option>
+          <option value="blobs4">Four groups</option>
+          <option value="elong">Elongated groups</option>
+          <option value="moons">Two moons</option>
+          <option value="ring">Ring + core</option>
+          <option value="uniform">Uniform noise (no structure)</option>
+        </select>
+      </label>
+      <label class="inline-label">k <input type="range" id="pgK" min="2" max="6" value="3" style="width:90px"> <span class="range-val" id="pgKVal">3</span></label>
+      <label class="inline-label">Linkage
+        <select id="pgLinkage">
+          <option value="single">Single</option>
+          <option value="complete">Complete</option>
+          <option value="average">Average (UPGMA)</option>
+          <option value="weighted">Weighted (WPGMA)</option>
+          <option value="centroid">Centroid</option>
+          <option value="median">Median</option>
+          <option value="ward.D">Ward.D</option>
+          <option value="ward.D2" selected>Ward.D2</option>
+        </select>
+      </label>
+      <button class="btn btn-primary btn-sm" id="pgRun">▶ Run k-means</button>
+      <button class="btn btn-secondary btn-sm" id="pgStep">Step</button>
+      <button class="btn btn-secondary btn-sm" id="pgRegen">Regenerate</button>
+      <button class="btn btn-ghost btn-sm" id="pgReset">Reset</button>
+    </div>
+    <div class="pg-grid">
+      <div class="pg-pane pg-canvas-wrap"><div class="pg-title">k-means · centroids and hulls</div><svg id="pgScatter" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      <div class="pg-pane"><div class="pg-title">Hierarchical · real dendrogram, cut at k</div><svg id="pgTree" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    </div>
+    <div class="pg-status" id="pgStatus"></div>
+  </div>
+
+  <h2 class="section-title">What's inside</h2>
+  <p class="section-sub">Eight blocks, built in order. Click a card to jump to it.</p>
+  <div class="feature-grid" id="featureGrid"></div>
+
+  <h2 class="section-title">Every kind of data</h2>
+  <p class="section-sub">Clustering starts with a dissimilarity, and the dissimilarity depends on what your variables are. ClusteringPro types each column and proposes the coefficients that make sense for it.</p>
+  <div class="dtype-grid" id="dtypeGrid"></div>
+
+  <h2 class="section-title">Methods covered</h2>
+  <p class="section-sub">The classical families and the modern ones, with the tools to compare them on your data rather than trusting a single tree.</p>
+  <div class="method-gallery" id="methodGallery"></div>
+
+  <!-- ---------- Theory ---------- -->
+  <h2 class="section-title" id="theory">Clustering, explained without the fog</h2>
+  <p class="section-sub">Thirteen short lessons with figures. Open the ones you need; every block of the app repeats the part that matters at that step.</p>
+  <div class="card theory-card">
+
+    <details class="acc" open>
+      <summary>1 · What is a cluster, and what is clustering? <span class="acc-tag">basics</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="whatis"><div class="cap">Small distances inside a group, large distances between groups.</div></div>
+        <p><b>Clustering</b> is the search for groups of objects that are <b>more similar to each other than to the rest</b>. Nobody tells the algorithm which groups exist or how many there are: that is why it is called <b>unsupervised</b>. Compare with classification (supervised), where the groups are known in advance and the goal is to predict them.</p>
+        <p>In biology and agronomy the "objects" are typically genotypes, accessions, sites, plots, soil profiles, samples, patients or genes, and the "variables" are the traits, environmental measurements, species counts, markers or expression values recorded on them.</p>
+        <p>A good clustering has two properties at once: <b>compactness</b> (members of a cluster are close) and <b>separation</b> (clusters are far apart). Almost every method, index and figure in this app is a way of measuring one or both.</p>
+        <div class="theory-fig wide" data-fig="families"><div class="cap">The four families of methods, plus hybrids and fuzzy variants. ClusteringPro implements all of them.</div></div>
+        <div class="callout tip"><b>Typical questions</b> Do my 120 maize landraces fall into distinct morphological groups? Which sampling sites share a similar community of insects? Are there soil-fertility types in the region? Do these gene-expression profiles define patient subtypes? Which cultivars respond alike across environments?</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>2 · Before clustering: are my data clusterable at all? <span class="acc-tag">exploratory analysis</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="hopkins"><div class="cap">Uniform noise (left) versus real structure (right). The Hopkins statistic tells them apart.</div></div>
+        <p>Every clustering algorithm returns clusters, <b>even when there are none</b>. Cutting a dendrogram of uniformly scattered points still yields groups; k-means will happily split a single cloud into three. So the first step is to ask whether the data contain structure worth finding.</p>
+        <ul>
+          <li><b>Hopkins statistic</b> compares the distances from random locations to their nearest data point with the distances from real points to their nearest neighbour. Around <b>0.5</b> the data look uniform; values approaching <b>1</b> indicate strong clustering. A common rule: below 0.75 be cautious, above 0.9 be confident.</li>
+          <li><b>VAT image</b> (visual assessment of tendency): the distance matrix is reordered so that similar objects sit together; dark diagonal blocks reveal clusters, a smooth gradient reveals none.</li>
+          <li><b>PCA or MDS preview</b>: a scatter of the first two dimensions often shows groups, gradients or a single blob at a glance.</li>
+          <li><b>Correlations and redundancy</b>: highly correlated variables count several times in a Euclidean distance; consider dropping one, using Mahalanobis distance or clustering on principal components.</li>
+          <li><b>Outliers and missing values</b>: a single extreme object becomes its own cluster in hierarchical methods and drags k-means centres. Decide how to treat them before, not after.</li>
+        </ul>
+        <div class="callout warn"><b>Rows and columns</b> The number of objects should comfortably exceed the number of clusters you expect (at least 5–10 objects per cluster). Many variables are fine, but they should all be relevant: irrelevant "noise" variables hide the structure that the useful ones carry.</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>3 · Similarity, dissimilarity and distance <span class="acc-tag">the heart of the matter</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="distance"><div class="cap">Three ways to measure how far two objects are in variable space.</div></div>
+        <p>Algorithms never see your variables; they see a <b>matrix of dissimilarities</b> between pairs of objects. Change the coefficient and you change the clusters, so this choice deserves more attention than the choice of algorithm. A <b>similarity</b> <i>s</i> (1 = identical) becomes a dissimilarity through <i>d</i> = 1 − <i>s</i> or <i>d</i> = √(1 − <i>s</i>).</p>
+        <h3>Quantitative variables</h3>
+        <ul>
+          <li><b>Euclidean</b>: the straight line. The default for k-means and Ward, sensitive to scale and to outliers.</li>
+          <li><b>Manhattan</b> (city block): sum of absolute differences; more robust to extreme values.</li>
+          <li><b>Minkowski</b> generalises both; <b>Chebyshev</b> keeps only the largest difference.</li>
+          <li><b>Canberra</b>: differences relative to magnitude, useful for skewed positive data.</li>
+          <li><b>Correlation-based</b> (Pearson, Spearman, Kendall, cosine): two objects are similar when their <i>profiles</i> rise and fall together, regardless of level. The standard choice for gene expression and for shape rather than size.</li>
+          <li><b>Mahalanobis</b>: Euclidean after removing correlations among variables.</li>
+        </ul>
+        <div class="theory-fig" data-fig="binary"><div class="cap">Binary coefficients are built from the 2 × 2 table of matches and mismatches.</div></div>
+        <h3>Binary variables (presence/absence, 0/1)</h3>
+        <ul>
+          <li><b>Jaccard</b> and <b>Dice–Sørensen</b> ignore double zeros: two sites that both lack a species are not made similar by that absence. Preferred in ecology and for markers.</li>
+          <li><b>Simple matching</b>, <b>Rogers–Tanimoto</b>, <b>Sokal–Sneath</b> count double zeros as agreement: right when 0 and 1 are symmetric states (male/female, allele A/B).</li>
+          <li><b>Russell–Rao</b>, <b>Ochiai</b>, <b>Kulczynski</b>, <b>Hamming</b>: further variants offered in Block 3 with their formulas.</li>
+        </ul>
+        <h3>Nominal, ordinal and mixed variables</h3>
+        <ul>
+          <li>Nominal: <b>simple matching</b> across categories (equivalently Hamming on dummy columns).</li>
+          <li>Ordinal: replace levels by ranks and use Manhattan, or treat them inside Gower.</li>
+          <li><b>Gower</b> distance handles any mixture: each variable contributes a 0–1 dissimilarity of the appropriate kind and the average is taken. It is the natural partner of <b>PAM</b>.</li>
+        </ul>
+        <h3>Ecological counts and abundances</h3>
+        <ul>
+          <li><b>Bray–Curtis</b>: the workhorse for species × site tables; ignores double zeros, bounded 0–1.</li>
+          <li><b>Hellinger</b> and <b>chord</b> transformations followed by Euclidean distance make abundance data suitable for k-means and Ward.</li>
+          <li><b>Chi-square</b> distance, <b>Morisita–Horn</b>, <b>Canberra</b>, <b>Kulczynski</b> (quantitative) and <b>Jaccard on abundances</b> (Ružička) complete the set.</li>
+        </ul>
+        <div class="callout"><b>The double-zero problem</b> In community data most cells are zero. A coefficient that treats "both absent" as evidence of similarity will group sites by the species they lack. Asymmetric coefficients (Jaccard, Bray–Curtis, Hellinger) are the safe choice.</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>4 · Standardisation: putting variables on the same footing <span class="acc-tag">preprocessing</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="scale"><div class="cap">In raw units the yield axis dominates; after standardisation both variables count.</div></div>
+        <p>Euclidean and Manhattan distances add differences across variables. A variable measured in kilograms per hectare (thousands) swamps one measured in pH units (5–8). Unless the units are already comparable, <b>standardise</b>:</p>
+        <ul>
+          <li><b>z-score</b>: subtract the mean, divide by the standard deviation. Each variable gets mean 0 and variance 1. The default.</li>
+          <li><b>Range (0–1)</b>: divides by max − min; keeps the shape of the distribution, sensitive to outliers.</li>
+          <li><b>Robust</b>: median and interquartile range, when outliers are present.</li>
+          <li><b>Log or square-root</b>: for skewed counts before any distance.</li>
+          <li><b>Hellinger, chord, proportions</b>: transformations specific to abundance data (see lesson 3).</li>
+        </ul>
+        <div class="callout warn"><b>When not to standardise</b> If all variables share a unit and the differences in variance are meaningful (for example, 12 morphological traits all in millimetres), scaling may erase real information. Binary and Gower distances do not need it. ClusteringPro shows the variances so you can decide.</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>5 · Hierarchical clustering and linkage rules <span class="acc-tag">agglomerative · divisive</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="linkage"><div class="cap">Five ways to define the distance between two groups. The red line or lines show what each rule measures.</div></div>
+        <p><b>Agglomerative</b> methods start with every object in its own cluster and repeatedly merge the two closest clusters until one remains. <b>Divisive</b> methods (DIANA) start from one cluster and split. Both produce a <b>hierarchy</b>: a tree with a merge height at every node, drawn as a dendrogram.</p>
+        <p>"Closest clusters" must be defined, and that definition is the <b>linkage rule</b>:</p>
+        <table class="mini-table" style="font-family:inherit;font-size:0.82rem">
+          <tr><th>Rule</th><th>Distance between clusters</th><th>Character</th></tr>
+          <tr><td>Single</td><td>nearest pair of members</td><td>finds elongated shapes; prone to chaining</td></tr>
+          <tr><td>Complete</td><td>farthest pair</td><td>compact, similar-sized clusters; sensitive to outliers</td></tr>
+          <tr><td>Average (UPGMA)</td><td>mean of all pairwise distances</td><td>balanced; the usual choice in taxonomy and ecology</td></tr>
+          <tr><td>Weighted (WPGMA)</td><td>mean of the two sub-cluster distances</td><td>like UPGMA but ignores cluster sizes</td></tr>
+          <tr><td>Centroid (UPGMC)</td><td>distance between centroids</td><td>can produce reversals (a merge lower than a previous one)</td></tr>
+          <tr><td>Median (WPGMC)</td><td>centroid of the two centroids</td><td>same caveat</td></tr>
+          <tr><td>Ward (Ward.D2)</td><td>increase in within-cluster sum of squares</td><td>compact spherical clusters; needs Euclidean distances</td></tr>
+          <tr><td>Flexible beta</td><td>tunable compromise</td><td>β = −0.25 behaves like a space-conserving average</td></tr>
+        </table>
+        <p>Two diagnostics tell you how well a tree represents the original distances:</p>
+        <ul>
+          <li><b>Cophenetic correlation</b>: correlation between the original distances and the heights at which pairs are joined. Above 0.75 the tree is a faithful summary; UPGMA usually scores highest here.</li>
+          <li><b>Agglomerative coefficient</b>: how strongly clustered the objects are (close to 1 = clear structure). It grows with sample size, so compare it only among trees of the same data.</li>
+        </ul>
+        <div class="callout tip"><b>Ward.D versus Ward.D2</b> Ward's criterion is defined on squared Euclidean distances. Ward.D2 squares them for you and reports heights in the original units; Ward.D applies the same formula to whatever you feed it. Prefer Ward.D2 unless you are reproducing an old analysis.</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>6 · Reading (and drawing) a dendrogram <span class="acc-tag">figures</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="dendrogram"><div class="cap">Anatomy of a dendrogram. Cutting at a height gives a partition.</div></div>
+        <p>The <b>height</b> of a node is the dissimilarity at which its two branches were merged. Long vertical branches mean well-separated groups; a cluster is convincing when the branch below the cut is short and the branch above it is long.</p>
+        <ul>
+          <li>The <b>left–right order</b> of the leaves is largely arbitrary: any node can be flipped without changing the tree (2<sup>n−1</sup> equivalent drawings). Do not read "neighbours" horizontally; read the height at which two objects join.</li>
+          <li><b>Cutting</b> the tree at a height, or asking for <i>k</i> groups, produces a partition. The cut can be at a single height or at different heights in different branches (dynamic cut).</li>
+          <li>For large trees, <b>zoom</b> into a branch, collapse sub-clusters into triangles, or show only the top part.</li>
+        </ul>
+        <p><b>What ClusteringPro draws.</b> Rectangular, triangular, horizontal and <b>radial (circular)</b> layouts; branches coloured by cluster or by a height gradient; leaf labels coloured, rotated, resized or replaced by symbols; a movable cut line; cluster boxes; a legend you can position; editable titles, axes, fonts, palettes (categorical, viridis-type, colour-blind safe) and line widths; export to PNG, TIFF, SVG, JPG and WEBP at up to 900 dpi. Every figure remembers your edits for the report.</p>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>7 · Comparing dendrograms <span class="acc-tag">tanglegram · cophenetic · Baker</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="tanglegram"><div class="cap">A tanglegram links the same leaves in two trees; fewer crossings means better agreement.</div></div>
+        <p>Different linkage rules, distances or variable sets give different trees for the same objects. Instead of trusting one, <b>compare</b> them:</p>
+        <ul>
+          <li><b>Tanglegram</b>: two trees face to face with the leaves connected. Leaves are re-ordered to minimise crossings; the <b>entanglement</b> (0 = perfect match, 1 = total disagreement) summarises the result.</li>
+          <li><b>Cophenetic correlation between trees</b>: correlation of the two sets of merge heights.</li>
+          <li><b>Baker's gamma</b>: rank correlation of the level at which each pair of objects first joins in each tree.</li>
+          <li><b>Fowlkes–Mallows index B<sub>k</sub></b>: agreement of the partitions obtained by cutting each tree into <i>k</i> groups, for every <i>k</i>.</li>
+          <li><b>Correlation matrix of methods</b>: run all eight linkages and see which ones agree; a stable structure appears in most of them.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>8 · Partitioning: k-means, PAM, CLARA and fuzzy clustering <span class="acc-tag">non-hierarchical</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig wide" data-fig="kmeans"><div class="cap">One k-means run: assign each point to the nearest centre, move the centres, repeat.</div></div>
+        <p><b>k-means</b> chooses <i>k</i> centres and alternates two steps until nothing changes: assign every object to its nearest centre, then move each centre to the mean of its objects. It minimises the total within-cluster sum of squares, is fast for large data and has no tree. Variants: <b>Hartigan–Wong</b> (default in R, usually best), <b>Lloyd/Forgy</b>, <b>MacQueen</b>; smarter starts with <b>k-means++</b>; many random starts (<code>nstart</code>) to avoid poor local optima.</p>
+        <ul>
+          <li><b>k-medoids (PAM)</b>: centres are real observations (medoids), so any distance works, including Gower and Bray–Curtis, and outliers weigh less.</li>
+          <li><b>CLARA</b>: PAM on repeated samples, for thousands of objects.</li>
+          <li><b>Fuzzy c-means (FANNY)</b>: every object receives a <b>membership degree</b> in each cluster instead of a hard label. Useful for gradients and for objects sitting between groups; the Dunn partition coefficient measures how crisp the result is.</li>
+          <li><b>Hierarchical k-means</b>: a Ward tree supplies the initial centres, k-means refines them; removes the dependence on random starts.</li>
+        </ul>
+        <div class="theory-fig" data-fig="shapes"><div class="cap">Two datasets where the k-means answer is wrong by construction.</div></div>
+        <p><b>Limits.</b> k-means assumes round clusters of similar size and variance, in Euclidean space, and needs <i>k</i> in advance. Curved, elongated or nested shapes (moons, rings) are split incorrectly; single linkage, DBSCAN or spectral clustering recover them. The live demo above lets you see this happen.</p>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>9 · Density-based and model-based clustering <span class="acc-tag">DBSCAN · Gaussian mixtures</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="dbscan"><div class="cap">DBSCAN classifies points as core, border or noise using a radius ε and a minimum count.</div></div>
+        <p><b>DBSCAN</b> grows clusters from <b>core points</b>, those with at least <i>minPts</i> neighbours within radius <b>ε</b>. Clusters can have any shape, the number of clusters is not fixed in advance, and isolated points are labelled <b>noise</b> rather than forced into a group. The <b>k-nearest-neighbour distance plot</b> suggests ε: sort the distance to the <i>minPts</i>-th neighbour and look for the knee. <b>HDBSCAN*</b> removes ε altogether and extracts clusters of varying density from a hierarchy.</p>
+        <p><b>Model-based clustering</b> assumes the data come from a mixture of Gaussian distributions, one per cluster, with its own mean and covariance. The <b>EM algorithm</b> estimates the parameters and gives each object a probability of belonging to each cluster; the <b>BIC</b> chooses both the number of clusters and the covariance shape (spherical, diagonal, ellipsoidal; equal or varying volume, shape and orientation). It is the principled way to get uncertainty with your labels, and it handles elliptical clusters that k-means cannot.</p>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>10 · How many clusters? <span class="acc-tag">elbow · silhouette · gap · consensus</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig wide" data-fig="optimalk"><div class="cap">Three classical criteria evaluated for k = 1…7. Here all three point to k = 3.</div></div>
+        <p>There is no single correct answer; there are criteria, and the domain has the last word. ClusteringPro computes them for every <i>k</i> in a range and for any method, then reports a <b>consensus</b>:</p>
+        <ul>
+          <li><b>Elbow</b>: total within-cluster sum of squares drops fast until the true <i>k</i>, then flattens. Subjective when the bend is gentle.</li>
+          <li><b>Average silhouette</b>: how well each object sits in its cluster compared with the nearest alternative (lesson 11); pick the <i>k</i> that maximises the mean.</li>
+          <li><b>Gap statistic</b>: compares the within-cluster dispersion with what is expected under no structure (bootstrap of uniform data); choose the smallest <i>k</i> whose gap is within one standard error of the maximum.</li>
+          <li><b>Calinski–Harabasz</b> (ratio of between to within dispersion), <b>Davies–Bouldin</b> (lower is better), <b>Dunn</b> (higher is better), plus the Hartigan, Ratkowsky, Ball, Duda–Hart, C-index and other indices of the NbClust family: the app tallies the votes.</li>
+          <li>For hierarchies: the <b>largest jump in merge heights</b> and the <b>inconsistency coefficient</b> of each node.</li>
+          <li>For model-based clustering: <b>BIC</b>. For DBSCAN: the knee of the kNN-distance plot.</li>
+        </ul>
+        <div class="callout"><b>Then look</b> A clustering that scores well but cannot be described in terms of the variables is not useful. Block 7 profiles every cluster so you can name it.</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>11 · Validating clusters <span class="acc-tag">internal · stability · external</span></summary>
+      <div class="acc-body clearfix">
+        <div class="theory-fig" data-fig="silhouette"><div class="cap">The silhouette of one object compares its own cluster with the nearest other cluster.</div></div>
+        <p><b>Internal validation</b> uses the data alone:</p>
+        <ul>
+          <li><b>Silhouette width</b> <i>s</i>(<i>i</i>) for every object: near 1 = well placed, near 0 = between two clusters, negative = probably misassigned. The silhouette plot shows them sorted within each cluster; the mean is the overall quality (0.7+ strong, 0.5 reasonable, below 0.25 no substantial structure).</li>
+          <li><b>Dunn index</b> (smallest between-cluster distance / largest cluster diameter) and <b>connectivity</b> (whether neighbours share a cluster).</li>
+        </ul>
+        <p><b>Stability</b> asks whether the clusters survive perturbation:</p>
+        <ul>
+          <li><b>Bootstrap Jaccard stability</b>: resample the objects, recluster, and measure how often each cluster reappears (above 0.75 = stable, below 0.5 = doubtful).</li>
+          <li><b>Multiscale bootstrap p-values</b> for hierarchical clusters (AU / BP): which branches of the tree are supported by the data.</li>
+          <li><b>Variable removal</b>: clusters that vanish when one variable is dropped depend on that variable alone.</li>
+        </ul>
+        <p><b>External validation</b> compares the clusters with a known grouping (species, origin, treatment): <b>Rand</b> and <b>adjusted Rand</b> index, <b>normalised mutual information</b>, <b>purity</b>, <b>variation of information</b>, plus a cross-table with a chi-square test. The same indices compare two clusterings with each other.</p>
+        <p><b>Comparing algorithms.</b> Run hierarchical, k-means, PAM and model-based side by side over a range of <i>k</i> and rank them by connectivity, Dunn and silhouette (the <i>clValid</i> approach) before you commit.</p>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>12 · From clusters to meaning: profiles, indicators and supervised follow-up <span class="acc-tag">interpretation</span></summary>
+      <div class="acc-body">
+        <p>A cluster is only useful once you can say what characterises it. Block 7 provides:</p>
+        <ul>
+          <li><b>Cluster profiles</b>: means, medians and dispersion of every variable per cluster, as a table, a heat map of standardised means, a radar chart and parallel coordinates.</li>
+          <li><b>Which variables define each cluster</b>: v-tests comparing the cluster mean with the overall mean, one-way ANOVA or Kruskal–Wallis per variable, and effect sizes. For categorical variables, the categories that are over- or under-represented.</li>
+          <li><b>Indicator species / indicator variables</b> for ecological tables: the IndVal statistic with permutation test.</li>
+          <li><b>Supervised follow-up</b>: a linear discriminant analysis trained on the clusters gives the axes that separate them, a confusion matrix showing how sharp the boundaries are, and a rule to <b>assign new observations</b> to the existing clusters (also by nearest centroid or k-nearest neighbours). A classification tree yields plain-language rules such as "cluster 2 = plant height &gt; 180 cm and early flowering".</li>
+          <li><b>Cluster map on PCA / MDS axes</b> with convex hulls, confidence ellipses, centroid labels and supplementary variables.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>13 · Pitfalls checklist <span class="acc-tag">before you publish</span></summary>
+      <div class="acc-body">
+        <div class="good-bad">
+          <div class="good"><h5>Do</h5><ul>
+            <li>Check clustering tendency first (Hopkins, VAT).</li>
+            <li>Match the coefficient to the data type; use asymmetric coefficients for presence/absence and abundances.</li>
+            <li>Standardise when units differ; say so in the methods.</li>
+            <li>Try several linkages and algorithms and compare them (tanglegram, cophenetic, ARI).</li>
+            <li>Choose <i>k</i> with several criteria and report them all.</li>
+            <li>Report the silhouette and a stability measure with every partition.</li>
+            <li>Describe each cluster in terms of the variables.</li>
+          </ul></div>
+          <div class="bad"><h5>Don't</h5><ul>
+            <li>Read the left–right order of a dendrogram as proximity.</li>
+            <li>Use Ward or k-means on non-Euclidean distances (Bray–Curtis, Gower) without a transformation.</li>
+            <li>Let one variable in big units decide the clusters.</li>
+            <li>Take a single k-means run with one random start as the answer.</li>
+            <li>Use double-zero coefficients (simple matching) on species tables.</li>
+            <li>Test differences between clusters with ANOVA on the very variables used to build them and call the result "significant".</li>
+            <li>Present a tree without its cophenetic correlation or a cut without its silhouette.</li>
+          </ul></div>
+        </div>
+      </div>
+    </details>
+
+  </div>
+
+  <h2 class="section-title">Which method should I use?</h2>
+  <p class="section-sub">A starting point, not a rule. Block 2 makes this recommendation automatically after typing your columns.</p>
+  <div class="table-scroll">
+    <table class="chooser">
+      <thead><tr><th>Your data</th><th>Dissimilarity</th><th>First choice</th><th>Also try</th><th>Validate with</th></tr></thead>
+      <tbody>
+        <tr><td>Quantitative traits, similar units</td><td>Euclidean (scaled if needed)</td><td>Ward.D2 tree, then k-means from the tree</td><td>UPGMA, model-based (GMM)</td><td>Silhouette, gap, bootstrap stability</td></tr>
+        <tr><td>Quantitative profiles (expression, spectra)</td><td>1 − Pearson correlation</td><td>UPGMA or complete linkage</td><td>PAM, k-means on standardised rows</td><td>Cophenetic, silhouette, AU p-values</td></tr>
+        <tr><td>Presence/absence (species, markers)</td><td>Jaccard or Dice</td><td>UPGMA</td><td>PAM, Ward on √(1 − s)</td><td>Cophenetic, bootstrap, indicator species</td></tr>
+        <tr><td>Species abundances</td><td>Bray–Curtis or Hellinger + Euclidean</td><td>UPGMA (Bray–Curtis) or Ward (Hellinger)</td><td>PAM, k-means on Hellinger</td><td>Silhouette, IndVal, ANOSIM/PERMANOVA</td></tr>
+        <tr><td>Mixed quantitative + categorical</td><td>Gower</td><td>PAM</td><td>UPGMA, hierarchical on Gower</td><td>Silhouette, stability</td></tr>
+        <tr><td>Large tables (thousands of rows)</td><td>Euclidean</td><td>k-means (k-means++, many starts)</td><td>CLARA, DBSCAN, mini-batch</td><td>Silhouette on a sample, CH index</td></tr>
+        <tr><td>Irregular shapes, noise, outliers</td><td>Euclidean</td><td>DBSCAN / HDBSCAN*</td><td>Single linkage, spectral</td><td>Silhouette (with caution), stability</td></tr>
+        <tr><td>Overlapping groups, gradients</td><td>Euclidean</td><td>Fuzzy c-means or GMM</td><td>PAM</td><td>Partition coefficient, BIC</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Why ClusteringPro</h2>
+  <div class="why-grid">
+    <div class="why"><div class="w-icon">🌿</div><h4>Built for life-science data</h4><p>Binary markers, species tables, morphometrics, soil and yield data, gene expression: each with the right coefficient and the right warnings.</p></div>
+    <div class="why"><div class="w-icon">🧭</div><h4>Guided, not just computed</h4><p>Every block explains the theory in plain language and tells you whether your data are clusterable, which distance fits and how many groups to keep.</p></div>
+    <div class="why"><div class="w-icon">🔬</div><h4>Validated numerics</h4><p>Distances, linkages, indices and p-values computed in the browser and checked against R reference values.</p></div>
+    <div class="why"><div class="w-icon">🌳</div><h4>Dendrograms worth publishing</h4><p>Rectangular, radial and phylogenic layouts, palettes, gradients, coloured labels, cut lines, legends, boxes: all editable, all exportable at up to 900 dpi.</p></div>
+    <div class="why"><div class="w-icon">⚖️</div><h4>Compare, don't trust</h4><p>Tanglegrams, cophenetic and Baker correlations, consensus of indices, bootstrap stability and side-by-side algorithms.</p></div>
+    <div class="why"><div class="w-icon">🔒</div><h4>Private and offline</h4><p>Nothing is uploaded. Works without internet, from a USB stick or a shared folder.</p></div>
+  </div>
+
+  <div class="glossary" style="margin-top:34px">
+    <h2 class="section-title" style="margin-top:0">Glossary at a glance</h2>
+    <div class="chips">
+      <span class="chip p">agglomerative</span><span class="chip p">divisive</span><span class="chip p">linkage</span><span class="chip p">UPGMA</span><span class="chip p">Ward</span><span class="chip p">dendrogram</span><span class="chip p">cophenetic correlation</span><span class="chip p">tanglegram</span><span class="chip p">entanglement</span>
+      <span class="chip a">centroid</span><span class="chip a">medoid</span><span class="chip a">k-means++</span><span class="chip a">membership</span><span class="chip a">ε · minPts</span><span class="chip a">BIC</span>
+      <span class="chip">Hopkins</span><span class="chip">VAT</span><span class="chip">elbow</span><span class="chip">silhouette</span><span class="chip">gap statistic</span><span class="chip">Dunn</span><span class="chip">Calinski–Harabasz</span><span class="chip">adjusted Rand</span><span class="chip">NMI</span><span class="chip">bootstrap stability</span><span class="chip">IndVal</span><span class="chip">Gower</span><span class="chip">Bray–Curtis</span><span class="chip">Jaccard</span>
+    </div>
+  </div>
+
+  <div class="next-bar" style="margin-top:30px"><button class="btn btn-primary btn-lg" data-go="2">Go to Block 2: load your data →</button></div>
+
+</section>
+
+<!-- ==================== BLOCK 2 · DATA & EDA ==================== -->
+<section class="step-panel" id="panel-2">
+  <div class="panel-title"><div class="pt-num">2</div><div><h2>Data: import, variable types, preprocessing and clustering tendency</h2><p>Load your table, confirm what each column is, choose how to treat missing values and scale, and find out whether the data are worth clustering.</p></div></div>
+
+  <!-- ---------- THEORY ---------- -->
+  <div class="card theory-card">
+    <div class="card-head"><div><h2>Before you upload: what this block checks and why</h2>
+      <p class="hint">Short and practical. The long version is in the lessons on the home page.</p></div></div>
+    <details class="acc" open>
+      <summary>1 · How to arrange the table</summary>
+      <div class="acc-body">
+        <ul>
+          <li><b>One row per object</b> to be clustered (accession, site, sample, plot, gene) and <b>one column per variable</b>. The first row holds the column names.</li>
+          <li>An <b>identifier column</b> (name or code) is optional but recommended: it becomes the label of the dendrogram leaves.</li>
+          <li>A <b>known grouping</b> column (region, species, treatment) is optional. It is never used to build the clusters; it colours the plots and is used for external validation later.</li>
+          <li>Missing values may be blank or coded NA, ND, ?, –.</li>
+          <li>A <b>distance matrix</b> is accepted as a square table whose first column repeats the column names (zeros on the diagonal). Scaling is skipped and the matrix is used directly.</li>
+        </ul>
+        <table class="mini-table" style="font-family:inherit;font-size:0.82rem"><tr><th>Accession</th><th>Region</th><th>PlantHeight_cm</th><th>EarLength_cm</th><th>KernelRows</th><th>…</th></tr>
+          <tr><td>ACC-001</td><td>Highland</td><td>182.7</td><td>11.1</td><td>12</td><td>…</td></tr><tr><td>ACC-002</td><td>Highland</td><td>206.1</td><td>14.6</td><td>14</td><td>…</td></tr><tr><td>ACC-016</td><td>Valley</td><td>241.0</td><td>18.2</td><td>14</td><td>…</td></tr></table>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>2 · Variable types and how they are recognised</summary>
+      <div class="acc-body">
+        <p>The type decides which dissimilarity makes sense in Block 3, so check the automatic guess:</p>
+        <ul>
+          <li><b>Quantitative</b>: numbers with many distinct values. Integers with very few distinct values are flagged, because they may be codes.</li>
+          <li><b>Count / abundance</b>: non-negative integers with many zeros (or a name that suggests species or counts). Recommended route: Bray–Curtis or Hellinger.</li>
+          <li><b>Binary</b>: exactly two states such as 0/1, yes/no, present/absent, +/−. The second state is coded 1.</li>
+          <li><b>Nominal</b>: text with up to 40 categories. Text where every value is different is taken as the object label.</li>
+          <li><b>Ordinal</b>: recognised sets such as low &lt; medium &lt; high or poor &lt; moderate &lt; good; otherwise set it by hand and type the order of the levels.</li>
+        </ul>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>3 · Missing values, transformation and scaling</summary>
+      <div class="acc-body">
+        <p><b>Missing values.</b> Distances need complete rows. Either drop the objects with gaps (safe when they are few) or impute them (mean for quantitative, median for counts and ordinal levels, mode for categories). Gower distance in Block 3 can also skip missing pairs variable by variable.</p>
+        <p><b>Transformation</b> acts before scaling: log(x + 1) or √x tame skewed variables; the row-wise Hellinger, chord and relative-abundance transformations turn a species × site table into something Euclidean distance, Ward and k-means can handle.</p>
+        <p><b>Scaling</b> puts variables on comparable footing: z-scores (mean 0, SD 1) are the default, range 0–1 keeps the shape, robust scaling resists outliers. Binary variables are never scaled; nominal variables are dummy-coded only for the exploratory preview (the real categorical distance is chosen in Block 3).</p>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>4 · What the tendency diagnostics mean</summary>
+      <div class="acc-body">
+        <ul>
+          <li><b>Hopkins statistic H</b> compares nearest-neighbour distances of random points with those of real objects. Uniform data give H ≈ 0.5; the grey band in the figure is where H falls 95 % of the time when there is no structure. Values above 0.75 indicate a clear tendency to cluster.</li>
+          <li><b>VAT image</b>: the distance matrix reordered so that neighbours sit together. Dark square blocks on the diagonal are candidate clusters; their number is a first guess of <i>k</i>. A smooth gradient means no clusters. If you provided a known grouping, the coloured strip shows whether the blocks match it.</li>
+          <li><b>PCA / MDS map</b>: the objects in the two directions of largest variance. Look for separate clouds, gradients or a single blob.</li>
+          <li><b>Mahalanobis D²</b>: how far each object is from the multivariate centre, accounting for correlations. Objects beyond the 99.9 % chi-square quantile will form their own branch in a tree or drag k-means centres.</li>
+          <li><b>Correlation heat map</b>: variables with |r| above 0.95 are redundant and count twice in a Euclidean distance.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <!-- ---------- UPLOAD ---------- -->
+  <div class="card">
+    <h2>1 · Load your data</h2>
+    <p class="hint">Drag a file or click to browse. The first row must contain the column names; one row per object.</p>
+    <div class="drop-zone" id="dropZone">
+      <div class="dz-icon" id="dzIcon"></div>
+      <p><b>Drop your file here</b> or click to choose</p>
+      <div class="format-chips"><span>.xlsx</span><span>.xls</span><span>.xlsm</span><span>.xlsb</span><span>.ods</span><span>.csv</span><span>.tsv</span><span>.txt</span><span>.json</span><span>.dat</span></div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.xlsm,.xlsb,.ods,.csv,.tsv,.txt,.json,.dat,.prn" hidden>
+    </div>
+    <div class="field-grid" style="margin-top:14px">
+      <div class="field"><label>Text delimiter</label>
+        <select id="delimSel"><option value="">Auto-detect</option><option value=",">Comma ( , )</option><option value=";">Semicolon ( ; )</option><option value="	">Tab</option><option value="|">Pipe ( | )</option></select>
+        <span class="field-help">Only for .csv / .txt files.</span></div>
+      <div class="field"><label>Decimal separator</label>
+        <select id="decimalSel"><option value="auto">Auto-detect</option><option value="dot">Point (4.65)</option><option value="comma">Comma (4,65)</option></select>
+        <span class="field-help">Latin American Excel often exports with a comma.</span></div>
+      <div class="field" id="sheetPicker" style="display:none"><label>Sheet</label><select id="sheetSelect"></select><span class="field-help">The workbook has several sheets.</span></div>
+    </div>
+    <details class="acc"><summary>Paste from the clipboard instead</summary>
+      <div class="acc-body">
+        <textarea id="pasteArea" rows="6" style="width:100%" placeholder="Site	Habitat	Quercus	Pinus&#10;S01	Forest	1	1&#10;S02	Wetland	0	0&#10;…"></textarea>
+        <div class="btn-row"><button class="btn btn-secondary btn-sm" id="pasteBtn">Use pasted data</button></div>
+      </div>
+    </details>
+    <h4 style="margin-top:18px">Or try an example dataset</h4>
+    <div class="example-grid">
+      <button class="example-btn" data-path="data/maize_landraces_morphology.csv" data-name="maize_landraces_morphology.csv"><b>Quantitative · maize landraces</b><small>45 accessions × 8 morphological traits, 3 regions, 1 missing value</small></button>
+      <button class="example-btn" data-path="data/plant_species_presence.csv" data-name="plant_species_presence.csv"><b>Binary · plant species presence</b><small>30 sites × 22 species (0/1), 3 habitats</small></button>
+      <button class="example-btn" data-path="data/insect_abundance_sites.csv" data-name="insect_abundance_sites.csv"><b>Counts · insect abundance</b><small>24 sites × 14 taxa, 3 landscapes — try Hellinger</small></button>
+      <button class="example-btn" data-path="data/soil_profiles_mixed.csv" data-name="soil_profiles_mixed.csv"><b>Mixed · soil profiles</b><small>quantitative + nominal + ordinal + binary → Gower</small></button>
+      <button class="example-btn" data-path="data/genetic_distance_matrix.csv" data-name="genetic_distance_matrix.csv"><b>Distance matrix · 12 cultivars</b><small>a ready-made genetic distance matrix</small></button>
+      <button class="example-btn" data-sim="clusters"><b>Simulated · four clear clusters</b><small>80 objects × 5 variables, generated now</small></button>
+      <button class="example-btn" data-sim="noise"><b>Simulated · uniform noise</b><small>60 objects with no structure — what H ≈ 0.5 looks like</small></button>
+    </div>
+    <div class="messages" id="dataMessages"></div>
+    <div id="gridIssues" class="check-list"></div>
+  </div>
+
+  <!-- ---------- VARIABLES ---------- -->
+  <div class="card" id="varCard" style="display:none">
+    <h2>2 · Variable types and roles</h2>
+    <p class="hint">The platform proposes a type and a role for each column. Correct them if needed: the dissimilarity offered in Block 3 depends on the types, and only <b>active</b> columns take part in the clustering.</p>
+    <div class="role-legend" id="roleLegend"></div>
+    <details class="acc"><summary>Variable types explained</summary><div class="acc-body"><div class="role-legend" id="kindLegend"></div></div></details>
+    <div class="table-scroll" id="varTable"></div>
+    <h3>Detected structure</h3>
+    <div class="design-summary" id="varSummary"></div>
+    <div class="check-list" id="varChecks"></div>
+    <div class="reco" id="recoBox"></div>
+  </div>
+
+  <!-- ---------- PREPROCESSING ---------- -->
+  <div class="card" id="prepCard" style="display:none">
+    <h2>3 · Missing values, transformation and scaling</h2>
+    <p class="hint">Defaults follow the recommendation above; change them and apply again at any time. Everything downstream is recomputed from this working matrix.</p>
+    <div class="prep-grid">
+      <div class="field"><label>Missing values</label>
+        <select id="missingSel"><option value="drop">Drop objects with any missing active value</option><option value="impute">Impute (mean / median / mode)</option></select>
+        <span class="field-help">Gower distance in Block 3 can additionally skip missing pairs.</span></div>
+      <div class="field"><label>Transformation (before scaling)</label>
+        <select id="transformSel"><option value="none">None</option><option value="log">log(x + 1)</option><option value="sqrt">Square root</option><option value="hellinger">Hellinger (row-wise)</option><option value="chord">Chord (row-wise)</option><option value="total">Relative abundance (row-wise)</option><option value="pa">Presence / absence</option></select>
+        <span class="field-help" id="transformHelp"></span><span class="field-help" id="transformScope"></span></div>
+      <div class="field"><label>Scaling</label>
+        <select id="scalingSel"><option value="zscore">z-scores (mean 0, SD 1)</option><option value="range">Range 0–1</option><option value="robust">Robust (median / IQR)</option><option value="maxabs">Divide by max |x|</option><option value="none">None (raw units)</option></select>
+        <span class="field-help" id="scalingHelp"></span></div>
+      <div class="field"><label>Ordinal variables</label>
+        <select id="ordinalSel"><option value="ranks">Ranks of the levels (0, 1, 2…)</option><option value="numeric">Numeric scores if the levels are numbers</option></select>
+        <span class="field-help">Ranks are then scaled like quantitative variables.</span></div>
+    </div>
+    <div class="messages" id="prepMessages"></div>
+    <div class="btn-row"><button class="btn btn-primary" id="applyBtn" disabled>Apply and explore →</button></div>
+  </div>
+
+  <!-- ---------- EDA ---------- -->
+  <div class="card" id="edaCard" style="display:none">
+    <h2>4 · Exploratory analysis and clustering tendency</h2>
+    <p class="hint">Are these data clusterable? The verdict combines the Hopkins statistic, the balance of the variables, redundancy, outliers and sample size.</p>
+    <div class="verdict" id="edaVerdict"></div>
+    <div class="results-summary" id="edaTiles"></div>
+    <div class="check-list" id="edaChecks"></div>
+    <div class="reco" id="edaReco"></div>
+    <div id="figVarBox"></div>
+    <div class="fig-grid">
+      <div id="figCorr"></div>
+      <div id="figVAT"></div>
+    </div>
+    <div id="figPCA"></div>
+    <div class="fig-grid">
+      <div id="figHopkins"></div>
+      <div id="figOutliers"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary btn-sm" id="downloadWorkingBtn">⬇ Download the preprocessed matrix (CSV)</button>
+      <span style="flex:1"></span>
+      <button class="btn btn-primary" id="nextBtn2" disabled>Continue to similarity and distance →</button>
+    </div>
+  </div>
+
+  <!-- ---------- PREVIEW ---------- -->
+  <div class="card" id="previewCard" style="display:none">
+    <h2>Data preview</h2>
+    <div class="table-scroll" id="previewTable"></div>
+  </div>
+</section>
+
+<section class="step-panel" id="panel-3">
+  <div class="panel-title"><div class="pt-num">3</div><div><h2>Similarity and distance</h2><p>Choose how "far apart" two objects are. Everything that follows (trees, partitions, validation) is computed from this matrix.</p></div></div>
+
+  <!-- ---------- THEORY ---------- -->
+  <div class="card theory-card">
+    <div class="card-head"><div><h2>Choosing a coefficient: the short version</h2><p class="hint">Lesson 3 on the home page has the full story; these are the rules that matter here.</p></div></div>
+    <details class="acc" open>
+      <summary>1 · Match the coefficient to the data type</summary>
+      <div class="acc-body">
+        <table><thead><tr><th>Data</th><th>Use</th><th>Avoid</th></tr></thead><tbody>
+          <tr><td>Quantitative, comparable units (scaled)</td><td>Euclidean, Manhattan; Mahalanobis if variables are correlated; Euclidean on PCs to drop noise</td><td>Correlation distances with fewer than ~5 variables</td></tr>
+          <tr><td>Profiles: expression, spectra, time series</td><td>1 − Pearson, 1 − Spearman, cosine</td><td>Euclidean when only the shape matters</td></tr>
+          <tr><td>Presence/absence where 0 = absent</td><td>Jaccard, Dice, Ochiai, Kulczynski</td><td>Simple matching (rewards shared absences)</td></tr>
+          <tr><td>Binary with two meaningful states</td><td>Simple matching, Rogers–Tanimoto</td><td>Jaccard (ignores one of the states)</td></tr>
+          <tr><td>Abundances, counts</td><td>Bray–Curtis, Ružička, Morisita–Horn; Hellinger or chord if you need Euclidean geometry</td><td>Raw Euclidean (dominated by abundant species and double zeros)</td></tr>
+          <tr><td>Nominal / ordinal</td><td>Simple matching on categories, ranks for ordinal, Gower</td><td>Treating category codes as numbers</td></tr>
+          <tr><td>Mixed types</td><td>Gower (weights optional)</td><td>Dummy coding + Euclidean unless categories are few</td></tr>
+        </tbody></table>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>2 · Metric, Euclidean, and why it matters</summary>
+      <div class="acc-body">
+        <p>A dissimilarity is a <b>metric</b> when d(x, z) ≤ d(x, y) + d(y, z) for every triple. It is <b>Euclidean-embeddable</b> when the objects can be placed as points in some Euclidean space reproducing every d exactly. Euclidean ⇒ metric, not the reverse.</p>
+        <ul>
+          <li>Ward's method, k-means on coordinates and principal coordinates (PCoA) assume Euclidean geometry. On a non-Euclidean matrix (Bray–Curtis, Jaccard, most similarities converted as 1 − s) they still run but distort; the fix is usually <b>√d</b>, which is Euclidean for Bray–Curtis, Jaccard, Sørensen and simple matching.</li>
+          <li>Single, complete and average linkage and PAM only need the matrix: any dissimilarity, metric or not, is fine.</li>
+          <li>This block checks both properties: the share of triples violating the triangle inequality and the negative eigenvalues of the double-centred matrix.</li>
+        </ul>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>3 · Reading the figures</summary>
+      <div class="acc-body">
+        <ul>
+          <li><b>Heat map</b>: objects reordered so that close ones sit together; dark diagonal blocks are candidate clusters. The strips show your known grouping, if any.</li>
+          <li><b>PCoA map</b>: the best 2-D picture of the matrix. Read it with the <b>Shepard diagram</b> and the stress: below 0.1 the map is faithful, above 0.2 it is only a sketch.</li>
+          <li><b>Distribution of dissimilarities</b>: two humps (near and far pairs) suggest groups; a single narrow hump means every pair is about equally far, which is bad news for clustering.</li>
+          <li><b>Nearest-neighbour network</b>: which objects would join first; edges crossing between known groups reveal where the grouping and the data disagree.</li>
+          <li><b>Comparison of coefficients</b>: correlation between the matrices produced by several coefficients. If they agree, the choice is harmless; if not, your clusters depend on it, and you should say so.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <!-- ---------- CHOOSE ---------- -->
+  <div class="card">
+    <h2>1 · Choose the coefficient</h2>
+    <div class="reco" id="distReco"></div>
+    <div class="tabs" id="famTabs"></div>
+    <p class="hint" id="famHelp"></p>
+    <div class="field-grid">
+      <div class="field"><label>Coefficient</label><select id="coefSel"></select></div>
+      <div class="field" id="pSource"><label>Data source</label><select id="sourceSel"><option value="working">Working matrix (transformed and scaled in Block 2)</option><option value="raw">Raw numeric variables</option></select></div>
+      <div class="field" id="pMink" style="display:none"><label>Minkowski order p</label><input type="number" id="minkP" value="3" min="1" max="10" step="0.5" style="width:90px"></div>
+      <div class="field" id="pK" style="display:none"><label>Principal components kept</label><input type="number" id="pcaK" value="2" min="1" max="50" step="1" style="width:90px"></div>
+    </div>
+    <div id="coefDesc"></div>
+    <div id="pGower" style="display:none">
+      <div class="field-grid">
+        <div class="field"><label>Binary variables</label><select id="gowerBinary"><option value="asym">Asymmetric (shared absences ignored)</option><option value="sym">Symmetric (both states count)</option></select></div>
+      </div>
+      <details class="acc"><summary>Variable weights (default 1)</summary><div class="acc-body"><div id="gowerWeights" style="display:flex;flex-wrap:wrap;gap:10px"></div></div></details>
+    </div>
+    <div class="messages" id="distMessages"></div>
+    <div class="btn-row"><button class="btn btn-primary" id="distRunBtn">Compute the dissimilarity matrix →</button></div>
+  </div>
+
+  <!-- ---------- RESULTS ---------- -->
+  <div class="card" id="distResults" style="display:none">
+    <h2>2 · The dissimilarity matrix</h2>
+    <div class="results-summary" id="distTiles"></div>
+    <div class="check-list" id="distChecks"></div>
+    <details class="acc"><summary>Nearest neighbours of every object</summary><div class="acc-body"><div class="table-scroll" id="nnTable"></div></div></details>
+    <div id="fig3Heat"></div>
+    <div id="fig3MDS"></div>
+    <div class="fig-grid"><div id="fig3Shepard"></div><div id="fig3Hist"></div></div>
+    <div id="fig3KNN"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary btn-sm" id="distDownloadBtn">⬇ Download the matrix (CSV)</button>
+      <span style="flex:1"></span>
+      <button class="btn btn-primary" id="nextBtn3" disabled>Continue to hierarchical clustering →</button>
+    </div>
+  </div>
+
+  <!-- ---------- COMPARE ---------- -->
+  <div class="card" id="cmpCard" style="display:none">
+    <h2>3 · Compare candidate coefficients</h2>
+    <p class="hint">How much does the choice matter for these data? Tick the coefficients to compare; each matrix is recomputed and the correlations between their pairwise dissimilarities are shown.</p>
+    <div id="cmpList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px"></div>
+    <div class="messages" id="cmpMessages"></div>
+    <div class="btn-row"><button class="btn btn-secondary" id="cmpRunBtn">Compare</button></div>
+    <div id="cmpResults" style="display:none">
+      <div id="cmpText"></div>
+      <div id="fig3Cmp"></div>
+      <div class="table-scroll" id="cmpTable" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>
+<section class="step-panel" id="panel-4">
+  <div class="panel-title"><div class="pt-num">4</div><div><h2>Hierarchical clustering and the dendrogram studio</h2><p>Build the tree from the dissimilarity matrix of Block 3, judge it, cut it, draw it the way you want, and compare linkage rules.</p></div></div>
+
+  <div class="card theory-card">
+    <div class="card-head"><div><h2>What to look at before trusting a tree</h2><p class="hint">Lessons 5–7 on the home page explain the linkage rules and how to read a dendrogram.</p></div></div>
+    <details class="acc" open>
+      <summary>1 · Three numbers per tree</summary>
+      <div class="acc-body">
+        <ul>
+          <li><b>Cophenetic correlation</b> between the original dissimilarities and the heights at which each pair joins. Above 0.75 the tree is a faithful summary; UPGMA typically scores highest, Ward and complete linkage lower because they favour compact clusters over fidelity.</li>
+          <li><b>Agglomerative coefficient</b> (or divisive coefficient for DIANA): mean over objects of 1 − (height of the object's first merge / height of the last merge). Near 1 = clear structure; it grows with n, so compare only trees of the same data.</li>
+          <li><b>Reversals</b>: merges that happen at a lower height than an earlier one (centroid and median linkage). They make cutting by height ambiguous.</li>
+        </ul>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>2 · Cutting the tree</summary>
+      <div class="acc-body">
+        <p>Cut by <b>number of clusters k</b> or by <b>height</b>. The bar chart of merge heights shows where the biggest jumps are: a long vertical stretch without merges means that the clusters below it are well separated. Block 6 adds silhouette, gap statistic, stability and many other criteria; use the jumps here as a first idea, then let Block 6 and your knowledge of the objects decide.</p>
+        <p>If you supplied a known grouping, the cross-table and the <b>adjusted Rand index</b> tell you how well the cut recovers it (1 = identical, 0 = what random labels give).</p>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>3 · Comparing linkage rules</summary>
+      <div class="acc-body">
+        <p>Run several rules on the same matrix and compare them with <b>Baker's gamma</b> (rank correlation of the level at which each pair joins), the correlation between cophenetic matrices, the <b>Fowlkes–Mallows index</b> at the chosen k, and a <b>tanglegram</b> that draws two trees face to face with the leaves connected; the entanglement (0 = identical orders after rotating branches, 1 = reversed) and the number of crossings summarise the disagreement. A structure that survives every linkage is real; one that appears with a single rule deserves suspicion.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>1 · Build the tree</h2>
+    <div class="reco" id="hcReco"></div>
+    <div class="field-grid">
+      <div class="field"><label>Linkage rule</label><select id="hcMethod"></select></div>
+      <div class="field" id="hcBetaWrap" style="display:none"><label>β for flexible linkage</label><input type="number" id="hcBeta" value="-0.25" min="-1" max="0.99" step="0.05" style="width:100px"><span class="field-help">β = −0.25 (Lance &amp; Williams) behaves like a space-conserving average linkage; more negative → more compact (Ward-like).</span></div>
+    </div>
+    <div class="messages" id="hcMessages"></div>
+    <div class="btn-row"><button class="btn btn-primary" id="hcRun">Build the tree →</button></div>
+  </div>
+
+  <div class="card" id="hcResults" style="display:none">
+    <h2>2 · The tree and its cut</h2>
+    <div class="results-summary" id="hcTiles"></div>
+    <div class="check-list" id="hcChecks"></div>
+    <div id="fig4Heights"></div>
+    <h3>Cut the tree</h3>
+    <div class="field-grid" style="align-items:end">
+      <div class="field"><label>Cut by</label><select id="cutMode"><option value="k">Number of clusters</option><option value="height">Height</option></select></div>
+      <div class="field" id="cutKWrap"><label>k</label><input type="number" id="cutK" value="3" min="1" max="50" step="1" style="width:90px"></div>
+      <div class="field" id="cutHWrap" style="display:none"><label>Height</label><input type="number" id="cutH" value="0" min="0" step="0.01" style="width:120px"></div>
+      <div class="field"><label>&nbsp;</label><button class="btn btn-secondary" id="cutApply">Apply the cut</button></div>
+    </div>
+    <div class="table-scroll" id="clusterTable"></div>
+    <div class="table-scroll" id="crossTable" style="margin-top:12px"></div>
+    <h3>Dendrogram studio</h3>
+    <p class="hint">Open <i>Edit figure</i> to change layout (rectangular, triangular, horizontal, radial), colours, labels, symbols, cut line, cluster boxes, collapsing, hanging leaves, leaf order, axis and legend. Every setting is kept for the report.</p>
+    <div id="fig4Dendro"></div>
+    <div id="fig4Heatmap"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary btn-sm" id="dlClustersBtn">⬇ Cluster membership (CSV)</button>
+      <button class="btn btn-secondary btn-sm" id="dlMergesBtn">⬇ Merge table (CSV)</button>
+      <span style="flex:1"></span>
+      <button class="btn btn-primary" id="nextBtn4" disabled>Continue to partitioning methods →</button>
+    </div>
+  </div>
+
+  <div class="card" id="cmp4Card" style="display:none">
+    <h2>3 · Compare linkage rules and draw tanglegrams</h2>
+    <p class="hint">Every ticked rule is run on the same dissimilarity matrix. The table reports fidelity and agreement; the heat map shows how much each pair of trees agrees.</p>
+    <div id="cmp4List" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px"></div>
+    <div class="messages" id="cmp4Messages"></div>
+    <div class="btn-row"><button class="btn btn-secondary" id="cmp4Run">Compare the ticked rules</button></div>
+    <div id="cmp4Results" style="display:none">
+      <div id="cmp4Text"></div>
+      <div class="table-scroll" id="cmp4Table"></div>
+      <div id="fig4Methods"></div>
+    </div>
+    <h3>Tanglegram</h3>
+    <div class="field-grid" style="align-items:end">
+      <div class="field"><label>Left tree</label><select id="tgA"></select></div>
+      <div class="field"><label>Right tree</label><select id="tgB"></select></div>
+      <div class="field"><label>&nbsp;</label><button class="btn btn-secondary" id="tgRun">Draw the tanglegram</button></div>
+    </div>
+    <div id="fig4Tangle" style="display:none"></div>
+  </div>
+</section>
+<section class="step-panel" id="panel-5">
+  <div class="panel-title"><div class="pt-num">5</div><div><h2>Partitioning, fuzzy, model-based, density-based and spectral clustering</h2><p>Non-hierarchical methods on the same data: choose one, judge it with the silhouette, and compare it with the tree of Block 4 and with the other algorithms.</p></div></div>
+
+  <div class="card theory-card">
+    <div class="card-head"><div><h2>Which algorithm, and what it assumes</h2><p class="hint">Lessons 8 and 9 on the home page explain each method; here is what matters when you press Run.</p></div></div>
+    <details class="acc" open>
+      <summary>1 · The methods at a glance</summary>
+      <div class="acc-body">
+        <table><thead><tr><th>Method</th><th>Works on</th><th>Assumes</th><th>Needs k?</th><th>Strength</th></tr></thead><tbody>
+          <tr><td>k-means</td><td>coordinates</td><td>round clusters, similar size, Euclidean</td><td>yes</td><td>fast, well understood; many starts avoid bad optima</td></tr>
+          <tr><td>Hierarchical k-means</td><td>coordinates</td><td>as k-means</td><td>yes</td><td>starts from the tree centroids: reproducible</td></tr>
+          <tr><td>PAM</td><td>any dissimilarity</td><td>medoid-shaped clusters</td><td>yes</td><td>robust to outliers; medoids are real objects; Gower, Bray–Curtis, Jaccard all fine</td></tr>
+          <tr><td>CLARA</td><td>any dissimilarity</td><td>as PAM</td><td>yes</td><td>thousands of objects</td></tr>
+          <tr><td>Fuzzy c-means</td><td>coordinates</td><td>as k-means, soft boundaries</td><td>yes</td><td>membership degrees reveal intermediate objects and gradients</td></tr>
+          <tr><td>Gaussian mixture</td><td>coordinates</td><td>ellipsoidal Gaussian components</td><td>BIC chooses</td><td>probabilities and uncertainty per object; k and shape selected by BIC</td></tr>
+          <tr><td>DBSCAN</td><td>any dissimilarity</td><td>dense regions separated by sparse ones</td><td>no (ε, minPts)</td><td>arbitrary shapes, labels outliers as noise</td></tr>
+          <tr><td>Spectral</td><td>any dissimilarity</td><td>connected neighbourhood graph</td><td>yes</td><td>curved, nested or elongated shapes (moons, rings)</td></tr>
+        </tbody></table>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>2 · Coordinates versus the matrix</summary>
+      <div class="acc-body">
+        <p>k-means, fuzzy c-means and Gaussian mixtures need <b>coordinates</b>. Two sources are offered: the working matrix of Block 2 (the natural choice when your Block 3 dissimilarity is Euclidean on those variables), or the <b>principal coordinates (PCoA axes)</b> of the chosen dissimilarity, which turns any matrix, even Bray–Curtis or Gower, into Euclidean coordinates that reproduce it as closely as possible. PAM, CLARA, DBSCAN and spectral clustering use the matrix directly.</p>
+        <p>The <b>silhouette</b> is always computed on the Block 3 dissimilarity, so every method is judged on the same footing.</p>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>3 · Reading the results</summary>
+      <div class="acc-body">
+        <ul>
+          <li><b>Average silhouette</b>: above 0.7 strong, 0.5 reasonable, 0.25 weak, below that no substantial structure. Negative values flag objects placed in the wrong cluster.</li>
+          <li><b>Between-SS / total-SS</b>: share of the variance explained by the partition (coordinate methods). It always grows with k, so it cannot choose k on its own.</li>
+          <li><b>Adjusted Rand index</b> against the tree cut and against your known grouping: 1 = identical, 0 = chance agreement.</li>
+          <li><b>Membership / posterior probabilities</b> (fuzzy, mixtures): objects with a maximum below about 0.6 sit between clusters; the partition coefficient summarises how crisp the solution is.</li>
+          <li><b>k-NN distance plot</b> (DBSCAN): sort the distance to the (minPts − 1)-th neighbour; the knee is a good ε. Objects beyond it are noise.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>1 · Choose the method</h2>
+    <div class="reco" id="ptReco"></div>
+    <div class="field-grid">
+      <div class="field"><label>Method</label><select id="ptMethod"></select><span class="field-help" id="ptHelp"></span></div>
+      <div class="field" id="pK"><label>Number of clusters k</label><input type="number" id="ptK" value="3" min="1" max="50" step="1" style="width:90px"></div>
+      <div class="field" id="pSource"><label>Coordinates</label><select id="ptSource"><option value="working">Working matrix (Block 2)</option><option value="pcoa">PCoA axes of the Block 3 dissimilarity</option></select></div>
+      <div class="field" id="pSeed"><label>Random seed</label><input type="number" id="ptSeed" value="1" min="1" max="999999" step="1" style="width:110px"><span class="field-help">Same seed → same result.</span></div>
+    </div>
+    <div class="field-grid" id="pKmeans">
+      <div class="field"><label>Algorithm</label><select id="kmAlgo"><option value="hartigan">Hartigan–Wong (Lloyd + optimal transfers)</option><option value="lloyd">Lloyd / Forgy</option><option value="macqueen">MacQueen (online)</option></select></div>
+      <div class="field"><label>Random starts (nstart)</label><input type="number" id="kmNstart" value="25" min="1" max="500" step="1" style="width:90px"></div>
+      <div class="field"><label>Initial centres</label><select id="kmInit"><option value="pp">k-means++</option><option value="random">random objects</option></select></div>
+    </div>
+    <div class="field-grid" id="pClara" style="display:none">
+      <div class="field"><label>Samples</label><input type="number" id="claraSamples" value="5" min="1" max="50" step="1" style="width:90px"></div>
+      <div class="field"><label>Sample size (0 = 40 + 2k)</label><input type="number" id="claraSize" value="0" min="0" max="2000" step="1" style="width:110px"></div>
+    </div>
+    <div class="field-grid" id="pFcm" style="display:none">
+      <div class="field"><label>Fuzzifier m</label><input type="number" id="fcmM" value="2" min="1.1" max="5" step="0.1" style="width:90px"><span class="field-help">2 is the usual value; closer to 1 → crisper.</span></div>
+    </div>
+    <div id="pGmm" style="display:none">
+      <div class="field-grid">
+        <div class="field"><label>Number of components</label><select id="gmmAuto"><option value="auto">Let BIC choose (2 … k max)</option><option value="fixed">Fixed k</option></select></div>
+        <div class="field"><label>k max for BIC</label><input type="number" id="gmmKmax" value="8" min="2" max="20" step="1" style="width:90px"></div>
+      </div>
+      <h4>Covariance models</h4><div id="gmmModels" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:4px"></div>
+    </div>
+    <div class="field-grid" id="pDbscan" style="display:none">
+      <div class="field"><label>ε (0 = knee of the k-NN plot)</label><input type="number" id="dbEps" value="0" min="0" step="0.001" style="width:120px"></div>
+      <div class="field"><label>minPts</label><input type="number" id="dbMinPts" value="4" min="2" max="50" step="1" style="width:90px"><span class="field-help">Rule of thumb: dimensions + 1, at least 4.</span></div>
+    </div>
+    <div class="field-grid" id="pSpectral" style="display:none">
+      <div class="field"><label>Affinity graph</label><select id="spGraph"><option value="knn">k-nearest-neighbour graph</option><option value="full">Fully connected</option></select></div>
+      <div class="field"><label>Neighbours</label><input type="number" id="spNeigh" value="7" min="2" max="50" step="1" style="width:90px"></div>
+      <div class="field"><label>Kernel width σ (0 = median k-NN distance)</label><input type="number" id="spSigma" value="0" min="0" step="0.01" style="width:120px"></div>
+    </div>
+    <div class="messages" id="ptMessages"></div>
+    <div class="btn-row"><button class="btn btn-primary" id="ptRun">Run →</button></div>
+  </div>
+
+  <div class="card" id="ptResults" style="display:none">
+    <h2>2 · The partition</h2>
+    <div class="results-summary" id="ptTiles"></div>
+    <div class="check-list" id="ptChecks"></div>
+    <div class="table-scroll" id="ptClusterTable"></div>
+    <div id="ptCrossTable"></div>
+    <div id="fig5Map"></div>
+    <div class="fig-grid"><div id="fig5Sil"></div><div id="fig5Sizes"></div></div>
+    <div id="fig5Extra"></div>
+    <div id="fig5Bic" style="display:none"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary btn-sm" id="dlMembershipBtn">⬇ Cluster membership (CSV)</button>
+      <span style="flex:1"></span>
+      <button class="btn btn-primary" id="nextBtn5" disabled>Continue to the optimal k and validation →</button>
+    </div>
+  </div>
+
+  <div class="card" id="cmp5Card" style="display:none">
+    <h2>3 · Compare methods at the same k</h2>
+    <p class="hint">Every ticked method is run with the k above (DBSCAN excluded: it chooses its own). Agreement is measured with the adjusted Rand index.</p>
+    <div id="cmp5List" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px"></div>
+    <div class="messages" id="cmp5Messages"></div>
+    <div class="btn-row"><button class="btn btn-secondary" id="cmp5Run">Compare</button></div>
+    <div id="cmp5Results" style="display:none">
+      <div id="cmp5Text"></div>
+      <div class="table-scroll" id="cmp5Table"></div>
+      <div id="fig5Agree"></div>
+    </div>
+  </div>
+</section>
+<section class="step-panel" id="panel-6">
+  <div class="panel-title"><div class="pt-num">6</div><div><h2>Optimal number of clusters and validation</h2><p>How many clusters, how stable, how well supported, and how much they agree with what you already know.</p></div></div>
+
+  <div class="card theory-card">
+    <div class="card-head"><div><h2>Four questions, four tools</h2><p class="hint">Lessons 10 and 11 on the home page explain each criterion in detail.</p></div></div>
+    <details class="acc" open>
+      <summary>1 · How many clusters? Thirteen criteria and a vote</summary>
+      <div class="acc-body">
+        <p>For every k in a range, a partition is produced (the tree cut, k-means or PAM) and each criterion selects its own k: <b>silhouette</b>, <b>Calinski–Harabasz</b>, <b>PBM</b>, <b>Ratkowsky–Lance</b>, <b>Dunn</b> and <b>Krzanowski–Lai</b> at their maximum; <b>Davies–Bouldin</b>, <b>C-index</b> and <b>McClain–Rao</b> at their minimum; <b>Hartigan</b> at the first k with H ≤ 10; <b>Ball–Hall</b> at the largest drop; the <b>elbow</b> at the knee of the WSS curve; and the <b>gap statistic</b> by Tibshirani's first-SE rule against uniform reference data. The tally of votes is the consensus, in the spirit of NbClust.</p>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>2 · Are the clusters stable?</summary>
+      <div class="acc-body">
+        <p><b>Bootstrap stability</b> (clusterboot): the objects are resampled, the clustering is recomputed and each original cluster is matched to its most similar bootstrap cluster by the Jaccard index. Mean Jaccard above 0.85 = highly stable, 0.75 = stable, 0.6 = some pattern, below 0.5 = the cluster dissolves and should not be interpreted.</p>
+        <p><b>Multiscale bootstrap for trees</b> (pvclust): the <i>variables</i> are resampled at several sizes, the tree is rebuilt and the frequency of each cluster is tracked. The AU value corrects the bias of the plain bootstrap probability BP; clusters with AU ≥ 95 % are strongly supported by the data.</p>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>3 · External validation and comparison of algorithms</summary>
+      <div class="acc-body">
+        <p>Against a known grouping (or between two partitions): <b>Rand</b> and <b>adjusted Rand</b>, <b>NMI</b>, <b>variation of information</b>, <b>Jaccard</b>, <b>Fowlkes–Mallows</b>, <b>purity</b> and a χ² test with Cramér's V.</p>
+        <p><b>Comparison of algorithms</b> (clValid): hierarchical, k-means and PAM over the range of k, scored by connectivity (lower is better), Dunn and silhouette (higher is better).</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>1 · Optimal number of clusters</h2>
+    <div class="field-grid">
+      <div class="field"><label>Partitions produced by</label><select id="vkGen"><option value="hier">Cutting the Block 4 tree</option><option value="kmeans">k-means</option><option value="pam">PAM</option></select></div>
+      <div class="field"><label>k from</label><input type="number" id="vkMin" value="2" min="2" max="50" step="1" style="width:80px"></div>
+      <div class="field"><label>k to</label><input type="number" id="vkMax" value="10" min="3" max="60" step="1" style="width:80px"></div>
+      <div class="field"><label>Gap statistic: reference sets B (0 = skip)</label><input type="number" id="vkGapB" value="50" min="0" max="500" step="10" style="width:90px"></div>
+    </div>
+    <div class="messages" id="vkMessages"></div>
+    <div class="btn-row"><button class="btn btn-primary" id="vkRun">Evaluate every k →</button><button class="btn btn-secondary" id="adoptK" disabled>Adopt k</button></div>
+    <div id="vkResults" style="display:none">
+      <div class="results-summary" id="vkTiles"></div>
+      <div class="check-list" id="vkChecks"></div>
+      <div class="table-scroll" id="vkTable"></div>
+      <div id="fig6Panel"></div>
+      <div id="fig6Votes"></div>
+      <div class="fig-grid"><div id="fig6Elbow"></div><div id="fig6Sil"></div></div>
+      <div id="fig6Gap"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Stability of the clusters (bootstrap)</h2>
+    <div class="field-grid">
+      <div class="field"><label>Partition</label><select id="stSource"><option value="partition">Block 5 partition</option><option value="tree">Tree cut (Block 4)</option></select></div>
+      <div class="field"><label>Bootstrap samples B</label><input type="number" id="stB" value="50" min="10" max="500" step="10" style="width:90px"></div>
+    </div>
+    <div class="messages" id="stMessages"></div>
+    <div class="btn-row"><button class="btn btn-secondary" id="stRun">Run the bootstrap</button></div>
+    <div id="stResults" style="display:none">
+      <div id="stText"></div>
+      <div class="table-scroll" id="stTable"></div>
+      <div id="fig6Stab"></div>
+    </div>
+  </div>
+
+  <div class="card" id="pvCard">
+    <h2>3 · Support of the tree clusters (multiscale bootstrap, AU / BP)</h2>
+    <div class="field-grid">
+      <div class="field"><label>Resamples per scale</label><input type="number" id="pvB" value="30" min="10" max="500" step="10" style="width:90px"><span class="field-help">10 scales × B trees; 30 is quick, 100 is publication grade.</span></div>
+      <div class="field"><label>AU threshold</label><input type="number" id="pvThr" value="0.95" min="0.5" max="0.99" step="0.01" style="width:90px"></div>
+    </div>
+    <div class="messages" id="pvMessages"></div>
+    <div class="btn-row"><button class="btn btn-secondary" id="pvRun">Compute AU / BP</button></div>
+    <div id="pvResults" style="display:none">
+      <div id="pvText"></div>
+      <div class="table-scroll" id="pvTable"></div>
+      <div id="fig6Pv"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4 · External validation</h2>
+    <div class="field-grid" style="align-items:end">
+      <div class="field"><label>Compare</label><select id="exA"></select></div>
+      <div class="field"><label>with</label><select id="exB"></select></div>
+      <div class="field"><label>&nbsp;</label><button class="btn btn-secondary" id="exRun">Compare</button></div>
+    </div>
+    <div class="messages" id="exMessages"></div>
+    <div id="exResults" style="display:none">
+      <div class="results-summary" id="exTiles"></div>
+      <div id="exText"></div>
+      <div id="fig6Ext"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>5 · Comparison of algorithms over k</h2>
+    <div id="cvList" style="display:flex;gap:16px;flex-wrap:wrap"></div>
+    <div class="messages" id="cvMessages"></div>
+    <div class="btn-row"><button class="btn btn-secondary" id="cvRun">Compare over the k range above</button></div>
+    <div id="cvResults" style="display:none">
+      <div class="table-scroll" id="cvTable"></div>
+      <div class="table-scroll" id="cvFull" style="margin-top:10px"></div>
+      <div id="fig6Cv"></div>
+    </div>
+    <div class="btn-row"><span style="flex:1"></span><button class="btn btn-primary" id="nextBtn6" disabled>Continue to cluster profiles →</button></div>
+  </div>
+</section>
+<section class="step-panel" id="panel-7">
+  <div class="panel-title"><div class="pt-num">7</div><div><h2>Cluster profiles, interpretation and prediction</h2><p>What makes each cluster different, which variables and categories define it, which species indicate it, and how to assign new objects to the clusters.</p></div></div>
+
+  <div class="card theory-card">
+    <div class="card-head"><div><h2>From labels to meaning</h2><p class="hint">Lesson 12 on the home page introduces these tools.</p></div></div>
+    <details class="acc" open>
+      <summary>1 · Describing clusters (catdes)</summary>
+      <div class="acc-body">
+        <p>For every quantitative variable the <b>test value v</b> compares the cluster mean with the overall mean, accounting for the cluster size: |v| ≥ 1.96 marks a variable that characterises the cluster (higher when v &gt; 0, lower when v &lt; 0). A one-way <b>ANOVA</b> (and its rank-based counterpart, <b>Kruskal–Wallis</b>) tells which variables separate the clusters at all, with η² as effect size. Categorical variables get the same treatment on proportions, plus a χ² test with Cramér's V.</p>
+        <div class="callout warn"><b>A caveat</b> Clusters were built to differ on the active variables, so their p-values are descriptive, not inferential. Supplementary variables (not used for clustering) are the ones that support genuine claims.</div>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>2 · Indicator species</summary>
+      <div class="acc-body">
+        <p>The <b>indicator value</b> (Dufrêne &amp; Legendre) of a species for a cluster is the product of its <b>specificity</b> A (share of the species' abundance found in that cluster) and its <b>fidelity</b> B (share of the cluster's sites where the species occurs). Species with IndVal above about 50 % and a significant permutation test are good indicators. Available whenever count or presence/absence variables are active.</p>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>3 · Supervised follow-up: discriminant analysis, rules and new objects</summary>
+      <div class="acc-body">
+        <p><b>Linear discriminant analysis</b> finds the axes that best separate the clusters, gives each variable a weight (standardised coefficient) and a correlation with the axis (structure), and yields a rule to classify objects. The <b>leave-one-out accuracy</b> is the honest estimate of how well new objects will be assigned; Wilks' Λ tests the separation. A <b>classification tree</b> translates the same task into plain rules such as "Cluster 2 if plant height ≤ 200 cm". New observations are assigned by three rules at once (LDA posterior, nearest centroid in standardised space, tree); disagreement flags objects between clusters.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>1 · Profile the clusters</h2>
+    <div class="field-grid">
+      <div class="field"><label>Partition</label><select id="prSource"><option value="partition">Block 5 partition</option><option value="tree">Tree cut (Block 4)</option></select></div>
+      <div class="field" id="prSpeciesWrap"><label>Indicator species</label><label class="checkbox-label"><input type="checkbox" id="prSpecies"> Treat count / binary variables as species (IndVal)</label><span class="field-help">Permutations: <input type="number" id="prPerm" value="499" min="99" max="4999" step="100" style="width:80px"></span></div>
+    </div>
+    <h4>Quantitative variables</h4><div id="prVars" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px"></div>
+    <div id="prCatsWrap"><h4 style="margin-top:12px">Categorical variables</h4><div id="prCats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px"></div></div>
+    <div class="messages" id="prMessages"></div>
+    <div class="btn-row"><button class="btn btn-primary" id="prRun">Profile →</button></div>
+  </div>
+
+  <div class="card" id="prResults" style="display:none">
+    <h2>2 · What characterises each cluster</h2>
+    <div class="results-summary" id="prTiles"></div>
+    <div class="cluster-grid" id="prNarrative"></div>
+    <div class="table-scroll" id="prQuantTable" style="margin-top:14px"></div>
+    <div id="prCatTable"></div>
+    <div class="table-scroll" id="prIndTable" style="margin-top:10px"></div>
+    <div id="fig7Heat"></div>
+    <div class="fig-grid"><div id="fig7Radar"></div><div id="fig7Parallel"></div></div>
+    <div id="fig7Boxes"></div>
+    <div id="fig7Cats"></div>
+    <div id="fig7Indval"></div>
+    <div class="btn-row"><button class="btn btn-secondary btn-sm" id="dlProfilesBtn">⬇ Profile table (CSV)</button></div>
+  </div>
+
+  <div class="card" id="ldaCard" style="display:none">
+    <h2>3 · Discriminant analysis and classification rules</h2>
+    <div class="field-grid" style="align-items:end">
+      <div class="field"><label>Prior probabilities</label><select id="ldaPriors"><option value="prop">Proportional to cluster sizes</option><option value="equal">Equal</option></select></div>
+      <div class="field"><label>Tree depth</label><input type="number" id="treeDepth" value="3" min="1" max="6" step="1" style="width:80px"></div>
+      <div class="field"><label>Minimum objects per leaf</label><input type="number" id="treeLeaf" value="3" min="1" max="50" step="1" style="width:80px"></div>
+      <div class="field"><label>&nbsp;</label><button class="btn btn-secondary" id="ldaRerun">Recompute</button></div>
+    </div>
+    <div class="messages" id="ldaMessages"></div>
+    <div class="results-summary" id="ldaTiles"></div>
+    <div class="table-scroll" id="ldaConfusion"></div>
+    <div class="table-scroll" id="ldaCoef" style="margin-top:10px"></div>
+    <div id="fig7LDA"></div>
+    <h3>Rules from the classification tree</h3>
+    <div id="treeRules"></div>
+    <div id="fig7Tree"></div>
+  </div>
+
+  <div class="card" id="predCard" style="display:none">
+    <h2>4 · Assign new observations</h2>
+    <p class="hint">Paste a table (or load a file) with a header row containing the same variable names; an extra column is taken as the object label. Missing variables are filled with the overall mean.</p>
+    <textarea id="newData" rows="6" style="width:100%" placeholder="Object	PlantHeight_cm	EarHeight_cm	…"></textarea>
+    <div class="btn-row"><input type="file" id="newFile" accept=".csv,.tsv,.txt"><button class="btn btn-ghost btn-sm" id="predExample">Fill with an example</button><span style="flex:1"></span><button class="btn btn-primary" id="predictBtn">Assign to clusters</button></div>
+    <div class="messages" id="predMessages"></div>
+    <div id="predResults" style="display:none">
+      <div id="predText"></div>
+      <div class="table-scroll" id="predTable"></div>
+      <div class="btn-row"><button class="btn btn-secondary btn-sm" id="dlPredBtn">⬇ Assignments (CSV)</button></div>
+    </div>
+    <div class="btn-row"><span style="flex:1"></span><button class="btn btn-primary" id="nextBtn7" disabled>Continue to the report →</button></div>
+  </div>
+</section>
+<section class="step-panel" id="panel-8">
+  <div class="panel-title"><div class="pt-num">8</div><div><h2>Report and export</h2><p>A self-contained HTML report with every table, diagnostic and figure exactly as you edited them; print it to PDF; or download a ZIP with data, CSV tables and figures at publication resolution.</p></div></div>
+
+  <div class="card">
+    <h2>1 · What goes into the report</h2>
+    <div class="design-summary" id="rpSummary"></div>
+    <div class="field-grid">
+      <div class="field"><label>Title</label><input type="text" id="rpTitle" placeholder="Cluster analysis of …" style="width:100%"></div>
+      <div class="field"><label>Author(s)</label><input type="text" id="rpAuthor" placeholder="Name, institution" style="width:100%"></div>
+    </div>
+    <div class="field"><label>Objective / notes (optional)</label><textarea id="rpNotes" rows="3" style="width:100%" placeholder="One paragraph describing the aim of the analysis. It is printed under the title."></textarea></div>
+    <h4 style="margin-top:14px">Sections</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px">
+      <label class="checkbox-label"><input type="checkbox" id="rpData"> Data, preprocessing and clustering tendency <span class="pill rp-state"></span></label>
+      <label class="checkbox-label"><input type="checkbox" id="rpDist"> Similarity and distance <span class="pill rp-state"></span></label>
+      <label class="checkbox-label"><input type="checkbox" id="rpHier"> Hierarchical clustering <span class="pill rp-state"></span></label>
+      <label class="checkbox-label"><input type="checkbox" id="rpPart"> Partitioning and advanced methods <span class="pill rp-state"></span></label>
+      <label class="checkbox-label"><input type="checkbox" id="rpValid"> Number of clusters and validation <span class="pill rp-state"></span></label>
+      <label class="checkbox-label"><input type="checkbox" id="rpProfiles"> Profiles, discriminant analysis and rules <span class="pill rp-state"></span></label>
+      <label class="checkbox-label"><input type="checkbox" id="rpMethods" checked> Auto-drafted methods paragraph</label>
+      <label class="checkbox-label"><input type="checkbox" id="rpAppendix" checked> Appendix: cluster membership of every object</label>
+      <label class="checkbox-label"><input type="checkbox" id="rpRaw"> Appendix: data as loaded</label>
+    </div>
+    <div class="field-grid" style="margin-top:14px">
+      <div class="field"><label>ZIP figures: raster format</label><select id="rpZipFmt"><option value="png">PNG</option><option value="tiff">TIFF (journal submission)</option><option value="jpg">JPG</option><option value="webp">WEBP</option><option value="svg">SVG only</option></select></div>
+      <div class="field"><label>ZIP figures: resolution</label><select id="rpZipRes"><option value="2">150 dpi (2×)</option><option value="4" selected>300 dpi (4×)</option><option value="6">450 dpi (6×)</option><option value="8">600 dpi (8×)</option><option value="12">900 dpi (12×)</option></select></div>
+    </div>
+    <div class="messages" id="rpMessages"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="rpPreview">Build and preview the report</button>
+      <button class="btn btn-secondary" id="rpHtml">⬇ Report (HTML)</button>
+      <button class="btn btn-secondary" id="rpPrint">🖨 Print / save as PDF</button>
+      <button class="btn btn-secondary" id="rpZip">⬇ Full package (ZIP)</button>
+      <button class="btn btn-ghost" id="rpMethodsBtn">Copy the methods paragraph</button>
+      <span class="hint" id="rpInfo" style="margin:0"></span>
+    </div>
+    <textarea id="rpMethodsText" rows="8" style="width:100%;display:none;margin-top:10px" readonly></textarea>
+  </div>
+
+  <div class="card" id="rpPreviewWrap" style="display:none">
+    <h2>2 · Preview</h2>
+    <p class="hint">This is the report as it will be saved. Go back to any block, edit a figure or change a setting, and build it again.</p>
+    <iframe id="rpFrame" class="rp-frame" title="Report preview"></iframe>
+  </div>
+</section>
+
+</main>
+
+<div class="footer-note">ClusteringPro · cluster analysis for every kind of data · runs locally in your browser</div>
+
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/figure.js"></script>
+<script src="js/hclust.js"></script>
+<script src="js/art.js"></script>
+<script src="js/playground.js"></script>
+<script src="js/plots2.js"></script>
+<script src="js/data.js"></script>
+<script src="js/dist.js"></script>
+<script src="js/plots3.js"></script>
+<script src="js/block3.js"></script>
+<script src="js/dendro.js"></script>
+<script src="js/block4.js"></script>
+<script src="js/partition.js"></script>
+<script src="js/plots5.js"></script>
+<script src="js/block5.js"></script>
+<script src="js/validate.js"></script>
+<script src="js/plots6.js"></script>
+<script src="js/block6.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/plots7.js"></script>
+<script src="js/block7.js"></script>
+<script src="js/zip.js"></script>
+<script src="js/report.js"></script>
+<script src="js/block8.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>
