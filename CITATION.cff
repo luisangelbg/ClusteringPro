@@ -20,10 +20,19 @@ authors:
     email: lbarrerag@chapingo.mx
     orcid: "https://orcid.org/0000-0001-8057-2583"
     country: MX
-version: 1.0.0
-date-released: "2026-09-09"
+version: 1.0.1
+date-released: "2026-09-10"
 license: GPL-3.0-or-later
 repository-code: "https://github.com/luisangelbg/ClusteringPro"
+url: "https://luisangelbg.github.io/ClusteringPro/"
+doi: 10.5281/zenodo.22682795
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22682795
+    description: "Concept DOI — always resolves to the latest version. Cite this one."
+  - type: doi
+    value: 10.5281/zenodo.22682889
+    description: "Version DOI for release v1.0.0."
 keywords:
   - cluster analysis
   - hierarchical clustering

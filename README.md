@@ -1,5 +1,8 @@
 # ClusteringPro
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22682795.svg)](https://doi.org/10.5281/zenodo.22682795)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+
 **Cluster analysis for every kind of data, without writing code.** All eight blocks are complete.
 
 A local web platform (HTML + JavaScript, no installation, no internet) that guides the user from the raw table to
@@ -103,5 +106,7 @@ ClusteringPro is free software released under the GNU General Public License, ve
 
 ## How to cite
 
-See `CITATION.cff` (GitHub shows a "Cite this repository" button built from it). A Zenodo DOI will be added here with the first archived release.
+Barrera-Guzmán, L. Á. (2026). *ClusteringPro: finding, validating and interpreting natural groups in biological, ecological and agronomic data without programming* (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22682795
+
+The DOI above is the concept DOI and always resolves to the latest version; each release also has its own DOI (v1.0.0: [10.5281/zenodo.22682889](https://doi.org/10.5281/zenodo.22682889)). `CITATION.cff` carries the same metadata, and GitHub builds its "Cite this repository" button from it.
 
