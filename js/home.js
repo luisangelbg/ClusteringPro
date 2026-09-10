@@ -65,6 +65,18 @@ function init() {
   el('startBtn').addEventListener('click', () => goStep(2));
   el('theoryBtn').addEventListener('click', () => { const t = el('theory'); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); const first = t.querySelector('details.acc'); if (first) first.open = true; });
   el('playBtn').addEventListener('click', () => el('playground').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  el('citeBtn').addEventListener('click', () => el('cite').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  /* citation card, fed from the single source of truth in report.js (Report.CITE) */
+  if (window.Report && Report.CITE) {
+    const c = Report.CITE;
+    el('citeRef').innerHTML = `${esc(c.author)} (${c.year}). <i>${esc(c.title)}</i> (Version ${esc(c.version)}) [Computer software]. Zenodo. <a href="${c.url}" target="_blank" rel="noopener">${c.url}</a>`;
+    const bib = `@software{barrera_guzman_clusteringpro_${c.year},\n  author  = {Barrera-Guzmán, Luis Ángel},\n  title   = {${c.title}},\n  year    = {${c.year}},\n  version = {${c.version}},\n  doi     = {${c.doi}},\n  url     = {${c.url}}\n}`;
+    el('citeBib').textContent = bib;
+    el('citeDoi').href = c.url; el('citeRepo').href = c.repo;
+    const copy = async (txt, label) => { try { await navigator.clipboard.writeText(txt); el('citeMsg').textContent = `${label} copied to the clipboard.`; } catch (e) { el('citeMsg').textContent = 'Copy blocked by the browser: select the text and copy it.'; } setTimeout(() => { el('citeMsg').textContent = ''; }, 3500); };
+    el('citeCopy').addEventListener('click', () => copy(Report.citation(), 'Reference'));
+    el('citeCopyBib').addEventListener('click', () => copy(bib, 'BibTeX'));
+  }
   el('brand').addEventListener('click', () => goStep(1));
   els('.step-btn').forEach(b => b.addEventListener('click', () => { if (!b.disabled) goStep(+b.dataset.step); }));
   els('[data-go]').forEach(b => b.addEventListener('click', () => goStep(+b.dataset.go)));

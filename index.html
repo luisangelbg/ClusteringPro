@@ -42,6 +42,7 @@
           <button class="btn btn-primary btn-lg" id="startBtn">Start with my data →</button>
           <button class="btn btn-secondary btn-lg" id="playBtn">Try the live demo</button>
           <button class="btn btn-ghost btn-lg" id="theoryBtn">Read the theory</button>
+          <button class="btn btn-ghost btn-lg" id="citeBtn">How to cite</button>
         </div>
         <div class="badge-row">
           <span class="badge ok">Runs entirely in your browser</span>
@@ -397,6 +398,21 @@
       <span class="chip a">centroid</span><span class="chip a">medoid</span><span class="chip a">k-means++</span><span class="chip a">membership</span><span class="chip a">ε · minPts</span><span class="chip a">BIC</span>
       <span class="chip">Hopkins</span><span class="chip">VAT</span><span class="chip">elbow</span><span class="chip">silhouette</span><span class="chip">gap statistic</span><span class="chip">Dunn</span><span class="chip">Calinski–Harabasz</span><span class="chip">adjusted Rand</span><span class="chip">NMI</span><span class="chip">bootstrap stability</span><span class="chip">IndVal</span><span class="chip">Gower</span><span class="chip">Bray–Curtis</span><span class="chip">Jaccard</span>
     </div>
+  </div>
+
+  <h2 class="section-title" id="cite">How to cite ClusteringPro</h2>
+  <p class="section-sub">If the platform contributes to a publication, a thesis or a report, please cite it. The DOI is a concept DOI registered in Zenodo: it always resolves to the latest archived version.</p>
+  <div class="card cite-card">
+    <p class="cite-ref" id="citeRef"></p>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-secondary btn-sm" id="citeCopy">Copy reference (APA)</button>
+      <button class="btn btn-secondary btn-sm" id="citeCopyBib">Copy BibTeX</button>
+      <a class="btn btn-ghost btn-sm" id="citeDoi" target="_blank" rel="noopener">Open the Zenodo record ↗</a>
+      <a class="btn btn-ghost btn-sm" id="citeRepo" target="_blank" rel="noopener">Source code on GitHub ↗</a>
+      <span class="hint" id="citeMsg" style="margin:0"></span>
+    </div>
+    <details class="acc"><summary>BibTeX entry</summary><div class="acc-body"><pre class="formula" id="citeBib"></pre></div></details>
+    <p class="hint" style="margin:8px 0 0">Version-specific DOIs and the full metadata are in the <code>CITATION.cff</code> file of the repository (GitHub shows them under "Cite this repository"). The same reference is printed in every report generated in Block 8.</p>
   </div>
 
   <div class="next-bar" style="margin-top:30px"><button class="btn btn-primary btn-lg" data-go="2">Go to Block 2: load your data →</button></div>
