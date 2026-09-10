@@ -8,6 +8,7 @@ function opts() {
     title: el('rpTitle').value.trim() || 'Cluster analysis report', author: el('rpAuthor').value.trim(), notes: el('rpNotes').value.trim(),
     data: el('rpData').checked, dist: el('rpDist').checked, hier: el('rpHier').checked, part: el('rpPart').checked, valid: el('rpValid').checked, profiles: el('rpProfiles').checked,
     methods: el('rpMethods').checked, appendix: el('rpAppendix').checked, rawdata: el('rpRaw').checked,
+    summary: el('rpExec').checked, cite: el('rpCite').checked,
     zipFmt: el('rpZipFmt').value, zipRes: +el('rpZipRes').value,
   };
 }
