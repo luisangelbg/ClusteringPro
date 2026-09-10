@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "ClusteringPro: an offline, browser-based platform for guided cluster analysis of every kind of data"
+title: "ClusteringPro: finding, validating and interpreting natural groups in biological, ecological and agronomic data without programming"
 abstract: >-
   ClusteringPro is a self-contained web application that performs a complete cluster analysis
   entirely in the browser, with no installation and no server-side computation. It guides the
