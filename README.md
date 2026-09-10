@@ -108,5 +108,5 @@ ClusteringPro is free software released under the GNU General Public License, ve
 
 Barrera-Guzmán, L. Á. (2026). *ClusteringPro: finding, validating and interpreting natural groups in biological, ecological and agronomic data without programming* (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22682795
 
-The DOI above is the concept DOI and always resolves to the latest version; each release also has its own DOI (v1.0.0: [10.5281/zenodo.22682889](https://doi.org/10.5281/zenodo.22682889)). `CITATION.cff` carries the same metadata, and GitHub builds its "Cite this repository" button from it.
+The DOI above is the concept DOI and always resolves to the latest version; each release also has its own DOI (v1.0.1: [10.5281/zenodo.22682889](https://doi.org/10.5281/zenodo.22682889); v1.0.0: [10.5281/zenodo.22682796](https://doi.org/10.5281/zenodo.22682796)). `CITATION.cff` carries the same metadata, and GitHub builds its "Cite this repository" button from it.
 

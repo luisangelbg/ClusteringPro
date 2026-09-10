@@ -32,6 +32,9 @@ identifiers:
     description: "Concept DOI — always resolves to the latest version. Cite this one."
   - type: doi
     value: 10.5281/zenodo.22682889
+    description: "Version DOI for release v1.0.1."
+  - type: doi
+    value: 10.5281/zenodo.22682796
     description: "Version DOI for release v1.0.0."
 keywords:
   - cluster analysis
