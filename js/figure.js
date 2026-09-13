@@ -11,24 +11,18 @@ const NS = 'http://www.w3.org/2000/svg';
 /* ================= palettes ================= */
 Fig.palettes = {
   cluster:  ['#4f46a5', '#e0803c', '#1fa39a', '#d64a6a', '#7bb041', '#8a5cd6', '#2b7bb9', '#c9a227', '#8c5a3c', '#6d6e71'],
-  vivid:    ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628', '#f781bf', '#999999', '#66c2a5', '#ffd92f'],
+  vivid:    ['#d7263d', '#1b6ca8', '#2e9e5b', '#7b3fa0', '#f08a24', '#8a5a2b', '#e45fa3', '#7d7d7d', '#39a9a0', '#e8c228'],
   harvest:  ['#3a5a40', '#a3b18a', '#dda15e', '#bc6c25', '#588157', '#e9c46a', '#8c5a3c', '#344e41', '#f4a261', '#264653'],
   soil:     ['#5b3a29', '#8c6a4a', '#b89b74', '#d9c8a9', '#3f5f3a', '#7f9f6d', '#c7b446', '#2f4a3a', '#a0522d', '#6b6b6b'],
-  npg:      ['#E64B35', '#4DBBD5', '#00A087', '#3C5488', '#F39B7F', '#8491B4', '#91D1C2', '#DC0000', '#7E6148', '#B09C85'],
-  lancet:   ['#00468B', '#ED0000', '#42B540', '#0099B4', '#925E9F', '#FDAF91', '#AD002A', '#ADB6B6', '#1B1919', '#00A087'],
-  jco:      ['#0073C2', '#EFC000', '#868686', '#CD534C', '#7AA6DC', '#003C67', '#8F7700', '#3B3B3B', '#A73030', '#4A6990'],
-  nejm:     ['#BC3C29', '#0072B5', '#E18727', '#20854E', '#7876B1', '#6F99AD', '#FFDC91', '#EE4C97', '#1B1919', '#00468B'],
-  d3:       ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
-  set2:     ['#66C2A5', '#FC8D62', '#8DA0CB', '#E78AC3', '#A6D854', '#FFD92F', '#E5C494', '#B3B3B3', '#66A61E', '#E6AB02'],
-  dark2:    ['#1B9E77', '#D95F02', '#7570B3', '#E7298A', '#66A61E', '#E6AB02', '#A6761D', '#666666', '#1F78B4', '#B15928'],
+  set2:     ['#7fc8a9', '#f3a683', '#9aa8d6', '#e7a1c8', '#b5d56a', '#f7d86b', '#dcc19e', '#bfbfbf', '#6fae3e', '#dfad2e'],
+  dark2:    ['#157a62', '#c65d1b', '#6b63a8', '#cf2f7f', '#5d9b2c', '#c9971a', '#98702a', '#5e5e5e', '#2f76a8', '#a94a25'],
   okabe:    ['#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7', '#000000', '#999999', '#661100'],
   tol:      ['#4477AA', '#EE6677', '#228833', '#CCBB44', '#66CCEE', '#AA3377', '#BBBBBB', '#000000', '#EE7733', '#009988'],
-  pastel:   ['#a1c9f4', '#ffb482', '#8de5a1', '#ff9f9b', '#d0bbff', '#debb9b', '#fab0e4', '#cfcfcf', '#fffea3', '#b9f2f0'],
+  pastel:   ['#a8c8ec', '#f7bd92', '#9ddcaf', '#f3a6a3', '#cdbff5', '#dcc0a3', '#f2b6de', '#d3d3d3', '#f6f2a4', '#bde8e5'],
   greys:    ['#111827', '#374151', '#6b7280', '#9ca3af', '#d1d5db', '#4b5563', '#1f2937', '#e5e7eb', '#111827', '#6b7280'],
 };
 Fig.paletteNames = {
-  cluster: 'ClusteringPro', vivid: 'Vivid (Set1)', harvest: 'Harvest', soil: 'Soil & crop', npg: 'Nature (NPG)', lancet: 'Lancet',
-  jco: 'Clinical Oncology', nejm: 'NEJM', d3: 'D3 classic', set2: 'Set2 (soft)', dark2: 'Dark2',
+  cluster: 'ClusteringPro', vivid: 'Vivid', harvest: 'Harvest', soil: 'Soil & crop', set2: 'Soft', dark2: 'Deep',
   okabe: 'Okabe–Ito (colour-blind safe)', tol: 'Paul Tol (colour-blind safe)', pastel: 'Pastel', greys: 'Greyscale',
 };
 
@@ -50,14 +44,17 @@ Fig.colormaps = {
   inferno: rampFrom([[0,0,4],[87,16,110],[188,55,84],[249,142,9],[252,255,164]]),
   plasma:  rampFrom([[13,8,135],[126,3,168],[204,71,120],[248,149,64],[240,249,33]]),
   cividis: rampFrom([[0,32,77],[60,86,120],[124,123,120],[192,164,98],[255,234,70]]),
-  rdylbu:  rampFrom([[49,54,149],[145,191,219],[255,255,191],[252,141,89],[165,0,38]]),
-  rdbu:    rampFrom([[5,48,97],[103,169,207],[247,247,247],[239,138,98],[103,0,31]]),
-  spectral:rampFrom([[94,79,162],[102,194,165],[255,255,191],[252,141,89],[158,1,66]]),
-  bluered: rampFrom([[33,102,172],[247,247,247],[178,24,43]]),
-  greens:  rampFrom([[247,252,245],[116,196,118],[0,68,27]]),
-  ylgn:    rampFrom([[255,255,229],[173,221,142],[49,163,84],[0,69,41]]),
+  /* the diverging and sequential ramps below are original to this program: their stops come from
+     anchors in the OKLCH colour space, with lightness rising to the centre and falling to the ends
+     (diverging) or falling steadily (sequential), and ends that stay apart under red–green colour blindness */
+  rdylbu:  rampFrom([[39,67,135],[105,174,213],[252,245,199],[237,156,85],[165,30,36]]),
+  rdbu:    rampFrom([[2,56,105],[151,197,222],[246,239,230],[229,166,146],[144,40,34]]),
+  spectral:rampFrom([[86,69,151],[82,200,180],[241,244,182],[248,154,86],[166,31,71]]),
+  bluered: rampFrom([[30,71,152],[243,237,230],[190,48,37]]),
+  greens:  rampFrom([[241,247,221],[89,180,125],[0,63,51]]),
+  ylgn:    rampFrom([[252,250,203],[189,224,126],[71,148,76],[3,71,65]]),
   browns:  rampFrom([[253,245,230],[204,153,102],[102,51,0]]),
-  heat:    rampFrom([[255,255,204],[254,178,76],[189,0,38]]),
+  heat:    rampFrom([[255,247,217],[253,146,62],[158,18,43]]),
 };
 Fig.colormapNames = {
   viridis: 'Viridis', magma: 'Magma', inferno: 'Inferno', plasma: 'Plasma', cividis: 'Cividis (colour-blind safe)',
