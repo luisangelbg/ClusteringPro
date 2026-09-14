@@ -59,7 +59,8 @@ VAL.gap = (X, ks, gen, B, seed) => {
   for (let b = 0; b < B; b++) {
     const U = Array.from({ length: n }, () => lo.map((l, j) => l + r() * (hi[j] - l)));
     const Du = gen.kind === 'kmeans' || n > 150 ? null : HC.dist(U);
-    ks.forEach((k, i) => { const cl = k === 1 ? U.map(() => 1) : (gen.kind === 'kmeans' || n > 150 ? PT.kmeans(U, k, { nstart: 2, seed: b + 1 }).cluster : gen.kind === 'pam' ? PT.pam(Du, k).cluster : HC.cutree(HC.agglomerate(Du, (state.hclust && state.hclust.method) || 'ward.D2'), k)); ref[i].push(Math.log(k === 1 ? KM.tss(U) : PT.ss(U, cl).wss)); });
+    const Tu = Du && gen.kind === 'hier' ? HC.agglomerate(Du, (state.hclust && state.hclust.method) || 'ward.D2') : null;
+    ks.forEach((k, i) => { const cl = k === 1 ? U.map(() => 1) : (!Du ? PT.kmeans(U, k, { nstart: 2, seed: b + 1 }).cluster : gen.kind === 'pam' ? PT.pam(Du, k).cluster : HC.cutree(Tu, k)); ref[i].push(Math.log(k === 1 ? KM.tss(U) : PT.ss(U, cl).wss)); });
   }
   const ElogW = ref.map(a => S.mean(a)), sk = ref.map(a => Math.sqrt(S.mean(a.map(v => (v - S.mean(a)) ** 2))) * Math.sqrt(1 + 1 / B));
   const gap = ks.map((k, i) => ElogW[i] - logW[i]);
@@ -85,8 +86,10 @@ VAL.sweep = (X, D, ks, gen, o) => {
     const diff = q => { const a = wssOf(q - 1), b = wssOf(q); return a != null && b != null ? Math.pow(q - 1, 2 / p) * a - Math.pow(q, 2 / p) * b : NaN; };
     const d1 = diff(k), d2 = diff(k + 1); r.kl = isFinite(d1) && isFinite(d2) && d2 !== 0 ? Math.abs(d1 / d2) : NaN;
   });
-  const gap = o.gapB > 0 ? VAL.gap(X, ks, gen, o.gapB, o.seed) : null;
-  if (gap) rows.forEach((r, i) => { r.gap = gap.gap[i]; r.gapSE = gap.sk[i]; });
+  /* the gap statistic also evaluates k = 1, so that it can conclude there is no cluster structure */
+  const gks = ks[0] === 2 ? [1].concat(ks) : ks;
+  const gap = o.gapB > 0 ? VAL.gap(X, gks, gen, o.gapB, o.seed) : null;
+  if (gap) rows.forEach(r => { const i = gap.ks.indexOf(r.k); r.gap = gap.gap[i]; r.gapSE = gap.sk[i]; });
   /* each index votes for one k */
   const pick = (key, dir) => { const vals = rows.map(r => r[key]); const ok = vals.map((v, i) => isFinite(v) ? i : -1).filter(i => i >= 0); if (!ok.length) return null; let bi = ok[0]; ok.forEach(i => { if (dir === 'max' ? vals[i] > vals[bi] : vals[i] < vals[bi]) bi = i; }); return rows[bi].k; };
   const votes = {
@@ -105,7 +108,7 @@ VAL.sweep = (X, D, ks, gen, o) => {
   if (gap) votes.gap = { k: gap.best, rule: 'first k within 1 SE of the next (Tibshirani)', label: 'Gap statistic' };
   /* elbow: max distance to the line joining the ends of the WSS curve */
   const w = rows.map(r => r.wss), kk = rows.map(r => r.k); { const x0 = kk[0], y0 = w[0], x1 = kk[kk.length - 1], y1 = w[w.length - 1]; const len = Math.hypot(x1 - x0, y1 - y0) || 1; let bi = 0, bd = -1; kk.forEach((k, i) => { const d = Math.abs((y1 - y0) * k - (x1 - x0) * w[i] + x1 * y0 - y1 * x0) / len; if (d > bd) { bd = d; bi = i; } }); votes.elbow = { k: kk[bi], rule: 'knee of the WSS curve', label: 'Elbow (WSS)' }; }
-  const tally = {}; Object.values(votes).forEach(v => { if (v.k != null) tally[v.k] = (tally[v.k] || 0) + 1; });
+  const tally = {}; Object.values(votes).forEach(v => { if (v.k != null && ks.includes(v.k)) tally[v.k] = (tally[v.k] || 0) + 1; });
   const consensus = Object.entries(tally).sort((a, b) => b[1] - a[1] || a[0] - b[0]).map(([k, c]) => ({ k: +k, votes: c }));
   return { ks, rows, votes, tally, consensus, gap, n, p, generator: gen.kind };
 };
@@ -149,18 +152,25 @@ VAL.pvclust = (X, method, B, scales, seed, opts) => {
       keys.forEach((k, s) => { if (set.has(k)) counts[si][s]++; });
     }
   });
+  const rEff = scales.map(sc => Math.max(2, Math.round(sc * p)) / p);
   const nodes = mem0.map((m, s) => {
     const bp = counts.map(c => c[s] / B);
-    /* fit z(r) = v √r + c / √r  by least squares on scales with 0 < bp < 1 */
-    let sxx = 0, sxy = 0, syy = 0, sx = 0, sy = 0, sw = 0; const pts = [];
-    scales.forEach((sc, si) => { let q = bp[si]; if (q <= 0) q = 0.5 / B; if (q >= 1) q = 1 - 0.5 / B; const z = S.qnorm(1 - q), sr = Math.sqrt(sc); pts.push([sr, z]); });
-    /* solve for v, c: z = v*sr + c/sr → linear in (sr, 1/sr) */
-    let a11 = 0, a12 = 0, a22 = 0, b1 = 0, b2 = 0; pts.forEach(([sr, z]) => { const u = sr, w = 1 / sr; a11 += u * u; a12 += u * w; a22 += w * w; b1 += u * z; b2 += w * z; });
-    const det = a11 * a22 - a12 * a12; let v = 0, c = 0; if (Math.abs(det) > 1e-12) { v = (b1 * a22 - b2 * a12) / det; c = (a11 * b2 - a12 * b1) / det; }
-    const au = 1 - S.pnorm(v - c), bpMain = bp[scales.indexOf(1)] != null ? bp[scales.indexOf(1)] : bp[Math.floor(scales.length / 2)];
-    return { step: s, members: m, size: m.length, height: h0.height[s], au, bp: bpMain, bpScales: bp, v, c };
+    /* pvclust msfit: weighted least squares of z(r) = v √r + c / √r on the scales with 0 < bp < 1,
+       r = the real ratio of resampled to original variables; AU = 1 − Φ(v − c), BP = 1 − Φ(v + c) */
+    const use = bp.map((q, si) => q > 0 && q < 1 ? si : -1).filter(si => si >= 0);
+    let v = 0, c = 0, au, bpFit, fitted = false;
+    if (use.length >= 2) {
+      let a11 = 0, a12 = 0, a22 = 0, b1 = 0, b2 = 0;
+      use.forEach(si => { const q = bp[si], z = S.qnorm(1 - q), sr = Math.sqrt(rEff[si]), dens = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI), wt = B * dens * dens / (q * (1 - q)), u = sr, w = 1 / sr; a11 += wt * u * u; a12 += wt * u * w; a22 += wt * w * w; b1 += wt * u * z; b2 += wt * w * z; });
+      const det = a11 * a22 - a12 * a12;
+      if (Math.abs(det) > 1e-12) { v = (b1 * a22 - b2 * a12) / det; c = (a11 * b2 - a12 * b1) / det; fitted = true; }
+    }
+    if (fitted) { au = 1 - S.pnorm(v - c); bpFit = 1 - S.pnorm(v + c); }
+    else { const mb = S.mean(bp); au = bpFit = mb < 0.5 ? 0 : 1; }
+    const i1 = scales.indexOf(1), bpRaw = i1 >= 0 ? bp[i1] : bp[Math.floor(scales.length / 2)];
+    return { step: s, members: m, size: m.length, height: h0.height[s], au, bp: bpFit, bpRaw, bpScales: bp, v, c, fitted, nScales: use.length };
   });
-  return { hc: h0, nodes, scales, B };
+  return { hc: h0, nodes, scales, rEff, B, p };
 };
 
 /* ---------- external validation between two labellings ---------- */

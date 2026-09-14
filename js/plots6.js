@@ -16,7 +16,7 @@ P6.curve = (cfg, sw, key, opts) => {
   const ok = ys.map((v, i) => isFinite(v) ? i : -1).filter(i => i >= 0);
   const svg = Fig.svg(cfg.width, cfg.height, cfg.theme);
   const f = Fig.frame(svg, cfg, { margin: { left: 74, right: 24, bottom: 62, top: 56 } });
-  const vals = ok.map(i => ys[i]), se = key === 'gap' && sw.gap ? sw.gap.sk : null;
+  const vals = ok.map(i => ys[i]), se = key === 'gap' ? rows.map(r => r.gapSE) : null;
   const lo = Math.min(...vals.map((v, t) => v - (se ? se[ok[t]] : 0))), hi = Math.max(...vals.map((v, t) => v + (se ? se[ok[t]] : 0)));
   const yd = Fig.niceDomain(lo, hi, key === 'wss');
   const x = Fig.scaleLinear(ks[0] - 0.5, ks[ks.length - 1] + 0.5, f.x0, f.x1), y = Fig.scaleLinear(yd[0], yd[1], f.y1, f.y0);
@@ -70,6 +70,7 @@ P6.votes = (cfg, sw) => {
   Fig.axisXBand(f, band, ks.map(String), Object.assign({}, cfg, { xlab: cfg.xlab || 'number of clusters k' }), { rotate: 0 });
   Fig.axisY(f, y, Object.assign({}, cfg, { ylab: cfg.ylab || 'indices voting for k' }), { count: 5, fmt: v => Number.isInteger(v) ? String(v) : '' });
   const g = Fig.g(), best = sw.consensus[0] ? sw.consensus[0].k : null;
+  if (sw.votes.gap && sw.votes.gap.k != null && !ks.includes(sw.votes.gap.k)) g.appendChild(Fig.text(f.x1 - 4, f.y0 + 12, `Gap statistic: k = ${sw.votes.gap.k}${sw.votes.gap.k === 1 ? ' (no cluster structure)' : ''}, outside the bars`, { size: 10, anchor: 'end', weight: 'bold', fill: Fig.color(cfg.palette, 1), font: f.font, role: 'label' }));
   ks.forEach((k, i) => { const v = tally[i]; if (!v) return; g.appendChild(Fig.el('rect', { x: band(i), y: y(v), width: band.bandwidth, height: f.y1 - y(v), fill: k === best ? Fig.color(cfg.palette, 1) : Fig.color(cfg.palette, 0), rx: 3 })); g.appendChild(Fig.text(band.center(i), y(v) - 6, String(v), { size: 11, anchor: 'middle', weight: 'bold', fill: f.t.fg, font: f.font, role: 'label' })); if (cfg.names !== false) names[i].forEach((nm, t) => g.appendChild(Fig.text(band.center(i), y(v) + 12 + t * 11, nm, { size: Math.min(9, band.bandwidth / 6), anchor: 'middle', fill: '#fff', font: f.font, role: 'label' }))); });
   f.g.appendChild(g);
   return svg;
@@ -132,7 +133,10 @@ P6.clValid = (cfg, cv, names) => {
 
 /* ---------- external cross-table heat map ---------- */
 P6.external = (cfg, ext, titles) => {
-  const { la, lb, M } = ext, rows = la.length, cols = lb.length;
+  /* rows and columns in natural order (C1, C2, … ; group names alphabetically) */
+  const cmp = (a, b) => String(a).localeCompare(String(b), undefined, { numeric: true });
+  const ri = ext.la.map((_, i) => i).sort((a, b) => cmp(ext.la[a], ext.la[b])), ci = ext.lb.map((_, j) => j).sort((a, b) => cmp(ext.lb[a], ext.lb[b]));
+  const la = ri.map(i => ext.la[i]), lb = ci.map(j => ext.lb[j]), M = ri.map(i => ci.map(j => ext.M[i][j])), rows = la.length, cols = lb.length;
   const svg = Fig.svg(cfg.width, cfg.height, cfg.theme);
   const f = Fig.frame(svg, cfg, { margin: { left: 120, right: 90, bottom: 110, top: 56 } });
   const cw = Math.min((f.x1 - f.x0) / cols, 120), ch = Math.min((f.y1 - f.y0) / rows, 70), ox = f.x0, oy = f.y0;
@@ -142,7 +146,7 @@ P6.external = (cfg, ext, titles) => {
   la.forEach((l, i) => g.appendChild(Fig.text(ox - 8, oy + i * ch + ch / 2 + 4, `${titles[0]} ${l}`, { size: 11, anchor: 'end', fill: f.t.fg, font: f.font, role: 'tick' })));
   lb.forEach((l, j) => g.appendChild(Fig.text(ox + j * cw + cw / 2, oy + rows * ch + 10, String(l), { size: 11, anchor: 'end', rotate: -35, fill: f.t.fg, font: f.font, role: 'tick' })));
   g.appendChild(Fig.text(ox + cols * cw / 2, oy - 10, titles[1], { size: 11, anchor: 'middle', fill: f.t.muted, font: f.font, role: 'label' }));
-  g.appendChild(Fig.text(f.x1, f.y1 + 60, `ARI ${ext.ari.toFixed(3)} · NMI ${ext.nmi.toFixed(3)} · purity ${(ext.purity * 100).toFixed(0)} % · χ² p ${ext.pval < 0.001 ? '< 0.001' : '= ' + ext.pval.toFixed(3)}`, { size: 11, anchor: 'end', fill: f.t.fg, font: f.font, role: 'label' }));
+  g.appendChild(Fig.text(ox + cols * cw + 60, oy + rows * ch + 84, `ARI ${ext.ari.toFixed(3)} · NMI ${ext.nmi.toFixed(3)} · purity ${(ext.purity * 100).toFixed(0)} % · χ² p ${ext.pval < 0.001 ? '< 0.001' : '= ' + ext.pval.toFixed(3)}`, { size: 11, anchor: 'end', fill: f.t.fg, font: f.font, role: 'label' }));
   const bx = ox + cols * cw + 20, bh = rows * ch;
   for (let q = 0; q < 40; q++) g.appendChild(Fig.el('rect', { x: bx, y: oy + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(1 - q / 39) }));
   g.appendChild(Fig.text(bx + 16, oy + 4, '100 %', { size: 9, fill: f.t.fg, font: f.font, role: 'tick' })); g.appendChild(Fig.text(bx + 16, oy + bh + 3, '0 %', { size: 9, fill: f.t.fg, font: f.font, role: 'tick' })); g.appendChild(Fig.text(bx + 6, oy - 8, 'row %', { size: 9, anchor: 'middle', fill: f.t.muted, font: f.font, role: 'label' }));

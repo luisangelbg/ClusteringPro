@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · Manual de usuario · Bloque 6: número de grupos y validación</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b6" data-pestana="B6" data-orden="7" style="--acento: var(--b6)">
+  <div class="cap-apertura">
+    <div class="cap-num">B6</div>
+    <div class="cap-etiqueta">Capítulo siete · Bloque 6 · Validation</div>
+    <h1 data-corto="Bloque 6 · Número de grupos y validación">Número de grupos y validación</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Cualquier método de agrupamiento devuelve grupos, incluso con datos sin estructura. Este bloque responde las preguntas que separan un resultado de un artefacto: cuántos grupos sostienen los datos, si esos grupos resisten el remuestreo, qué ramas del árbol están respaldadas por las variables, cuánto coinciden con lo que ya sabías y qué algoritmo describe mejor los datos a lo largo de <i>k</i>.</p>
+    <div class="cap-franja"><span class="k6"></span><span class="k6" style="opacity:.75"></span><span class="k6" style="opacity:.5"></span><span class="k6" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>7.1</b>¿Cuántos grupos? Trece criterios y un voto</li>
+      <li><b>7.2</b>El estadístico gap</li>
+      <li><b>7.3</b>Estabilidad por bootstrap</li>
+      <li><b>7.4</b>Soporte de los grupos del árbol (AU y BP)</li>
+      <li><b>7.5</b>Validación externa</li>
+      <li><b>7.6</b>Comparar algoritmos a lo largo de <i>k</i></li>
+      <li><b>7.7</b>Ajustes, tablas y figuras del bloque</li>
+      <li><b>7.8</b>Paso a paso</li>
+    </ul>
+  </div>
+
+  <p class="lead">El Bloque 6 tiene una tarjeta de teoría y cinco tarjetas de trabajo. <span class="ui">1 · Optimal number of clusters</span> evalúa cada <i>k</i> de un rango con trece criterios y cuenta sus votos. <span class="ui">2 · Stability of the clusters (bootstrap)</span> remuestrea los objetos y mide si cada grupo reaparece. <span class="ui">3 · Support of the tree clusters</span> remuestrea las variables y da a cada rama del árbol un valor de soporte. <span class="ui">4 · External validation</span> compara dos agrupaciones. <span class="ui">5 · Comparison of algorithms over k</span> enfrenta el árbol, k-means y PAM en el mismo rango. Las tarjetas son independientes: puedes correr solo las que necesites, en cualquier orden.</p>
+
+  <p>El bloque se activa en cuanto el Bloque 3 calcula una matriz. Las tarjetas 2 y 4 necesitan además una partición: el corte del árbol del Bloque 4 o la del Bloque 5. Al terminar la tarjeta 1 se habilita el Bloque 7.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.1.</b> Las cuatro preguntas del bloque y la herramienta que responde cada una.</caption>
+    <thead><tr><th style="width:24%">Pregunta</th><th style="width:28%">Tarjeta</th><th style="width:22%">Qué remuestrea o compara</th><th>Resultado principal</th></tr></thead>
+    <tbody>
+      <tr><td>¿Cuántos grupos?</td><td><span class="ui">1 · Optimal number of clusters</span></td><td>una partición por cada <i>k</i></td><td><i>k</i> de consenso, votos de cada criterio y estadístico gap.</td></tr>
+      <tr><td>¿Son estables los grupos?</td><td><span class="ui">2 · Stability of the clusters</span></td><td>los objetos</td><td>Jaccard medio por grupo y su veredicto.</td></tr>
+      <tr><td>¿Qué ramas del árbol están respaldadas?</td><td><span class="ui">3 · Support of the tree clusters</span></td><td>las variables, a varias escalas</td><td>AU y BP de cada rama.</td></tr>
+      <tr><td>¿Coinciden con lo que ya sé?</td><td><span class="ui">4 · External validation</span></td><td>dos agrupaciones</td><td>ARI, NMI, pureza y prueba de χ².</td></tr>
+      <tr><td>¿Qué algoritmo conviene?</td><td><span class="ui">5 · Comparison of algorithms over k</span></td><td>tres métodos en el rango de <i>k</i></td><td>Conectividad, Dunn y silueta.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 7.1 -->
+  <h2 id="s7-1"><span class="num">7.1</span>¿Cuántos grupos? Trece criterios y un voto</h2>
+  <p class="lead">No existe un criterio único para el número de grupos. Cada índice mide algo distinto (compacidad, separación, ganancia al añadir un grupo) y cada uno falla en situaciones distintas. La app los calcula todos para cada <i>k</i> del rango y deja que voten, al estilo de NbClust: el <i>k</i> con más votos es el consenso.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b6-tarjeta1.png" alt="La tarjeta 1 · Optimal number of clusters">
+      <span class="marca" style="left:21%;top:33%">1</span>
+      <span class="marca" style="left:35%;top:33%">2</span>
+      <span class="marca" style="left:57%;top:33%">3</span>
+      <span class="marca" style="left:85%;top:56%">4</span>
+      <span class="marca" style="left:1%;top:79%">5</span>
+      <span class="marca" style="left:28%;top:79%">6</span>
+    </div>
+    <figcaption><b>Figura 7.1.</b> La tarjeta <span class="ui">1 · Optimal number of clusters</span> antes de correr, con las razas de maíz y el árbol de Ward.D2 del Bloque 4.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Partitions produced by</span>: cómo se obtiene la partición de cada <i>k</i>: cortando el árbol del Bloque 4, con k-means o con PAM.</li>
+    <li><span class="n">2</span><span class="ui">k from</span>: el primer <i>k</i> del rango (2 como mínimo).</li>
+    <li><span class="n">3</span><span class="ui">k to</span>: el último; empieza en 10, o en <i>n</i> − 1 si hay menos de 11 objetos. El rango debe tener al menos tres valores.</li>
+    <li><span class="n">4</span><span class="ui">Gap statistic: reference sets B</span>: cuántos conjuntos de referencia usa el estadístico gap (sección 7.2); 0 lo omite.</li>
+    <li><span class="n">5</span><span class="ui">Evaluate every k →</span>.</li>
+    <li><span class="n">6</span><span class="ui">Adopt k</span>: lleva el <i>k</i> de consenso a los Bloques 4 y 5.</li>
+  </ul>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué generador de particiones propone la app</div>
+    <table class="compacta">
+      <thead><tr><th style="width:44%">Si…</th><th>propone</th></tr></thead>
+      <tbody>
+        <tr><td>construiste un árbol en el Bloque 4</td><td><span class="ui">Cutting the Block 4 tree</span>: los grupos de cada <i>k</i> son cortes del mismo árbol, anidados y reproducibles.</td></tr>
+        <tr><td>no hay árbol y el coeficiente es euclidiano (o una matriz cargada)</td><td><span class="ui">k-means</span>, con 5 arranques y semilla 1.</td></tr>
+        <tr><td>no hay árbol y el coeficiente no es euclidiano</td><td><span class="ui">PAM</span>, que trabaja directamente sobre la matriz del Bloque 3.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">La propuesta se actualiza al construir el árbol mientras no hayas evaluado ningún rango. Puedes cambiarla: si piensas usar PAM en el Bloque 5, elige PAM aquí para evaluar el número de grupos con el mismo método.</p>
+  </div>
+
+  <h3>Dos espacios para calcular los índices</h3>
+  <p>Unos criterios trabajan con disimilitudes y otros con coordenadas. La silueta, Dunn, el C-index y McClain–Rao usan la matriz del Bloque 3 tal cual. Calinski–Harabasz, Davies–Bouldin, PBM, Ratkowsky–Lance, Hartigan, Krzanowski–Lai, Ball–Hall, el codo y el gap usan coordenadas: la matriz de trabajo del Bloque 2 si el coeficiente es euclidiano, las coordenadas del MDS si cargaste una matriz, y los ejes del PCoA del coeficiente en cualquier otro caso. La casilla <span class="ui">Partitions from</span> dice cuál se usó.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.2.</b> Los trece criterios, la regla con la que vota cada uno y su voto con las razas de maíz (árbol de Ward.D2, <i>k</i> de 2 a 10).</caption>
+    <thead><tr><th style="width:19%">Criterio</th><th style="width:44%">Qué mide</th><th style="width:20%">Vota por</th><th class="c">Maíz</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Silhouette</span></td><td>Cohesión frente a separación de cada objeto, promediada (sección 6.7).</td><td>el máximo</td><td class="c">3 (0.419)</td></tr>
+      <tr><td><span class="ui">Calinski–Harabasz</span></td><td>Suma de cuadrados entre grupos frente a la de dentro, cada una entre sus grados de libertad.</td><td>el máximo</td><td class="c">3 (40.6)</td></tr>
+      <tr><td><span class="ui">Davies–Bouldin</span></td><td>Dispersión de cada grupo y de su vecino más parecido, relativa a la distancia entre sus centroides.</td><td>el mínimo</td><td class="c">2 (0.915)</td></tr>
+      <tr><td><span class="ui">Dunn</span></td><td>Distancia mínima entre grupos dividida entre el diámetro máximo de un grupo.</td><td>el máximo</td><td class="c">5 (0.515)</td></tr>
+      <tr><td><span class="ui">C-index</span></td><td>Suma de distancias dentro de los grupos, comparada con las más pequeñas y las más grandes posibles.</td><td>el mínimo</td><td class="c">4 (0.026)</td></tr>
+      <tr><td><span class="ui">McClain–Rao</span></td><td>Distancia media dentro de los grupos entre la distancia media entre grupos.</td><td>el mínimo</td><td class="c">10 (0.454)</td></tr>
+      <tr><td><span class="ui">PBM</span></td><td>Producto de la reducción de la dispersión y la separación máxima entre centroides, penalizado por <i>k</i>.</td><td>el máximo</td><td class="c">2 (7.73)</td></tr>
+      <tr><td><span class="ui">Ratkowsky–Lance</span></td><td>Proporción de la variación de cada variable explicada por los grupos, dividida entre √<i>k</i>.</td><td>el máximo</td><td class="c">3 (0.469)</td></tr>
+      <tr><td><span class="ui">Ball–Hall</span></td><td>La suma de cuadrados dentro de los grupos por grupo, <i>W</i>/<i>k</i>.</td><td>la mayor caída</td><td class="c">2</td></tr>
+      <tr><td><span class="ui">Krzanowski–Lai</span></td><td>Cuánto mejora <i>W</i> al llegar a <i>k</i>, comparado con lo que mejora al pasar a <i>k</i> + 1.</td><td>el máximo</td><td class="c">3 (4.32)</td></tr>
+      <tr><td><span class="ui">Hartigan</span></td><td>Si vale la pena añadir un grupo: H = (<i>W<sub>k</sub></i>/<i>W</i><sub><i>k</i>+1</sub> − 1)(<i>n</i> − <i>k</i> − 1).</td><td>el primer <i>k</i> con H ≤ 10</td><td class="c">3 (8.21)</td></tr>
+      <tr><td><span class="ui">Gap statistic</span></td><td>Cuánto más compactos son los grupos que los de datos uniformes (sección 7.2).</td><td>la regla del primer error estándar</td><td class="c">4 (1.104)</td></tr>
+      <tr><td><span class="ui">Elbow (WSS)</span></td><td>La suma de cuadrados dentro de los grupos, <i>W</i>, que siempre baja con <i>k</i>.</td><td>la rodilla de la curva</td><td class="c">4 (95.8)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · por qué no basta un criterio</div>
+    <p>La suma de cuadrados dentro de los grupos siempre baja al añadir grupos, así que ningún criterio puede buscar simplemente el mínimo de <i>W</i>: cada uno la penaliza o la compara de otra forma. Calinski–Harabasz y PBM tienden a favorecer pocos grupos grandes. Dunn y McClain–Rao, que dependen de distancias extremas o de medias que bajan con <i>k</i>, suelen irse al extremo superior del rango. La silueta prefiere a menudo <i>k</i> = 2 cuando un grupo se separa mucho del resto. Por eso el voto importa más que cualquier índice aislado, y un voto repartido también es información: los datos admiten varias resoluciones o no tienen una estructura clara.</p>
+  </div>
+
+  <h3>Casillas y comprobaciones</h3>
+  <figure>
+    <div class="marco"><img src="../img/b6-resultados.png" alt="Casillas y comprobaciones de la tarjeta 1 con el maíz"></div>
+    <figcaption><b>Figura 7.2.</b> El resultado con el maíz: consenso <i>k</i> = 3 con 5 de 13 votos y segundo lugar <i>k</i> = 2 con 3. La silueta vota por 3; el gap y el codo, por 4. Como el ganador no llega a la mitad de los votos, la comprobación lo califica de consenso débil.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.3.</b> Las casillas de la tarjeta 1.</caption>
+    <thead><tr><th style="width:24%">Casilla</th><th>Qué muestra</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Consensus k</span></td><td>El <i>k</i> con más votos y cuántos de los 13 criterios lo eligieron. Los empates se resuelven hacia el <i>k</i> menor.</td></tr>
+      <tr><td><span class="ui">Runner-up</span></td><td>El segundo <i>k</i> más votado.</td></tr>
+      <tr><td><span class="ui">Silhouette</span></td><td>El <i>k</i> de silueta máxima y su valor.</td></tr>
+      <tr><td><span class="ui">Gap statistic</span></td><td>El <i>k</i> de la regla del primer error estándar, el número de conjuntos de referencia y el <i>k</i> del máximo global.</td></tr>
+      <tr><td><span class="ui">Elbow (WSS)</span></td><td>La rodilla de la curva de <i>W</i>: el punto más alejado de la recta que une sus extremos.</td></tr>
+      <tr><td><span class="ui">Partitions from</span></td><td>El generador de particiones y el espacio de coordenadas.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.4.</b> Las comprobaciones de la tarjeta 1 y cuándo aparecen.</caption>
+    <thead><tr><th style="width:38%">Comprobación</th><th>Aparece cuando…</th></tr></thead>
+    <tbody>
+      <tr><td>✅ <span class="ui">Clear consensus for k = …</span></td><td>el ganador reúne al menos la mitad de los votos; dice si la silueta coincide.</td></tr>
+      <tr><td>⚠️ <span class="ui">Tie between k = … and k = …</span></td><td>los dos más votados empatan. Recomienda el menor, salvo que el grupo extra sea interpretable, y revisar ambos con la estabilidad.</td></tr>
+      <tr><td>ℹ️ <span class="ui">Weak consensus for k = …</span></td><td>el ganador no llega a la mitad; la estructura puede ser jerárquica (varias resoluciones válidas) o débil.</td></tr>
+      <tr><td>⚠️ <span class="ui">The consensus k = … is the upper end of the range</span></td><td>el ganador es el último <i>k</i>: varios criterios siguen mejorando hasta donde termina el rango, lo que suele indicar que no hay un número natural de grupos.</td></tr>
+      <tr><td>⚠️ <span class="ui">Low silhouette at the consensus k</span></td><td>la silueta del consenso es menor que 0.25.</td></tr>
+      <tr><td>⚠️ <span class="ui">The gap statistic finds no cluster structure (k = 1)</span></td><td>el gap elige <i>k</i> = 1 (sección 7.2).</td></tr>
+      <tr><td>ℹ️ <span class="ui">Gap statistic: first-SE rule chooses…</span></td><td>la regla del gap y su máximo global no coinciden.</td></tr>
+      <tr><td>ℹ️ <span class="ui">The silhouette peaks at k = 2</span></td><td>la silueta prefiere dos grupos; sugiere mirar 3 y 4 y el árbol.</td></tr>
+      <tr><td>ℹ️ <span class="ui">How the vote works</span></td><td>siempre: el recuento es una guía, no una prueba, y el <i>k</i> final debe interpretarse en el Bloque 7.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Debajo de las comprobaciones, la tabla <span class="ui">Internal indices by k</span> da el valor de cada criterio para cada <i>k</i>. El encabezado de cada columna indica el <i>k</i> que eligió ese criterio, y su valor aparece resaltado. Las columnas de Hartigan y Krzanowski–Lai quedan vacías en el último <i>k</i>, porque necesitan <i>W</i> en <i>k</i> + 1.</p>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · el botón Adopt k</div>
+    <p><span class="ui">Adopt k = … in Blocks 4 and 5</span> escribe el <i>k</i> de consenso en el corte del árbol del Bloque 4 y lo aplica, y lo escribe también en el campo <span class="ui">Number of clusters k</span> del Bloque 5. La partición del Bloque 5 no se recalcula sola: tienes que volver a pulsar <span class="ui">Run →</span> allí. Si prefieres otro <i>k</i> (el segundo lugar, o el de la silueta), cámbialo a mano en esos bloques.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-panel.png" alt="Panel con los índices frente al número de grupos"></div>
+    <figcaption><b>Figura 7.3.</b> <span class="ui">Every criterion at a glance</span> con el maíz: un panel por criterio, con el <i>k</i> que elige marcado en naranja. Las curvas cuentan más que el voto: la silueta y Calinski–Harabasz tienen un pico claro en 3, el gap sube hasta 4 y luego se aplana, y McClain–Rao baja sin cesar hasta el final del rango.</figcaption>
+  </figure>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-votos.png" alt="Votos de los criterios por k"></div>
+    <figcaption><b>Figura 7.4.</b> <span class="ui">Consensus of the criteria</span>: cuántos criterios votan por cada <i>k</i>, con sus nombres dentro de las barras. El consenso, en naranja, es <i>k</i> = 3: silueta, Calinski–Harabasz, Ratkowsky–Lance, Krzanowski–Lai y Hartigan.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-codo-sil.png" alt="Curva del codo y silueta por k"></div>
+    <figcaption><b>Figura 7.5.</b> Las dos curvas más consultadas. A la izquierda, el codo: <i>W</i> cae de 187.6 a 115.5 al pasar de dos a tres grupos y solo a 95.8 con cuatro, donde la app sitúa la rodilla. A la derecha, la silueta media por <i>k</i>, con su máximo en 3 (0.419), muy cerca de 2 (0.406).</figcaption>
+  </figure>
+
+  <!-- 7.2 -->
+  <h2 id="s7-2"><span class="num">7.2</span>El estadístico gap</h2>
+  <p class="lead">Los demás criterios comparan particiones entre sí; el gap compara cada partición con lo que se obtendría con datos <b>sin grupos</b>. Es el único de los trece que puede concluir que no hay estructura.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · la brecha frente a datos uniformes</div>
+    <p>Para cada <i>k</i>, la app calcula log <i>W<sub>k</sub></i> con tus datos. Después genera <i>B</i> conjuntos de referencia con el mismo número de objetos, repartidos uniformemente en la caja que ocupan tus coordenadas, los agrupa con el mismo método y promedia su log <i>W<sub>k</sub></i>. El gap es la diferencia: Gap(<i>k</i>) = media de los log <i>W<sub>k</sub></i> de referencia − log <i>W<sub>k</sub></i>. Un gap grande indica grupos mucho más compactos que los del azar.</p>
+    <p>Como los conjuntos de referencia varían, cada gap tiene un error estándar, <i>s<sub>k</sub></i> = desviación estándar × √(1 + 1/<i>B</i>). La regla del <b>primer error estándar</b> elige el menor <i>k</i> tal que Gap(<i>k</i>) ≥ Gap(<i>k</i> + 1) − <i>s</i><sub><i>k</i>+1</sub>: el primer <i>k</i> a partir del cual añadir un grupo ya no mejora de forma apreciable. Cuando el rango empieza en 2, la app evalúa también <i>k</i> = 1; si la regla se detiene ahí, los datos no están más agrupados que los uniformes.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-gap.png" alt="Estadístico gap con el maíz"></div>
+    <figcaption><b>Figura 7.6.</b> <span class="ui">Gap statistic</span> con el maíz, con barras de ± 1 error estándar. El gap sube de 0.24 en <i>k</i> = 1 a 1.04 en <i>k</i> = 3 y a 1.10 en <i>k</i> = 4; de ahí en adelante se aplana. En <i>k</i> = 3 la regla todavía no se cumple (1.036 &lt; 1.104 − 0.054); en <i>k</i> = 4 sí (1.104 ≥ 1.101 − 0.055).</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.5.</b> Cómo leer la curva del gap.</caption>
+    <thead><tr><th style="width:38%">Forma de la curva</th><th>Lectura</th></tr></thead>
+    <tbody>
+      <tr><td>Sube y se aplana (maíz, figura 7.6)</td><td>La rodilla es el número de grupos; la regla la encuentra.</td></tr>
+      <tr><td>Pico nítido y descenso (cuatro grupos simulados)</td><td>Estructura fuerte: la regla, el máximo y el voto coinciden.</td></tr>
+      <tr><td>Plana o descendente desde <i>k</i> = 1 (ruido uniforme)</td><td>No hay grupos: la regla elige <i>k</i> = 1.</td></tr>
+      <tr><td>Sigue subiendo hasta el final del rango</td><td>Estructura anidada o muchos ejes de PCoA; la regla da la resolución más gruesa y el máximo la más fina.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · cuándo desconfiar del gap</div>
+    <p>La caja uniforme de referencia se construye sobre las coordenadas. Con pocos objetos y muchas dimensiones (una matriz de 12 cultivares tiene hasta 11 ejes de MDS) los conjuntos de referencia varían mucho, los errores estándar crecen y la regla se vuelve conservadora: puede quedarse en <i>k</i> = 1 aunque la silueta y la estabilidad muestren grupos claros. La comprobación del gap lo advierte cuando hay menos de 30 objetos. Con 50 conjuntos de referencia el cálculo es rápido; súbelo a 100 o más para reportar el resultado.</p>
+  </div>
+
+  <!-- 7.3 -->
+  <h2 id="s7-3"><span class="num">7.3</span>Estabilidad por bootstrap</h2>
+  <p class="lead">Un grupo real debe reaparecer si repites el análisis con una muestra ligeramente distinta de objetos. La tarjeta 2 hace exactamente eso, al estilo de clusterboot: remuestrea, vuelve a agrupar y busca cada grupo original entre los nuevos.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · el Jaccard de cada grupo</div>
+    <p>En cada una de las <i>B</i> réplicas se sortean <i>n</i> objetos con reemplazo y se conservan los distintos, alrededor del 63 %. Con ellos se recalcula la partición con el mismo tipo de método y el mismo <i>k</i>. Cada grupo original, restringido a los objetos sorteados, se compara con todos los grupos nuevos mediante el índice de Jaccard (objetos en común entre objetos en cualquiera de los dos) y se queda con el mejor valor. Al final, cada grupo tiene <i>B</i> valores de Jaccard. Su media resume la estabilidad; una réplica con Jaccard menor que 0.5 cuenta como <b>disuelta</b> y una con más de 0.75 como <b>recuperada</b>.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.6.</b> Controles de la tarjeta 2 y cómo se vuelve a agrupar cada partición.</caption>
+    <thead><tr><th style="width:26%">Elemento</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Partition</span></td><td><span class="ui">Block 5 partition</span> (si existe) o <span class="ui">Tree cut (Block 4)</span>.</td></tr>
+      <tr><td><span class="ui">Bootstrap samples B</span></td><td>De 10 a 500; 50 por omisión. La semilla es fija, así que el resultado se repite.</td></tr>
+      <tr><td>Método de las réplicas</td><td>PAM y CLARA se reagrupan con PAM; k-means y k-means jerárquico, con k-means; el corte del árbol y los demás métodos del Bloque 5 (fuzzy, mezclas, DBSCAN, espectral), con el enlace del Bloque 4.</td></tr>
+      <tr><td>Ruido de DBSCAN</td><td>Se trata como un grupo más durante el remuestreo, y un aviso lo indica.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-estab-tabla.png" alt="Tabla de estabilidad con los insectos"></div>
+    <figcaption><b>Figura 7.7.</b> La estabilidad de PAM con <i>k</i> = 3 sobre Bray–Curtis con los 24 sitios de insectos. El grupo de cuatro campos orgánicos (grupo 1) se disuelve en 26 de las 50 réplicas: Jaccard medio 0.538, "dudoso". Los otros dos son estables.</figcaption>
+  </figure>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · el veredicto de cada grupo</div>
+    <table class="compacta">
+      <thead><tr><th style="width:26%">Jaccard medio</th><th style="width:22%">Veredicto</th><th>Qué hacer</th></tr></thead>
+      <tbody>
+        <tr><td>≥ 0.85</td><td>highly stable</td><td>Interprétalo con confianza.</td></tr>
+        <tr><td>0.75 a 0.85</td><td>stable</td><td>Interprétalo.</td></tr>
+        <tr><td>0.60 a 0.75</td><td>some pattern</td><td>Hay algo, pero sus límites dependen de la muestra.</td></tr>
+        <tr><td>0.50 a 0.60</td><td>doubtful</td><td>No lo describas como un grupo sin más evidencia.</td></tr>
+        <tr><td>&lt; 0.50</td><td>dissolved</td><td>No es un grupo: depende de unos pocos objetos.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">La comprobación de arriba cuenta los grupos estables (≥ 0.75), los que solo muestran algún patrón y los dudosos o disueltos (&lt; 0.6). Se vuelve una advertencia si hay alguno de estos últimos.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-estab-fig.png" alt="Gráfico de estabilidad de los grupos"></div>
+    <figcaption><b>Figura 7.8.</b> <span class="ui">Bootstrap stability of the clusters</span> con los insectos: la barra es el Jaccard medio y el bigote baja hasta el mínimo. Las líneas marcan 0.75 (estable) y 0.5 (disuelto). El grupo de cuatro campos orgánicos queda en naranja, a un paso de disolverse, y su mínimo llega a 0.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · estabilidad no es verdad</div>
+    <p>Un grupo muy estable puede ser un artefacto sistemático: si el método siempre corta los datos por el mismo sitio, el corte se repite en todas las réplicas. Por eso la estabilidad complementa, pero no sustituye, al número de grupos y a la interpretación. Al revés sí es concluyente: un grupo que se disuelve casi nunca es un grupo real.</p>
+  </div>
+
+  <!-- 7.4 -->
+  <h2 id="s7-4"><span class="num">7.4</span>Soporte de los grupos del árbol (AU y BP)</h2>
+  <p class="lead">La tarjeta 3 responde una pregunta distinta: si midieras otras variables del mismo tipo, ¿aparecería la misma rama? Remuestrea las <b>variables</b>, no los objetos, a varias escalas, al estilo de pvclust, y da a cada rama del árbol dos valores: BP y AU.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · bootstrap multiescala</div>
+    <p>En el bootstrap ordinario se sortean tantas variables como hay, con reemplazo, se rehace el árbol y se cuenta en cuántas réplicas aparece cada rama: es su probabilidad bootstrap, <b>BP</b>. BP está sesgada y subestima el soporte de las ramas reales. El bootstrap multiescala repite el sorteo con 10 tamaños de muestra, de 0.5 a 1.4 veces el número de variables, y observa cómo cambia la frecuencia de cada rama con la proporción <i>r</i> de variables sorteadas. Con las escalas en que la rama no aparece siempre ni nunca, ajusta por mínimos cuadrados ponderados el modelo z(<i>r</i>) = <i>v</i>√<i>r</i> + <i>c</i>/√<i>r</i>, donde z es el cuantil normal de 1 − BP(<i>r</i>), y extrapola: <b>AU</b> = 1 − Φ(<i>v</i> − <i>c</i>) es la probabilidad aproximadamente insesgada, y BP = 1 − Φ(<i>v</i> + <i>c</i>). Una rama con AU ≥ 95 % está fuertemente respaldada por los datos.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-pv.png" alt="La tarjeta 3 con el maíz"></div>
+    <figcaption><b>Figura 7.9.</b> La tarjeta 3 con el maíz y 30 réplicas por escala. Como solo hay 8 variables, aparece la advertencia de que el método es liberal. La tabla, de la que se ven las tres primeras filas, lista las 12 ramas con AU ≥ 95 % de la más respaldada a la menos. Entre ellas están los tres grupos regionales: costa (14 accesiones, AU 100, BP 61), altiplano (15, AU 99, BP 34) y valles (15, AU 95, BP 38).</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.7.</b> Controles, condiciones y mensajes de la tarjeta 3.</caption>
+    <thead><tr><th style="width:26%">Elemento</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Resamples per scale</span></td><td>De 10 a 500; 30 por omisión. Se construyen 10 × <i>B</i> árboles; 30 es rápido, usa 200 o más para reportar los valores.</td></tr>
+      <tr><td><span class="ui">AU threshold</span></td><td>El AU mínimo para que una rama entre en la tabla y reciba un recuadro en la figura; 0.95 por omisión.</td></tr>
+      <tr><td>Variables y distancia</td><td>Las variables numéricas de la matriz de trabajo (sin las columnas indicadoras de los nominales), con distancia euclidiana y el enlace del Bloque 4.</td></tr>
+      <tr><td>Cuándo no está disponible</td><td>Se oculta con una matriz cargada (no hay variables); se niega con más de 200 objetos o menos de 3 variables.</td></tr>
+      <tr><td>ℹ️ Distancia distinta</td><td>Si tu coeficiente no es euclidiano, avisa de que este árbol difiere del tuyo.</td></tr>
+      <tr><td>⚠️ <span class="ui">Only … variables</span></td><td>Con menos de 15 variables el método es liberal: incluso con datos al azar muchas ramas alcanzan AU ≥ 95 %. Usa el AU como guía y juzga los grupos con la tarjeta 2.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · el número de variables decide</div>
+    <p>El bootstrap multiescala supone que las variables son muchas e intercambiables. Al comprobarlo con datos uniformes de 40 objetos, la proporción de ramas con AU ≥ 95 % fue de más de la mitad con 6 variables, de un tercio con 8, de una de cada cinco con 10 y de una de cada diez con 15; con 30 variables o más se acerca a lo esperado. Por eso, con el maíz o los suelos (8 variables numéricas), las 12 y 19 ramas "respaldadas" incluyen muchas parejas sin interés. Con decenas o cientos de variables (expresión, marcadores, especies) el AU es la herramienta adecuada.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-pv-fig.png" alt="Árbol con valores AU"></div>
+    <figcaption><b>Figura 7.10.</b> <span class="ui">Tree with bootstrap support</span>: el árbol de Ward.D2 del maíz con el AU (%) de cada rama en rojo y un recuadro alrededor de las que alcanzan el umbral. Una rama con AU 0 no apareció en ninguna réplica de ninguna escala.</figcaption>
+  </figure>
+
+  <!-- 7.5 -->
+  <h2 id="s7-5"><span class="num">7.5</span>Validación externa</h2>
+  <p class="lead">Si tienes una agrupación conocida (especies, regiones, tratamientos) o dos particiones que quieres contrastar, la tarjeta 4 mide cuánto coinciden. No hace falta que los grupos tengan los mismos nombres ni el mismo número: los índices comparan cómo se reparten los pares de objetos.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-externa-tiles.png" alt="Casillas de la validación externa con los insectos"></div>
+    <figcaption><b>Figura 7.11.</b> PAM con <i>k</i> = 3 frente a los paisajes de los insectos: ARI 0.610, NMI 0.740, pureza 83.3 % y χ² = 32 con 4 grados de libertad (p &lt; 0.001). El párrafo lo califica de acuerdo sustancial.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.8.</b> Los índices de la tarjeta 4.</caption>
+    <thead><tr><th style="width:22%">Casilla</th><th>Qué mide</th><th style="width:24%">Escala</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Adjusted Rand</span></td><td>Proporción de pares de objetos tratados igual por las dos agrupaciones (juntos en ambas o separados en ambas), corregida por el acuerdo esperado al azar.</td><td>1 idénticas, 0 azar; verde &gt; 0.7, ámbar &gt; 0.4.</td></tr>
+      <tr><td><span class="ui">Rand</span></td><td>La misma proporción sin corregir; con muchos grupos se infla.</td><td>0 a 1.</td></tr>
+      <tr><td><span class="ui">NMI</span></td><td>Información mutua normalizada: cuánto dice una agrupación de la otra.</td><td>0 a 1; verde &gt; 0.7.</td></tr>
+      <tr><td><span class="ui">Variation of information</span></td><td>Información que se pierde y se gana al pasar de una agrupación a la otra.</td><td>0 idénticas; menor es mejor.</td></tr>
+      <tr><td><span class="ui">Jaccard · FM</span></td><td>Pares juntos en ambas entre pares juntos en alguna (Jaccard), y la media geométrica de las dos proporciones (Fowlkes–Mallows).</td><td>0 a 1.</td></tr>
+      <tr><td><span class="ui">Purity</span></td><td>Proporción de objetos que pertenecen a la clase mayoritaria de su grupo.</td><td>Sube con el número de grupos.</td></tr>
+      <tr><td><span class="ui">χ² test</span></td><td>Independencia de la tabla cruzada, con la V de Cramér.</td><td>Verde si p &lt; 0.05.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.9.</b> El párrafo de la tarjeta 4 según el ARI.</caption>
+    <thead><tr><th style="width:18%">ARI</th><th>Frase</th></tr></thead>
+    <tbody>
+      <tr><td>&gt; 0.8</td><td><span class="ui">The two labellings are essentially the same partition.</span></td></tr>
+      <tr><td>0.5 a 0.8</td><td><span class="ui">Substantial agreement</span>: la mayoría de los objetos se agrupan igual, con una minoría en otro sitio.</td></tr>
+      <tr><td>0.2 a 0.5</td><td><span class="ui">Partial agreement</span>: estructuras relacionadas pero distintas.</td></tr>
+      <tr><td>≤ 0.2</td><td><span class="ui">The labellings are unrelated</span>: lo que darían etiquetas al azar.</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-externa-fig.png" alt="Tabla cruzada de PAM y los paisajes"></div>
+    <figcaption><b>Figura 7.12.</b> <span class="ui">Cross-table</span>: cada celda da el número de objetos y el porcentaje de la fila, coloreada por ese porcentaje. Los grupos 1 y 2 son puros (campos orgánicos y convencionales); el grupo 3 reúne los 8 setos y los otros 4 campos orgánicos.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · qué comparar con qué</div>
+    <p>Los selectores <span class="ui">Compare</span> y <span class="ui">with</span> ofrecen el corte del árbol, la partición del Bloque 5 y la agrupación conocida (la columna de grupos del Bloque 1). Por omisión comparan la partición del Bloque 5 con la agrupación conocida o, si no la hay, con el árbol. No elijas la misma dos veces. Con DBSCAN, el ruido cuenta como un grupo más, el 0. La pureza favorece a la partición con más grupos; el ARI es el índice que conviene reportar.</p>
+  </div>
+
+  <!-- 7.6 -->
+  <h2 id="s7-6"><span class="num">7.6</span>Comparar algoritmos a lo largo de k</h2>
+  <p class="lead">La tarjeta 5 sigue la idea de clValid: en lugar de fijar un <i>k</i> y un método, recorre el rango de la tarjeta 1 con el árbol (con el enlace del Bloque 4), k-means (5 arranques, semilla 1) y PAM, y puntúa cada combinación con tres medidas.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.10.</b> Las tres medidas de la comparación.</caption>
+    <thead><tr><th style="width:18%">Medida</th><th>Qué mide</th><th style="width:20%">Mejor</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Connectivity</span></td><td>Para cada objeto, cuántos de sus 10 vecinos más cercanos quedaron en otro grupo; el vecino <i>j</i>-ésimo pesa 1/<i>j</i>. Mide si los grupos respetan la vecindad.</td><td>el mínimo (0 a ∞)</td></tr>
+      <tr><td><span class="ui">Dunn</span></td><td>Distancia mínima entre grupos entre el diámetro máximo.</td><td>el máximo</td></tr>
+      <tr><td><span class="ui">Silhouette</span></td><td>La silueta media sobre la matriz del Bloque 3.</td><td>el máximo</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · por qué las tres medidas no coinciden</div>
+    <p>La conectividad casi siempre es mínima con dos grupos: cuantos menos grupos, menos vecinos quedan del otro lado. Dunn depende de dos distancias extremas y oscila mucho; suele premiar un <i>k</i> alto en el que un grupo pequeño y aislado sube la separación mínima. La silueta es la más equilibrada de las tres. Por eso la tabla de óptimos rara vez da un ganador único: léela como un mapa de compromisos, y usa la curva de la silueta para decidir el método, no el <i>k</i>, que ya decidiste en la tarjeta 1.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-clvalid.png" alt="Tablas de la comparación de algoritmos con el maíz"></div>
+    <figcaption><b>Figura 7.13.</b> La comparación con el maíz. Arriba, el mejor método y <i>k</i> para cada medida: la conectividad es mínima con dos grupos, Dunn es máximo con k-means en diez y la silueta con el árbol en tres. Abajo, todas las medidas por método y <i>k</i>, en una tabla que se desplaza en horizontal hasta las columnas de PAM; el árbol y k-means dan las mismas particiones hasta <i>k</i> = 5.</figcaption>
+  </figure>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-clvalid-fig.png" alt="Silueta por método y k"></div>
+    <figcaption><b>Figura 7.14.</b> <span class="ui">Comparison of algorithms over k</span> con la silueta: una línea por método y un círculo en el mejor. PAM cae antes que los otros dos a partir de <i>k</i> = 4.</figcaption>
+  </figure>
+
+  <!-- 7.7 -->
+  <h2 id="s7-7"><span class="num">7.7</span>Ajustes, tablas y figuras del bloque</h2>
+  <p>El bloque produce hasta nueve figuras, todas editables y exportables con el estudio de figuras (capítulo 2). Las cinco de la tarjeta 1 aparecen juntas; la del gap, solo si <span class="ui">B</span> es mayor que cero.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.11.</b> Las figuras del bloque y sus controles propios.</caption>
+    <thead><tr><th style="width:28%">Figura</th><th style="width:30%">Qué muestra</th><th>Controles propios</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Every criterion at a glance</span></td><td>Un panel por criterio frente a <i>k</i> (figura 7.3).</td><td>Título y paleta.</td></tr>
+      <tr><td><span class="ui">Consensus of the criteria</span></td><td>Votos por <i>k</i> (figura 7.4). Si el gap vota por <i>k</i> = 1, lo indica en una línea.</td><td><span class="ui">Show index names inside the bars</span>, título y paleta.</td></tr>
+      <tr><td><span class="ui">Elbow</span> · <span class="ui">Average silhouette by k</span></td><td>Las curvas de <i>W</i> y de la silueta (figura 7.5).</td><td>Título y paleta.</td></tr>
+      <tr><td><span class="ui">Gap statistic</span></td><td>El gap con ± 1 error estándar, desde <i>k</i> = 1 (figura 7.6).</td><td>Título y paleta.</td></tr>
+      <tr><td><span class="ui">Bootstrap stability of the clusters</span></td><td>Jaccard medio y mínimo por grupo (figura 7.8).</td><td><span class="ui">Dissolved colour</span>, título y paleta.</td></tr>
+      <tr><td><span class="ui">Tree with bootstrap support</span></td><td>El árbol con AU y BP (figura 7.10).</td><td>Umbral de los recuadros; mostrar AU y BP; tamaño de los valores; etiquetas de las hojas y su tamaño; grosor de las ramas; colores de AU, BP y recuadros.</td></tr>
+      <tr><td><span class="ui">Cross-table</span></td><td>La tabla cruzada coloreada (figura 7.12).</td><td><span class="ui">Colour map</span> y <span class="ui">Show row percentages</span>.</td></tr>
+      <tr><td><span class="ui">Comparison of algorithms over k</span></td><td>Una medida por método y <i>k</i> (figura 7.14).</td><td><span class="ui">Measure</span> (silueta, Dunn o conectividad), paleta y posición de la leyenda.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.12.</b> Valores fijos del bloque, para reproducir o reportar un análisis.</caption>
+    <thead><tr><th style="width:36%">Cálculo</th><th>Valor</th></tr></thead>
+    <tbody>
+      <tr><td>Particiones con k-means (tarjetas 1 y 5)</td><td>5 arranques, semilla 1.</td></tr>
+      <tr><td>Conjuntos de referencia del gap</td><td>Semilla 2026. Con más de 150 objetos, o con k-means como generador, se agrupan con k-means de 2 arranques.</td></tr>
+      <tr><td>Estabilidad</td><td>Semilla 77.</td></tr>
+      <tr><td>Bootstrap multiescala</td><td>Escalas 0.5, 0.6, …, 1.4 del número de variables; semilla 13.</td></tr>
+      <tr><td>Conectividad</td><td>10 vecinos más cercanos.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · qué pasa con los resultados al cambiar los datos</div>
+    <p>Cada vez que el Bloque 3 recalcula la matriz, los resultados de este bloque se borran y el Bloque 7 se deshabilita. El informe del Bloque 8 incluye lo que hayas corrido aquí: el <i>k</i> de consenso con sus votos, la estabilidad de cada grupo, el bootstrap multiescala y el acuerdo externo.</p>
+  </div>
+
+  <!-- 7.8 -->
+  <h2 id="s7-8"><span class="num">7.8</span>Paso a paso</h2>
+  <p class="lead">Con cada ejemplo preparado como en los capítulos anteriores (UPGMA en el Bloque 4 para la presencia de especies y los insectos, y el método propuesto en el Bloque 5), la tabla 7.13 resume lo que dice el Bloque 6 con sus valores iniciales. Las prácticas se detienen en cada caso.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 7.13.</b> Los siete ejemplos en el Bloque 6 (<i>k</i> de 2 a 10, particiones del árbol).</caption>
+    <thead><tr><th style="width:17%">Ejemplo</th><th class="c" style="width:12%">Consenso</th><th class="c" style="width:11%">Silueta</th><th class="c" style="width:6%">Gap</th><th style="width:22%">Jaccard medio</th><th>Observación</th></tr></thead>
+    <tbody>
+      <tr><td>Razas de maíz</td><td class="c">3 (5/13)</td><td class="c">3 · 0.419</td><td class="c">4</td><td>1.00 · 0.99 · 0.99</td><td>Consenso débil; tres grupos muy estables.</td></tr>
+      <tr><td>Presencia de especies</td><td class="c">2 = 3 (4/13)</td><td class="c">3 · 0.333</td><td class="c">3</td><td>0.98 · 1.00 · 0.98</td><td>Empate; los tres hábitats son interpretables.</td></tr>
+      <tr><td>Abundancia de insectos</td><td class="c">2 (10/13)</td><td class="c">2 · 0.494</td><td class="c">2</td><td>0.54 · 0.92 · 0.80</td><td>Convencionales frente al resto.</td></tr>
+      <tr><td>Perfiles de suelo</td><td class="c">3 (7/13)</td><td class="c">3 · 0.607</td><td class="c">3</td><td>0.93 · 0.89 (<i>k</i> = 2)</td><td>El voto corrige el corte en dos.</td></tr>
+      <tr><td>Matriz de distancias</td><td class="c">3 (8/13)</td><td class="c">3 · 0.665</td><td class="c">1</td><td>0.98 · 0.98 · 0.99</td><td>El gap es conservador con 12 objetos.</td></tr>
+      <tr><td>Cuatro grupos simulados</td><td class="c">4 (10/13)</td><td class="c">4 · 0.714</td><td class="c">4</td><td>1.00 en los cuatro</td><td>Todo coincide.</td></tr>
+      <tr><td>Ruido uniforme</td><td class="c">10 (5/13)</td><td class="c">10 · 0.197</td><td class="c">1</td><td>0.56 · 0.60 · 0.64</td><td>Consenso en el extremo; no hay grupos.</td></tr>
+    </tbody>
+  </table>
+  <p class="small">El Jaccard medio es el de la partición del Bloque 5 con 50 réplicas y el <i>k</i> de los capítulos anteriores (3, salvo los suelos y los cuatro grupos simulados).</p>
+
+  <h3>Práctica 1 · Razas de maíz: un consenso débil y grupos muy estables</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con el maíz, el árbol de Ward.D2 cortado en tres grupos y k-means jerárquico en el Bloque 5, entra al Bloque 6. El generador propuesto es el árbol. Pulsa <span class="ui">Evaluate every k →</span> (figuras 7.2 a 7.6): consenso 3 con 5 votos, silueta 3, gap y codo 4.</li>
+      <li>En la tarjeta 2 pulsa <span class="ui">Run the bootstrap</span>: Jaccard medio 1.000, 0.988 y 0.988, con las 50 réplicas recuperadas en los tres grupos. Cambia a <span class="ui">Tree cut (Block 4)</span>: 1.000, 0.998 y 0.997.</li>
+      <li>En la tarjeta 3 pulsa <span class="ui">Compute AU / BP</span> (figuras 7.9 y 7.10) y lee la advertencia de las 8 variables.</li>
+      <li>En la tarjeta 4 compara la partición del Bloque 5 con la agrupación conocida: ARI, NMI y pureza valen 1; χ² = 88 con 4 grados de libertad.</li>
+      <li>En la tarjeta 5 pulsa <span class="ui">Compare over the k range above</span> (figuras 7.13 y 7.14).</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Un voto repartido no significa grupos débiles. Con el maíz, cinco criterios eligen 3, tres eligen 2 y tres eligen 4: el árbol tiene una primera división en dos (costa frente al resto), y el gap y el codo sugieren un cuarto grupo, como la mezcla gaussiana del capítulo 6. Pero los tres grupos regionales reaparecen en todas las réplicas y coinciden exactamente con las regiones. El número de grupos se decide con el conjunto de la evidencia: el voto, la forma de las curvas, la estabilidad y el significado.</p>
+  </div>
+
+  <h3>Práctica 2 · Presencia de especies: un empate que resuelve la interpretación</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Jaccard, el árbol UPGMA y PAM en el Bloque 5, evalúa el rango: 4 votos para <i>k</i> = 2 y 4 para <i>k</i> = 3 (figura 7.15). La casilla de consenso muestra 2, por la regla del <i>k</i> menor, y aparece la advertencia <span class="ui">Tie between k = 2 and k = 3</span>.</li>
+      <li>Observa quién vota: por 2, Calinski–Harabasz, PBM, Ball–Hall y Hartigan; por 3, la silueta (0.333), Krzanowski–Lai, el gap y el codo. Las coordenadas son los ejes del PCoA de Jaccard.</li>
+      <li>Corre la estabilidad de PAM con <i>k</i> = 3: 0.977, 0.997 y 0.976.</li>
+      <li>Corre la tarjeta 3: con 22 variables no aparece la advertencia. Los bosques (AU 98) y los pastizales (AU 97) están respaldados; los humedales completos quedan en 84, y sin S22 suben a 97.</li>
+    </ol>
+  </div>
+
+  <figure class="media" style="width:68%">
+    <div class="marco"><img src="../img/b6-votos-binario.png" alt="Votos con la presencia de especies"></div>
+    <figcaption><b>Figura 7.15.</b> El empate con la presencia de especies. Los criterios que premian pocos grupos grandes votan por 2; la silueta, el gap y el codo, por 3. Dunn, el C-index, Davies–Bouldin, McClain–Rao y Ratkowsky–Lance se reparten entre 7, 9 y 10.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>La regla del <i>k</i> menor es una convención, no una recomendación ciega; la comprobación lo dice: prefiere el menor salvo que el grupo extra sea interpretable. Aquí lo es: tres hábitats y tres grupos estables que coinciden con ellos (ARI 1.000, capítulo 6). Cuando el voto empata, deciden la estabilidad y el conocimiento del sistema. Y el AU recuerda que en la tarjeta 3 las ramas se evalúan con distancia euclidiana sobre ceros y unos, no con tu Jaccard: el aviso azul lo señala.</p>
+  </div>
+
+  <h3>Práctica 3 · Abundancia de insectos: el voto más claro no es el más útil</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Bray–Curtis, el árbol UPGMA y PAM con <i>k</i> = 3, evalúa el rango: consenso <i>k</i> = 2 con 10 de 13 votos, silueta 0.494, y la comprobación <span class="ui">The silhouette peaks at k = 2</span> (figura 7.16).</li>
+      <li>Corre la estabilidad de PAM con <i>k</i> = 3 (figuras 7.7 y 7.8): el grupo de cuatro campos orgánicos es dudoso (0.538). Cambia a <span class="ui">Tree cut (Block 4)</span>: grupos de 16, 3 y 5 objetos con Jaccard 0.868, 0.643 y 0.815.</li>
+      <li>Compara en la tarjeta 4 (figuras 7.11 y 7.12): PAM frente a los paisajes da ARI 0.610; el árbol frente a los paisajes, 0.419.</li>
+      <li>Pulsa <span class="ui">Adopt k = 2 in Blocks 4 and 5</span>, vuelve al Bloque 5, corre PAM y regresa. El Jaccard medio sube a 0.998 y 0.997, y el ARI con los paisajes es 0.549: los dos grupos son los campos convencionales (8) frente a los orgánicos y los setos juntos (16).</li>
+    </ol>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-insectos-panel.png" alt="Panel de índices con los insectos"></div>
+    <figcaption><b>Figura 7.16.</b> Los índices con los insectos: casi todos marcan <i>k</i> = 2 en el borde izquierdo. El gap tiene su máximo en 7 (0.316), pero la regla se detiene en 2.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>La estructura dominante de esta comunidad es el manejo: los campos convencionales son muy distintos de todo lo demás, y esa división es la que ven casi todos los criterios y la que resiste todas las réplicas. Los tres paisajes existen, pero los campos orgánicos se parecen a los setos y su grupo es frágil. Ninguna de las dos respuestas es incorrecta: <i>k</i> = 2 describe la estructura más fuerte y <i>k</i> = 3 la del diseño del muestreo. Repórtalo así, con la estabilidad de cada grupo, en lugar de forzar una sola cifra.</p>
+  </div>
+
+  <h3>Práctica 4 · Perfiles de suelo: el voto corrige el corte</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Gower, el árbol UPGMA cortado en dos y PAM con <i>k</i> = 2, evalúa el rango: consenso <i>k</i> = 3 con 7 votos y <span class="ui">Clear consensus</span>. La silueta sube de 0.575 con dos grupos a 0.607 con tres (figura 7.17).</li>
+      <li>Corre la estabilidad con la partición actual (<i>k</i> = 2): 0.925 y 0.887, aunque el grupo de 12 perfiles se disuelve en 5 de las 50 réplicas.</li>
+      <li>Pulsa <span class="ui">Adopt k = 3 in Blocks 4 and 5</span>: un mensaje verde confirma que el corte del árbol ya se aplicó. En la tarjeta 2 elige <span class="ui">Tree cut (Block 4)</span> y corre: los tres grupos, de 12 perfiles cada uno, tienen Jaccard 1.000.</li>
+      <li>Vuelve al Bloque 5, corre PAM con <i>k</i> = 3 y regresa: 12 / 12 / 12, también con Jaccard 1.000. El corte en dos unía los perfiles PR-13 a PR-24 con los PR-25 a PR-36.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-suelos-sil.png" alt="Codo y silueta con los suelos"></div>
+    <figcaption><b>Figura 7.17.</b> Los suelos: la rodilla del codo y el máximo de la silueta están en <i>k</i> = 3. La curva de <i>W</i> cae a menos de la mitad al pasar de dos a tres grupos.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>La sugerencia de corte del Bloque 4 se basa en los saltos de altura del árbol, y el mayor salto no siempre marca el número de grupos más útil. Aquí dos grupos eran "razonables" y estables, pero el voto, el codo, la silueta y el gap señalaban tres, y con tres la estabilidad se vuelve perfecta. Evaluar el rango completo antes de interpretar evita quedarse con la primera partición plausible.</p>
+  </div>
+
+  <h3>Práctica 5 · Matriz de distancias: cuando el gap no alcanza</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con la matriz genética de 12 cultivares, el árbol UPGMA y PAM con <i>k</i> = 3, evalúa el rango. Las coordenadas son las del MDS de tu matriz.</li>
+      <li>Consenso 3 con 8 votos y silueta 0.665; pero el gap elige <i>k</i> = 1 y aparece la advertencia <span class="ui">The gap statistic finds no cluster structure</span>, con la aclaración de que con solo 12 objetos la regla es conservadora (figura 7.18).</li>
+      <li>Corre la estabilidad: 0.980, 0.975 y 0.990. La tarjeta 3 no aparece: una matriz no tiene variables que remuestrear.</li>
+    </ol>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-matriz-gap.png" alt="Gap con la matriz de distancias"></div>
+    <figcaption><b>Figura 7.18.</b> El gap con la matriz: el máximo está en <i>k</i> = 3 (0.09), pero el gap de <i>k</i> = 1 (−0.67) queda dentro de un error estándar del de <i>k</i> = 2 (−0.62 ± 0.19), y la regla se detiene en 1.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>El gap aplica su regla con honestidad, pero con 12 objetos repartidos en 11 dimensiones los conjuntos de referencia son muy variables y los errores estándar enormes. Un solo criterio discordante no invalida el resto: la silueta alta, el voto amplio y la estabilidad casi perfecta sostienen los tres grupos. Lo correcto es reportar que el gap no fue concluyente con tan pocos objetos, no esconderlo.</p>
+  </div>
+
+  <h3>Práctica 6 · Cuatro grupos simulados: el caso de libro</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los 80 objetos simulados, Ward.D2 y k-means jerárquico con <i>k</i> = 4, evalúa el rango: consenso 4 con 10 votos, silueta 0.714, gap y codo 4. En el gap, el salto de 0.88 a 2.06 entre <i>k</i> = 3 y 4 es inconfundible.</li>
+      <li>Estabilidad: los cuatro grupos con Jaccard 1.000. Validación externa con los grupos simulados: ARI 1.000 y χ² = 240 con 9 grados de libertad.</li>
+      <li>Comparación de algoritmos: la silueta máxima (0.714) y el Dunn máximo (0.896) coinciden en el árbol con <i>k</i> = 4.</li>
+      <li>Corre la tarjeta 3: 36 ramas con AU ≥ 95 % y la advertencia de las 5 variables. Los cuatro grupos de 20 tienen AU de 97 a 100, pero también reciben ese soporte muchas parejas sin significado.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Cuando la estructura es fuerte, todas las herramientas del bloque dicen lo mismo, y ese acuerdo es lo que debes buscar en tus datos. Incluso aquí, con solo 5 variables, el bootstrap multiescala infla el soporte de las ramas pequeñas: su advertencia no depende de que los grupos sean buenos, sino de cuántas variables hay.</p>
+  </div>
+
+  <h3>Práctica 7 · Ruido uniforme: reconocer que no hay grupos</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los 60 objetos uniformes, Ward.D2 y k-means jerárquico con <i>k</i> = 3, evalúa el rango (figura 7.19). El "consenso" es <i>k</i> = 10 con 5 votos, y aparecen cuatro comprobaciones: consenso débil, consenso en el extremo del rango, silueta baja (0.20) y gap sin estructura.</li>
+      <li>Mira el gap (figura 7.20): negativo en todo el rango y máximo en <i>k</i> = 1.</li>
+      <li>Corre la estabilidad: Jaccard medio 0.558, 0.604 y 0.640, con entre 12 y 22 réplicas disueltas por grupo. Ningún grupo es estable; dos muestran algún patrón y uno es dudoso. Con el corte del árbol, 0.558, 0.529 y 0.486: uno se disuelve.</li>
+      <li>Corre la comparación de algoritmos: la mejor silueta, 0.209, es de k-means con <i>k</i> = 7.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-ruido-resultados.png" alt="Casillas y comprobaciones con el ruido uniforme"></div>
+    <figcaption><b>Figura 7.19.</b> El ruido uniforme en la tarjeta 1. Las casillas parecen dar una respuesta (<i>k</i> = 10), pero las comprobaciones la desmontan: el voto está repartido, se detiene en el borde del rango, la silueta es baja y el gap elige un solo grupo.</figcaption>
+  </figure>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-ruido-gap.png" alt="Gap con el ruido uniforme"></div>
+    <figcaption><b>Figura 7.20.</b> El gap con el ruido: −0.03 en <i>k</i> = 1 y por debajo en todos los demás, dentro de un error estándar. Los datos no están más agrupados que los de referencia.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>El Bloque 6 existe para este caso. Todos los métodos de los Bloques 4 y 5 dieron grupos, y los criterios de la tarjeta 1, obligados a elegir un <i>k</i> ≥ 2, eligieron uno. Solo la combinación de evidencias revela lo que pasa: silueta baja, voto en el borde, gap en 1 y grupos que se deshacen al remuestrear. Cuando ves ese patrón en tus datos, la conclusión correcta es un gradiente continuo, no una tipología.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · lo que hay que reportar de este bloque</div>
+    <p>En la sección de métodos: el rango de <i>k</i>, el generador de particiones y los criterios usados; el número de conjuntos de referencia del gap; el número de réplicas de la estabilidad y el método de reagrupamiento; si usaste el bootstrap multiescala, las réplicas por escala y el número de variables; y los índices de acuerdo externo. En resultados: el <i>k</i> elegido con sus votos y los del segundo lugar, el Jaccard medio de cada grupo y el ARI con la agrupación conocida. Por ejemplo: "Se evaluó <i>k</i> = 2–10 con 13 criterios; <i>k</i> = 3 recibió 5 votos (<i>k</i> = 2 y <i>k</i> = 4, 3 cada uno). Los tres grupos fueron muy estables en 50 réplicas bootstrap (Jaccard medio 0.99–1.00) y coincidieron con las regiones de origen (ARI = 1.00)". El párrafo del Bloque 8 lo redacta con tus valores.</p>
+  </div>
+
+  <p style="margin-top:0.12in">Con un número de grupos justificado y grupos que resisten el remuestreo, queda la parte que da sentido al análisis: describir cada grupo. El siguiente capítulo presenta los perfiles de los grupos, las variables, categorías y especies que caracterizan a cada uno, las reglas de clasificación del análisis discriminante y la asignación de objetos nuevos.</p>
+</section>
+
+</body>
+</html>

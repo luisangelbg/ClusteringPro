@@ -38,7 +38,10 @@ manual/
     06-bloque5.html    capítulo 6 · Bloque 5 "Particionamiento y métodos avanzados": k-means y k-means jerárquico,
                        PAM y CLARA, fuzzy c-means, mezclas gaussianas con BIC, DBSCAN y espectral, coordenadas
                        frente a matriz, figuras, comparación a igual k y seis prácticas
-    07-bloque6.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
+    07-bloque6.html    capítulo 7 · Bloque 6 "Número de grupos y validación": trece criterios y su voto,
+                       estadístico gap (con k = 1), estabilidad por bootstrap, AU/BP multiescala, validación
+                       externa, comparación de algoritmos a lo largo de k y siete prácticas
+    08-bloque7.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
     10-apendices.html  apéndices A–F (pendiente)
   en/                  versión en inglés (pendiente)
 ```
@@ -133,6 +136,7 @@ Recetas de las capturas actuales (`h` es la altura del marco cuando no es la pre
 | `b3-suelos-mds.png` · `b3-matriz-res.png` · `b3-ruido-hist.png` | `ex:3;…;scroll:%23fig3MDS,10` (760) · `ex:4;step:3;run:distRunBtn;scroll:%23distResults,10` (700) · `ex:6;…;scroll:%23fig3Shepard,10` (640) | 2200 × 1500 desde (300, 20) · 2300 × 1040 desde (250, 20) · 2200 × 1260 desde (300, 20) |
 | `b4-*.png` (20 capturas) | prefijo común `M = ex:N;apply;step:3;run:distRunBtn;step:4` (sin `apply` con la matriz) y luego `run:hcRun` y, según la figura, `run:cmp4Run`, `run:tgRun`, `select:%23hcMethod=average` (o `diana`, `single`), `cfg:fig4Dendro.layout=radial` · `horizontal` · `radialtri`, `cfg:fig4Dendro.collapse=true`, `cfg:fig4Dendro.colourBy=gradient`, `cfg:fig4Dendro.legendPos=bottom`, `open:%23fig4Dendro%20details.fig-editor`; `scroll:` a `%23hcReco`, `%23hcResults`, `%23fig4Heights`, `%23hcResults%20h3`, `%23fig4Dendro`, `%23fig4Heatmap`, `%23cmp4Card`, `%23fig4Methods`, `%23fig4Tangle` (ventanas 1400 × 520–1250) | tarjetas 2300 de ancho desde (250, 20); figuras 2200 de ancho desde (300, 20); alturas entre 700 y 1780 |
 | `b5-*.png` (21 capturas) | prefijo `ex:N;apply;step:3;run:distRunBtn;step:4;[select:%23hcMethod=average;]run:hcRun;step:5` y luego `select:%23ptMethod=kmeans|pam|fcm|gmm|dbscan`, `select:%23ptSource=pcoa`, `set:%23dbMinPts=3|6`, `run:ptRun`, `run:cmp5Run`; `scroll:` a `%23ptReco,70`, `%23ptResults`, `%23fig5Map`, `%23fig5Sil`, `%23fig5Extra`, `%23fig5Bic`, `%23cmp5Card`, `%23cmp5Results` (ventanas 1400 × 560–1250) | tarjetas 2300 de ancho desde (250, 0–20); mapas 2200 × 1310 desde (300, 20); siluetas solo la tarjeta izquierda, 1086 de ancho desde (300, 20) |
+| `b6-*.png` (20 capturas) | prefijo `P = ex:N;apply;step:3;run:distRunBtn;step:4;[select:%23hcMethod=average;]run:hcRun;step:5;run:ptRun;step:6` (sin `apply` con la matriz; UPGMA en los ejemplos 1 y 2) y luego `run:vkRun`, `run:stRun`, `run:pvRun`, `run:exRun`, `run:cvRun`; `scroll:` a `%23panel-6,10`, `%23vkTiles,60`, `%23fig6Panel`, `%23fig6Votes`, `%23fig6Elbow`, `%23fig6Gap`, `%23stSource,60`, `%23pvCard`, `%23fig6Pv`, `%23exA,60`, `%23cvList,60`, `%23fig6Cv` (ventanas 1400 × 560–1200; tres grupos de capturas en paralelo con perfiles `--user-data-dir` distintos) | tarjetas y tablas 2200 de ancho desde (300, 110–300); paneles 2140 × 1180 desde (330, 120); votos 1600 × 830 desde (560, 120); gap 1300 × 780 desde (740, 120); codo y silueta 2110 × 630 desde (330, 120) |
 
 Los recortes se hacen con `System.Drawing` desde PowerShell sobre la captura a 2×. Las cifras del demo que cita el capítulo 2 (cofenética por enlace, iteraciones, SS entre/total, silueta y ARI) se obtuvieron de la propia app con la semilla fija del demo; si el demo cambia, hay que recalcularlas.
 

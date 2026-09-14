@@ -43,9 +43,11 @@ function renderSweep(sw) {
   const checks = []; const add = (l, t, x) => checks.push([l, t, x]);
   if (c[0] && c[0].votes >= total * 0.5) add('ok', `Clear consensus for k = ${c[0].k}`, `${c[0].votes} of the ${total} criteria agree. ${sw.votes.silhouette.k === c[0].k ? 'The silhouette agrees.' : `The silhouette prefers k = ${sw.votes.silhouette.k}.`}`);
   else if (c[0] && c[1] && c[0].votes === c[1].votes) add('warn', `Tie between k = ${c[0].k} and k = ${c[1].k}`, 'The criteria split their votes. Prefer the smaller k unless the extra cluster is interpretable, and check both with the stability analysis below.');
-  else if (c[0]) add('info', `Weak consensus for k = ${c[0].k}`, `Only ${c[0].votes} of ${total} criteria agree; the others spread over ${c.length} values. The structure may be hierarchical (several valid resolutions) or weak.`);
+  else if (c[0]) add('info', `Weak consensus for k = ${c[0].k}`, `Only ${c[0].votes} of ${total} criteria agree; the others spread over ${c.length - 1} other value${c.length - 1 === 1 ? "" : "s"}. The structure may be hierarchical (several valid resolutions) or weak.`);
   const s2 = sw.rows.find(r => r.k === 2), sk = c[0] ? sw.rows.find(r => r.k === c[0].k) : null;
+  if (c[0] && c[0].k === sw.ks[sw.ks.length - 1] && sw.ks.length > 3) add('warn', `The consensus k = ${c[0].k} is the upper end of the range`, 'Several criteria keep improving as clusters are added and stop only where the range stops. This usually means there is no natural number of clusters (the partition just keeps slicing the data finer). Extend the range to check, and read it together with the gap statistic and the stability below.');
   if (sk && sk.silhouette < 0.25) add('warn', `Low silhouette at the consensus k (${fmtFixed(sk.silhouette, 2)})`, 'Even the best k gives weak, overlapping clusters. Consider another dissimilarity or method, or accept a fuzzy description.');
+  if (sw.gap && sw.gap.best === 1) add('warn', 'The gap statistic finds no cluster structure (k = 1)', 'The gap at k = 1 is within one standard error of the gap at k = 2: the data are no more clustered than uniform reference data spread over the same range. The other criteria can only choose among k ≥ 2, so read their votes with caution and check the stability of the clusters below.' + (sw.n < 30 ? ` With only ${sw.n} objects the reference sets vary a lot and the rule is conservative.` : ''));
   if (sw.gap && sw.gap.best !== sw.gap.globalMax) add('info', `Gap statistic: first-SE rule chooses k = ${sw.gap.best}, the global maximum is at k = ${sw.gap.globalMax}`, 'The conservative rule stops at the first k whose gap is within one standard error of the next; the maximum favours more clusters.');
   if (s2 && sw.votes.silhouette.k === 2 && sw.rows.length > 3) add('info', 'The silhouette peaks at k = 2', 'A very common outcome: a coarse split dominates. If the domain suggests finer groups, look at the silhouette of k = 3–4 and at the tree.');
   add('info', 'How the vote works', 'Each criterion selects one k by its own rule (maximum, minimum, first k under a threshold or the knee of a curve). The tally is a guide, not a proof: the final k must also be interpretable in Block 7.');
@@ -63,7 +65,7 @@ function renderSweep(sw) {
   mount('fig6Elbow', { title: 'Elbow: within-cluster sum of squares', fileName: 'elbow', width: 620, height: 400, defaults: { palette: 'cluster', title: 'Total within-cluster sum of squares' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, pal], render: cfg => P6.curve(cfg, sw, 'wss', { best: sw.votes.elbow.k, bestLabel: 'knee at' }) });
   mount('fig6Sil', { title: 'Average silhouette by k', fileName: 'silhouette_by_k', width: 620, height: 400, defaults: { palette: 'cluster', title: 'Average silhouette width' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, pal], render: cfg => P6.curve(cfg, sw, 'silhouette', { bestLabel: 'maximum at' }) });
   el('fig6Gap').style.display = sw.gap ? '' : 'none';
-  if (sw.gap) mount('fig6Gap', { title: 'Gap statistic', fileName: 'gap_statistic', width: 620, height: 400, defaults: { palette: 'cluster', title: `Gap statistic (${sw.gap.B} uniform reference sets)` }, controls: [{ key: 'title', label: 'Title', type: 'text' }, pal], render: cfg => P6.curve(cfg, sw, 'gap', { best: sw.gap.best, bestLabel: 'first-SE rule:', note: 'bars: ± 1 standard error' }) });
+  if (sw.gap) mount('fig6Gap', { title: 'Gap statistic', fileName: 'gap_statistic', width: 620, height: 400, defaults: { palette: 'cluster', title: `Gap statistic (${sw.gap.B} uniform reference sets)` }, controls: [{ key: 'title', label: 'Title', type: 'text' }, pal], render: cfg => P6.curve(cfg, { rows: sw.gap.ks.map((k, i) => ({ k, gap: sw.gap.gap[i], gapSE: sw.gap.sk[i] })), votes: {}, gap: sw.gap }, 'gap', { best: sw.gap.best, bestLabel: 'first-SE rule:', note: 'bars: ± 1 standard error' }) });
   el('adoptK').textContent = c[0] ? `Adopt k = ${c[0].k} in Blocks 4 and 5` : 'Adopt k'; el('adoptK').disabled = !c[0];
 }
 function adoptK() {
@@ -92,8 +94,8 @@ function runStability() {
   state.validation = Object.assign(state.validation || {}, { stability: Object.assign(st, { partition: P.name }) });
   const rows = st.clusters.map(c => ({ c: `Cluster ${c.cluster}`, n: c.n, mean: fmtFixed(c.mean, 3), min: fmtFixed(c.min, 3), dis: `${c.dissolved} (${fmtPct(c.dissolved / (c.runs || 1), 0)})`, rec: `${c.recovered} (${fmtPct(c.recovered / (c.runs || 1), 0)})`, verdict: c.mean >= 0.85 ? 'highly stable' : c.mean >= 0.75 ? 'stable' : c.mean >= 0.6 ? 'some pattern' : c.mean >= 0.5 ? 'doubtful' : 'dissolved' }));
   buildTable('stTable', [{ key: 'c', label: 'Cluster' }, { key: 'n', label: 'n', num: true }, { key: 'mean', label: 'Mean Jaccard', num: true }, { key: 'min', label: 'Min', num: true }, { key: 'dis', label: 'Dissolved (< 0.5)' }, { key: 'rec', label: 'Recovered (> 0.75)' }, { key: 'verdict', label: 'Verdict' }], rows, { caption: `${P.name} · ${B} bootstrap samples, reclustered with ${GEN_NAMES[P.kind]}` });
-  const bad = st.clusters.filter(c => c.mean < 0.6).length, good = st.clusters.filter(c => c.mean >= 0.75).length;
-  el('stText').innerHTML = `<div class="check-item ${bad ? 'warn' : 'ok'}"><div class="ck-icon">${bad ? '⚠️' : '✅'}</div><div class="ck-body"><div class="ck-title">${good} of ${st.clusters.length} clusters are stable (mean Jaccard ≥ 0.75)${bad ? `; ${bad} ${bad > 1 ? 'are' : 'is'} doubtful or dissolved` : ''}</div><div class="ck-text">Each bootstrap sample recomputes the clustering on a resample of the objects; a cluster is counted as recovered when a bootstrap cluster overlaps it with Jaccard above 0.75 and dissolved below 0.5. Clusters that dissolve depend on a few objects and should not be interpreted as real groups.</div></div></div>`;
+  const bad = st.clusters.filter(c => c.mean < 0.6).length, good = st.clusters.filter(c => c.mean >= 0.75).length, mid = st.clusters.length - bad - good;
+  el('stText').innerHTML = `<div class="check-item ${bad ? 'warn' : 'ok'}"><div class="ck-icon">${bad ? '⚠️' : '✅'}</div><div class="ck-body"><div class="ck-title">${good} of ${st.clusters.length} clusters are stable (mean Jaccard ≥ 0.75)${mid ? `; ${mid} ${mid > 1 ? 'show' : 'shows'} only some pattern` : ''}${bad ? `; ${bad} ${bad > 1 ? 'are' : 'is'} doubtful or dissolved` : ''}</div><div class="ck-text">Each bootstrap sample recomputes the clustering on a resample of the objects; a cluster is counted as recovered when a bootstrap cluster overlaps it with Jaccard above 0.75 and dissolved below 0.5. Clusters that dissolve depend on a few objects and should not be interpreted as real groups.</div></div></div>`;
   mount('fig6Stab', { title: 'Bootstrap stability of the clusters', fileName: 'cluster_stability', width: 760, height: 420, defaults: { palette: 'cluster', title: `Cluster stability · ${P.name}`, badColor: '#c93a2c' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'badColor', label: 'Dissolved colour', type: 'color' }, pal], render: cfg => P6.stability(cfg, st) });
   el('stResults').style.display = '';
   document.dispatchEvent(new CustomEvent('validationchange'));
@@ -119,6 +121,7 @@ function runPv() {
   const rows = sig.map(nd => ({ node: `node ${nd.step + 1}`, n: nd.size, au: (nd.au * 100).toFixed(0), bp: (nd.bp * 100).toFixed(0), h: fmtNum(nd.height, 3), members: nd.members.map(i => esc(state.dist.labels[i])).slice(0, 25).join(', ') + (nd.size > 25 ? ' …' : '') }));
   buildTable('pvTable', [{ key: 'node', label: 'Cluster (tree node)' }, { key: 'n', label: 'n', num: true }, { key: 'au', label: 'AU %', num: true }, { key: 'bp', label: 'BP %', num: true }, { key: 'h', label: 'Height', num: true }, { key: 'members', label: 'Members', html: true }], rows, { caption: `Clusters supported at AU ≥ ${Math.round(thr * 100)} % · Euclidean distance on the ${X[0].length} numeric variables, ${HC_METHOD_NAMES[method]} linkage, ${B} resamples × ${scales.length} scales` });
   if (state.dist.fam !== 'quant' || !/euclid/.test(state.dist.id)) showMessage('pvMessages', 'info', 'Resampling the variables requires recomputing the distance from them; Euclidean distance on the working variables is used here, which differs from your Block 3 dissimilarity.');
+  if (X[0].length < 15) showMessage('pvMessages', 'warning', `Only ${X[0].length} variables: with so few columns the multiscale bootstrap is liberal, and even in random data many clusters reach AU ≥ 95 %. Read AU as a rough guide and rely on the bootstrap of the objects (card 2) to judge the clusters.`);
   el('pvText').innerHTML = `<p class="hint">${sig.length} cluster${sig.length === 1 ? '' : 's'} with AU ≥ ${Math.round(thr * 100)} %. AU (approximately unbiased) corrects the plain bootstrap probability BP for its known bias; an AU of 95 % means the cluster is strongly supported by the variables, not an accident of which variables were measured.</p>`;
   mount('fig6Pv', { title: 'Tree with bootstrap support', fileName: 'pvclust_tree', width: 960, height: 560, defaults: { palette: 'cluster', title: `Multiscale bootstrap support · ${HC_METHOD_NAMES[method]}`, subtitle: `${B} resamples at ${scales.length} scales · numbers: AU % (red)${''}`, threshold: thr, showAU: true, showBP: false, valueSize: 9, labels: n <= 120 ? 'auto' : 'none', labelSize: 9, branchWidth: 1.6, auColor: '#d64a6a', bpColor: '#2f9e44', boxColor: '#d64a6a', legendPos: 'right' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'subtitle', label: 'Subtitle', type: 'text' }, { key: 'threshold', label: 'AU threshold for boxes', type: 'range', min: 0.5, max: 0.99, step: 0.01 }, { key: 'showAU', label: 'Show AU values', type: 'checkbox' }, { key: 'showBP', label: 'Show BP values', type: 'checkbox' }, { key: 'valueSize', label: 'Value size', type: 'range', min: 6, max: 14, step: 0.5 }, { key: 'labels', label: 'Leaf labels', type: 'select', options: [['auto', 'shown'], ['none', 'hidden']] }, { key: 'labelSize', label: 'Label size', type: 'range', min: 6, max: 14, step: 0.5 }, { key: 'branchWidth', label: 'Branch width', type: 'range', min: 0.5, max: 4, step: 0.1 }, { key: 'auColor', label: 'AU colour', type: 'color' }, { key: 'bpColor', label: 'BP colour', type: 'color' }, { key: 'boxColor', label: 'Box colour', type: 'color' }, pal], render: cfg => P6.pvDendro(cfg, pv, state.dist.labels) });
   el('pvResults').style.display = '';
@@ -157,13 +160,15 @@ function runClValid() {
   el('cvResults').style.display = '';
 }
 
+/* partitions for the sweep: the Block 4 tree if there is one, k-means on Euclidean-like coordinates, PAM otherwise */
+function defaultGen() { const quantLike = state.dist.fam === 'quant' && /euclid|sqeuclid|pca/.test(state.dist.id); return state.hclust ? 'hier' : (quantLike ? 'kmeans' : 'pam'); }
 function refresh() {
   if (!state.dist) return;
   state.validation = null;
   ['vkResults', 'stResults', 'pvResults', 'exResults', 'cvResults'].forEach(id => el(id).style.display = 'none');
   enableStep(7, false); el('nextBtn6').disabled = true;
   el('vkMax').value = Math.min(10, state.dist.n - 1);
-  el('vkGen').value = state.hclust ? 'hier' : 'kmeans';
+  el('vkGen').value = defaultGen();
   const exSel = el('exA'), exB = el('exB');
   [exSel, exB].forEach(s => { s.innerHTML = ''; [['tree', 'Tree cut (Block 4)'], ['partition', 'Block 5 partition'], ['groups', 'Known grouping']].forEach(([v, t]) => s.appendChild(mk('option', { value: v }, t))); });
   exSel.value = state.partition ? 'partition' : 'tree'; exB.value = state.groups ? 'groups' : 'tree';
@@ -181,6 +186,7 @@ function init() {
   el('cvRun').addEventListener('click', runClValid);
   el('nextBtn6').addEventListener('click', () => goStep(7));
   document.addEventListener('distchange', refresh);
+  document.addEventListener('hclustchange', () => { if (state.dist && !state.validation) el('vkGen').value = defaultGen(); });
   document.addEventListener('partitionchange', () => { if (state.dist) { el('stSource').value = 'partition'; el('exA').value = 'partition'; } });
 }
 document.addEventListener('DOMContentLoaded', init);
