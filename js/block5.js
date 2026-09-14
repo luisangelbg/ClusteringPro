@@ -94,9 +94,11 @@ function finish(res, space) {
 
 function renderResults(R) {
   const sil = R.sil, lvl = sil.avg >= 0.7 ? 'ok' : sil.avg >= 0.5 ? 'ok' : sil.avg >= 0.25 ? 'warn' : 'bad';
-  const tiles = [['Method', R.name, R.space], ['Clusters', R.k, R.method === 'dbscan' ? `${R.noise} noise objects` : `sizes ${Object.values(R.sizes).join(' / ')}`], ['Average silhouette', fmtFixed(sil.avg, 3), sil.negatives ? `${sil.negatives} object${sil.negatives > 1 ? 's' : ''} with s < 0` : 'no negative silhouettes', lvl]];
+  const clustered = R.cluster.filter(c => c > 0).length, single = R.k < 2;
+  const silSub = single ? 'undefined for a single cluster' : (sil.negatives ? `${sil.negatives} object${sil.negatives > 1 ? 's' : ''} with s < 0` : 'no negative silhouettes') + (R.noise ? ` · on the ${clustered} clustered objects (noise excluded)` : '');
+  const tiles = [['Method', R.name, R.space], ['Clusters', R.k, R.method === 'dbscan' ? `${R.noise} noise object${R.noise === 1 ? '' : 's'}` : `sizes ${Object.values(R.sizes).join(' / ')}`], ['Average silhouette', single ? '—' : fmtFixed(sil.avg, 3), silSub, single ? '' : lvl]];
   if (R.ssq) tiles.push(['Between-SS / total-SS', fmtPct(R.ssq.bss / R.ssq.tss, 1), 'variance explained by the partition', R.ssq.bss / R.ssq.tss > 0.6 ? 'ok' : R.ssq.bss / R.ssq.tss > 0.4 ? 'warn' : '']);
-  if (R.method === 'kmeans' || R.method === 'hkmeans') tiles.push(['Iterations', R.iter, `${R.params.algorithm} · ${R.params.nstart} start${R.params.nstart > 1 ? 's' : ''} · ${R.params.init}`]);
+  if (R.method === 'kmeans' || R.method === 'hkmeans') tiles.push(['Iterations', R.iter, `${R.params.algorithm} · ${R.params.nstart} start${R.params.nstart > 1 ? 's' : ''} · ${({ pp: 'k-means++', 'k-means++': 'k-means++', random: 'random objects' })[R.params.init] || R.params.init}`]);
   if (R.method === 'pam') tiles.push(['Total cost', fmtNum(R.cost, 3), `${R.iter} swap${R.iter === 1 ? '' : 's'}`]);
   if (R.method === 'clara') tiles.push(['Best sample', `${R.sample} of ${R.params.samples}`, `sample size ${R.params.sampleSize} · cost ${fmtNum(R.cost, 3)}`]);
   if (R.method === 'fcm') tiles.push(['Partition coefficient', fmtFixed(R.pc, 3), `normalised ${fmtFixed(R.pcNorm, 3)} · entropy ${fmtFixed(R.pe, 3)}`, R.pcNorm > 0.7 ? 'ok' : R.pcNorm > 0.4 ? 'warn' : 'bad']);
@@ -107,10 +109,12 @@ function renderResults(R) {
   if (R.ariGroups != null) tiles.push(['ARI vs known groups', fmtFixed(R.ariGroups, 3), 'external validation', R.ariGroups > 0.7 ? 'ok' : R.ariGroups > 0.4 ? 'warn' : 'bad']);
   statTiles('ptTiles', tiles);
   const checks = []; const add = (l, t, x) => checks.push([l, t, x]);
-  if (sil.avg >= 0.7) add('ok', `Strong structure (silhouette ${fmtFixed(sil.avg, 2)})`, 'Objects are much closer to their own cluster than to the nearest other one.');
+  if (single) { /* the silhouette is undefined with a single cluster */ }
+  else if (sil.avg >= 0.7) add('ok', `Strong structure (silhouette ${fmtFixed(sil.avg, 2)})`, 'Objects are much closer to their own cluster than to the nearest other one.');
   else if (sil.avg >= 0.5) add('ok', `Reasonable structure (silhouette ${fmtFixed(sil.avg, 2)})`, 'A clear partition with some objects near the boundaries.');
   else if (sil.avg >= 0.25) add('warn', `Weak structure (silhouette ${fmtFixed(sil.avg, 2)})`, 'Clusters overlap; the partition may still be useful but treat it as exploratory and check the stability in Block 6.');
   else add('bad', `No substantial structure (silhouette ${fmtFixed(sil.avg, 2)})`, 'Objects are about as close to other clusters as to their own. Try a different k, method or dissimilarity.');
+  if (!single && R.noise && R.noise / R.cluster.length > 0.2) add('info', 'The silhouette ignores the noise objects', `It is computed on the ${clustered} objects placed in clusters. With ${fmtPct(R.noise / R.cluster.length, 0)} of the objects set aside as noise, a high silhouette describes only the dense cores; compare methods on all the objects before preferring this partition.`);
   const worst = Object.entries(sil.byCluster).sort((a, b) => a[1] - b[1])[0];
   if (worst && worst[1] < 0.2 && R.k > 1) add('warn', `Cluster ${worst[0]} is poorly defined (silhouette ${fmtFixed(worst[1], 2)})`, 'Its members are close to other clusters: it may be a leftover group or a gradient split in two.');
   const tiny = Object.entries(R.sizes).filter(([c, v]) => +c > 0 && v < 3);
@@ -125,11 +129,15 @@ function renderResults(R) {
   checks.forEach(([level, title, text]) => host.appendChild(mk('div', { class: 'check-item ' + level }, `<div class="ck-icon">${level === 'ok' ? '✅' : level === 'bad' ? '⛔' : level === 'warn' ? '⚠️' : 'ℹ️'}</div><div class="ck-body"><div class="ck-title">${title}</div><div class="ck-text">${text}</div></div>`)));
   /* cluster table */
   const rows = [];
-  for (let c = 1; c <= R.k; c++) { const mem = R.labels.filter((_, i) => R.cluster[i] === c); rows.push({ c: `Cluster ${c}`, n: mem.length, sil: fmtFixed(sil.byCluster[c], 3), rep: R.medoids ? `medoid: ${esc(R.labels[R.medoids[c - 1]])}` : R.centers ? 'centroid' : '—', members: mem.slice(0, 30).map(esc).join(', ') + (mem.length > 30 ? ` … (+${mem.length - 30})` : '') }); }
+  for (let c = 1; c <= R.k; c++) { const mem = R.labels.filter((_, i) => R.cluster[i] === c); rows.push({ c: `Cluster ${c}`, n: mem.length, sil: R.k < 2 ? '—' : fmtFixed(sil.byCluster[c], 3), rep: R.medoids ? `medoid: ${esc(R.labels[R.medoids[c - 1]])}` : R.centers ? 'centroid' : '—', members: mem.slice(0, 30).map(esc).join(', ') + (mem.length > 30 ? ` … (+${mem.length - 30})` : '') }); }
   if (R.cluster.includes(0)) rows.push({ c: 'Noise', n: R.noise, sil: '—', rep: '—', members: R.labels.filter((_, i) => R.cluster[i] === 0).slice(0, 30).map(esc).join(', ') });
   buildTable('ptClusterTable', [{ key: 'c', label: 'Cluster' }, { key: 'n', label: 'n', num: true }, { key: 'sil', label: 'Mean silhouette', num: true }, { key: 'rep', label: 'Representative', html: true }, { key: 'members', label: 'Members', html: true }], rows);
   const ct = el('ptCrossTable'); ct.innerHTML = '';
-  const cross = (other, title, ari) => { const { la, lb, M } = HC.contingency(R.cluster, other); const cols = [{ key: 'c', label: title }].concat(lb.map((g, j) => ({ key: 'g' + j, label: esc(String(g)), num: true }))); const rws = la.map((c, i) => { const o = { c: c === 0 ? 'Noise' : `Cluster ${c}` }; lb.forEach((g, j) => o['g' + j] = M[i][j]); return o; }).sort((a, b) => (a.c === 'Noise' ? 99 : +a.c.slice(8)) - (b.c === 'Noise' ? 99 : +b.c.slice(8))); const d = mk('div', { class: 'table-scroll', style: 'margin-top:10px' }); buildTable(d, cols, rws, { caption: `${title} · adjusted Rand index ${ari.toFixed(3)}` }); ct.appendChild(d); };
+  const cross = (other, title, ari) => {
+    const ct0 = HC.contingency(R.cluster, other), isTree = /^tree C/.test(String(ct0.lb[0]));
+    /* tree-cut columns in natural order (tree C1, C2, C3…); known groups keep the order of the data */
+    const ordB = ct0.lb.map((g, j) => j).sort((p, q) => String(ct0.lb[p]).localeCompare(String(ct0.lb[q]), undefined, { numeric: true }));
+    const la = ct0.la, lb = isTree ? ordB.map(j => ct0.lb[j]) : ct0.lb, M = isTree ? ct0.M.map(r => ordB.map(j => r[j])) : ct0.M; const cols = [{ key: 'c', label: title }].concat(lb.map((g, j) => ({ key: 'g' + j, label: esc(String(g)), num: true }))); const rws = la.map((c, i) => { const o = { c: c === 0 ? 'Noise' : `Cluster ${c}` }; lb.forEach((g, j) => o['g' + j] = M[i][j]); return o; }).sort((a, b) => (a.c === 'Noise' ? 99 : +a.c.slice(8)) - (b.c === 'Noise' ? 99 : +b.c.slice(8))); const d = mk('div', { class: 'table-scroll', style: 'margin-top:10px' }); buildTable(d, cols, rws, { caption: `${title} · adjusted Rand index ${ari.toFixed(3)}` }); ct.appendChild(d); };
   if (state.groups && R.k > 1) cross(state.groups, 'Cluster \\ known group', R.ariGroups);
   if (state.hclust && state.hclust.cl) cross(state.hclust.cl.map(c => 'tree C' + c), 'Cluster \\ Block 4 tree cut', R.ariTree);
 }
@@ -141,7 +149,7 @@ function mountFigures(R) {
   const n = R.cluster.length;
   mount('fig5Map', {
     title: 'Cluster map', fileName: `${R.method}_cluster_map`, width: 900, height: 600,
-    defaults: { palette: 'cluster', title: `${R.name} · k = ${R.k}`, subtitle: `${R.space} · average silhouette ${R.sil.avg.toFixed(3)}`, region: 'ellipse', regionAlpha: 0.12, centers: R.medoids ? 'medoid' : 'centroid', centerLabels: true, labels: 'auto', labelSize: 9, pointSize: 4.5, shape: 'circle', shapeBy: state.groups ? 'group' : 'none', certainty: true, noiseColor: '#9a9ab0', legendPos: 'right' },
+    defaults: { palette: 'cluster', title: `${R.name} · k = ${R.k}`, subtitle: R.k < 2 ? `${R.space} · a single cluster` : `${R.space} · average silhouette ${R.sil.avg.toFixed(3)}${R.noise ? ' (noise excluded)' : ''}`, region: 'ellipse', regionAlpha: 0.12, centers: R.medoids ? 'medoid' : 'centroid', centerLabels: true, labels: 'auto', labelSize: 9, pointSize: 4.5, shape: 'circle', shapeBy: state.groups ? 'group' : 'none', certainty: true, noiseColor: '#9a9ab0', legendPos: 'right' },
     controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'subtitle', label: 'Subtitle', type: 'text' }, { key: 'xlab', label: 'X axis title', type: 'text' }, { key: 'ylab', label: 'Y axis title', type: 'text' },
       { key: 'region', label: 'Cluster region', type: 'select', options: [['ellipse', '95 % concentration ellipse'], ['hull', 'convex hull'], ['none', 'none']] }, { key: 'regionAlpha', label: 'Region opacity', type: 'range', min: 0, max: 0.5, step: 0.02 },
       { key: 'centers', label: 'Centres', type: 'select', options: [['centroid', 'centroid (◆)'], ['medoid', 'medoid (ring)'], ['none', 'none']] }, { key: 'centerLabels', label: 'Cluster numbers at the centres', type: 'checkbox' },
@@ -220,12 +228,18 @@ function refresh() {
   state.partition = null; el('ptResults').style.display = 'none'; el('cmp5Card').style.display = 'none'; el('cmp5Results').style.display = 'none';
   enableStep(6, false); el('nextBtn5').disabled = true;
   el('ptK').value = defaultK();
+  el('dbEps').value = 0;   /* an ε found for other data would be meaningless here */
+  renderReco();
+}
+/* the recommendation depends on the Block 4 tree too, so it is redrawn when the tree changes */
+function renderReco() {
   const eu = state.dist.diag && state.dist.diag.euclid ? state.dist.diag.euclid.negMass : 0;
   const quantLike = state.dist.fam === 'quant' && /euclid|sqeuclid|pca/.test(state.dist.id);
   el('ptSource').value = quantLike || state.isDistance ? 'working' : 'pcoa';
   let rec = 'kmeans', why;
   const t = state.profile ? state.profile.type : 'quant';
-  if (t === 'mixed' || t === 'nominal' || t === 'binary' || t === 'ordinal' || state.isDistance) { rec = 'pam'; why = `${state.dist.name} is not a Euclidean distance on raw coordinates: PAM works directly on the matrix and its medoids are real objects.`; }
+  if (state.isDistance) { rec = 'pam'; why = 'Your supplied matrix is used as it is: PAM works directly on the matrix and its medoids are real objects.'; }
+  else if (t === 'mixed' || t === 'nominal' || t === 'binary' || t === 'ordinal') { rec = 'pam'; why = `${state.dist.name} is not a Euclidean distance on raw coordinates: PAM works directly on the matrix and its medoids are real objects.`; }
   else if (t === 'ecological') { rec = 'pam'; why = 'For community data PAM on Bray–Curtis (or k-means on Hellinger-transformed data) is the standard route.'; }
   else if (state.eda && state.eda.maha && state.eda.maha.d2.some(d => d > state.eda.maha.thresholdStrict)) { rec = 'pam'; why = 'Extreme outliers were flagged in Block 2: medoids resist them better than centroids.'; }
   else { rec = state.hclust ? 'hkmeans' : 'kmeans'; why = state.hclust ? 'Quantitative data with a Ward tree available: seeding k-means with the tree centroids gives a reproducible, refined partition.' : 'Quantitative data in Euclidean space: k-means (Hartigan–Wong, many starts) is fast and well understood.'; }
@@ -246,7 +260,7 @@ function init() {
   el('dlMembershipBtn').addEventListener('click', downloadMembership);
   el('nextBtn5').addEventListener('click', () => goStep(6));
   document.addEventListener('distchange', refresh);
-  document.addEventListener('hclustchange', () => { if (state.dist && !state.partition) { el('ptK').value = defaultK(); } });
+  document.addEventListener('hclustchange', () => { if (state.dist && !state.partition) { el('ptK').value = defaultK(); renderReco(); } });
 }
 document.addEventListener('DOMContentLoaded', init);
 window.PT_METHOD_NAMES = NAME;

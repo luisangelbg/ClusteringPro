@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · Manual de usuario · Bloque 5: particionamiento y métodos avanzados</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b5" data-pestana="B5" data-orden="6" style="--acento: var(--b5)">
+  <div class="cap-apertura">
+    <div class="cap-num">B5</div>
+    <div class="cap-etiqueta">Capítulo seis · Bloque 5 · Partitioning</div>
+    <h1 data-corto="Bloque 5 · Particionamiento y métodos avanzados">Particionamiento y métodos avanzados</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Un árbol ofrece todas las particiones a la vez; los métodos de este bloque buscan directamente una. Aquí están k-means y su versión sembrada con el árbol, PAM y CLARA, el agrupamiento difuso, las mezclas gaussianas, DBSCAN y el agrupamiento espectral: ocho algoritmos con supuestos distintos, juzgados todos con la misma silueta y comparables entre sí con el mismo número de grupos.</p>
+    <div class="cap-franja"><span class="k5"></span><span class="k5" style="opacity:.75"></span><span class="k5" style="opacity:.5"></span><span class="k5" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>6.1</b>k-means y sus variantes</li>
+      <li><b>6.2</b>PAM y CLARA</li>
+      <li><b>6.3</b>Fuzzy c-means</li>
+      <li><b>6.4</b>Mezclas gaussianas</li>
+      <li><b>6.5</b>DBSCAN y agrupamiento espectral</li>
+      <li><b>6.6</b>Coordenadas frente a matriz</li>
+      <li><b>6.7</b>Ajustes, tablas y figuras del bloque</li>
+      <li><b>6.8</b>Comparar métodos con el mismo k</li>
+      <li><b>6.9</b>Paso a paso</li>
+    </ul>
+  </div>
+
+  <p class="lead">El Bloque 5 tiene tres tarjetas. En <span class="ui">1 · Choose the method</span> eliges el algoritmo, el número de grupos y sus parámetros. <span class="ui">2 · The partition</span> muestra el resultado con sus casillas, comprobaciones, tablas y figuras. <span class="ui">3 · Compare methods at the same k</span> corre varios algoritmos con el mismo <i>k</i> y mide cuánto coinciden. La tarjeta de teoría resume en tres lecciones qué supone cada método. El bloque se activa en cuanto el Bloque 3 calcula una matriz; si además construiste un árbol en el Bloque 4, el valor inicial de <i>k</i> es el de su corte.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.1.</b> Los ocho métodos de un vistazo (la primera lección de la tarjeta de teoría).</caption>
+    <thead><tr><th style="width:20%">Método</th><th style="width:13%">Trabaja con</th><th style="width:24%">Supone</th><th style="width:12%">¿Pide <i>k</i>?</th><th>Fortaleza</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">k-means</span></td><td>coordenadas</td><td>grupos redondos, de tamaño parecido, euclidianos</td><td>sí</td><td>Rápido y bien conocido; muchos arranques evitan óptimos malos.</td></tr>
+      <tr><td><span class="ui">Hierarchical k-means</span></td><td>coordenadas</td><td>como k-means</td><td>sí</td><td>Arranca de los centroides del árbol del Bloque 4: reproducible.</td></tr>
+      <tr><td><span class="ui">PAM (k-medoids)</span></td><td>cualquier disimilitud</td><td>grupos alrededor de un objeto central</td><td>sí</td><td>Resiste atípicos; los medoides son objetos reales; Gower, Bray–Curtis y Jaccard sirven.</td></tr>
+      <tr><td><span class="ui">CLARA</span></td><td>cualquier disimilitud</td><td>como PAM</td><td>sí</td><td>Miles de objetos.</td></tr>
+      <tr><td><span class="ui">Fuzzy c-means</span></td><td>coordenadas</td><td>como k-means, con fronteras suaves</td><td>sí</td><td>Los grados de pertenencia revelan objetos intermedios y gradientes.</td></tr>
+      <tr><td><span class="ui">Gaussian mixture (EM + BIC)</span></td><td>coordenadas</td><td>componentes gaussianas elipsoidales</td><td>el BIC elige</td><td>Probabilidad e incertidumbre por objeto; el BIC elige <i>k</i> y la forma.</td></tr>
+      <tr><td><span class="ui">DBSCAN</span></td><td>cualquier disimilitud</td><td>regiones densas separadas por zonas vacías</td><td>no (ε, minPts)</td><td>Formas arbitrarias; marca los atípicos como ruido.</td></tr>
+      <tr><td><span class="ui">Spectral</span></td><td>cualquier disimilitud</td><td>grafo de vecindad conectado</td><td>sí</td><td>Formas curvas, anidadas o alargadas (lunas, anillos).</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué método propone la app</div>
+    <table class="compacta">
+      <thead><tr><th style="width:44%">Si…</th><th>propone</th></tr></thead>
+      <tbody>
+        <tr><td>la entrada es una matriz de distancias</td><td>PAM: trabaja sobre la matriz y sus medoides son objetos reales.</td></tr>
+        <tr><td>los datos son mixtos, nominales, binarios u ordinales</td><td>PAM, por la misma razón: el coeficiente del Bloque 3 no es una distancia euclidiana entre coordenadas.</td></tr>
+        <tr><td>es una tabla de comunidades</td><td>PAM sobre Bray–Curtis (o k-means sobre datos con Hellinger).</td></tr>
+        <tr><td>el Bloque 2 marcó atípicos extremos</td><td>PAM: los medoides resisten los atípicos mejor que los centroides.</td></tr>
+        <tr><td>son cuantitativos y hay árbol en el Bloque 4</td><td>k-means jerárquico: sembrado con los centroides del corte, reproducible.</td></tr>
+        <tr><td>son cuantitativos sin árbol</td><td>k-means (Hartigan–Wong, muchos arranques).</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">La fuente de coordenadas se fija sola: la matriz de trabajo si el coeficiente del Bloque 3 es euclidiano (o una matriz cargada), los ejes del PCoA en cualquier otro caso. El valor inicial de <i>k</i> es el corte del Bloque 4, o el número de grupos conocidos, o 3.</p>
+  </div>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b5-elegir.png" alt="La tarjeta 1 · Choose the method">
+      <span class="marca" style="left:1.5%;top:14%">1</span>
+      <span class="marca" style="left:1.5%;top:54.6%">2</span>
+      <span class="marca" style="left:25.4%;top:54.6%">3</span>
+      <span class="marca" style="left:49.3%;top:54.6%">4</span>
+      <span class="marca" style="left:73.2%;top:54.6%">5</span>
+      <span class="marca" style="left:1.5%;top:81.9%">6</span>
+      <span class="marca" style="left:1.5%;top:92.8%">7</span>
+    </div>
+    <figcaption><b>Figura 6.1.</b> La tarjeta <span class="ui">1 · Choose the method</span> con las razas de maíz y k-means elegido.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Recommendation</span>: método propuesto, <i>k</i> para empezar y la razón (tabla 6.2).</li>
+    <li><span class="n">2</span><span class="ui">Method</span>, con una línea que resume qué hace el elegido.</li>
+    <li><span class="n">3</span><span class="ui">Number of clusters k</span> (se oculta con DBSCAN y con mezclas cuando el BIC elige).</li>
+    <li><span class="n">4</span><span class="ui">Coordinates</span>: solo para los métodos de coordenadas (sección 6.6).</li>
+    <li><span class="n">5</span><span class="ui">Random seed</span>: la misma semilla da siempre el mismo resultado.</li>
+    <li><span class="n">6</span>Los parámetros propios del método; aquí, los de k-means.</li>
+    <li><span class="n">7</span><span class="ui">Run →</span>.</li>
+  </ul>
+
+  <!-- 6.1 -->
+  <h2 id="s6-1"><span class="num">6.1</span>k-means y sus variantes</h2>
+  <p class="lead">k-means es el método de particionamiento más usado. Viste cómo trabaja paso a paso en el demo de la portada (capítulo 2); aquí interesan sus variantes, sus parámetros y lo que devuelve la app.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · lo que minimiza k-means</div>
+    <p>k-means busca <i>k</i> centros que hagan mínima la <b>suma de cuadrados dentro de los grupos</b> (<i>W</i>): la suma, sobre todos los objetos, del cuadrado de su distancia al centro de su grupo. Como la suma de cuadrados total (<i>T</i>) no depende de la partición, minimizar <i>W</i> equivale a maximizar la suma entre grupos, <i>B</i> = <i>T</i> − <i>W</i>. La casilla <span class="ui">Between-SS / total-SS</span> da <i>B</i>/<i>T</i>, el porcentaje de la variación que explica la partición.</p>
+    <p>Encontrar el mínimo exacto es imposible salvo con muy pocos objetos; los algoritmos llegan a un mínimo <b>local</b> que depende de dónde empiezan. Por eso se repite desde muchos arranques y se conserva el de menor <i>W</i>.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.2.</b> Parámetros de k-means.</caption>
+    <thead><tr><th style="width:28%">Control</th><th>Opciones y efecto</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Algorithm</span></td><td><b>Hartigan–Wong</b> (predeterminado): iteraciones de Lloyd seguidas de pasadas de <i>transferencia óptima</i>, que mueven un objeto de grupo si eso baja <i>W</i> aunque el objeto esté más cerca de su centro actual; suele dar el <i>W</i> más bajo. <b>Lloyd / Forgy</b>: asigna todos los objetos y luego mueve todos los centros, hasta que nada cambia. <b>MacQueen</b>: actualiza el centro después de cada reasignación individual.</td></tr>
+      <tr><td><span class="ui">Random starts (nstart)</span></td><td>Cuántas veces se repite desde centros iniciales distintos (25 por defecto, hasta 500). Se conserva la solución con menor <i>W</i>.</td></tr>
+      <tr><td><span class="ui">Initial centres</span></td><td><b>k-means++</b>: el primer centro al azar y cada siguiente con probabilidad proporcional al cuadrado de su distancia a los ya elegidos, lo que reparte los centros. <b>Random objects</b>: <i>k</i> objetos al azar.</td></tr>
+      <tr><td><span class="ui">Random seed</span></td><td>Fija el sorteo de arranques: con la misma semilla el resultado es idéntico.</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>k-means jerárquico</b> (<span class="ui">Hierarchical k-means</span>) no sortea nada: corta el árbol del Bloque 4 en <i>k</i> grupos, calcula sus centroides y corre un solo k-means de Hartigan–Wong desde ellos. Combina lo mejor de ambos mundos: la partición es reproducible, como la del árbol, y luego se refina para reducir <i>W</i>, cosa que el corte de un árbol no hace. Necesita que exista un árbol; si no, la app lo avisa.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b5-resultados.png" alt="Casillas, comprobaciones y tabla de grupos de k-means">
+      <span class="marca" style="left:1.5%;top:9%">1</span>
+      <span class="marca" style="left:1.5%;top:42%">2</span>
+      <span class="marca" style="left:1.5%;top:72%">3</span>
+    </div>
+    <figcaption><b>Figura 6.2.</b> La tarjeta <span class="ui">2 · The partition</span> con k-means sobre las razas de maíz: silueta 0.419, 66.4 % de la variación explicada, dos iteraciones y acuerdo total con el árbol y con las regiones.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Casillas (tabla 6.3). Cambian según el método: aquí aparecen las de k-means.</li>
+    <li><span class="n">2</span>Comprobaciones interpretadas (tabla 6.4).</li>
+    <li><span class="n">3</span>Tabla de grupos con tamaño, silueta media, representante (centroide o medoide) y miembros. Debajo, las tablas cruzadas con la agrupación conocida y con el corte del árbol.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.3.</b> Casillas de la partición. Las cuatro primeras aparecen siempre que corresponden; el resto, según el método.</caption>
+    <thead><tr><th style="width:26%">Casilla</th><th>Qué es</th><th style="width:27%">Semáforo</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Method</span> · <span class="ui">Clusters</span></td><td>Método y espacio de trabajo; número de grupos con sus tamaños (con DBSCAN, objetos de ruido).</td><td>—</td></tr>
+      <tr><td><span class="ui">Average silhouette</span></td><td>Silueta media sobre la disimilitud del Bloque 3 y cuántos objetos tienen silueta negativa. Con ruido, se calcula sin él; con un solo grupo, no está definida.</td><td>verde ≥ 0.5 · ámbar 0.25–0.5 · rojo &lt; 0.25</td></tr>
+      <tr><td><span class="ui">Between-SS / total-SS</span></td><td>Variación explicada (métodos de coordenadas).</td><td>verde &gt; 60 % · ámbar &gt; 40 %</td></tr>
+      <tr><td><span class="ui">Iterations</span></td><td>k-means: iteraciones, algoritmo, arranques y tipo de inicio.</td><td>—</td></tr>
+      <tr><td><span class="ui">Total cost</span> · <span class="ui">Best sample</span></td><td>PAM: suma de disimilitudes a los medoides e intercambios. CLARA: mejor muestra, tamaño y costo.</td><td>—</td></tr>
+      <tr><td><span class="ui">Partition coefficient</span></td><td>Fuzzy c-means: coeficiente de partición, su versión normalizada y la entropía (sección 6.3).</td><td>normalizado: verde &gt; 0.7 · ámbar &gt; 0.4 · rojo</td></tr>
+      <tr><td><span class="ui">Model</span> · <span class="ui">Mean uncertainty</span></td><td>Mezclas: modelo y <i>k</i> elegidos, BIC y log-verosimilitud; incertidumbre media y objetos por encima de 0.25.</td><td>—</td></tr>
+      <tr><td><span class="ui">ε · minPts</span> · <span class="ui">Noise</span></td><td>DBSCAN: parámetros y si ε salió de la rodilla; ruido y puntos núcleo.</td><td>ruido: ámbar &gt; 30 %</td></tr>
+      <tr><td><span class="ui">Affinity graph</span></td><td>Espectral: tipo de grafo, vecinos y σ.</td><td>—</td></tr>
+      <tr><td><span class="ui">ARI vs Block 4 tree</span> · <span class="ui">ARI vs known groups</span></td><td>Índice de Rand ajustado con el corte del árbol y con la agrupación conocida.</td><td>verde &gt; 0.7 · ámbar &gt; 0.4</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.4.</b> Comprobaciones de la partición.</caption>
+    <thead><tr><th style="width:38%">Comprobación</th><th style="width:8%" class="c">Nivel</th><th>Qué sugiere</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Strong</span> / <span class="ui">Reasonable</span> / <span class="ui">Weak</span> / <span class="ui">No substantial structure</span></td><td class="c">✅ ✅ ⚠️ ⛔</td><td>Silueta media ≥ 0.7, ≥ 0.5, ≥ 0.25 o menor. Con estructura débil, trata la partición como exploratoria y comprueba su estabilidad en el Bloque 6.</td></tr>
+      <tr><td><span class="ui">Cluster N is poorly defined</span></td><td class="c">⚠️</td><td>El peor grupo tiene silueta media &lt; 0.2: puede ser un grupo sobrante o un gradiente partido en dos.</td></tr>
+      <tr><td><span class="ui">N tiny clusters</span></td><td class="c">⚠️</td><td>Grupos de menos de 3 objetos: probablemente atípicos. PAM o DBSCAN los manejan mejor.</td></tr>
+      <tr><td><span class="ui">Agreement with the hierarchical cut</span></td><td class="c">✅ ℹ️</td><td>Con el mismo <i>k</i> que el árbol: ARI &gt; 0.7, dos algoritmos distintos encuentran los mismos grupos; si no, los objetos que cambian son los ambiguos.</td></tr>
+      <tr><td><span class="ui">Known grouping recovered with ARI</span></td><td class="c">✅ ℹ️ ⚠️</td><td>Acuerdo con la agrupación conocida (&gt; 0.7, 0.4–0.7, menor).</td></tr>
+      <tr><td><span class="ui">Coordinate method on the working matrix</span></td><td class="c">ℹ️</td><td>Un método de coordenadas sobre la matriz de trabajo cuando el Bloque 3 usó otro coeficiente: elige los ejes del PCoA o compara con PAM (sección 6.6).</td></tr>
+      <tr><td><span class="ui">The silhouette ignores the noise objects</span></td><td class="c">ℹ️</td><td>DBSCAN con más del 20 % de ruido: la silueta describe solo los núcleos densos.</td></tr>
+      <tr><td><span class="ui">More than 30 % of the objects are noise</span> · <span class="ui">A single dense cluster</span></td><td class="c">⚠️ ℹ️</td><td>DBSCAN: sube ε o baja minPts; o baja ε para dividir el único grupo.</td></tr>
+      <tr><td><span class="ui">Very fuzzy partition</span></td><td class="c">⚠️</td><td>Coeficiente de partición normalizado &lt; 0.4: los grupos se traslapan mucho o <i>m</i> es demasiado grande (prueba 1.5).</td></tr>
+      <tr><td><span class="ui">BIC chose … with k = …</span></td><td class="c">ℹ️</td><td>Cuántos ajustes se compararon y qué modelo ganó; prefiere el más simple cuyo BIC quede a pocas unidades del mejor.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-mapa.png" alt="Mapa de grupos de k-means"></div>
+    <figcaption><b>Figura 6.3.</b> <span class="ui">Cluster map</span> de k-means con el maíz: los objetos sobre los dos primeros componentes, coloreados por grupo, con la elipse de concentración del 95 % de cada uno, su centroide (rombo) y la forma de cada punto según la región conocida. Los tres grupos coinciden con las tres formas.</figcaption>
+  </figure>
+
+  <!-- 6.2 -->
+  <h2 id="s6-2"><span class="num">6.2</span>PAM y CLARA</h2>
+  <p class="lead">PAM (<i>partitioning around medoids</i>) es k-means con dos cambios decisivos: el centro de cada grupo es un <b>objeto real</b>, el medoide, y lo que se minimiza es la suma de <b>disimilitudes</b>, no de cuadrados. Por eso acepta cualquier matriz del Bloque 3 y un atípico pesa mucho menos.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · BUILD y SWAP</div>
+    <p>PAM trabaja en dos fases. <b>BUILD</b> elige un primer medoide, el objeto con menor suma de disimilitudes a todos, y va añadiendo, uno a uno, el objeto que más reduce el costo total. <b>SWAP</b> prueba intercambiar cada medoide por cada objeto que no lo es, aplica el intercambio que más baje el costo y repite hasta que ningún intercambio mejora. Al final cada objeto va al medoide más cercano. La casilla <span class="ui">Total cost</span> da ese costo y cuántos intercambios hicieron falta; con grupos claros, BUILD suele acertar y SWAP no cambia nada.</p>
+    <p><b>CLARA</b> aplica PAM a varias muestras aleatorias del conjunto (5 por defecto, de 40 + 2<i>k</i> objetos) y asigna todos los objetos a los medoides de cada muestra; se queda con los medoides de menor costo total. Hace posible trabajar con miles de objetos; con pocos, la muestra abarca a todos y CLARA coincide con PAM.</p>
+  </div>
+
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b5-pam-mapa.png" alt="Mapa de PAM con medoides"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b5-pam-sil.png" alt="Silueta de PAM"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figura 6.4.</b> PAM con el maíz. A la izquierda, el mapa con los medoides como anillos (ACC-034, ACC-012 y ACC-021). A la derecha, la silueta: ACC-029, una accesión de valle, queda con el grupo de costa y es la única barra negativa (−0.052). El resto de la partición coincide con k-means; por eso el ARI con las regiones es 0.929 y no 1.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.5.</b> Parámetros de PAM y CLARA.</caption>
+    <thead><tr><th style="width:30%">Control</th><th>Efecto</th></tr></thead>
+    <tbody>
+      <tr><td>PAM</td><td>Solo <i>k</i>. Es determinista (no usa semilla). Límite en la app: 800 objetos; por encima, usa CLARA.</td></tr>
+      <tr><td><span class="ui">Samples</span> (CLARA)</td><td>Número de muestras (1 a 50). Más muestras, más probable encontrar buenos medoides.</td></tr>
+      <tr><td><span class="ui">Sample size</span> (CLARA)</td><td>Objetos por muestra; 0 = 40 + 2<i>k</i>. Si es mayor que <i>n</i>, se usan todos.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 6.3 -->
+  <h2 id="s6-3"><span class="num">6.3</span>Fuzzy c-means</h2>
+  <p class="lead">En las particiones anteriores cada objeto pertenece a un solo grupo. Fuzzy c-means le da, en cambio, un <b>grado de pertenencia</b> a cada grupo, entre 0 y 1, que suma 1 por objeto. Un objeto con 0.95 en un grupo es típico; uno con 0.47, 0.30 y 0.23 está entre grupos.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · el fuzzificador m y el coeficiente de partición</div>
+    <p>El algoritmo alterna dos pasos, como k-means: calcula las pertenencias de cada objeto según su distancia relativa a los centros, y mueve cada centro al promedio de todos los objetos ponderados por su pertenencia elevada a <i>m</i>. El <b>fuzzificador</b> <i>m</i> controla cuán suaves son las fronteras: con <i>m</i> cercano a 1 las pertenencias se acercan a 0 o 1 (casi k-means); con <i>m</i> = 2, el valor habitual, son claramente graduales; con <i>m</i> mayor todo tiende a 1/<i>k</i>. La partición "dura" que muestran el mapa y la silueta asigna cada objeto a su pertenencia máxima.</p>
+    <p>El <b>coeficiente de partición</b> de Dunn es el promedio de la suma de cuadrados de las pertenencias: vale 1 si todas son 0 o 1 y 1/<i>k</i> si todas son iguales. La versión <b>normalizada</b>, (<i>k</i>·PC − 1)/(<i>k</i> − 1), va de 0 a 1 sea cual sea <i>k</i>. La <b>entropía de partición</b> mide lo mismo al revés: 0 es nítido.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-fcm.png" alt="Mapa de calor de pertenencias difusas"></div>
+    <figcaption><b>Figura 6.5.</b> <span class="ui">Membership degrees</span> con el maíz (<i>m</i> = 2): una fila por objeto, ordenadas por grupo y por pertenencia, y una columna por grupo. La partición coincide con k-means, pero el coeficiente normalizado es solo 0.429: las pertenencias máximas van de 0.93 a 0.47. Las filas del fondo de cada bloque son los objetos intermedios: ACC-002, ACC-023, ACC-032 y ACC-029 (0.47, el mismo que PAM dejó con silueta negativa).</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.6.</b> Parámetros y salidas propias de fuzzy c-means.</caption>
+    <thead><tr><th style="width:30%">Elemento</th><th>Qué es</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Fuzzifier m</span></td><td>De 1.1 a 5; 2 por defecto. Más cerca de 1, más nítido.</td></tr>
+      <tr><td>Mapa con <span class="ui">Fade uncertain objects</span></td><td>La opacidad de cada punto sigue su pertenencia máxima: los objetos intermedios, en los bordes de las elipses, se ven pálidos.</td></tr>
+      <tr><td><span class="ui">⬇ Cluster membership (CSV)</span></td><td>Añade una columna <i>u_C1</i>, <i>u_C2</i>… por grupo, además del grupo asignado y la silueta.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 6.4 -->
+  <h2 id="s6-4"><span class="num">6.4</span>Mezclas gaussianas</h2>
+  <p class="lead">El agrupamiento basado en modelos supone que los datos provienen de una mezcla de distribuciones normales multivariadas, una por grupo, cada una con su media, su matriz de covarianzas y su proporción. Ajustar la mezcla da a cada objeto una <b>probabilidad</b> de pertenecer a cada componente y permite elegir <i>k</i> y la forma de los grupos con un criterio estadístico, el BIC.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · EM y BIC</div>
+    <p>El algoritmo <b>EM</b> parte de un k-means y alterna dos pasos: el paso E calcula, con los parámetros actuales, la probabilidad posterior de cada objeto en cada componente; el paso M reestima medias, covarianzas y proporciones ponderando por esas probabilidades. Cada vuelta aumenta la verosimilitud, hasta que deja de cambiar. La <b>incertidumbre</b> de un objeto es 1 menos su probabilidad máxima.</p>
+    <p>El <b>BIC</b> que usa la app es 2·log-verosimilitud − (número de parámetros)·log <i>n</i>: <b>más alto es mejor</b>. Premia el ajuste y castiga la complejidad, de modo que un modelo con covarianzas libres solo gana si mejora mucho la verosimilitud. Un componente con menos objetos que los que necesita para estimar su covarianza (menos de <i>p</i> + 2 en VVV, 3 en VVI, 2 en los demás) se considera degenerado y el ajuste se rechaza.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-gmm-panel.png" alt="Parámetros de la mezcla gaussiana"></div>
+    <figcaption><b>Figura 6.6.</b> Los parámetros de la mezcla: <span class="ui">Number of components</span> (que el BIC elija entre 2 y <span class="ui">k max for BIC</span>, u otro <i>k</i> fijo) y los cinco modelos de covarianza, de los que vienen marcados VII, VVI y VVV.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.7.</b> Los cinco modelos de covarianza. La primera letra se refiere al volumen, la segunda a la forma y la tercera a la orientación: E = igual en todos los grupos, V = variable, I = identidad (esférica o alineada con los ejes).</caption>
+    <thead><tr><th style="width:12%">Modelo</th><th style="width:30%">En la app</th><th>Forma de los grupos</th><th class="c" style="width:22%">Parámetros de covarianza</th></tr></thead>
+    <tbody>
+      <tr><td>EII</td><td><span class="ui">spherical, equal volume</span></td><td>Esferas del mismo tamaño (lo que supone k-means).</td><td class="c">1</td></tr>
+      <tr><td>VII</td><td><span class="ui">spherical, varying volume</span></td><td>Esferas de tamaños distintos.</td><td class="c"><i>k</i></td></tr>
+      <tr><td>VVI</td><td><span class="ui">diagonal, varying</span></td><td>Elipsoides alineados con los ejes, de forma y tamaño libres.</td><td class="c"><i>k</i>·<i>p</i></td></tr>
+      <tr><td>EEE</td><td><span class="ui">ellipsoidal, equal shape &amp; orientation</span></td><td>Elipsoides girados, todos iguales.</td><td class="c"><i>p</i>(<i>p</i> + 1)/2</td></tr>
+      <tr><td>VVV</td><td><span class="ui">ellipsoidal, all varying</span></td><td>Elipsoides libres en todo.</td><td class="c"><i>k</i>·<i>p</i>(<i>p</i> + 1)/2</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-gmm-bic.png" alt="Perfil del BIC por número de componentes y modelo"></div>
+    <figcaption><b>Figura 6.7.</b> <span class="ui">BIC by number of components and model</span> con el maíz (8 variables, 44 objetos). El mejor es VII con <i>k</i> = 4 (BIC −798.7), apenas por encima de VII con <i>k</i> = 3 (−809.7). VVV, con 36 parámetros de covarianza por componente, solo pudo ajustarse con 2 y 3 componentes y queda muy por debajo; con más componentes los grupos son demasiado pequeños y la app rechaza el ajuste.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · el BIC no conoce tus grupos</div>
+    <p>Con el maíz, el BIC prefiere cuatro componentes: separa las accesiones de valle en un grupo de 10 y otro de 5 (ARI con las regiones 0.873). No es un error: con componentes esféricos, un grupo algo alargado se describe mejor con dos esferas. Once unidades de BIC entre <i>k</i> = 3 y <i>k</i> = 4 son poca diferencia. La regla práctica de la comprobación se aplica aquí: prefiere el modelo más simple cuyo BIC esté a pocas unidades del mejor, y deja que el Bloque 6 decida <i>k</i> con más criterios. Para ver la solución de tres componentes, elige <span class="ui">Fixed k</span> con <i>k</i> = 3.</p>
+  </div>
+
+  <!-- 6.5 -->
+  <h2 id="s6-5"><span class="num">6.5</span>DBSCAN y agrupamiento espectral</h2>
+  <p class="lead">Los dos métodos restantes no suponen grupos redondos. DBSCAN los define por densidad y deja fuera, como ruido, lo que no es denso. El agrupamiento espectral los define por conectividad en un grafo de vecinos. Ambos trabajan sobre la matriz.</p>
+
+  <figure>
+    <svg viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Puntos núcleo, frontera y ruido en DBSCAN">
+      <g>
+        <circle cx="150" cy="105" r="46" fill="#d9701f" fill-opacity="0.08" stroke="#d9701f" stroke-dasharray="4 3"/>
+        <line x1="150" y1="105" x2="196" y2="105" stroke="#d9701f" stroke-width="1.4"/>
+        <text x="173" y="99" text-anchor="middle" font-size="12" fill="#d9701f" font-weight="600">ε</text>
+        <g fill="#4f46a5"><circle cx="150" cy="105" r="6"/><circle cx="128" cy="90" r="6"/><circle cx="170" cy="82" r="6"/><circle cx="134" cy="128" r="6"/><circle cx="166" cy="124" r="6"/><circle cx="108" cy="112" r="6"/><circle cx="92" cy="86" r="6"/><circle cx="112" cy="66" r="6"/></g>
+        <circle cx="214" cy="118" r="6" fill="#e0803c"/>
+        <circle cx="244" cy="80" r="0" />
+        <g stroke="#8a8aa0" stroke-width="2.2"><path d="M272 52 l10 10 M282 52 l-10 10"/><path d="M58 170 l10 10 M68 170 l-10 10"/></g>
+        <text x="150" y="195" text-anchor="middle" font-size="10" fill="#5d6472">minPts = 4 (el propio punto cuenta)</text>
+      </g>
+      <g font-size="11" fill="#22252c">
+        <circle cx="340" cy="50" r="6" fill="#4f46a5"/><text x="356" y="54"><tspan font-weight="600">Núcleo</tspan>: al menos minPts objetos a distancia ≤ ε. Forma el grupo.</text>
+        <circle cx="340" cy="92" r="6" fill="#e0803c"/><text x="356" y="96"><tspan font-weight="600">Frontera</tspan>: no es núcleo, pero está a ≤ ε de uno. Se une a su grupo.</text>
+        <path d="M335 128 l10 10 M345 128 l-10 10" stroke="#8a8aa0" stroke-width="2.2"/><text x="356" y="138"><tspan font-weight="600">Ruido</tspan>: ni núcleo ni cerca de uno. Queda sin grupo (0).</text>
+        <text x="340" y="178" fill="#5d6472" font-size="10">Los núcleos que están a ≤ ε entre sí se encadenan en un mismo grupo;</text>
+        <text x="340" y="192" fill="#5d6472" font-size="10">el número de grupos sale de los datos, no se fija de antemano.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figura 6.8.</b> Los tres tipos de objeto en DBSCAN. Dos parámetros bastan: el radio ε y el número mínimo de objetos, minPts, que debe haber dentro de ese radio para que un objeto sea núcleo.</figcaption>
+  </figure>
+
+  <h3>Elegir ε con el gráfico de vecinos</h3>
+  <p>Con <span class="ui">ε</span> en 0, la app lo elige sola. Para cada objeto calcula la distancia a su vecino número minPts − 1, ordena esas distancias de mayor a menor y busca la <b>rodilla</b>: el punto de la curva más alejado de la recta que une sus extremos. Los objetos cuya distancia queda por encima de ε no son núcleo; pueden terminar como frontera o como ruido. La regla práctica para minPts es el número de dimensiones más uno, y al menos 4.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-dbscan-knn.png" alt="Gráfico de distancias al k-ésimo vecino"></div>
+    <figcaption><b>Figura 6.9.</b> <span class="ui">k-NN distance plot (choosing ε)</span> con el maíz y minPts = 4: distancia de cada accesión a su tercer vecino, ordenada. La rodilla da ε = 2.045. Solo tres accesiones quedan por encima de la línea; como están cerca de núcleos, se integran como frontera, y DBSCAN recupera las tres regiones sin ruido (ARI 1.000, 41 puntos núcleo).</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · ε vuelve a 0 al cambiar de datos</div>
+    <p>Después de correr DBSCAN, el campo ε muestra el valor que eligió la rodilla. Si luego calculas otra matriz en el Bloque 3 o cargas otros datos, el campo vuelve a 0 para que la rodilla se recalcule: un ε pensado para otra escala de distancias no tendría sentido. Si quieres un ε fijo, escríbelo después de calcular la matriz.</p>
+  </div>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · agrupamiento espectral</div>
+    <p>El agrupamiento espectral convierte la matriz en un <b>grafo</b>: cada objeto se une a sus vecinos más cercanos (7 por defecto) con un peso gaussiano que decrece con la distancia, exp(−<i>d</i>²/2σ²), donde σ es por defecto la mediana de las distancias a esos vecinos. Luego normaliza el grafo, toma los <i>k</i> primeros vectores propios, que resumen cómo está conectado, y corre k-means sobre ellos. Dos objetos lejanos en línea recta pero unidos por una cadena de vecinos quedan juntos, por eso recupera lunas y anillos que k-means rompe. Los controles son <span class="ui">Affinity graph</span> (grafo de <i>k</i> vecinos o totalmente conectado), <span class="ui">Neighbours</span> y <span class="ui">Kernel width σ</span>. En la app admite hasta 500 objetos.</p>
+  </div>
+
+  <!-- 6.6 -->
+  <h2 id="s6-6"><span class="num">6.6</span>Coordenadas frente a matriz</h2>
+  <p class="lead">k-means, k-means jerárquico, fuzzy c-means y las mezclas gaussianas necesitan <b>coordenadas</b>: calculan medias de objetos. PAM, CLARA, DBSCAN y el espectral usan la <b>matriz</b> directamente. El menú <span class="ui">Coordinates</span> decide de dónde salen las coordenadas cuando hacen falta.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.8.</b> Las dos fuentes de coordenadas.</caption>
+    <thead><tr><th style="width:28%">Fuente</th><th>Qué es</th><th style="width:30%">Úsala cuando</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Working matrix (Block 2)</span></td><td>La matriz de trabajo: variables transformadas y escaladas, con indicadoras para las nominales.</td><td>El coeficiente del Bloque 3 es la euclidiana sobre esas variables.</td></tr>
+      <tr><td><span class="ui">PCoA axes of the Block 3 dissimilarity</span></td><td>Todos los ejes positivos del análisis de coordenadas principales de la matriz: coordenadas euclidianas que reproducen la disimilitud lo mejor posible.</td><td>El coeficiente es otro (Bray–Curtis, Jaccard, Gower…): así el método de coordenadas respeta la disimilitud elegida.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-insectos-mapa.png" alt="k-means sobre ejes del PCoA de Bray–Curtis"></div>
+    <figcaption><b>Figura 6.10.</b> k-means sobre los ejes del PCoA de Bray–Curtis con los 24 sitios de insectos: recupera exactamente los tres paisajes (8 / 8 / 8, ARI 1.000) con 15 ejes positivos. El mapa muestra los dos primeros; la elipse del grupo de campos convencionales, muy alargada, se recorta en el borde del gráfico.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · la silueta se calcula siempre sobre la matriz del Bloque 3</div>
+    <p>Sea cual sea el método y la fuente de coordenadas, la silueta se mide con la disimilitud del Bloque 3. Así todos los métodos se juzgan con la misma vara y la comparación de la tarjeta 3 es justa. La casilla <span class="ui">Between-SS / total-SS</span>, en cambio, se calcula en el espacio de coordenadas que usó el método, así que no es comparable entre fuentes distintas.</p>
+  </div>
+
+  <!-- 6.7 -->
+  <h2 id="s6-7"><span class="num">6.7</span>Ajustes, tablas y figuras del bloque</h2>
+  <p>El bloque produce hasta cinco figuras, todas editables y exportables. El mapa, la silueta y los tamaños aparecen con cualquier método; el mapa de pertenencias, con fuzzy c-means y mezclas; el gráfico de vecinos, con DBSCAN; el perfil del BIC, con mezclas cuando se comparan varios ajustes.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.9.</b> Las figuras del bloque y sus controles propios.</caption>
+    <thead><tr><th style="width:26%">Figura</th><th style="width:28%">Qué muestra</th><th>Controles propios</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cluster map</span></td><td>Los objetos sobre dos ejes, por grupo (figuras 6.3, 6.4 y 6.10).</td><td><span class="ui">Cluster region</span> (elipse del 95 %, envolvente convexa o nada) y su opacidad; <span class="ui">Centres</span> (centroide ◆, medoide como anillo o nada); números de grupo; etiquetas (automáticas hasta 60); tamaño y forma de punto; <span class="ui">Shape by known group</span>; <span class="ui">Fade uncertain objects</span>; color del ruido; paleta y leyenda.</td></tr>
+      <tr><td><span class="ui">Silhouette plot</span></td><td>Una barra por objeto, ordenadas dentro de cada grupo, con la media en rojo y el resumen por grupo a la derecha (figura 6.4).</td><td><span class="ui">Object labels (n ≤ 80)</span>, color de la línea media, paleta.</td></tr>
+      <tr><td><span class="ui">Cluster sizes</span></td><td>Objetos por grupo con su silueta media; el ruido en gris.</td><td>Color del ruido, paleta.</td></tr>
+      <tr><td><span class="ui">Membership degrees</span> / <span class="ui">Posterior membership probabilities</span></td><td>Pertenencias o probabilidades por objeto y grupo (figura 6.5).</td><td><span class="ui">Colour map</span>, etiquetas (hasta 80), paleta.</td></tr>
+      <tr><td><span class="ui">k-NN distance plot</span></td><td>Distancias al vecino minPts − 1, ordenadas, con ε y la rodilla (figura 6.9).</td><td>Título, paleta.</td></tr>
+      <tr><td><span class="ui">BIC by number of components and model</span></td><td>BIC de cada ajuste, con el mejor marcado (figura 6.7).</td><td>Paleta y leyenda.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · leer el gráfico de silueta</div>
+    <p>Para cada objeto, <i>a</i> es su disimilitud media a los demás de su grupo y <i>b</i> la disimilitud media al grupo vecino más cercano; su silueta es (<i>b</i> − <i>a</i>)/máx(<i>a</i>, <i>b</i>). Una barra larga hacia la derecha es un objeto bien colocado; una barra cerca de cero, un objeto en la frontera; una barra hacia la izquierda, un objeto que estaría mejor en el grupo vecino. Un grupo de barras cortas y parejas es un grupo difuso; un grupo con unas pocas barras negativas al final tiene miembros mal asignados. Los umbrales de la media son los de la sección 1.9: 0.7 fuerte, 0.5 razonable, 0.25 débil.</p>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · qué se lleva el informe y la descarga</div>
+    <p><span class="ui">⬇ Cluster membership (CSV)</span> guarda, por objeto, su etiqueta, la agrupación conocida si existe, el grupo asignado (0 = ruido), las pertenencias o probabilidades si el método las da y la silueta. La partición de este bloque es la que usan el Bloque 6, para validarla, y el Bloque 7, para describir los grupos; el informe del Bloque 8 incluye sus casillas, tablas y figuras tal como las editaste.</p>
+  </div>
+
+  <!-- 6.8 -->
+  <h2 id="s6-8"><span class="num">6.8</span>Comparar métodos con el mismo k</h2>
+  <p class="lead">La tercera tarjeta corre los métodos marcados con el <i>k</i> de la tarjeta 1 y mide su acuerdo con el índice de Rand ajustado. DBSCAN no participa porque elige su propio número de grupos; en cambio puede entrar el corte del árbol del Bloque 4. Vienen marcados el corte, k-means, PAM, fuzzy c-means y la mezcla gaussiana.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-comparar-tabla.png" alt="Tabla de comparación de métodos"></div>
+    <figcaption><b>Figura 6.11.</b> La comparación con el maíz en <i>k</i> = 3: cuatro de los cinco métodos dan la misma partición (silueta 0.419, 66.4 %); PAM difiere en una accesión (ACC-029). El párrafo concluye que los grupos son robustos al algoritmo.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.10.</b> Columnas de la comparación y cómo la resume la app.</caption>
+    <thead><tr><th style="width:30%">Elemento</th><th>Qué es</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Mean silhouette</span> · <span class="ui">s &lt; 0</span></td><td>Silueta media sobre la matriz del Bloque 3 y objetos con silueta negativa.</td></tr>
+      <tr><td><span class="ui">BSS / TSS</span></td><td>Variación explicada, en el espacio de coordenadas elegido en la tarjeta 1.</td></tr>
+      <tr><td><span class="ui">Cluster sizes</span></td><td>Tamaños de los grupos.</td></tr>
+      <tr><td><span class="ui">Mean ARI with the others</span></td><td>Promedio del ARI con los demás métodos: el más alto es el más "central".</td></tr>
+      <tr><td><span class="ui">ARI vs known groups</span></td><td>Acuerdo con la agrupación conocida, si existe.</td></tr>
+      <tr><td>Párrafo</td><td>Nombra el método de mayor silueta y lee el ARI mínimo entre pares: &gt; 0.8, <span class="ui">All methods essentially agree</span> (grupos robustos al algoritmo); 0.5–0.8, <span class="ui">Moderate agreement</span> (un núcleo estable y el resto depende del método); menor, <span class="ui">Methods disagree</span> (la partición no es robusta: revisa <i>k</i> en el Bloque 6 o los supuestos de los métodos).</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · en la comparación los parámetros son fijos</div>
+    <p>Para que la comparación sea rápida y reproducible, cada método se corre con valores estándar, no con los de la tarjeta 1: k-means con 10 arranques y k-means++, k-means jerárquico desde el corte, PAM y CLARA con sus valores por defecto, fuzzy c-means con <i>m</i> = 2, la mezcla con <i>k</i> fijo y los modelos VVI y VVV, y el espectral con 7 vecinos. Todos usan la semilla y la fuente de coordenadas de la tarjeta 1. Por eso la mezcla da tres grupos aquí aunque el BIC haya preferido cuatro.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-comparar-fig.png" alt="Matriz de acuerdo entre métodos"></div>
+    <figcaption><b>Figura 6.12.</b> <span class="ui">Agreement between methods</span>: el ARI entre cada par de particiones. Con el maíz todo es amarillo salvo la fila y la columna de PAM (0.93).</figcaption>
+  </figure>
+
+  <!-- 6.9 -->
+  <h2 id="s6-9"><span class="num">6.9</span>Paso a paso</h2>
+  <p class="lead">Con cada ejemplo preparado en los Bloques 2 a 4 con los valores propuestos (UPGMA en los ejemplos binario y de insectos, como en el capítulo 5), la tabla 6.11 resume el método que propone el Bloque 5 y otras corridas que enseñan algo. Las prácticas se detienen en cada caso.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 6.11.</b> Los siete ejemplos en el Bloque 5.</caption>
+    <thead><tr><th style="width:15%">Ejemplo</th><th style="width:22%">Método</th><th class="c" style="width:8%"><i>k</i></th><th class="c" style="width:10%">Silueta</th><th class="c" style="width:12%">ARI grupos</th><th>Observación</th></tr></thead>
+    <tbody>
+      <tr><td>Razas de maíz</td><td>k-means jerárquico*</td><td class="c">3</td><td class="c">0.419</td><td class="c">1.000</td><td>Igual que k-means, fuzzy, DBSCAN y espectral.</td></tr>
+      <tr><td></td><td>PAM</td><td class="c">3</td><td class="c">0.415</td><td class="c">0.929</td><td>ACC-029 con silueta negativa.</td></tr>
+      <tr><td></td><td>Mezcla (BIC)</td><td class="c">4</td><td class="c">0.387</td><td class="c">0.873</td><td>VII divide los valles en 10 y 5.</td></tr>
+      <tr><td>Presencia de especies</td><td>PAM*</td><td class="c">3</td><td class="c">0.334</td><td class="c">1.000</td><td>Separa el sitio S05 mejor que el árbol.</td></tr>
+      <tr><td></td><td>DBSCAN</td><td class="c">2</td><td class="c">0.551</td><td class="c">0.462</td><td>57 % de ruido; la silueta solo ve los núcleos.</td></tr>
+      <tr><td>Abundancia de insectos</td><td>PAM*</td><td class="c">3</td><td class="c">0.294</td><td class="c">0.610</td><td>4 / 8 / 12: parte los campos orgánicos.</td></tr>
+      <tr><td></td><td>k-means sobre PCoA</td><td class="c">3</td><td class="c">0.288</td><td class="c">1.000</td><td>8 / 8 / 8: los tres paisajes.</td></tr>
+      <tr><td>Perfiles de suelo</td><td>PAM*</td><td class="c">2</td><td class="c">0.575</td><td class="c">—</td><td>Igual que el árbol; fuzzy y mezcla mueven un perfil.</td></tr>
+      <tr><td>Matriz de distancias</td><td>PAM*</td><td class="c">3</td><td class="c">0.665</td><td class="c">—</td><td>DBSCAN (minPts 3) deja a Olotillo como ruido.</td></tr>
+      <tr><td>Cuatro grupos simulados</td><td>k-means jerárquico*</td><td class="c">4</td><td class="c">0.714</td><td class="c">1.000</td><td>Estructura fuerte; DBSCAN sin ruido.</td></tr>
+      <tr><td>Ruido uniforme</td><td>k-means jerárquico*</td><td class="c">3</td><td class="c">0.174</td><td class="c">—</td><td>Aviso rojo; los métodos no coinciden (ARI mínimo 0.19).</td></tr>
+    </tbody>
+  </table>
+  <p class="small">* Método propuesto por la app. Con árbol en el Bloque 4 y datos cuantitativos propone k-means jerárquico, que en estos tres ejemplos da la misma partición que k-means.</p>
+
+  <h3>Práctica 1 · Razas de maíz: ocho métodos, una misma respuesta</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con el maíz y el árbol de Ward.D2 cortado en tres grupos, entra al Bloque 5. La recomendación es k-means jerárquico con <i>k</i> = 3 sobre la matriz de trabajo. Pulsa <span class="ui">Run →</span>: silueta 0.419, 66.4 % explicado, una iteración, ARI 1.000 con el árbol y con las regiones.</li>
+      <li>Cambia a <span class="ui">k-means</span> y corre (figuras 6.2 y 6.3): la misma partición, en dos iteraciones con 25 arranques.</li>
+      <li>Corre <span class="ui">PAM (k-medoids)</span> y <span class="ui">CLARA</span> (figura 6.4): 16 / 14 / 14, silueta 0.415, con ACC-029 en el grupo de costa. CLARA da exactamente lo mismo: con 44 objetos su muestra de 46 los abarca a todos.</li>
+      <li>Corre <span class="ui">Fuzzy c-means</span> (figura 6.5), <span class="ui">DBSCAN</span> (figura 6.9) y <span class="ui">Spectral</span>: los tres reproducen las regiones.</li>
+      <li>Corre <span class="ui">Gaussian mixture (EM + BIC)</span> (figura 6.7): el BIC elige VII con cuatro componentes.</li>
+      <li>Vuelve a k-means y pulsa <span class="ui">Compare</span> (figuras 6.11 y 6.12).</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Cuando la estructura es clara, algoritmos con supuestos muy distintos (centroides, medoides, pertenencias, densidad, grafos) llegan al mismo sitio, y ese acuerdo es la mejor evidencia de que los grupos son reales. Lo que cambia son los <b>detalles</b>, y son informativos: PAM, fuzzy c-means y la silueta señalan la misma accesión dudosa, ACC-029, y la mezcla gaussiana sugiere que el grupo de valles tiene subestructura. Nada de eso cambia la conclusión principal, pero son los objetos que conviene revisar en los datos originales. Y la silueta de 0.42, "débil", convive con un acuerdo perfecto: tres grupos que se tocan pueden ser muy estables.</p>
+  </div>
+
+  <h3>Práctica 2 · Presencia de especies: PAM, k-means sobre PCoA y DBSCAN</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Jaccard y el árbol UPGMA, la app propone PAM. Corre: 10 / 10 / 10, silueta 0.334, ARI 1.000 con los hábitats y 0.898 con el árbol. PAM coloca en el bosque al sitio S05 que el árbol UPGMA dejaba con los pastizales (capítulo 5).</li>
+      <li>Cambia a k-means con la fuente <span class="ui">Working matrix</span>: la misma partición, pero aparece la comprobación <span class="ui">Coordinate method on the working matrix</span>. Cambia a <span class="ui">PCoA axes</span>: igual partición y el aviso desaparece.</li>
+      <li>Corre <span class="ui">DBSCAN</span> con los valores automáticos (figuras 6.13 y 6.14): ε = 0.4, dos grupos (4 pastizales y 9 humedales) y 17 objetos de ruido (57 %). La silueta sube a 0.551.</li>
+      <li>Corre la mezcla gaussiana sobre los ejes del PCoA: el BIC elige VVI con dos componentes, humedales frente a todo lo demás (ARI 0.554).</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b5-binario-dbscan.png" alt="DBSCAN sobre Jaccard con mucho ruido"></div>
+    <figcaption><b>Figura 6.13.</b> DBSCAN sobre Jaccard: una silueta "razonable" de 0.551 calculada sobre solo 13 sitios, con los avisos de que ignora el ruido y de que más del 30 % de los objetos quedaron fuera. Los bosques, más heterogéneos en su composición, no alcanzan la densidad de un núcleo y quedan todos como ruido.</figcaption>
+  </figure>
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-binario-dbscan-mapa.png" alt="Mapa de DBSCAN con ruido"></div>
+    <figcaption><b>Figura 6.14.</b> El mapa de DBSCAN: el ruido se dibuja con cruces grises. Solo los humedales (a la izquierda) y un núcleo de cuatro pastizales forman grupos densos.</figcaption>
+  </figure>
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · no compares siluetas con y sin ruido</div>
+    <p>DBSCAN puede "mejorar" la silueta simplemente dejando fuera los objetos difíciles. Una silueta de 0.551 sobre 13 objetos no es mejor que una de 0.334 sobre los 30. Para comparar métodos usa la tarjeta 3, que corre todos sobre todos los objetos (DBSCAN no entra precisamente por eso), o compara el ARI con una referencia. DBSCAN es valioso aquí por otra razón: dice que los bosques no forman un núcleo compacto de composición florística.</p>
+  </div>
+
+  <h3>Práctica 3 · Abundancia de insectos: la matriz y sus coordenadas</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Bray–Curtis y el árbol UPGMA, la app propone PAM. Corre: 4 / 8 / 12, silueta 0.294, ARI 0.610 con los paisajes. Un grupo de cuatro campos orgánicos (P02, P04, P06, P08) se separa; los otros cuatro caen con los setos.</li>
+      <li>Cambia a k-means con <span class="ui">PCoA axes</span> (figura 6.10): 8 / 8 / 8, ARI 1.000, silueta 0.288 y el aviso <span class="ui">Cluster 2 is poorly defined</span> (0.19) sobre los campos orgánicos.</li>
+      <li>Corre fuzzy c-means con la misma fuente: la misma partición, pero coeficiente normalizado 0.292 y el aviso <span class="ui">Very fuzzy partition</span>.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Las dos particiones tienen casi la misma silueta y describen cosas distintas. PAM, que minimiza disimilitudes a objetos reales, reconoce que los campos orgánicos son heterogéneos: la mitad se parece a los setos. k-means sobre el PCoA, que minimiza cuadrados, prefiere tres grupos del mismo tamaño y recupera los paisajes, pero la silueta y las pertenencias difusas avisan de que el grupo de campos orgánicos es el menos definido. Con tablas de comunidades, las dos rutas son legítimas; la diferencia entre ellas es un resultado ecológico que merece contarse.</p>
+  </div>
+
+  <h3>Práctica 4 · Perfiles de suelo: medoides que son perfiles reales</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Gower y el árbol UPGMA cortado en dos grupos, corre PAM (propuesto): 24 / 12, silueta 0.575 ("razonable"), igual que el árbol (ARI 1.000). Los medoides son PR-17 y PR-11 (figura 6.15).</li>
+      <li>Corre fuzzy c-means sobre <span class="ui">PCoA axes</span> (20 ejes positivos): PR-20 pasa al grupo pequeño (13 / 23), coeficiente normalizado 0.592.</li>
+      <li>Corre la mezcla gaussiana con la misma fuente: el BIC elige VVI con dos componentes y es PR-01 el que cambia (11 / 25), con dos siluetas negativas.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-suelos-pam.png" alt="Mapa de PAM sobre Gower"></div>
+    <figcaption><b>Figura 6.15.</b> PAM sobre Gower con los 36 perfiles. Los anillos marcan los medoides: PR-17 representa al grupo grande y PR-11 al pequeño. Como son perfiles reales, puedes describir cada tipo de suelo con los valores de su medoide. PR-01, abajo a la derecha, es el perfil que la mezcla gaussiana cambia de grupo.</figcaption>
+  </figure>
+
+  <h3>Práctica 5 · Matriz genética: el cultivar que DBSCAN deja fuera</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con la matriz de 12 cultivares y el árbol UPGMA en tres grupos, la recomendación es PAM porque la matriz se usa tal cual. Corre: 4 / 4 / 4, silueta 0.665, igual que el árbol. Medoides: Elotero, Tabloncillo y Azul.</li>
+      <li>Cambia a DBSCAN y baja <span class="ui">minPts</span> a 3 (con 12 objetos, 4 es exigente): ε = 0.18, tres grupos y un objeto de ruido, Olotillo (figura 6.16). ARI con el árbol 0.879.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-matriz-dbscan.png" alt="DBSCAN sobre la matriz genética"></div>
+    <figcaption><b>Figura 6.16.</b> DBSCAN sobre la matriz genética. Los cuatro cultivares de cada grupo están tan juntos en el PCoA que sus etiquetas se enciman; Olotillo (cruz) no tiene ningún cultivar a 0.18 o menos: sus distancias a los otros tres de su grupo son 0.19, 0.20 y 0.21. Por centésimas queda fuera, ni núcleo ni frontera.</figcaption>
+  </figure>
+
+  <h3>Práctica 6 · Cuatro grupos y ruido: cuando la silueta no deja dudas</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los cuatro grupos simulados, corre k-means con <i>k</i> = 4: silueta 0.714 ("fuerte"), 92.5 % explicado, cuatro grupos de 20 (figura 6.17). DBSCAN con minPts = 6 los encuentra también, sin ruido.</li>
+      <li>Con el ruido uniforme, corre k-means con <i>k</i> = 3: aviso rojo <span class="ui">No substantial structure</span> (silueta 0.174), cuatro objetos con silueta negativa y un grupo "mal definido" (figura 6.18).</li>
+      <li>Corre DBSCAN con minPts = 6 (figura 6.19): un solo grupo de 59 objetos y un objeto de ruido. La silueta aparece como "—": con un solo grupo no está definida.</li>
+      <li>Vuelve a k-means y pulsa <span class="ui">Compare</span> (figura 6.20): <span class="ui">Methods disagree</span>, con un ARI mínimo de 0.19 entre k-means y la mezcla.</li>
+    </ol>
+  </div>
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b5-sim-sil.png" alt="Silueta de cuatro grupos simulados"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b5-ruido-sil.png" alt="Silueta del ruido uniforme"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figuras 6.17 y 6.18.</b> Dos siluetas extremas. A la izquierda, los cuatro grupos simulados: barras largas y parejas, media 0.714. A la derecha, el ruido uniforme en tres grupos: barras cortas, media 0.174 y un bloque naranja que termina en barras negativas.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Es la cuarta señal de ausencia de estructura, después de Hopkins (Bloque 2), del desacuerdo entre coeficientes (Bloque 3) y del desacuerdo entre enlaces (Bloque 4): una silueta baja con avisos de grupos mal definidos, métodos que no coinciden entre sí y un DBSCAN que solo encuentra un grupo. De todos los métodos, DBSCAN es el único que puede responder "no hay grupos", porque no necesita <i>k</i>.</p>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b5-ruido-dbscan.png" alt="DBSCAN sobre ruido uniforme"></div>
+    <figcaption><b>Figura 6.19.</b> DBSCAN sobre el ruido uniforme: un solo grupo denso de 59 objetos y un objeto de ruido. La silueta no está definida y la comprobación <span class="ui">A single dense cluster</span> lo explica. Es la respuesta correcta: no hay grupos.</figcaption>
+  </figure>
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-ruido-comparar.png" alt="Comparación de métodos sobre ruido"></div>
+    <figcaption><b>Figura 6.20.</b> La comparación con el ruido uniforme: siluetas entre 0.12 y 0.17, tamaños distintos con cada método y un ARI medio con los demás de 0.31 a 0.39.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · lo que hay que reportar de este bloque</div>
+    <p>En la sección de métodos: el algoritmo con sus parámetros (algoritmo y número de arranques de k-means, <i>m</i> de fuzzy, modelo y criterio de la mezcla, ε y minPts de DBSCAN, grafo y σ del espectral), la fuente de coordenadas si aplica, <i>k</i>, la silueta media sobre qué disimilitud, y la <b>semilla</b>. Si comparaste métodos, el ARI mínimo entre ellos. Por ejemplo: "k-means (Hartigan–Wong, 25 arranques k-means++, semilla 1) sobre los ejes del PCoA de Bray–Curtis produjo tres grupos (silueta media 0.29) que coincidieron con los paisajes (ARI = 1.00)". El párrafo automático del Bloque 8 lo redacta con tus valores.</p>
+  </div>
+
+  <p style="margin-top:0.12in">Con una partición en la mano, falta decidir si ese <i>k</i> es el correcto y si los grupos son estables. El siguiente capítulo presenta los trece criterios para elegir el número de grupos y su votación, el estadístico gap, la estabilidad por remuestreo, el soporte de las ramas del árbol, la validación externa y la comparación de algoritmos a lo largo de <i>k</i>.</p>
+</section>
+
+</body>
+</html>

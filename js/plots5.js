@@ -3,7 +3,7 @@
 
 const P5 = {};
 
-function ellipsePath(pts, x, y) {
+function ellipsePath(pts, x, y, box) {
   /* 95 % concentration ellipse from the 2-D covariance of the points (data units → pixels) */
   if (pts.length < 3) return null;
   const mx = S.mean(pts.map(p => p[0])), my = S.mean(pts.map(p => p[1]));
@@ -14,7 +14,9 @@ function ellipsePath(pts, x, y) {
   const ang = Math.atan2(l1 - sxx, sxy || 1e-12);
   const a = Math.sqrt(5.991 * l1), b = Math.sqrt(5.991 * l2);
   const pts2 = []; for (let t = 0; t <= 72; t++) { const th = t / 72 * 2 * Math.PI; const ex = a * Math.cos(th), ey = b * Math.sin(th); pts2.push([x(mx + ex * Math.cos(ang) - ey * Math.sin(ang)), y(my + ex * Math.sin(ang) + ey * Math.cos(ang))]); }
-  return 'M' + pts2.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L') + ' Z';
+  /* clamp to the plot area: the figure engine fits its viewBox to the drawn content, so a clip-path would not stop an oversized ellipse from enlarging the figure */
+  const cl = box ? p => [Math.min(box.x1, Math.max(box.x0, p[0])), Math.min(box.y1, Math.max(box.y0, p[1]))] : p => p;
+  return 'M' + pts2.map(cl).map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L') + ' Z';
 }
 
 /* ---------- 1. cluster map ---------- */
@@ -32,11 +34,13 @@ P5.map = (cfg, R) => {
   g.appendChild(Fig.el('line', { x1: f.x0, x2: f.x1, y1: y(0), y2: y(0), stroke: f.t.axis, 'stroke-dasharray': '4 4', opacity: 0.5 }));
   const col = c => c === 0 ? (cfg.noiseColor || '#9a9ab0') : Fig.color(cfg.palette, c - 1);
   const gLevels = R.groups ? [...new Set(R.groups)] : null;
+  /* 95 % ellipses of small or elongated clusters can reach far beyond the data: they are clamped to the plot area */
+  const regions = Fig.g(); g.appendChild(regions);
   const shapeOf = i => cfg.shapeBy === 'group' && gLevels ? Fig.shapes[gLevels.indexOf(R.groups[i]) % Fig.shapes.length] : (cfg.shape || 'circle');
   for (let c = 1; c <= k; c++) {
     const pts = C.filter((_, i) => cl[i] === c).map(p => [p[0], p[1] || 0]);
-    if (cfg.region === 'hull' && pts.length >= 3) g.appendChild(Fig.el('path', { d: Geom.blobPath(Geom.hull(pts.map(p => [x(p[0]), y(p[1])])), 8), fill: Fig.alpha(col(c), +cfg.regionAlpha || 0.12), stroke: col(c), 'stroke-width': 1, 'stroke-opacity': 0.7 }));
-    else if (cfg.region === 'ellipse') { const d = ellipsePath(pts, x, y); if (d) g.appendChild(Fig.el('path', { d, fill: Fig.alpha(col(c), +cfg.regionAlpha || 0.12), stroke: col(c), 'stroke-width': 1.2, 'stroke-opacity': 0.8 })); }
+    if (cfg.region === 'hull' && pts.length >= 3) regions.appendChild(Fig.el('path', { d: Geom.blobPath(Geom.hull(pts.map(p => [x(p[0]), y(p[1])])), 8), fill: Fig.alpha(col(c), +cfg.regionAlpha || 0.12), stroke: col(c), 'stroke-width': 1, 'stroke-opacity': 0.7 }));
+    else if (cfg.region === 'ellipse') { const d = ellipsePath(pts, x, y, f); if (d) regions.appendChild(Fig.el('path', { d, fill: Fig.alpha(col(c), +cfg.regionAlpha || 0.12), stroke: col(c), 'stroke-width': 1.2, 'stroke-opacity': 0.8 })); }
   }
   const r = +cfg.pointSize || 4.5;
   /* fuzzy / model-based: point opacity by certainty */
@@ -142,7 +146,7 @@ P5.knn = (cfg, R) => {
   const g = Fig.g(), eps = R.params.eps;
   g.appendChild(Fig.el('path', { d: 'M' + d.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' L'), fill: 'none', stroke: Fig.color(cfg.palette, 0), 'stroke-width': 2 }));
   g.appendChild(Fig.el('line', { x1: f.x0, x2: f.x1, y1: y(eps), y2: y(eps), stroke: '#d64a6a', 'stroke-dasharray': '6 3', 'stroke-width': 1.4 }));
-  g.appendChild(Fig.text(f.x1 - 6, y(eps) - 6, `ε = ${fmtNum(eps, 4)}${R.epsAuto ? ' (knee)' : ''} · objects above the line become noise`, { size: 11, anchor: 'end', weight: 'bold', fill: '#d64a6a', font: f.font, role: 'label' }));
+  g.appendChild(Fig.text(f.x1 - 6, y(eps) - 6, `ε = ${fmtNum(eps, 4)}${R.epsAuto ? ' (knee)' : ''} · objects above the line are not core points (border or noise)`, { size: 11, anchor: 'end', weight: 'bold', fill: '#d64a6a', font: f.font, role: 'label' }));
   if (R.knee != null) g.appendChild(Fig.marker(x(R.knee), y(d[R.knee]), 5, 'circle', { fill: 'none', stroke: '#d64a6a', 'stroke-width': 2 }));
   f.g.appendChild(g);
   return svg;
