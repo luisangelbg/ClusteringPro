@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · Manual de usuario · Bloque 1: inicio y teoría</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b1" data-pestana="B1" data-orden="2" style="--acento: var(--b1)">
+  <div class="cap-apertura">
+    <div class="cap-num">B1</div>
+    <div class="cap-etiqueta">Capítulo dos · Bloque 1 · Home</div>
+    <h1 data-corto="Bloque 1 · Inicio y teoría">Inicio y teoría</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">La portada de la app es a la vez un mapa del programa, un laboratorio donde puedes ver cómo k-means y un dendrograma agrupan los mismos puntos, un catálogo de los tipos de datos y los métodos, y un curso breve de teoría en trece lecciones. Este capítulo la recorre de arriba abajo y propone cinco prácticas con el demo.</p>
+    <div class="cap-franja"><span class="k1"></span><span class="k1" style="opacity:.75"></span><span class="k1" style="opacity:.5"></span><span class="k1" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>2.1</b>La portada de la app</li>
+      <li><b>2.2</b>El demo interactivo: k-means y dendrograma</li>
+      <li><b>2.3</b>Tipos de datos y métodos, de un vistazo</li>
+      <li><b>2.4</b>Las trece lecciones de teoría</li>
+      <li><b>2.5</b>¿Qué método uso? La tabla de elección</li>
+      <li><b>2.6</b>Cómo citar</li>
+    </ul>
+  </div>
+
+  <!-- 2.1 -->
+  <h2 id="s2-1"><span class="num">2.1</span>La portada de la app</h2>
+  <p class="lead">Al abrir <code>index.html</code> aparece el Bloque 1. Se lee como un folleto, de arriba abajo: primero qué hace el programa, luego cómo se recorre, después el demo para experimentar, los tipos de datos y los métodos, la teoría, una tabla para elegir método y, al final, cómo citarlo. La figura 1.1 del capítulo anterior muestra la parte superior; la tabla 2.1 enumera todas las secciones en el orden en que aparecen.</p>
+
+  <table>
+    <caption><b>Tabla 2.1.</b> Secciones de la portada, en el orden en que aparecen.</caption>
+    <thead><tr><th style="width:30%">Sección en la app</th><th>Qué contiene</th><th style="width:26%">Para qué te sirve</th></tr></thead>
+    <tbody>
+      <tr><td><b>Presentación</b><br><span class="small">cuatro botones y cuatro garantías</span></td><td><span class="ui">Start with my data →</span>, <span class="ui">Try the live demo</span>, <span class="ui">Read the theory</span> y <span class="ui">How to cite</span>; a la derecha, una ilustración con un dendrograma y un mapa de grupos.</td><td>Ir directo a cargar datos o a una sección de la portada.</td></tr>
+      <tr><td><span class="ui">How it works</span></td><td>Los seis pasos de un análisis, del archivo al artículo (figura 2.1 y tabla 2.2).</td><td>Ubicar cada bloque en la lógica de un estudio.</td></tr>
+      <tr><td><span class="ui">Try it: k-means and a dendrogram on the same points</span></td><td>El demo interactivo (sección 2.2).</td><td>Entender, jugando, qué hace cada familia de métodos y por qué se equivoca.</td></tr>
+      <tr><td><span class="ui">What's inside</span></td><td>Una tarjeta por bloque, con ilustración y descripción (figura 1.6).</td><td>Saltar a un bloque con un clic.</td></tr>
+      <tr><td><span class="ui">Every kind of data</span></td><td>Siete tipos de tabla y los coeficientes que convienen a cada uno (sección 2.3).</td><td>Confirmar que tus datos caben en el programa.</td></tr>
+      <tr><td><span class="ui">Methods covered</span></td><td>Galería de quince métodos en cuatro familias (sección 2.3).</td><td>Ver de un vistazo todo lo que se puede calcular.</td></tr>
+      <tr><td><span class="ui">Clustering, explained without the fog</span></td><td>Trece lecciones desplegables con figuras (sección 2.4).</td><td>Repasar la teoría antes de interpretar o defender resultados.</td></tr>
+      <tr><td><span class="ui">Which method should I use?</span></td><td>Tabla de elección por tipo de datos (sección 2.5).</td><td>Tener un punto de partida razonable.</td></tr>
+      <tr><td><span class="ui">Why ClusteringPro</span> y <span class="ui">Glossary at a glance</span></td><td>Seis argumentos y veintinueve términos clave en fichas.</td><td>Justificar el uso del programa y reconocer el vocabulario.</td></tr>
+      <tr><td><span class="ui">How to cite ClusteringPro</span></td><td>La referencia lista para copiar en formato APA o BibTeX (sección 2.6).</td><td>Citar correctamente en tu artículo o tesis.</td></tr>
+      <tr><td><span class="ui">Go to Block 2: load your data →</span></td><td>El botón de cierre.</td><td>Empezar el análisis.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-flujo.png" alt="Los seis pasos de How it works"></div>
+    <figcaption><b>Figura 2.1.</b> La sección <span class="ui">How it works</span>. Los seis pasos siguen el orden en que se escribe la sección de métodos de un artículo; el dendrograma es el final del proceso, no el principio.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 2.2.</b> Los seis pasos de la portada y los bloques que los resuelven.</caption>
+    <thead><tr><th style="width:9%">Paso</th><th style="width:25%">En la app</th><th>Qué se hace</th><th style="width:16%">Bloques</th></tr></thead>
+    <tbody>
+      <tr><td class="c">1</td><td><span class="ui">Load &amp; explore</span></td><td>Tipificar las columnas, escalar, revisar atípicos y medir la tendencia al agrupamiento.</td><td><span class="chip k2">2</span></td></tr>
+      <tr><td class="c">2</td><td><span class="ui">Measure similarity</span></td><td>Elegir el coeficiente que corresponde a los datos y calcular la matriz.</td><td><span class="chip k3">3</span></td></tr>
+      <tr><td class="c">3</td><td><span class="ui">Cluster</span></td><td>Construir el árbol o la partición: jerárquico, particionamiento, densidad o mezclas.</td><td><span class="chip k4">4</span> <span class="chip k5">5</span></td></tr>
+      <tr><td class="c">4</td><td><span class="ui">Choose k</span></td><td>Decidir cuántos grupos conservar con el codo, la silueta, el gap y el consenso de índices.</td><td><span class="chip k6">6</span></td></tr>
+      <tr><td class="c">5</td><td><span class="ui">Validate</span></td><td>Validación interna, estabilidad por remuestreo y comparación con grupos conocidos.</td><td><span class="chip k6">6</span></td></tr>
+      <tr><td class="c">6</td><td><span class="ui">Interpret &amp; publish</span></td><td>Perfiles de los grupos, predicción de casos nuevos, figuras editables e informe.</td><td><span class="chip k7">7</span> <span class="chip k8">8</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · navegar desde la portada</div>
+    <p>Los botones de la presentación te llevan a la sección correspondiente de la misma portada, salvo <span class="ui">Start with my data →</span>, que abre el Bloque 2. Las tarjetas de <span class="ui">What's inside</span> abren su bloque; si aún no cargaste datos, cualquier tarjeta del 3 en adelante te lleva primero al Bloque 2, porque todos los bloques leen de ahí. Para volver a la portada desde cualquier parte, pulsa el nombre del programa arriba a la izquierda o el botón <span class="ui">1 Home</span> de la barra.</p>
+  </div>
+
+  <!-- 2.2 -->
+  <h2 id="s2-2"><span class="num">2.2</span>El demo interactivo: k-means y dendrograma</h2>
+  <p class="lead">El demo toma un conjunto de puntos en dos dimensiones y lo agrupa de las dos maneras clásicas al mismo tiempo. A la izquierda, k-means mueve sus centros paso a paso; a la derecha, un dendrograma real, calculado con el mismo motor que usa el Bloque 4, se recalcula con cada cambio de regla de enlace y se corta en <i>k</i> grupos. No es una animación decorativa: los números de la línea de resultados son los mismos que verás en los bloques de análisis.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · dos maneras de agrupar los mismos puntos</div>
+    <p><b>k-means</b> parte de <i>k</i> centros y repite dos pasos hasta que nada cambia: asigna cada punto al centro más cercano y mueve cada centro al promedio de sus puntos. Busca grupos redondos y de tamaño parecido, y necesita <i>k</i> de antemano. El <b>agrupamiento jerárquico</b> no fija <i>k</i>: empieza con cada punto en su propio grupo y une, una y otra vez, los dos grupos más cercanos hasta que queda uno solo. El resultado es un árbol, y cortarlo a una altura produce una partición. Qué significa "más cercanos" lo decide la <b>regla de enlace</b>, y ahí está la gracia del demo: con los mismos puntos, cada regla dibuja un árbol distinto.</p>
+  </div>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b1-demo.png" alt="El demo con tres grupos redondos después de correr k-means">
+      <span class="marca" style="left:16.7%;top:7.5%">1</span>
+      <span class="marca" style="left:32.4%;top:7.5%">2</span>
+      <span class="marca" style="left:52.7%;top:7.5%">3</span>
+      <span class="marca" style="left:66%;top:7.5%">4</span>
+      <span class="marca" style="left:81.4%;top:7.5%">5</span>
+      <span class="marca" style="left:36%;top:52%">6</span>
+      <span class="marca" style="left:57.2%;top:44.8%">7</span>
+      <span class="marca" style="left:1.6%;top:94%">8</span>
+    </div>
+    <figcaption><b>Figura 2.2.</b> El demo con el conjunto <span class="ui">Three round groups</span> después de pulsar <span class="ui">▶ Run k-means</span> con <i>k</i> = 3 y enlace Ward.D2. Las dos maneras de agrupar coinciden por completo.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Dataset</span>: seis conjuntos de puntos preparados (tabla 2.4).</li>
+    <li><span class="n">2</span><span class="ui">k</span>: número de grupos, de 2 a 6, para k-means y para el corte del árbol.</li>
+    <li><span class="n">3</span><span class="ui">Linkage</span>: la regla de enlace del dendrograma; el árbol se recalcula al instante.</li>
+    <li><span class="n">4</span><span class="ui">▶ Run k-means</span> corre el algoritmo con una pausa entre iteraciones para que veas moverse los centros.</li>
+    <li><span class="n">5</span><span class="ui">Step</span> avanza una iteración, <span class="ui">Regenerate</span> sortea otros puntos y <span class="ui">Reset</span> borra los grupos.</li>
+    <li><span class="n">6</span>Cada grupo de k-means con su centro (estrella) y su envolvente.</li>
+    <li><span class="n">7</span>La línea de corte del árbol; las ramas por debajo se colorean según el grupo.</li>
+    <li><span class="n">8</span>La línea de resultados (tabla 2.5).</li>
+  </ul>
+
+  <table>
+    <caption><b>Tabla 2.3.</b> Los controles del demo.</caption>
+    <thead><tr><th style="width:24%">Control</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Dataset</span></td><td>Cambia el conjunto de puntos. Cada conjunto se genera con la misma semilla, así que al elegirlo verás exactamente los puntos de este manual.</td></tr>
+      <tr><td><span class="ui">k</span></td><td>Fija el número de grupos. Si ya corriste k-means, se reinicia con el nuevo <i>k</i>; el corte del árbol se mueve a la altura que separa <i>k</i> ramas.</td></tr>
+      <tr><td><span class="ui">Linkage</span></td><td>Ocho reglas: simple, completa, promedio (UPGMA), ponderada (WPGMA), centroide, mediana, Ward.D y Ward.D2. Solo afecta al árbol.</td></tr>
+      <tr><td><span class="ui">▶ Run k-means</span></td><td>Coloca <i>k</i> centros al azar y repite las iteraciones hasta converger, una cada 0.4 s.</td></tr>
+      <tr><td><span class="ui">Step</span></td><td>Una sola iteración: útil para ver cómo se reasignan los puntos y se desplazan los centros.</td></tr>
+      <tr><td><span class="ui">Regenerate</span></td><td>Sortea otro conjunto de puntos del mismo tipo (otra semilla). Los números cambiarán.</td></tr>
+      <tr><td><span class="ui">Reset</span></td><td>Quita los grupos de k-means y deja los puntos en gris; el árbol no cambia.</td></tr>
+      <tr><td>Clic en el panel izquierdo</td><td>Añade un punto donde hagas clic (hasta 150). El árbol se recalcula y los grupos de k-means se borran para que vuelvas a correrlo.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 2.4.</b> Los seis conjuntos de puntos y lo que enseña cada uno.</caption>
+    <thead><tr><th style="width:26%">Conjunto</th><th style="width:8%" class="c">Puntos</th><th>Forma</th><th style="width:34%">Lo que muestra</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Three round groups</span></td><td class="c">54</td><td>Tres nubes redondas bien separadas.</td><td>El caso ideal: todos los métodos coinciden.</td></tr>
+      <tr><td><span class="ui">Four groups</span></td><td class="c">60</td><td>Cuatro nubes en las esquinas.</td><td>Cómo cambian los índices al pasar de <i>k</i> = 3 a <i>k</i> = 4.</td></tr>
+      <tr><td><span class="ui">Elongated groups</span></td><td class="c">58</td><td>Dos nubes alargadas y una redonda.</td><td>k-means corta las nubes alargadas; el árbol no.</td></tr>
+      <tr><td><span class="ui">Two moons</span></td><td class="c">60</td><td>Dos medias lunas entrelazadas.</td><td>Formas curvas: solo el enlace simple las recupera.</td></tr>
+      <tr><td><span class="ui">Ring + core</span></td><td class="c">64</td><td>Un anillo con un núcleo dentro.</td><td>Un grupo dentro de otro: k-means no puede.</td></tr>
+      <tr><td><span class="ui">Uniform noise (no structure)</span></td><td class="c">55</td><td>Puntos al azar, sin grupos.</td><td>Los algoritmos devuelven grupos aunque no existan.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>La línea de resultados</h3>
+  <p>Debajo de los dos paneles, una línea resume el estado del demo. Son cuatro números que volverás a encontrar en los Bloques 4, 5 y 6, así que conviene aprender a leerlos aquí.</p>
+  <table>
+    <caption><b>Tabla 2.5.</b> Los números de la línea de resultados.</caption>
+    <thead><tr><th style="width:30%">En la app</th><th>Qué mide</th><th style="width:26%">Cómo leerlo</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cophenetic correlation</span></td><td>Correlación entre las distancias originales y las alturas a las que el árbol une cada par de puntos.</td><td>Por encima de 0.75 el árbol resume bien las distancias. Cambia con el enlace, no con <i>k</i>.</td></tr>
+      <tr><td><span class="ui">k-means iteration</span></td><td>Cuántas veces se reasignaron los puntos y se movieron los centros.</td><td>Pocas iteraciones con grupos claros; muchas cuando los grupos se traslapan.</td></tr>
+      <tr><td><span class="ui">between-SS / total-SS</span></td><td>Porcentaje de la variación total que queda explicado por las diferencias entre grupos.</td><td>Siempre sube al aumentar <i>k</i>; sirve para buscar el codo, no el máximo.</td></tr>
+      <tr><td><span class="ui">average silhouette</span></td><td>Promedio de la silueta de todos los puntos (sección 1.9).</td><td>0.7 o más, estructura fuerte; 0.5, razonable; menos de 0.25, dudosa.</td></tr>
+      <tr><td><span class="ui">converged</span></td><td>Aparece cuando una iteración ya no cambia nada.</td><td>Hasta entonces la partición es provisional.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · los números de este manual son reproducibles</div>
+    <p>Los puntos de cada conjunto y los centros iniciales de k-means se sortean con una semilla fija. Mientras no pulses <span class="ui">Regenerate</span> obtendrás exactamente los valores de las prácticas siguientes. Después de regenerar, las cifras cambian pero las conclusiones se mantienen.</p>
+  </div>
+
+  <h3>Práctica 1 · Tres grupos redondos: el caso ideal</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>En la portada pulsa <span class="ui">Try the live demo</span>. El conjunto inicial es <span class="ui">Three round groups</span>, con <i>k</i> = 3 y enlace Ward.D2.</li>
+      <li>Pulsa <span class="ui">Step</span> varias veces y observa: primero aparecen tres estrellas en posiciones arbitrarias, luego los puntos cambian de color y las estrellas se desplazan hacia el centro de cada nube. Pulsa <span class="ui">Reset</span> y después <span class="ui">▶ Run k-means</span> para verlo de corrido: converge en cuatro iteraciones (figura 2.2).</li>
+      <li>Mueve <span class="ui">k</span> a 2 y luego a 4, corriendo k-means cada vez, y anota los dos últimos números de la línea de resultados (tabla 2.6).</li>
+      <li>Vuelve a <i>k</i> = 3 y cambia la regla en <span class="ui">Linkage</span>. Fíjate en la correlación cofenética y en si el corte del árbol sigue separando las tres nubes (tabla 2.7).</li>
+    </ol>
+  </div>
+  <div class="dos">
+    <table class="compacta">
+      <caption><b>Tabla 2.6.</b> k-means en los tres grupos redondos según <i>k</i>.</caption>
+      <thead><tr><th class="c"><i>k</i></th><th class="c">Iteraciones</th><th class="c">SS entre / total</th><th class="c">Silueta media</th></tr></thead>
+      <tbody>
+        <tr><td class="c">2</td><td class="c">3</td><td class="c">33.1 %</td><td class="c">0.398</td></tr>
+        <tr><td class="c"><b>3</b></td><td class="c">4</td><td class="c">87.6 %</td><td class="c"><b>0.691</b></td></tr>
+        <tr><td class="c">4</td><td class="c">3</td><td class="c">88.7 %</td><td class="c">0.553</td></tr>
+      </tbody>
+    </table>
+    <table class="compacta">
+      <caption><b>Tabla 2.7.</b> Correlación cofenética de los ocho enlaces con los mismos 54 puntos.</caption>
+      <thead><tr><th>Enlace</th><th class="c">Cofenética</th><th>Enlace</th><th class="c">Cofenética</th></tr></thead>
+      <tbody>
+        <tr><td>Single</td><td class="c">0.800</td><td>Centroid</td><td class="c">0.877</td></tr>
+        <tr><td>Complete</td><td class="c">0.869</td><td>Median</td><td class="c">0.855</td></tr>
+        <tr><td>Average (UPGMA)</td><td class="c"><b>0.883</b></td><td>Ward.D</td><td class="c">0.864</td></tr>
+        <tr><td>Weighted (WPGMA)</td><td class="c">0.862</td><td>Ward.D2</td><td class="c">0.877</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>La suma de cuadrados entre grupos <b>siempre crece</b> con <i>k</i>: pasar de 2 a 3 grupos la dispara del 33 al 88 %, pero pasar de 3 a 4 apenas la mueve. Ese cambio brusco de pendiente es el <b>codo</b>. La silueta, en cambio, tiene un máximo claro en <i>k</i> = 3, porque con 4 grupos una nube se parte en dos mitades que están más cerca entre sí que de cualquier otra cosa. Y con grupos tan nítidos, los ocho enlaces dan árboles muy fieles a las distancias (cofenética de 0.80 a 0.88; el promedio, UPGMA, es el más alto, como suele ocurrir) y todos, salvo el simple, separan las tres nubes al cortar en 3. Los Bloques 4 y 6 hacen este mismo razonamiento con tus datos y con trece criterios en lugar de dos.</p>
+  </div>
+
+  <h3>Práctica 2 · Dos lunas: donde k-means se equivoca</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>En <span class="ui">Dataset</span> elige <span class="ui">Two moons</span> y baja <span class="ui">k</span> a 2.</li>
+      <li>Pulsa <span class="ui">▶ Run k-means</span>. Cuando converja, mira cómo quedó repartida cada luna.</li>
+      <li>En <span class="ui">Linkage</span> elige <span class="ui">Single</span> y compara el corte del árbol con los grupos de k-means (figura 2.3).</li>
+      <li>Prueba después <span class="ui">Average (UPGMA)</span> y <span class="ui">Ward.D2</span>: los colores del árbol vuelven a mezclar las lunas.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b1-lunas.png" alt="Dos lunas: k-means frente a enlace simple"></div>
+    <figcaption><b>Figura 2.3.</b> <span class="ui">Two moons</span> con <i>k</i> = 2. k-means (izquierda) parte cada luna por la mitad, porque solo sabe trazar fronteras rectas entre centros. El enlace simple (derecha) sigue la cadena de vecinos cercanos y recupera las dos lunas exactas.</figcaption>
+  </figure>
+  <table class="compacta">
+    <caption><b>Tabla 2.8.</b> Dos lunas con <i>k</i> = 2: acuerdo de cada método con las lunas verdaderas, medido con el índice de Rand ajustado (ARI; 1 = acuerdo perfecto, 0 = azar).</caption>
+    <thead><tr><th>Método</th><th class="c">ARI con las lunas</th><th class="c">Cofenética</th><th class="c">Silueta media</th></tr></thead>
+    <tbody>
+      <tr><td>k-means</td><td class="c">0.391</td><td class="c">—</td><td class="c">0.453</td></tr>
+      <tr><td>Árbol, enlace simple, corte en 2</td><td class="c"><b>1.000</b></td><td class="c">0.651</td><td class="c">—</td></tr>
+      <tr><td>Árbol, UPGMA, corte en 2</td><td class="c">0.312</td><td class="c"><b>0.751</b></td><td class="c">—</td></tr>
+      <tr><td>Árbol, Ward.D2, corte en 2</td><td class="c">0.312</td><td class="c">0.739</td><td class="c">—</td></tr>
+    </tbody>
+  </table>
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla · una cifra alta no significa grupos correctos</div>
+    <p style="margin:0;padding:0.08in 0.16in 0.1in">El enlace simple es el único que recupera las lunas y, sin embargo, tiene la cofenética <b>más baja</b> (0.651 frente a 0.751 de UPGMA). La cofenética mide qué tan bien el árbol reproduce las distancias entre pares, no si los grupos son los verdaderos. Del mismo modo, la silueta de k-means (0.453) no es despreciable aunque la partición sea absurda: la silueta premia grupos compactos y redondos. Con formas curvas o alargadas, mira siempre la figura antes que el índice.</p>
+  </div>
+
+  <h3>Práctica 3 · Un anillo con un núcleo</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Elige <span class="ui">Ring + core</span>, deja <i>k</i> = 2 y <span class="ui">Single</span> como enlace.</li>
+      <li>Corre k-means y compara los dos paneles (figura 2.4).</li>
+      <li>Cambia a <span class="ui">Complete</span>, <span class="ui">Average (UPGMA)</span> y <span class="ui">Ward.D2</span>: ninguno separa el núcleo del anillo.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b1-anillo.png" alt="Anillo con núcleo: k-means frente a enlace simple"></div>
+    <figcaption><b>Figura 2.4.</b> <span class="ui">Ring + core</span> con <i>k</i> = 2. k-means corta el conjunto en dos mitades (silueta 0.303, 33.9 % de la variación entre grupos). El enlace simple aísla el núcleo como un grupo y el anillo como otro: acuerdo perfecto con la verdad (ARI = 1.000) pese a una cofenética de solo 0.252. Con enlace completo, UPGMA o Ward el ARI queda cerca de cero.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Un grupo dentro de otro no tiene "centro" propio: el centro del anillo cae en el núcleo. Por eso ninguna regla que trabaje con centros o con promedios de distancias puede separarlos, y solo el enlace simple, que une vecinos inmediatos, encadena los puntos del anillo entre sí. En el Bloque 5 encontrarás dos métodos hechos para estas formas: <b>DBSCAN</b>, que agrupa por densidad y además reconoce el ruido, y el agrupamiento <b>espectral</b>, que usa el grafo de vecinos más cercanos. La regla práctica es: si tu mapa de puntos muestra formas curvas, anilladas o alargadas, no confíes en k-means ni en Ward.</p>
+  </div>
+
+  <h3>Práctica 4 · Grupos alargados y el problema de los arranques</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Elige <span class="ui">Elongated groups</span>, sube <i>k</i> a 3 y vuelve a <span class="ui">Ward.D2</span>.</li>
+      <li>Corre k-means. Fíjate en cómo la nube alargada de la izquierda se reparte entre dos centros, mientras el árbol separa las tres nubes correctamente (figura 2.5).</li>
+      <li>Pulsa <span class="ui">Regenerate</span> y corre k-means de nuevo, varias veces: con otros puntos y otros centros iniciales, unas veces acierta y otras no.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b1-alargados.png" alt="Grupos alargados: k-means frente a Ward.D2"></div>
+    <figcaption><b>Figura 2.5.</b> <span class="ui">Elongated groups</span> con <i>k</i> = 3. k-means (ARI = 0.385 con los grupos verdaderos, silueta 0.413) partió la nube horizontal de la izquierda y fusionó su mitad derecha con parte de la nube grande. El árbol de Ward.D2, y también el de UPGMA, recupera las tres nubes (ARI = 1.000).</figcaption>
+  </figure>
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · k-means depende de dónde empieza</div>
+    <p>k-means solo garantiza llegar a un mínimo <b>local</b> de la suma de cuadrados: el resultado depende de los centros iniciales, y con grupos alargados o de tamaños distintos un mal arranque produce una partición mala que aun así "converge". Por eso el Bloque 5 usa por defecto el arranque inteligente <b>k-means++</b> y repite el algoritmo con muchos inicios (<span class="ui">nstart</span>) quedándose con el mejor, y ofrece el <b>k-means jerárquico</b>, que toma los centros de un árbol de Ward. En el demo no hay repeticiones a propósito, para que veas el problema.</p>
+  </div>
+
+  <h3>Práctica 5 · Ruido uniforme: grupos donde no los hay</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Elige <span class="ui">Uniform noise (no structure)</span> con <i>k</i> = 3 y Ward.D2.</li>
+      <li>Corre k-means y mira la línea de resultados (figura 2.6).</li>
+      <li>Cambia <i>k</i> a 4, 5 y 6: la variación explicada sube cada vez, la silueta apenas se mueve y el árbol siempre entrega los grupos que le pidas.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b1-uniforme.png" alt="Ruido uniforme agrupado en tres grupos"></div>
+    <figcaption><b>Figura 2.6.</b> <span class="ui">Uniform noise (no structure)</span> con <i>k</i> = 3. Los dos métodos producen tres grupos de aspecto razonable, con 65.1 % de la variación entre grupos, silueta 0.397 y cofenética 0.658. Ninguno de esos números delata que los puntos se sortearon al azar.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Todo algoritmo de agrupamiento devuelve grupos, <b>aunque no existan</b>. Los índices ayudan poco: la silueta de 0.40 del ruido no está lejos de la 0.45 de las dos lunas, y el codo de la suma de cuadrados es suave pero visible. La única defensa es preguntar antes de agrupar si los datos tienen estructura, y para eso el Bloque 2 calcula el <b>estadístico de Hopkins</b> con su valor P frente a datos uniformes y dibuja la <b>imagen VAT</b> de la matriz de distancias. Un Hopkins cercano a 0.5 significa "no hay nada que encontrar", y esa es una conclusión legítima.</p>
+  </div>
+
+  <p><b>Pruébalo tú.</b> Con cualquier conjunto, haz clic en un rincón vacío del panel izquierdo para añadir un punto aislado y cambia el enlace a <span class="ui">Single</span>: el punto nuevo queda como un grupo de uno y todos los demás se funden en el otro, porque el enlace simple aísla a los atípicos antes que a nada. Vuelve a <span class="ui">Ward.D2</span> y el punto se incorpora a la nube más cercana. Con k-means, corre el algoritmo y observa cómo el punto arrastra hacia sí el centro de su grupo. Es la razón por la que el Bloque 2 detecta los atípicos multivariados antes de agrupar.</p>
+
+  <!-- 2.3 -->
+  <h2 id="s2-3"><span class="num">2.3</span>Tipos de datos y métodos, de un vistazo</h2>
+  <p class="lead">Las dos secciones siguientes de la portada son catálogos. La primera responde a "¿mis datos sirven?" y la segunda a "¿qué se puede calcular?". Ninguna tiene controles: son tarjetas para leer.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-tipos.png" alt="Las siete tarjetas de tipos de datos"></div>
+    <figcaption><b>Figura 2.7.</b> La sección <span class="ui">Every kind of data</span>: siete tipos de tabla, ejemplos típicos y, en color, los coeficientes de disimilitud que convienen a cada uno.</figcaption>
+  </figure>
+
+  <table>
+    <caption><b>Tabla 2.9.</b> Los siete tipos de datos, los coeficientes que la app propone y los bloques donde se tratan.</caption>
+    <thead><tr><th style="width:20%">Tipo</th><th style="width:30%">Ejemplos</th><th>Coeficientes propuestos</th><th style="width:13%">Bloques</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Quantitative</span></td><td>Rendimiento, altura, expresión génica, química del suelo, morfometría.</td><td>Euclidiana, Manhattan, correlación, Mahalanobis.</td><td class="c"><span class="chip k3">3</span> <span class="chip k5">5</span></td></tr>
+      <tr><td><span class="ui">Binary (0/1)</span></td><td>Presencia o ausencia de especies, alelos, rasgos, síntomas.</td><td>Jaccard, Dice, apareamiento simple, Ochiai.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td><span class="ui">Nominal</span></td><td>Cultivar, tipo de suelo, color, región, categoría.</td><td>Apareamiento simple, Hamming, Gower.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td><span class="ui">Ordinal</span></td><td>Escalas de daño, escalas de Likert, clases ordenadas.</td><td>Rangos + Manhattan, Gower.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td><span class="ui">Counts &amp; abundances</span></td><td>Tablas de especies × sitios, recuentos de OTU, capturas de insectos.</td><td>Bray–Curtis, Hellinger, ji cuadrada, Morisita–Horn.</td><td class="c"><span class="chip k2">2</span> <span class="chip k3">3</span></td></tr>
+      <tr><td><span class="ui">Mixed</span></td><td>Cualquier combinación de los anteriores en una tabla.</td><td>Distancia de Gower.</td><td class="c"><span class="chip k3">3</span> <span class="chip k5">5</span></td></tr>
+      <tr><td><span class="ui">Distance matrix</span></td><td>Una matriz ya calculada: genética, geográfica, de expertos.</td><td>Se usa tal cual.</td><td class="c"><span class="chip k2">2</span></td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 2.10.</b> Los quince métodos de la galería, por familia, y el bloque que los calcula.</caption>
+    <thead><tr><th style="width:16%">Familia</th><th style="width:30%">Tarjeta</th><th>Qué es</th><th style="width:10%">Bloque</th></tr></thead>
+    <tbody>
+      <tr><td><b>Hierarchical</b><br><span class="small">jerárquico</span></td><td><span class="ui">Agglomerative</span></td><td>Fusiones de abajo hacia arriba con ocho reglas de enlace.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td></td><td><span class="ui">Divisive (DIANA)</span></td><td>Divisiones de arriba hacia abajo.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td></td><td><span class="ui">Tree comparison</span></td><td>Tanglegrama, entrelazamiento y γ de Baker entre dos árboles.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td></td><td><span class="ui">Clustered heat map</span></td><td>Mapa de calor con filas y columnas ordenadas por sus árboles.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td><b>Partitioning</b><br><span class="small">particionamiento</span></td><td><span class="ui">k-means</span></td><td>Centroides; algoritmos de Hartigan–Wong, Lloyd y MacQueen; arranque k-means++.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">k-medoids (PAM)</span></td><td>Centros que son observaciones reales; acepta cualquier distancia.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">CLARA</span></td><td>PAM sobre muestras repetidas, para miles de filas.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">Fuzzy c-means</span></td><td>Grados de pertenencia en lugar de etiquetas.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td><b>Advanced</b><br><span class="small">avanzado</span></td><td><span class="ui">Model-based</span></td><td>Mezclas gaussianas ajustadas por EM; el BIC elige el modelo.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">DBSCAN</span></td><td>Agrupamiento por densidad: cualquier forma, con ruido.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">Hierarchical k-means</span></td><td>El árbol aporta los centros iniciales de k-means.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td><b>Validation</b><br><span class="small">validación</span></td><td><span class="ui">Clustering tendency</span></td><td>Estadístico de Hopkins e imagen VAT.</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td></td><td><span class="ui">Optimal number of clusters</span></td><td>Codo, silueta, gap y el consenso de índices.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td></td><td><span class="ui">Validation</span></td><td>Silueta, Dunn, estabilidad por remuestreo, ARI.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td></td><td><span class="ui">Supervised follow-up</span></td><td>Análisis discriminante y clasificación de observaciones nuevas.</td><td class="c"><span class="chip k7">7</span></td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-metodos.png" alt="La galería de quince métodos"></div>
+    <figcaption><b>Figura 2.8.</b> La galería <span class="ui">Methods covered</span>. Cada tarjeta lleva la etiqueta de su familia, una ilustración del método y las palabras clave que lo distinguen.</figcaption>
+  </figure>
+
+  <div class="caja dato">
+    <div class="dato-cifra">39</div>
+    <div class="dato-txt">
+      <div class="caja-t">Dato · más de lo que muestra la galería</div>
+      Las tarjetas son un resumen. El Bloque 3 ofrece <b>39 coeficientes</b> de disimilitud, el Bloque 4 añade el enlace flexible con parámetro β, el Bloque 5 incluye el agrupamiento espectral y el Bloque 6 vota entre trece criterios para elegir <i>k</i>, remuestrea variables para dar valores AU y BP a las ramas del árbol y compara algoritmos a lo largo de <i>k</i>. Cada capítulo de este manual detalla lo suyo.
+    </div>
+  </div>
+
+  <!-- 2.4 -->
+  <h2 id="s2-4"><span class="num">2.4</span>Las trece lecciones de teoría</h2>
+  <p class="lead">La sección <span class="ui">Clustering, explained without the fog</span> es un curso breve de análisis de agrupamientos en trece lecciones desplegables, cada una con una o dos figuras. Está en inglés, como el resto de la app. No hace falta leerlas en orden ni todas de una vez: cada bloque de análisis repite, en su tarjeta de teoría, la parte que importa en ese paso. Esta sección las presenta y reúne las reglas prácticas que enuncian, para que las tengas en español.</p>
+
+  <ol class="pasos">
+    <li>Pulsa <span class="ui">Read the theory</span> en la presentación: la página baja hasta la tarjeta y abre la primera lección.</li>
+    <li>Pulsa el título de cualquier lección para abrirla o cerrarla. Pueden estar abiertas varias a la vez.</li>
+    <li>Las figuras de las lecciones son vectoriales: si el navegador está en una pantalla pequeña se reacomodan debajo del texto.</li>
+  </ol>
+
+  <table class="compacta">
+    <caption><b>Tabla 2.11.</b> Las trece lecciones: qué pregunta responde cada una y dónde se aplica.</caption>
+    <thead><tr><th style="width:5%" class="c">N.º</th><th style="width:34%">Lección en la app</th><th>Qué responde</th><th style="width:11%">Se aplica en</th></tr></thead>
+    <tbody>
+      <tr><td class="c">1</td><td><span class="ui">What is a cluster, and what is clustering?</span></td><td>Qué es un grupo (compacidad y separación), qué es "no supervisado" y cuáles son las cuatro familias de métodos.</td><td class="c">todos</td></tr>
+      <tr><td class="c">2</td><td><span class="ui">Before clustering: are my data clusterable at all?</span></td><td>Hopkins, VAT, vista previa por componentes, correlaciones, atípicos y faltantes.</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td class="c">3</td><td><span class="ui">Similarity, dissimilarity and distance</span></td><td>Los coeficientes para variables cuantitativas, binarias, nominales, mixtas y ecológicas; el problema del doble cero.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td class="c">4</td><td><span class="ui">Standardisation: putting variables on the same footing</span></td><td>Cuándo estandarizar (z, rango, robusto, logaritmo, Hellinger) y cuándo no.</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td class="c">5</td><td><span class="ui">Hierarchical clustering and linkage rules</span></td><td>Aglomerativo y divisivo; las ocho reglas de enlace; cofenética y coeficiente aglomerativo; Ward.D frente a Ward.D2.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td class="c">6</td><td><span class="ui">Reading (and drawing) a dendrogram</span></td><td>Altura de las uniones, el orden arbitrario de las hojas, el corte y lo que la app dibuja.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td class="c">7</td><td><span class="ui">Comparing dendrograms</span></td><td>Tanglegrama y entrelazamiento, cofenética entre árboles, γ de Baker, índice de Fowlkes–Mallows.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td class="c">8</td><td><span class="ui">Partitioning: k-means, PAM, CLARA and fuzzy clustering</span></td><td>Cómo funciona k-means y sus variantes, los medoides, CLARA, la pertenencia difusa y los límites de k-means.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td class="c">9</td><td><span class="ui">Density-based and model-based clustering</span></td><td>DBSCAN (ε, minPts, ruido) y las mezclas gaussianas con EM y BIC.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td class="c">10</td><td><span class="ui">How many clusters?</span></td><td>Codo, silueta, gap, Calinski–Harabasz, Davies–Bouldin, Dunn y el consenso; BIC para mezclas, la rodilla para DBSCAN.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td class="c">11</td><td><span class="ui">Validating clusters</span></td><td>Validación interna, estabilidad por remuestreo, valores AU y BP, validación externa y comparación de algoritmos.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td class="c">12</td><td><span class="ui">From clusters to meaning: profiles, indicators and supervised follow-up</span></td><td>Perfiles, pruebas v, ANOVA, especies indicadoras, análisis discriminante, árbol de clasificación y asignación de casos nuevos.</td><td class="c"><span class="chip k7">7</span></td></tr>
+      <tr><td class="c">13</td><td><span class="ui">Pitfalls checklist</span></td><td>Lo que sí y lo que no hay que hacer antes de publicar (tabla 2.12).</td><td class="c"><span class="chip k8">8</span></td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-teoria.png" alt="La primera lección de teoría abierta"></div>
+    <figcaption><b>Figura 2.9.</b> El inicio de la tarjeta de teoría, con la lección 1 abierta. Cada lección tiene un título con su etiqueta a la derecha, texto con los términos clave en negrita, figuras originales y, más abajo, recuadros de consejos o advertencias.</figcaption>
+  </figure>
+
+  <h3>Las reglas prácticas que enuncian las lecciones</h3>
+  <p>Las lecciones son ricas en umbrales y advertencias. Los siguientes recuadros reúnen los que más se usan; cada uno vuelve a aparecer, con más detalle, en el capítulo del bloque correspondiente.</p>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Reglas · umbrales que conviene memorizar</div>
+    <table class="compacta">
+      <thead><tr><th style="width:24%">Medida</th><th>Umbrales y lectura</th><th style="width:11%" class="c">Lección</th></tr></thead>
+      <tbody>
+        <tr><td><b>Hopkins</b></td><td>Cerca de 0.5 los datos parecen uniformes; por debajo de 0.75 sé cauto; por encima de 0.9 hay estructura clara.</td><td class="c">2</td></tr>
+        <tr><td><b>Objetos por grupo</b></td><td>Al menos 5 a 10 objetos por cada grupo que esperes. Muchas variables están bien, siempre que todas sean pertinentes.</td><td class="c">2</td></tr>
+        <tr><td><b>Correlación cofenética</b></td><td>Por encima de 0.75 el árbol es un resumen fiel de las distancias. El coeficiente aglomerativo crece con el tamaño de la muestra: compáralo solo entre árboles de los mismos datos.</td><td class="c">5</td></tr>
+        <tr><td><b>Gap</b></td><td>Elige el menor <i>k</i> cuyo gap esté a un error estándar del máximo.</td><td class="c">10</td></tr>
+        <tr><td><b>Silueta media</b></td><td>0.7 o más, estructura fuerte; 0.5, razonable; menos de 0.25, no hay estructura sustancial. Una silueta negativa señala un objeto probablemente mal asignado.</td><td class="c">11</td></tr>
+        <tr><td><b>Estabilidad de Jaccard</b></td><td>Por encima de 0.75 un grupo es estable; por debajo de 0.5 es dudoso.</td><td class="c">11</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · tres errores que las lecciones repiten</div>
+    <ul>
+      <li><b>El orden izquierda–derecha de un dendrograma no significa cercanía</b> (lección 6). Cualquier nodo puede girarse sin cambiar el árbol: hay 2<sup><i>n</i>−1</sup> dibujos equivalentes. Lee la altura a la que dos objetos se unen, no si son vecinos en la fila de hojas.</li>
+      <li><b>Ward y k-means necesitan distancias euclidianas</b> (lecciones 5 y 13). Con Bray–Curtis o Gower usa PAM o UPGMA, o transforma antes (Hellinger, o la raíz de 1 − <i>s</i>).</li>
+      <li><b>El doble cero</b> (lección 3). En tablas de especies casi todas las celdas son ceros; un coeficiente que cuente "ambos ausentes" como parecido agrupará sitios por las especies que les faltan. Usa coeficientes asimétricos: Jaccard, Bray–Curtis, Hellinger.</li>
+    </ul>
+  </div>
+
+  <div class="caja dato">
+    <div class="dato-cifra">D2</div>
+    <div class="dato-txt">
+      <div class="caja-t">Dato · Ward.D y Ward.D2</div>
+      El criterio de Ward se define sobre distancias euclidianas <b>al cuadrado</b>. Ward.D2 las eleva al cuadrado por ti y reporta las alturas en las unidades originales; Ward.D aplica la misma fórmula a lo que le des. Prefiere Ward.D2, salvo que estés reproduciendo un análisis antiguo. En el demo puedes ver que ambos dan árboles casi iguales pero con alturas distintas.
+    </div>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Tabla 2.12.</b> La lista de la lección 13, <span class="ui">Pitfalls checklist</span>, en español.</caption>
+    <thead><tr><th style="width:50%">Sí</th><th>No</th></tr></thead>
+    <tbody>
+      <tr><td>Comprueba primero la tendencia al agrupamiento (Hopkins, VAT).</td><td>Leer el orden izquierda–derecha del dendrograma como proximidad.</td></tr>
+      <tr><td>Empareja el coeficiente con el tipo de dato; usa coeficientes asimétricos para presencia/ausencia y abundancias.</td><td>Usar Ward o k-means sobre distancias no euclidianas (Bray–Curtis, Gower) sin transformar.</td></tr>
+      <tr><td>Estandariza cuando las unidades difieren, y dilo en los métodos.</td><td>Dejar que una variable en unidades grandes decida los grupos.</td></tr>
+      <tr><td>Prueba varios enlaces y algoritmos y compáralos (tanglegrama, cofenética, ARI).</td><td>Tomar como respuesta una sola corrida de k-means con un solo arranque.</td></tr>
+      <tr><td>Elige <i>k</i> con varios criterios y repórtalos todos.</td><td>Usar coeficientes de doble cero (apareamiento simple) en tablas de especies.</td></tr>
+      <tr><td>Reporta la silueta y una medida de estabilidad con cada partición.</td><td>Probar diferencias entre grupos con ANOVA sobre las mismas variables que los construyeron y llamar al resultado "significativo".</td></tr>
+      <tr><td>Describe cada grupo en términos de las variables.</td><td>Presentar un árbol sin su cofenética o un corte sin su silueta.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 2.5 -->
+  <h2 id="s2-5"><span class="num">2.5</span>¿Qué método uso? La tabla de elección</h2>
+  <p class="lead">La sección <span class="ui">Which method should I use?</span> condensa las lecciones en una tabla de ocho filas: según cómo sean tus datos, qué disimilitud usar, qué método probar primero, cuál después y con qué validar. Es un punto de partida, no una regla, y el Bloque 2 hace esta misma recomendación automáticamente en cuanto tipifica tus columnas.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-eleccion.png" alt="La tabla Which method should I use"></div>
+    <figcaption><b>Figura 2.10.</b> La tabla de elección en la app. La tabla 2.13 la traduce.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 2.13.</b> La tabla de elección, en español.</caption>
+    <thead><tr><th style="width:21%">Tus datos</th><th style="width:17%">Disimilitud</th><th style="width:22%">Primera opción</th><th style="width:19%">Prueba también</th><th>Valida con</th></tr></thead>
+    <tbody>
+      <tr><td>Rasgos cuantitativos, unidades parecidas</td><td>Euclidiana (escalada si hace falta)</td><td>Árbol de Ward.D2 y luego k-means sembrado con el árbol</td><td>UPGMA, mezclas gaussianas</td><td>Silueta, gap, estabilidad por remuestreo</td></tr>
+      <tr><td>Perfiles cuantitativos (expresión, espectros)</td><td>1 − correlación de Pearson</td><td>UPGMA o enlace completo</td><td>PAM, k-means sobre filas estandarizadas</td><td>Cofenética, silueta, valores AU</td></tr>
+      <tr><td>Presencia/ausencia (especies, marcadores)</td><td>Jaccard o Dice</td><td>UPGMA</td><td>PAM, Ward sobre √(1 − <i>s</i>)</td><td>Cofenética, remuestreo, especies indicadoras</td></tr>
+      <tr><td>Abundancias de especies</td><td>Bray–Curtis, o Hellinger + euclidiana</td><td>UPGMA (Bray–Curtis) o Ward (Hellinger)</td><td>PAM, k-means sobre Hellinger</td><td>Silueta, IndVal, ANOSIM/PERMANOVA</td></tr>
+      <tr><td>Mezcla de cuantitativas y categóricas</td><td>Gower</td><td>PAM</td><td>UPGMA, jerárquico sobre Gower</td><td>Silueta, estabilidad</td></tr>
+      <tr><td>Tablas grandes (miles de filas)</td><td>Euclidiana</td><td>k-means (k-means++, muchos arranques)</td><td>CLARA, DBSCAN</td><td>Silueta sobre una muestra, índice CH</td></tr>
+      <tr><td>Formas irregulares, ruido, atípicos</td><td>Euclidiana</td><td>DBSCAN</td><td>Enlace simple, espectral</td><td>Silueta (con cautela), estabilidad</td></tr>
+      <tr><td>Grupos traslapados, gradientes</td><td>Euclidiana</td><td>Fuzzy c-means o mezclas gaussianas</td><td>PAM</td><td>Coeficiente de partición, BIC</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · cómo usar la tabla</div>
+    <p>Busca la fila que más se parezca a tu tabla de datos y lleva sus tres columnas centrales a los Bloques 3, 4 y 5. Si tus datos caen en dos filas (por ejemplo, abundancias con miles de sitios), la disimilitud la decide la naturaleza de las variables y el algoritmo la decide el tamaño. Cuando el Bloque 2 haya tipificado tus columnas, compara su tarjeta <span class="ui">What to do next</span> con esta tabla: casi siempre coinciden, y cuando no, la tarjeta explica por qué.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b1-porque.png" alt="Las seis tarjetas de Why ClusteringPro"></div>
+    <figcaption><b>Figura 2.11.</b> La sección <span class="ui">Why ClusteringPro</span>: seis argumentos, útiles cuando tienes que justificar en un proyecto o una tesis por qué elegiste el programa.</figcaption>
+  </figure>
+
+  <p>Las seis tarjetas de <span class="ui">Why ClusteringPro</span> resumen lo que distingue al programa: está hecho para datos de ciencias de la vida, con el coeficiente y las advertencias apropiadas para cada tipo; guía además de calcular; sus cálculos se han verificado contra valores de referencia; sus dendrogramas son publicables y editables hasta 900 puntos por pulgada; compara en lugar de confiar en un solo árbol; y trabaja sin conexión, sin subir nada. Debajo, <span class="ui">Glossary at a glance</span> muestra en fichas los veintinueve términos que más se repiten en la app, agrupados por familia: los del agrupamiento jerárquico, los del particionamiento y los de la exploración y validación. El apéndice A los define todos en español.</p>
+
+  <!-- 2.6 -->
+  <h2 id="s2-6"><span class="num">2.6</span>Cómo citar</h2>
+  <p class="lead">Si ClusteringPro te ayudó en una tesis, un artículo o un informe, cítalo: así se sabe con qué herramienta y versión se hicieron los cálculos, y así el programa puede seguir siendo gratuito. La sección <span class="ui">How to cite ClusteringPro</span>, al final de la portada, tiene la referencia lista para copiar.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b1-cita.png" alt="La tarjeta How to cite ClusteringPro">
+      <span class="marca" style="left:9.9%;top:61.8%">1</span>
+      <span class="marca" style="left:21.6%;top:61.8%">2</span>
+      <span class="marca" style="left:34.8%;top:61.8%">3</span>
+      <span class="marca" style="left:51.3%;top:61.8%">4</span>
+      <span class="marca" style="left:9.4%;top:72.5%">5</span>
+    </div>
+    <figcaption><b>Figura 2.12.</b> La tarjeta de la cita.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Copy reference (APA)</span> copia la referencia en formato APA al portapapeles.</li>
+    <li><span class="n">2</span><span class="ui">Copy BibTeX</span> copia la entrada para LaTeX y los gestores de referencias.</li>
+    <li><span class="n">3</span><span class="ui">Open the Zenodo record ↗</span> abre el registro del archivo, con todas las versiones.</li>
+    <li><span class="n">4</span><span class="ui">Source code on GitHub ↗</span> abre el repositorio con el código fuente.</li>
+    <li><span class="n">5</span><span class="ui">BibTeX entry</span> despliega la entrada para verla antes de copiarla.</li>
+  </ul>
+
+  <ol class="pasos">
+    <li>En la presentación pulsa <span class="ui">How to cite</span>; la página baja hasta la tarjeta.</li>
+    <li>Pulsa <span class="ui">Copy reference (APA)</span> o <span class="ui">Copy BibTeX</span>. Un mensaje confirma <i>Reference copied to the clipboard</i>; si el navegador bloquea el portapapeles, selecciona el texto y cópialo a mano.</li>
+    <li>Pega la referencia en tu gestor o en tu documento y ajústala al estilo de la revista.</li>
+    <li>En la sección de métodos indica la versión y los ajustes que usaste. El informe del Bloque 8 imprime esta misma referencia y redacta ese párrafo.</li>
+  </ol>
+
+  <div class="cita">Barrera-Guzmán, L. Á. (2026). <i>ClusteringPro: finding, validating and interpreting natural groups in biological, ecological and agronomic data without programming</i> (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22682795</div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · el DOI</div>
+    <p>El identificador de la cita, 10.5281/zenodo.22682795, es el <b>DOI de concepto</b>: lleva siempre a la versión más reciente del programa. Cada versión tiene además su propio DOI, visible en su registro del archivo (el de la 1.0.1 es 10.5281/zenodo.22682889). Cita el de concepto junto con el número de versión; si la revista exige que cualquiera pueda recuperar exactamente la versión que usaste, cita el de esa versión. Los DOI de cada versión y los metadatos completos están en el archivo <code>CITATION.cff</code> del repositorio, que GitHub muestra bajo <span class="ui">Cite this repository</span>.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · reporta también los ajustes</div>
+    <p>Una cita del programa no basta para que otro investigador repita tu análisis. Indica en los métodos la versión de ClusteringPro, el coeficiente de disimilitud, el escalado, la regla de enlace o el algoritmo con sus parámetros, el número de grupos y los criterios con que lo elegiste, el número de remuestreos y la <b>semilla aleatoria</b>. El párrafo de métodos que redacta el Bloque 8 contiene todo eso con los valores que realmente usaste.</p>
+  </div>
+
+  <p style="margin-top:0.25in">Con la portada, el demo y la teoría a la mano, el siguiente paso es cargar tus propios datos. El capítulo del Bloque 2 explica los formatos que acepta la app, cómo tipifica cada columna y qué papel puede tener, el tratamiento de faltantes, transformaciones y escalado, y la pregunta que hay que responder antes de agrupar: si los datos son agrupables.</p>
+</section>
+
+</body>
+</html>

@@ -22,7 +22,10 @@ manual/
                        capítulo 1 "Introducción a ClusteringPro" (qué es, para quién, cinco ideas clave,
                        tipos de datos, requisitos, recorrido por la interfaz, ejemplos, flujo de trabajo y
                        cómo leer los números principales)
-    02-bloque1.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
+    02-bloque1.html    capítulo 2 · Bloque 1 "Inicio y teoría": la portada de la app, el demo interactivo con
+                       cinco prácticas (cifras reproducibles: semilla fija), tipos de datos y galería de métodos,
+                       las trece lecciones de teoría con sus reglas en español, la tabla de elección y cómo citar
+    03-bloque2.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
     10-apendices.html  apéndices A–F (pendiente)
   en/                  versión en inglés (pendiente)
 ```
@@ -78,8 +81,22 @@ Recetas de las capturas actuales (`h` es la altura del marco cuando no es la pre
 | `app-bloques.png` | `scroll:%23featureGrid,118` con `h=780` | ninguno |
 | `app-datos.png` | `ex:0;apply;scroll:%23edaCard` | 2300 × 1900 desde (250, 30) |
 | `app-figura.png` | `ex:0;apply;step:3;run:distRunBtn;open:%23fig3Heat%20details.fig-editor;scroll:%23fig3Heat` | 2200 × 2160 desde (300, 0) |
+| `b1-flujo.png` | `scroll:.workflow,130` (ventana 1400 × 290) | 2320 × 470 desde (240, 30) |
+| `b1-demo.png` | `scroll:.playground,96;click:%23pgRun;wait:5000` (ventana 1400 × 660) | 2320 × 1135 desde (240, 185) |
+| `b1-lunas.png` | `select:%23pgDataset=moons;select:%23pgLinkage=single;set:%23pgK=2;click:%23pgRun;wait:6000;scroll:.pg-grid,8` (ventana 1400 × 478) | 2320 × 956 desde (240, 0) |
+| `b1-anillo.png` | igual, con `ring` | igual |
+| `b1-alargados.png` | `select:%23pgDataset=elong;click:%23pgRun;wait:8000;scroll:.pg-grid,8` (ventana 1400 × 478) | igual |
+| `b1-uniforme.png` | igual, con `uniform` | igual |
+| `b1-tipos.png` | `scroll:%23dtypeGrid,130` (ventana 1400 × 680) | 2320 × 1090 desde (240, 30) |
+| `b1-metodos.png` | `scroll:%23methodGallery,130` (ventana 1400 × 1200) | 2320 × 1800 desde (240, 30) |
+| `b1-teoria.png` | `scroll:%23theory,10` (ventana 1400 × 900) | 2320 × 802 desde (240, 20) |
+| `b1-eleccion.png` | `scroll:table.chooser,96` (ventana 1400 × 600) | 2320 × 1075 desde (240, 20) |
+| `b1-porque.png` | `scroll:.why-grid,110` (ventana 1400 × 590) | 2320 × 945 desde (240, 130) |
+| `b1-cita.png` | `scroll:%23cite,10` (ventana 1400 × 420) | 2320 × 765 desde (240, 20) |
 
-Los recortes se hacen con `System.Drawing` desde PowerShell sobre la captura a 2×.
+Los recortes se hacen con `System.Drawing` desde PowerShell sobre la captura a 2×. Las cifras del demo que cita el capítulo 2 (cofenética por enlace, iteraciones, SS entre/total, silueta y ARI) se obtuvieron de la propia app con la semilla fija del demo; si el demo cambia, hay que recalcularlas.
+
+Dos trucos de paginación aprendidos con el capítulo 2: una tabla con `rowspan` se rompe cuando el paginador la parte entre hojas (mejor repetir la familia en la primera fila de cada grupo y dejar celdas vacías), y una caja `regla` no lleva relleno interior porque está pensada para una tabla (un párrafo suelto necesita su propio `padding`).
 
 ## Cómo revisar una parte o imprimir la portada
 
