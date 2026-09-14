@@ -80,7 +80,7 @@ function renderSummary() {
   /* chaining */
   const late = hc.merge.slice(Math.floor((hc.n - 1) / 2)); const single = late.filter(m => (m[0] < 0) !== (m[1] < 0)).length;
   if (late.length >= 6 && single / late.length > 0.7) add('warn', 'Chaining: objects are added one by one to a growing cluster', `${fmtPct(single / late.length, 0)} of the later merges attach a single object. Typical of single linkage on gradients: the clusters are elongated chains rather than compact groups. Complete, average or Ward linkage give more compact clusters; single linkage is right if you expect elongated shapes.`);
-  if (d.diag && d.diag.euclid && d.diag.euclid.negMass >= 0.1 && /ward|centroid|median/.test(H.method)) add('warn', 'This linkage assumes Euclidean distances', `Your dissimilarity is not Euclidean-embeddable (${fmtPct(d.diag.euclid.negMass, 0)} negative eigenvalue mass). Ward, centroid and median linkage still run but their geometric meaning is lost. Use √d (Block 3, supplied matrix) or prefer average / complete linkage.`);
+  if (d.diag && d.diag.euclid && d.diag.euclid.negMass >= 0.1 && /ward|centroid|median/.test(H.method)) add('warn', 'This linkage assumes Euclidean distances', `Your dissimilarity is not Euclidean-embeddable (${fmtPct(d.diag.euclid.negMass, 0)} negative eigenvalue mass). Ward, centroid and median linkage still run but their geometric meaning is lost. Use √d (the square-root option of Block 3) or prefer average / complete linkage.`);
   if (H.method === 'diana') add('info', 'Divisive analysis', 'DIANA starts from one cluster and splits by diameter; it is usually better than agglomerative methods at recovering a few large clusters, and the divisive coefficient plays the role of the agglomerative coefficient.');
   if (H.coef < 0.5) add('info', 'Weak hierarchical structure', `A coefficient of ${fmtFixed(H.coef, 2)} means objects join late relative to the final merge: the data are more like a gradient than a set of nested groups. (The coefficient also grows with n; compare only trees of the same data.)`);
   add('info', `Cut suggestions: k = ${H.suggested.map(s => `${s.k} (gap ${fmtPct(s.rel, 0)} of the tree height)`).join(', ')}`, 'These are the largest jumps between consecutive merge heights. Block 6 will weigh them against silhouette, gap statistic and stability; the domain has the final word.');
@@ -229,7 +229,7 @@ function refresh() {
   const d = state.dist, eu = d.diag && d.diag.euclid ? d.diag.euclid.negMass : 0;
   let rec, why;
   if (eu < 0.05) { rec = 'ward.D2'; why = `${d.name} is Euclidean-embeddable, so Ward.D2 (compact, equal-variance clusters) is a sound default; UPGMA is the alternative when you care about the fidelity of the tree to the distances.`; }
-  else { rec = 'average'; why = `${d.name} is not Euclidean-embeddable (${fmtPct(eu, 0)} negative eigenvalue mass): prefer UPGMA or complete linkage, which only need the matrix. If you want Ward, go back to Block 3 and use √d.`; }
+  else { rec = 'average'; why = `${d.name} is not Euclidean-embeddable (${fmtPct(eu, 0)} negative eigenvalue mass): prefer UPGMA or complete linkage, which only need the matrix. If you want Ward, go back to Block 3 and tick the square-root option (√d).`; }
   if (state.profile && state.profile.type === 'ecological' && rec === 'ward.D2') why += ' For community data UPGMA on Bray–Curtis remains the classical choice.';
   el('hcMethod').value = rec;
   el('hcReco').innerHTML = `<h4>Recommendation</h4><div class="reco-row"><div><b>Linkage</b>${esc(NAME[rec])}</div><div><b>Why</b>${esc(why)}</div></div>`;

@@ -29,6 +29,7 @@ function describe() {
   el('pK').style.display = c.id === 'pca_euclid' ? '' : 'none';
   el('pGower').style.display = c.id === 'gower' ? '' : 'none';
   el('pSource').style.display = c.fam === 'quant' ? '' : 'none';
+  el('pSqrt').style.display = c.fam === 'given' ? 'none' : '';
   if (c.id === 'pca_euclid' && src) { const p = src.quantWorking.names.length; el('pcaK').max = p; if (+el('pcaK').value > p) el('pcaK').value = Math.min(2, p); }
   if (c.id === 'gower' && src) renderGowerWeights();
 }
@@ -49,6 +50,8 @@ function compute() {
   let R;
   try { R = Dist.compute(el('coefSel').value, currentOpts()); }
   catch (e) { showMessage('distMessages', 'error', esc(e.message)); return; }
+  /* optional √d: turns Bray–Curtis, Jaccard, Sørensen and simple matching into Euclidean-embeddable dissimilarities */
+  if (el('distSqrt').checked && R.fam !== 'given') { R.D = R.D.map(r => r.map(v => Math.sqrt(Math.max(0, v)))); R.name += ' (√d)'; R.sqrt = true; R.note += ' Square root taken.'; }
   R.groups = state.groups;
   R.diag = Dist.diagnose(R.D);
   const m = R.diag.euclid ? R.diag.euclid.mds : S.cmdscale(R.D, 2);
@@ -75,7 +78,7 @@ function compute() {
 function renderResults(R) {
   const d = R.diag, c = Dist.byId(R.id);
   const tiles = [
-    ['Coefficient', c.name, R.params.p ? `p = ${R.params.p}` : R.params.k ? `${R.params.k} components (${fmtPct(R.params.varExplained, 0)})` : R.params.components ? `${R.params.components} components` : R.params.binary ? `binary: ${R.params.binary}` : Dist.families[c.fam].label],
+    ['Coefficient', R.name, R.params.p ? `p = ${R.params.p}` : R.params.k ? `${R.params.k} components (${fmtPct(R.params.varExplained, 0)})` : R.params.components ? `${R.params.components} components` : R.params.binary ? `binary: ${R.params.binary}` : Dist.families[c.fam].label],
     ['Objects', R.n, `${R.n * (R.n - 1) / 2} pairs`],
     ['Range of d', `${fmtNum(d.min, 3)} – ${fmtNum(d.max, 3)}`, `mean ${fmtNum(d.mean, 3)} · median ${fmtNum(d.median, 3)}`],
     ['Identical pairs (d = 0)', d.zeros, d.zeros ? 'duplicates or ties' : 'none', d.zeros > R.n * 0.05 ? 'warn' : 'ok'],

@@ -29,7 +29,10 @@ manual/
                        tipos y papeles de columna con las reglas de detección, faltantes/transformación/escalado,
                        Hopkins y VAT, calificación A–D y ruta recomendada, figuras del bloque y paso a paso con
                        los siete ejemplos (cifras reales de la app)
-    04-bloque3.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
+    04-bloque3.html    capítulo 4 · Bloque 3 "Similitud y distancia": similitud/disimilitud/distancia, las seis
+                       familias y los 39 coeficientes con fórmula, métrico y euclidiano (con la casilla √d),
+                       diagnóstico de la matriz, comparación de coeficientes, figuras del bloque y seis prácticas
+    05-bloque4.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
     10-apendices.html  apéndices A–F (pendiente)
   en/                  versión en inglés (pendiente)
 ```
@@ -114,6 +117,14 @@ Recetas de las capturas actuales (`h` es la altura del marco cuando no es la pre
 | `b2-matriz-mds.png` | `ex:4;scroll:%23figPCA,10` (ventana 1400 × 760; la matriz se aplica sola) | 2200 × 1500 desde (300, 20) |
 | `b2-sim-hopkins.png` · `b2-ruido-hopkins.png` | `ex:5;apply;scroll:%23figHopkins,10` · `ex:6;…` (ventana 1400 × 560) | 1090 × 960 desde (300, 20): solo la tarjeta izquierda |
 | `b2-ruido-eda.png` | `ex:6;apply;scroll:%23edaCard,10` (ventana 1400 × 700) | 2300 × 1380 desde (250, 20) |
+| `b3-elegir.png` | `ex:0;apply;step:3;scroll:%23distReco,70` (ventana 1400 × 760) | 2300 × 1050 desde (250, 20) |
+| `b3-gower.png` | `ex:3;apply;step:3;open:%23pGower%20details;scroll:%23famTabs,60` (ventana 1400 × 820) | 2300 × 1160 desde (250, 110) |
+| `b3-resultados.png` · `b3-vecinos.png` | `ex:0;apply;step:3;run:distRunBtn;scroll:%23distResults,10` (860) · `…;open:%23distResults%20details.acc;scroll:%23distResults%20details.acc,10` (560) | 2300 de ancho desde (250, 20); alturas 1200 y 1100 |
+| `b3-heat.png` · `b3-mds.png` · `b3-shepard.png` · `b3-knn.png` | `ex:0;apply;step:3;run:distRunBtn;scroll:%23fig3Heat,10` (820) · `…%23fig3MDS,10` (760) · `…%23fig3Shepard,10` (640) · `…%23fig3KNN,10` (760) | 2200 de ancho desde x 300; alturas 1500, 1500, 1260, 1380 |
+| `b3-comparar-lista.png` · `b3-comparar-fig.png` | `ex:0;apply;step:3;run:distRunBtn;run:cmpRunBtn;scroll:%23cmpCard,10` (ventana 1400 × 1400), dos recortes de la misma captura | 2300 × 1060 desde (250, 20) · 2200 × 1375 desde (300, 1265) |
+| `b3-binario-heat.png` | `ex:1;apply;step:3;run:distRunBtn;scroll:%23fig3Heat,10` (820) | 2200 × 1500 desde (300, 20) |
+| `b3-insectos-cmp.png` · `b3-insectos-sqrt.png` | `ex:2;apply;step:3;run:distRunBtn;run:cmpRunBtn;scroll:%23cmpResults,10` (900) · `ex:2;apply;step:3;check:%23distSqrt=true;run:distRunBtn;scroll:%23distResults,10` (700) | 2200 × 1370 desde (300, 190) · 2300 × 1310 desde (250, 20) |
+| `b3-suelos-mds.png` · `b3-matriz-res.png` · `b3-ruido-hist.png` | `ex:3;…;scroll:%23fig3MDS,10` (760) · `ex:4;step:3;run:distRunBtn;scroll:%23distResults,10` (700) · `ex:6;…;scroll:%23fig3Shepard,10` (640) | 2200 × 1500 desde (300, 20) · 2300 × 1040 desde (250, 20) · 2200 × 1260 desde (300, 20) |
 
 Los recortes se hacen con `System.Drawing` desde PowerShell sobre la captura a 2×. Las cifras del demo que cita el capítulo 2 (cofenética por enlace, iteraciones, SS entre/total, silueta y ARI) se obtuvieron de la propia app con la semilla fija del demo; si el demo cambia, hay que recalcularlas.
 
