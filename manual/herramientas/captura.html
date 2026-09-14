@@ -15,8 +15,9 @@
             <details>) · select:selector=valor · set:selector=valor (un campo de texto o número, con su evento
             input) · check:selector=true|false · cfg:figura.clave=valor (opción del editor de una figura) ·
             hide:selector · frame:selector (un iframe, como la vista previa del informe, crece a la altura de su
-            página) · scrollin:iframe|elemento,desfase · top · report (al final: la página se vuelve el
-            informe del Bloque 8, para imprimirlo con --print-to-pdf).
+            página) · scrollin:iframe|elemento,desfase · top · scrollx:selector,px (desplaza en horizontal
+            el contenido de una tabla ancha) · report (al final: la página se vuelve el informe del
+            Bloque 8, para imprimirlo con --print-to-pdf).
      En la dirección, # se escribe %23, la coma dentro de un valor %2C y los espacios %20. -->
 <style>html,body{margin:0;overflow:hidden;background:#fff}iframe{border:0;display:block;position:absolute;left:0;top:0}</style>
 </head>
@@ -75,6 +76,8 @@
       f.style.top = -Math.max(0, y) + 'px'; await sleep(500);
     }
     else if (cmd === 'top') { w.scrollTo(0, 0); await sleep(300); }
+    /* scrollx:selector,px — horizontal scroll inside a wide table container */
+    else if (cmd === 'scrollx') { const [sel, px] = arg.split(','); q(sel).scrollLeft = +px || 0; await sleep(300); }
     else if (cmd === 'report') {
       /* report — this page becomes the report of Block 8 as built with its current options */
       const html = w.Report.build(w.B8.opts());

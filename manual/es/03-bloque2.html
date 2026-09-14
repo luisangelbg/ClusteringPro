@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · Manual de usuario · Bloque 2: datos y análisis exploratorio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b2" data-pestana="B2" data-orden="3" style="--acento: var(--b2)">
+  <div class="cap-apertura">
+    <div class="cap-num">B2</div>
+    <div class="cap-etiqueta">Capítulo tres · Bloque 2 · Data &amp; EDA</div>
+    <h1 data-corto="Bloque 2 · Datos y análisis exploratorio">Datos y análisis exploratorio</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Todo empieza aquí: cargas la tabla, confirmas qué es cada columna y qué papel juega, decides qué hacer con los faltantes, transformas y escalas, y antes de agrupar respondes la pregunta que casi nadie se hace: ¿tienen estos datos grupos que valga la pena buscar? El bloque termina con una calificación de A a D y una ruta recomendada para los bloques siguientes.</p>
+    <div class="cap-franja"><span class="k2"></span><span class="k2" style="opacity:.75"></span><span class="k2" style="opacity:.5"></span><span class="k2" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>3.1</b>Formatos de entrada y cómo debe ir la tabla</li>
+      <li><b>3.2</b>Tipos de variable y papel de cada columna</li>
+      <li><b>3.3</b>Faltantes, transformación y escalado</li>
+      <li><b>3.4</b>¿Son agrupables mis datos? Hopkins y VAT</li>
+      <li><b>3.5</b>La calificación y la recomendación</li>
+      <li><b>3.6</b>Ajustes, tablas y figuras del bloque</li>
+      <li><b>3.7</b>Paso a paso con los siete ejemplos</li>
+    </ul>
+  </div>
+
+  <p class="lead">El Bloque 2 se organiza en cuatro tarjetas numeradas que se van abriendo conforme avanzas: <span class="ui">1 · Load your data</span>, <span class="ui">2 · Variable types and roles</span>, <span class="ui">3 · Missing values, transformation and scaling</span> y <span class="ui">4 · Exploratory analysis and clustering tendency</span>. Arriba de todas hay una tarjeta de teoría con cuatro lecciones breves, y al final una vista previa de la tabla tal como se leyó. Este capítulo sigue ese mismo orden.</p>
+
+  <!-- 3.1 -->
+  <h2 id="s3-1"><span class="num">3.1</span>Formatos de entrada y cómo debe ir la tabla</h2>
+  <p>La primera tarjeta lee el archivo. Puedes arrastrarlo a la zona punteada, hacer clic en ella para buscarlo, pegar el contenido del portapapeles o cargar uno de los siete ejemplos que trae la app (figura 3.1).</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b2-carga.png" alt="La tarjeta 1 · Load your data">
+      <span class="marca" style="left:50%;top:21%">1</span>
+      <span class="marca" style="left:6%;top:49%">2</span>
+      <span class="marca" style="left:51%;top:49%">3</span>
+      <span class="marca" style="left:4%;top:61%">4</span>
+      <span class="marca" style="left:4%;top:74%">5</span>
+    </div>
+    <figcaption><b>Figura 3.1.</b> La tarjeta <span class="ui">1 · Load your data</span>.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Zona de carga: arrastra el archivo o haz clic para elegirlo. Las fichas muestran los formatos aceptados.</li>
+    <li><span class="n">2</span><span class="ui">Text delimiter</span>: separador de los archivos de texto; en automático la app lo deduce contando comas, puntos y comas, tabuladores o barras.</li>
+    <li><span class="n">3</span><span class="ui">Decimal separator</span>: punto o coma; en automático se decide por mayoría entre las celdas numéricas.</li>
+    <li><span class="n">4</span><span class="ui">Paste from the clipboard instead</span>: un área para pegar una tabla copiada de una hoja de cálculo.</li>
+    <li><span class="n">5</span>Los siete ejemplos (tabla 1.4 y sección 3.7). Los dos últimos se generan al momento en el navegador.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.1.</b> Formatos que lee el Bloque 2.</caption>
+    <thead><tr><th style="width:26%">Formato</th><th>Cómo se lee</th><th style="width:30%">Observaciones</th></tr></thead>
+    <tbody>
+      <tr><td>Hojas de cálculo <code>.xlsx</code>, <code>.xls</code>, <code>.xlsm</code>, <code>.xlsb</code>, <code>.ods</code></td><td>Con la biblioteca de hojas de cálculo incluida en la app; se toma la primera hoja y aparece el selector <span class="ui">Sheet</span> si hay varias.</td><td>Las celdas combinadas se detectan y se reportan; las fechas no se usan como números.</td></tr>
+      <tr><td>Texto delimitado <code>.csv</code>, <code>.tsv</code>, <code>.txt</code>, <code>.dat</code>, <code>.prn</code></td><td>Con el delimitador elegido o detectado; respeta las comillas dobles.</td><td>Se acepta UTF-8 con o sin marca de orden de bytes.</td></tr>
+      <tr><td><code>.json</code></td><td>Un arreglo de objetos (un objeto por fila), un arreglo de arreglos, un objeto con <code>columns</code> y <code>data</code>, o un objeto cuyas claves son columnas.</td><td>Cualquier otra disposición produce un mensaje de error.</td></tr>
+      <tr><td>Portapapeles</td><td>Lo que pegues en <span class="ui">Paste from the clipboard instead</span> se lee como texto delimitado (los tabuladores de Excel se detectan solos).</td><td>El archivo se llama <i>pasted-data.txt</i> en los informes.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Cómo acomodar la tabla</h3>
+  <p>La regla es la de siempre en estadística multivariada: <b>una fila por objeto</b> que quieras agrupar (accesión, sitio, muestra, parcela, perfil, gen) y <b>una columna por variable</b>, con los nombres de las columnas en la primera fila. Además, dos columnas opcionales facilitan todo lo que viene después:</p>
+  <ul>
+    <li>Una <b>columna de identificación</b> (nombre o código único por fila). Se convierte en la etiqueta de las hojas del dendrograma y de los puntos en los mapas.</li>
+    <li>Una <b>columna de agrupación conocida</b> (región, especie, hábitat, tratamiento). Nunca se usa para construir los grupos: colorea las figuras y, en el Bloque 6, sirve para la validación externa.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.2.</b> Cómo escribir cada tipo de dato en la tabla.</caption>
+    <thead><tr><th style="width:24%">Dato</th><th>Cómo escribirlo</th></tr></thead>
+    <tbody>
+      <tr><td>Números</td><td>Con punto o con coma decimal, pero no mezclados en una misma columna. Los separadores de miles se toleran; un signo de porcentaje al final se ignora.</td></tr>
+      <tr><td>Faltantes</td><td>Celda vacía o cualquiera de los códigos: <code>NA</code>, <code>N/A</code>, <code>NaN</code>, <code>null</code>, <code>none</code>, <code>.</code>, <code>-</code>, <code>--</code>, <code>?</code>, <code>ND</code>, <code>S/D</code>, <code>missing</code>, <code>faltante</code>, los errores de Excel (<code>#N/A</code>, <code>#DIV/0!</code>…) e <code>inf</code>.</td></tr>
+      <tr><td>Binarias</td><td>Dos estados: <code>0/1</code>, <code>yes/no</code>, <code>y/n</code>, <code>true/false</code>, <code>present/absent</code>, <code>p/a</code>, <code>+/−</code>, <code>si/no</code>, <code>presence/absence</code>, <code>t/f</code>. El segundo estado de cada par se codifica como 1.</td></tr>
+      <tr><td>Nominales</td><td>Texto con hasta 40 categorías. Cuida mayúsculas y acentos: <i>Clay</i> y <i>clay</i> serían dos niveles distintos (la app lo avisa).</td></tr>
+      <tr><td>Ordinales</td><td>Niveles de texto reconocidos (por ejemplo <i>low &lt; medium &lt; high</i>, <i>poor &lt; moderate &lt; good &lt; excellent</i>, <i>bajo &lt; medio &lt; alto</i>, <i>early &lt; intermediate &lt; late</i>), o puntuaciones enteras en una columna cuyo nombre contenga <i>score</i>, <i>scale</i>, <i>grade</i>, <i>rating</i>, <i>severity</i>, <i>level</i>, <i>stage</i>, <i>damage</i> o <i>likert</i>.</td></tr>
+      <tr><td>Matriz de distancias</td><td>Una tabla cuadrada cuya primera columna repite los nombres de las columnas, con ceros en la diagonal y sin valores negativos. Pequeñas asimetrías se promedian.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · la palabra "none" cuenta como faltante</div>
+    <p>Entre los códigos de faltante está <code>none</code>. Si una columna de agrupación usa esa palabra como categoría (por ejemplo, "none" para los sitios sin tratamiento), la app la leerá como celda vacía. Cámbiala por otra etiqueta, como <i>control</i> o <i>ninguno</i>. Lo verás en el ejemplo de ruido uniforme de la sección 3.7, donde la columna <i>Group</i> vale "none" en todas las filas y por eso aparece como <span class="ui">Empty</span> y excluida.</p>
+  </div>
+
+  <h3>Lo que la app revisa al leer</h3>
+  <p>Al cargar, la app busca los problemas de formato más comunes y los muestra debajo del mensaje de lectura (figura 3.2). Muchos los corrige sola; los que rompen la regla de una fila por objeto se marcan en rojo.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-mensajes.png" alt="Mensaje de lectura y lista de comprobaciones del archivo"></div>
+    <figcaption><b>Figura 3.2.</b> Tras leer el ejemplo de razas de maíz: el mensaje de lectura (objetos, columnas y separador decimal detectado) y la comprobación <span class="ui">Tidy table</span>.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.3.</b> Comprobaciones del archivo y qué hace la app con cada una.</caption>
+    <thead><tr><th style="width:34%">Aviso</th><th style="width:10%" class="c">Nivel</th><th>Qué significa y qué hace la app</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Tidy table</span></td><td class="c">✅</td><td>Una fila de encabezados, una fila por objeto, sin celdas combinadas ni filas de totales.</td></tr>
+      <tr><td><span class="ui">N title rows above the header</span></td><td class="c">⚠️</td><td>Había filas de título antes de los nombres de columna; se saltan solas. Revisa la vista previa.</td></tr>
+      <tr><td><span class="ui">Merged cell ranges detected</span></td><td class="c">⛔</td><td>Celdas combinadas en la hoja de cálculo: solo la primera celda conserva el valor. Descombina y rellena cada fila.</td></tr>
+      <tr><td><span class="ui">Columns without a name</span></td><td class="c">⚠️</td><td>Se nombran V1, V2… (la primera sin nombre se llama <i>Object</i>, porque suele ser la de etiquetas).</td></tr>
+      <tr><td><span class="ui">Duplicated column names</span></td><td class="c">⚠️</td><td>Se renombran con un sufijo (_2, _3…).</td></tr>
+      <tr><td><span class="ui">Rows with more cells than the header</span></td><td class="c">⚠️</td><td>Las celdas sobrantes a la derecha se descartan.</td></tr>
+      <tr><td><span class="ui">Summary rows (Total / Mean) inside the data</span></td><td class="c">⛔</td><td>Filas cuya primera celda dice Total, Mean, Average, Promedio, Suma, Sum o Media: se eliminan, porque se agruparían como si fueran objetos.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-preview.png" alt="La tarjeta Data preview"></div>
+    <figcaption><b>Figura 3.3.</b> La tarjeta <span class="ui">Data preview</span>, al final del bloque, muestra la tabla tal como se leyó (hasta 200 filas). El guion largo de la fila ACC-005 es la celda faltante del ejemplo.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · una matriz de distancias salta dos tarjetas</div>
+    <p>Si la tabla se reconoce como matriz de distancias, las tarjetas de tipos de variable y de preprocesamiento no aparecen: no hay variables que tipificar ni nada que escalar. La app pasa directamente al análisis exploratorio, donde el mapa y la tendencia al agrupamiento se calculan sobre las coordenadas principales de la matriz. El Bloque 3 usará la matriz tal cual.</p>
+  </div>
+
+  <!-- 3.2 -->
+  <h2 id="s3-2"><span class="num">3.2</span>Tipos de variable y papel de cada columna</h2>
+  <p class="lead">La segunda tarjeta es la más importante del bloque. Para cada columna la app propone un <b>tipo</b> (qué clase de variable es) y un <b>papel</b> (para qué se usa). Del tipo dependen los coeficientes que ofrecerá el Bloque 3; del papel depende qué columnas entran en las distancias. Revisa la propuesta antes de seguir: es un minuto que evita análisis enteros mal planteados.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.4.</b> Los cinco tipos de variable.</caption>
+    <thead><tr><th style="width:26%">Tipo</th><th>Qué es</th><th style="width:30%">Ejemplos</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Quantitative</span></td><td>Mediciones continuas o enteras.</td><td>Altura, rendimiento, pH, expresión.</td></tr>
+      <tr><td><span class="ui">Count / abundance</span></td><td>Enteros no negativos con muchos ceros.</td><td>Abundancias de especies, capturas, lecturas.</td></tr>
+      <tr><td><span class="ui">Binary (0/1)</span></td><td>Dos estados.</td><td>Presente/ausente, sí/no, alelo A/B.</td></tr>
+      <tr><td><span class="ui">Nominal</span></td><td>Categorías sin orden.</td><td>Cultivar, tipo de suelo, color.</td></tr>
+      <tr><td><span class="ui">Ordinal</span></td><td>Categorías ordenadas.</td><td>Bajo &lt; medio &lt; alto, escalas de daño.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.5.</b> Los cinco papeles de una columna.</caption>
+    <thead><tr><th style="width:26%">Papel</th><th>Para qué sirve</th><th style="width:22%">Cuántas columnas</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Active (used to cluster)</span></td><td>Define la similitud entre objetos: entra en la matriz de trabajo y en las distancias.</td><td>Al menos dos.</td></tr>
+      <tr><td><span class="ui">Supplementary</span></td><td>No agrupa, pero se guarda para describir los grupos en el Bloque 7.</td><td>Las que quieras.</td></tr>
+      <tr><td><span class="ui">Object label / ID</span></td><td>Nombre de cada objeto en dendrogramas y mapas.</td><td>Una; al elegir otra, la anterior pasa a excluida.</td></tr>
+      <tr><td><span class="ui">Known grouping</span></td><td>Clasificación previa para colorear figuras y validar externamente. Nunca agrupa.</td><td>Una; al elegir otra, la anterior pasa a activa.</td></tr>
+      <tr><td><span class="ui">Exclude</span></td><td>Ignorar la columna.</td><td>Las que quieras.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Cómo adivina la app el tipo y el papel</h3>
+  <p>La propuesta sale de reglas sencillas sobre el contenido y el nombre de cada columna (tabla 3.6). Con datos bien nombrados acierta casi siempre; cuando duda, lo dice en la columna <span class="ui">Checks</span>.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.6.</b> Reglas de detección, en el orden en que se aplican a cada columna.</caption>
+    <thead><tr><th style="width:36%">Si la columna…</th><th>…se propone como</th></tr></thead>
+    <tbody>
+      <tr><td>Está vacía</td><td><span class="ui">Empty</span>, excluida.</td></tr>
+      <tr><td>Es numérica (al menos 90 % de las celdas) y solo tiene dos valores de un par binario conocido</td><td>Binaria (0/1), activa.</td></tr>
+      <tr><td>Es numérica, todos sus valores son distintos y se llama <i>ID</i>, <i>Code</i>, <i>Accession</i>, <i>Sample</i>, <i>Site</i>, <i>Plot</i>, <i>Profile</i>, <i>Name</i>, <i>Genotype</i>…</td><td>Etiqueta de objeto.</td></tr>
+      <tr><td>Es numérica y constante</td><td>Constante, excluida.</td></tr>
+      <tr><td>Son enteros no negativos, con más de dos valores, y al menos 15 % de ceros o un nombre que sugiere conteos (<i>_sp</i>, <i>abund</i>, <i>count</i>, <i>captur</i>, <i>reads</i>, <i>OTU</i>…)</td><td>Conteo / abundancia, activa.</td></tr>
+      <tr><td>Son pocos enteros (hasta 7 valores distintos) y se llama <i>Group</i>, <i>Class</i>, <i>Type</i>, <i>Region</i>, <i>Habitat</i>, <i>Treatment</i>, <i>Species</i>, <i>Population</i>…</td><td>Códigos enteros de grupo: nominal, agrupación conocida.</td></tr>
+      <tr><td>Son pocos enteros (hasta 9) y el nombre sugiere una escala (<i>score</i>, <i>scale</i>, <i>grade</i>, <i>severity</i>, <i>damage</i>…)</td><td>Ordinal con niveles numéricos, activa.</td></tr>
+      <tr><td>Es numérica y no cae en lo anterior</td><td>Cuantitativa, activa. Si tiene pocos enteros distintos se añade el aviso "few integer values → nominal or ordinal?".</td></tr>
+      <tr><td>Es texto y todos los valores son distintos (más de 3 filas)</td><td>Etiqueta de objeto (o excluida si ya hay una).</td></tr>
+      <tr><td>Es texto con dos niveles de un par binario conocido</td><td>Binaria, activa.</td></tr>
+      <tr><td>Es texto con niveles de una escala ordinal conocida</td><td>Ordinal, activa, con el orden de la escala.</td></tr>
+      <tr><td>Es texto con más de 40 categorías</td><td>Nominal, excluida.</td></tr>
+      <tr><td>Es texto y se llama como un grupo (<i>Region</i>, <i>Habitat</i>, <i>Landscape</i>…)</td><td>Nominal, agrupación conocida.</td></tr>
+      <tr><td>Es texto con hasta 40 categorías</td><td>Nominal, activa.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja dato">
+    <div class="dato-cifra">60 %</div>
+    <div class="dato-txt">
+      <div class="caja-t">Dato · la regla de las tablas de comunidades</div>
+      Después de tipificar columna por columna, la app mira el conjunto: si hay al menos cuatro columnas numéricas de enteros no negativos, son al menos el 60 % de las numéricas activas y el 30 % de ellas contiene ceros, todas pasan a <span class="ui">Count / abundance</span>. Así una tabla de especies por sitio se reconoce como tal aunque algunas especies aparezcan en todos los sitios.
+    </div>
+  </div>
+
+  <h3>La tabla de variables</h3>
+  <p>Cada columna del archivo ocupa una fila de la tabla (figura 3.4). En pantalla la tabla es más ancha que la ventana y se desplaza en horizontal; aquí se muestra en dos mitades.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-vartabla.png" alt="Mitad izquierda de la tabla de variables"></div>
+    <div class="marco" style="margin-top:0.08in"><img src="../img/b2-vartabla2.png" alt="Mitad derecha de la tabla de variables"></div>
+    <figcaption><b>Figura 3.4.</b> La tabla de variables del ejemplo de razas de maíz: a la izquierda, del nombre al papel; a la derecha, de los recuentos a las comprobaciones. La app reconoció la etiqueta (<i>Accession</i>), la agrupación conocida (<i>Region</i>, tres grupos) y ocho variables cuantitativas activas; marcó <i>KernelRows</i> por tener solo cuatro valores enteros y <i>LeafWidth_cm</i> por su celda faltante.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.7.</b> Columnas de la tabla de variables.</caption>
+    <thead><tr><th style="width:22%">Columna</th><th>Qué muestra</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Variable</span></td><td>El nombre tal como viene en el archivo (o el asignado si faltaba).</td></tr>
+      <tr><td><span class="ui">Detected</span></td><td>Lo que la app dedujo del contenido, con un color por tipo: por ejemplo <i>Numeric (continuous)</i>, <i>Counts (17 % zeros)</i>, <i>Binary (no / yes)</i>, <i>Ordinal (4 levels)</i>, <i>Categorical (3 groups)</i>, <i>Text, all distinct (label)</i>.</td></tr>
+      <tr><td><span class="ui">Type</span></td><td>Menú para corregir el tipo. Solo ofrece los tipos compatibles con el contenido (una columna de texto no puede ser cuantitativa). Si eliges <i>Ordinal</i> aparece debajo un campo para escribir el orden de los niveles separados por <code>&lt;</code>.</td></tr>
+      <tr><td><span class="ui">Role</span></td><td>Menú para cambiar el papel (tabla 3.5).</td></tr>
+      <tr><td><span class="ui">n</span> · <span class="ui">Missing</span> · <span class="ui">Unique</span></td><td>Celdas con dato, celdas faltantes y valores distintos.</td></tr>
+      <tr><td><span class="ui">Summary</span></td><td>Media, desviación estándar y rango para las numéricas; el orden de los niveles para las ordinales; qué valor vale 0 y cuál 1, con el porcentaje de unos, para las binarias; los primeros niveles para las nominales.</td></tr>
+      <tr><td><span class="ui">Distribution</span></td><td>Un histograma en miniatura (numéricas) o barras por nivel (categóricas), con el color del tipo.</td></tr>
+      <tr><td><span class="ui">Checks</span></td><td>Avisos de la tabla 3.8, u <i>ok</i>.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.8.</b> Avisos de la columna <span class="ui">Checks</span>.</caption>
+    <thead><tr><th style="width:34%">Aviso</th><th>Cuándo aparece y qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td><b>zero variance</b></td><td>Todos los valores son iguales: la variable no aporta nada y se descarta al aplicar.</td></tr>
+      <tr><td><b>N missing</b> / <b>X % missing</b></td><td>Celdas faltantes; en rojo cuando pasan del 20 %. Decide en la tarjeta 3 si eliminas o imputas.</td></tr>
+      <tr><td><b>numbers mixed with text</b></td><td>Más del 50 % pero menos del 90 % de las celdas son numéricas, o un número está escrito con letras. Revisa la columna en el archivo.</td></tr>
+      <tr><td><b>strongly skewed → log/sqrt?</b> / <b>skewed</b></td><td>Asimetría mayor que 2 (o que 1). Considera una transformación logarítmica o de raíz cuadrada.</td></tr>
+      <tr><td><b>N outliers |z| &gt; 3</b></td><td>Valores a más de tres desviaciones estándar de la media. Compruébalos en los datos originales.</td></tr>
+      <tr><td><b>few integer values → nominal or ordinal?</b></td><td>Enteros con hasta siete valores distintos: pueden ser códigos. Si lo son, cambia el tipo.</td></tr>
+      <tr><td><b>many categories</b></td><td>Nominal activa con más de 15 niveles: cada nivel se vuelve una columna indicadora y pesa poco.</td></tr>
+      <tr><td><b>levels differ only by case</b></td><td>Dos niveles que solo cambian en mayúsculas o minúsculas: unifícalos en el archivo.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>La estructura detectada y la ruta recomendada</h3>
+  <p>Debajo de la tabla, <span class="ui">Detected structure</span> resume la decisión en seis casillas, añade las comprobaciones que afectan al conjunto y propone una <b>ruta</b> para los bloques siguientes (figura 3.5). La ruta se deduce del <b>perfil</b> de los datos: la combinación de tipos de las columnas activas (tabla 3.10).</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-resumen.png" alt="Detected structure y ruta recomendada"></div>
+    <figcaption><b>Figura 3.5.</b> <span class="ui">Detected structure</span> con las razas de maíz: 45 objetos, 8 variables cuantitativas activas, etiqueta y agrupación conocida; tres avisos (una celda faltante, dispersiones que difieren más de 20 veces, enteros con pocos valores en <i>KernelRows</i>) y la ruta recomendada: puntuaciones z, distancia euclidiana, Ward.D2 seguido de k-means.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.9.</b> Comprobaciones de <span class="ui">Detected structure</span>.</caption>
+    <thead><tr><th style="width:36%">Aviso</th><th style="width:8%" class="c">Nivel</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">No active variables</span></td><td class="c">⛔</td><td>Marca al menos dos columnas como activas; el botón de aplicar queda desactivado mientras tanto.</td></tr>
+      <tr><td><span class="ui">Only one active variable</span></td><td class="c">⚠️</td><td>Agrupar por una sola variable es solo cortar sus valores en intervalos.</td></tr>
+      <tr><td><span class="ui">Very few objects</span></td><td class="c">⛔</td><td>Menos de 8 filas no sostienen más de uno o dos grupos.</td></tr>
+      <tr><td><span class="ui">Fewer than 3 objects per variable</span></td><td class="c">⚠️</td><td>Con muchas variables las distancias se parecen todas; el Bloque 3 ofrece agrupar sobre componentes principales.</td></tr>
+      <tr><td><span class="ui">N missing values among the active variables</span></td><td class="c">⚠️</td><td>Elige en la tarjeta 3 entre eliminar filas o imputar.</td></tr>
+      <tr><td><span class="ui">Mixed variable types</span></td><td class="c">ℹ️</td><td>La ruta natural es Gower + PAM; la estandarización la hace Gower por dentro.</td></tr>
+      <tr><td><span class="ui">Looks like a community (species × site) table</span></td><td class="c">ℹ️</td><td>Usa coeficientes asimétricos o la transformación de Hellinger, no la euclidiana cruda.</td></tr>
+      <tr><td><span class="ui">Spreads differ by more than 20×</span></td><td class="c">⚠️</td><td>Sin estandarizar, la variable de unidades grandes decide los grupos.</td></tr>
+      <tr><td><span class="ui">No label column</span></td><td class="c">ℹ️</td><td>Se usarán números de fila como nombres.</td></tr>
+      <tr><td><span class="ui">Integer codes treated as quantitative</span></td><td class="c">ℹ️</td><td>Si esos enteros son categorías, cambia el tipo a nominal u ordinal.</td></tr>
+      <tr><td><span class="ui">Constant variables</span></td><td class="c">⚠️</td><td>Se descartan al aplicar.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.10.</b> La ruta recomendada según el perfil de los datos. El preprocesamiento propuesto se copia a la tarjeta 3; lo demás se repite en <span class="ui">What to do next</span> al final del bloque.</caption>
+    <thead><tr><th style="width:17%">Perfil</th><th style="width:17%">Preprocesamiento</th><th style="width:24%">Disimilitud</th><th style="width:22%">Método</th><th>Prueba también</th></tr></thead>
+    <tbody>
+      <tr><td><b>Quantitative</b><br><span class="small">cuantitativas, con o sin ordinales</span></td><td>z (log antes si hay variables muy asimétricas)</td><td>Euclidiana</td><td>Ward.D2 y k-means sembrado con el árbol</td><td>UPGMA · PAM · mezclas gaussianas</td></tr>
+      <tr><td><b>Ecological counts</b><br><span class="small">≥ 60 % conteos</span></td><td>Hellinger, sin escalar</td><td>Bray–Curtis sobre conteos, o euclidiana sobre Hellinger</td><td>UPGMA (Bray–Curtis) o Ward.D2 (Hellinger)</td><td>PAM · k-means sobre Hellinger</td></tr>
+      <tr><td><b>Binary</b></td><td>Sin escalar</td><td>Jaccard (asimétrica) o apareamiento simple (estados simétricos)</td><td>UPGMA</td><td>PAM · Ward sobre √(1 − <i>s</i>)</td></tr>
+      <tr><td><b>Nominal</b></td><td>Rango 0–1</td><td>Apareamiento simple / Gower</td><td>PAM</td><td>UPGMA sobre Gower</td></tr>
+      <tr><td><b>Ordinal</b></td><td>Rango 0–1</td><td>Manhattan sobre rangos / Gower</td><td>PAM o UPGMA</td><td>Ward.D2 sobre rangos</td></tr>
+      <tr><td><b>Mixed types</b></td><td>Rango 0–1</td><td>Gower</td><td>PAM</td><td>UPGMA sobre Gower</td></tr>
+      <tr><td><b>Distance matrix</b></td><td>Ninguno</td><td>Tu matriz, tal cual</td><td>UPGMA o PAM</td><td>Enlace completo · Ward sobre √<i>d</i> si es euclidiana</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué escalado propone la app para datos cuantitativos</div>
+    <table class="compacta">
+      <thead><tr><th style="width:44%">Si las desviaciones estándar de las variables activas…</th><th>entonces</th></tr></thead>
+      <tbody>
+        <tr><td>difieren más de 20 veces (máxima / mínima &gt; 20)</td><td>Puntuaciones z, con aviso: sin estandarizar una sola variable domina.</td></tr>
+        <tr><td>difieren entre 3 y 20 veces</td><td>Puntuaciones z; conserva las unidades crudas solo si todas comparten unidad y quieres que las mayores pesen más.</td></tr>
+        <tr><td>son parecidas (menos de 3 veces)</td><td>Puntuaciones z de todos modos: cambia poco y mantiene el análisis comparable.</td></tr>
+        <tr><td>y además alguna variable tiene asimetría mayor que 1.5</td><td>Se propone log(<i>x</i> + 1) antes de escalar.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3.3 -->
+  <h2 id="s3-3"><span class="num">3.3</span>Faltantes, transformación y escalado</h2>
+  <p class="lead">La tercera tarjeta construye la <b>matriz de trabajo</b>: la tabla numérica que verán todos los bloques siguientes. Cuatro menús y un botón (figura 3.6). Los valores iniciales son los de la ruta recomendada; puedes cambiarlos y volver a pulsar <span class="ui">Apply and explore →</span> cuantas veces quieras: todo lo que sigue se recalcula.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-prep.png" alt="La tarjeta 3 · Missing values, transformation and scaling"></div>
+    <figcaption><b>Figura 3.6.</b> La tarjeta <span class="ui">3 · Missing values, transformation and scaling</span> con los valores propuestos para las razas de maíz. Debajo de cada menú, una línea explica la opción elegida.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.11.</b> Opciones de <span class="ui">Missing values</span> y <span class="ui">Ordinal variables</span>.</caption>
+    <thead><tr><th style="width:38%">Opción</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Drop objects with any missing active value</span></td><td>Elimina las filas con algún faltante en las columnas activas. Es lo seguro cuando son pocas; la app avisa del porcentaje eliminado y se queja si pasa del 20 %.</td></tr>
+      <tr><td><span class="ui">Impute (mean / median / mode)</span></td><td>Rellena cada faltante con la media (cuantitativas), la mediana (conteos y niveles ordinales) o la moda (binarias y nominales) de su columna. Conserva todas las filas; el mensaje dice cuántas celdas se imputaron.</td></tr>
+      <tr><td><span class="ui">Ranks of the levels (0, 1, 2…)</span></td><td>Cada variable ordinal se codifica con el rango de su nivel, del más bajo al más alto, y luego se escala como una cuantitativa.</td></tr>
+      <tr><td><span class="ui">Numeric scores if the levels are numbers</span></td><td>Si los niveles son números (una escala 1–5, por ejemplo), se usan tal cual en vez de los rangos.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.12.</b> Opciones de <span class="ui">Transformation (before scaling)</span>. Las transformaciones por fila se aplican a las columnas de conteo; si no hay, a todas las cuantitativas. Los valores negativos las bloquean (log y raíz usan el valor absoluto con su signo; las de fila se omiten con aviso).</caption>
+    <thead><tr><th style="width:30%">Opción</th><th style="width:22%">Fórmula</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">None</span></td><td>—</td><td>Los valores se usan como están.</td></tr>
+      <tr><td><span class="ui">log(x + 1)</span></td><td>log(<i>x</i> + 1) por celda</td><td>Comprime los valores grandes y conserva los ceros; para datos positivos asimétricos.</td></tr>
+      <tr><td><span class="ui">Square root</span></td><td>√<i>x</i> por celda</td><td>Más suave que el logaritmo; la transformación clásica para estabilizar la varianza de conteos.</td></tr>
+      <tr><td><span class="ui">Hellinger (row-wise)</span></td><td>√(<i>x</i> / total de la fila)</td><td>Convierte una tabla de abundancias en algo que la distancia euclidiana, Ward y k-means manejan bien.</td></tr>
+      <tr><td><span class="ui">Chord (row-wise)</span></td><td><i>x</i> / √Σ<i>x</i>²</td><td>Cada objeto se vuelve un vector unitario; las distancias reflejan la forma del perfil, no su tamaño.</td></tr>
+      <tr><td><span class="ui">Relative abundance (row-wise)</span></td><td><i>x</i> / total de la fila</td><td>Proporciones por objeto.</td></tr>
+      <tr><td><span class="ui">Presence / absence</span></td><td>1 si <i>x</i> &gt; 0</td><td>Reduce las abundancias a presencia.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.13.</b> Opciones de <span class="ui">Scaling</span>. Las variables binarias nunca se escalan; las columnas indicadoras de las nominales se multiplican por 0.7071 para que una variable nominal pese como una cuantitativa.</caption>
+    <thead><tr><th style="width:30%">Opción</th><th style="width:26%">Fórmula</th><th>Cuándo usarla</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">z-scores (mean 0, SD 1)</span></td><td>(<i>x</i> − media) / DE</td><td>La opción habitual con distancia euclidiana.</td></tr>
+      <tr><td><span class="ui">Range 0–1</span></td><td>(<i>x</i> − mín) / (máx − mín)</td><td>Conserva la forma de la distribución; es lo que Gower hace internamente. Sensible a atípicos.</td></tr>
+      <tr><td><span class="ui">Robust (median / IQR)</span></td><td>(<i>x</i> − mediana) / RIC</td><td>Como z, pero resistente a valores extremos.</td></tr>
+      <tr><td><span class="ui">Divide by max |x|</span></td><td><i>x</i> / máx |<i>x</i>|</td><td>Mantiene los ceros en cero; útil con datos dispersos.</td></tr>
+      <tr><td><span class="ui">None (raw units)</span></td><td>—</td><td>Solo si todas las variables comparten unidad y quieres que las de mayor dispersión pesen más.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · qué contiene la matriz de trabajo</div>
+    <p>Después de aplicar, cada objeto es una fila de números: las cuantitativas y los conteos transformados y escalados, las ordinales como rangos escalados, las binarias como 0/1 sin escalar y cada nominal convertida en tantas columnas indicadoras como niveles (hasta 40), escaladas por 0.7071. Sobre esa matriz se calculan la distancia euclidiana del análisis exploratorio, el mapa de componentes principales, la imagen VAT y el estadístico de Hopkins. El Bloque 3 vuelve a leer los tipos originales para ofrecer coeficientes que respeten cada clase de variable; la matriz de trabajo es solo el punto de partida común. Puedes descargarla con <span class="ui">⬇ Download the preprocessed matrix (CSV)</span> al final del bloque.</p>
+  </div>
+
+  <!-- 3.4 -->
+  <h2 id="s3-4"><span class="num">3.4</span>¿Son agrupables mis datos? Hopkins y VAT</h2>
+  <p class="lead">Todo algoritmo devuelve grupos, existan o no (lo viste con el ruido uniforme del demo, práctica 5 del capítulo 2). Por eso la cuarta tarjeta, antes de mostrar un solo dendrograma, mide la <b>tendencia al agrupamiento</b> con dos herramientas complementarias: un número con su valor P, el estadístico de Hopkins, y una imagen, la VAT. Las acompañan el mapa de componentes principales, el mapa de calor de correlaciones y el diagrama de atípicos multivariados.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · el estadístico de Hopkins</div>
+    <p>Se toman <i>m</i> puntos al azar dentro de la caja que envuelve a los datos y se mide la distancia de cada uno a su objeto real más cercano (suma <i>u</i>). Se toman también <i>m</i> objetos reales al azar y se mide la distancia de cada uno a su vecino real más cercano (suma <i>w</i>). El estadístico es <b>H = <i>u</i> / (<i>u</i> + <i>w</i>)</b>. Si los objetos están repartidos al azar, un punto artificial y un objeto real tienen vecinos igual de cerca y H ronda 0.5. Si los objetos forman grupos, cada objeto real tiene vecinos muy cerca (<i>w</i> pequeña) mientras que muchos puntos artificiales caen en los huecos entre grupos (<i>u</i> grande), y H se acerca a 1.</p>
+    <p>ClusteringPro usa <i>m</i> igual a la mitad de los objetos (entre 10 y 200), repite el sorteo <b>20 veces</b> y promedia. Y en lugar de la aproximación teórica, que solo vale para <i>m</i> pequeña, calibra el resultado por <b>Monte Carlo</b>: simula 80 tablas uniformes con el mismo número de objetos, de variables y el mismo rango, calcula H en cada una y reporta la banda del 95 % de esos valores y un valor P, la fracción de simulaciones que dan un H tan grande como el observado. Con más de 12 variables, o con una matriz de distancias, H se calcula sobre los componentes principales que reúnen el 90 % de la varianza (de 2 a 10), porque con muchas dimensiones todas las distancias se parecen.</p>
+  </div>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b2-hopkins.png" alt="Figuras de Hopkins y de atípicos multivariados">
+      <span class="marca" style="left:17%;top:30%">1</span>
+      <span class="marca" style="left:38%;top:18%">2</span>
+      <span class="marca" style="left:16%;top:56%">3</span>
+      <span class="marca" style="left:76%;top:19%">4</span>
+      <span class="marca" style="left:60%;top:60%">5</span>
+    </div>
+    <figcaption><b>Figura 3.7.</b> Las dos figuras de la tendencia al agrupamiento y los atípicos, con las razas de maíz.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Curva de densidad de H en las 80 tablas uniformes simuladas; la franja gris es la banda del 95 % (aquí 0.46–0.51).</li>
+    <li><span class="n">2</span>El H observado (línea punteada): 0.634 ± 0.013 con m = 22, P = 0.012, "detectable but modest tendency".</li>
+    <li><span class="n">3</span>Marcas al pie: arriba los 20 sorteos del H observado, abajo las simulaciones.</li>
+    <li><span class="n">4</span>Distancia de Mahalanobis D² de cada objeto al centro multivariado, con las líneas de referencia ji cuadrada del 97.5 % (sospechoso) y 99.9 % (extremo); los objetos por encima se rotulan.</li>
+    <li><span class="n">5</span>Puntos coloreados por la agrupación conocida, si la hay.</li>
+  </ul>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · cómo lee la app el estadístico de Hopkins</div>
+    <table class="compacta">
+      <thead><tr><th style="width:38%">Si…</th><th style="width:14%">Nivel</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td>P ≤ 0.05 y H ≥ 0.70</td><td>✅ clara</td><td><span class="ui">Clear clustering tendency</span>: los datos están lejos de la aleatoriedad espacial; vale la pena buscar grupos.</td></tr>
+        <tr><td>P ≤ 0.05 pero H &lt; 0.70</td><td>⚠️ modesta</td><td><span class="ui">Detectable but modest</span>: más de lo que da el azar, pero no por mucho. Espera pocos grupos bien poblados o gradientes. Con pocos objetos por grupo H se queda modesto aunque el mapa muestre nubes claras: deja que el mapa y la VAT opinen.</td></tr>
+        <tr><td>P &gt; 0.05 pero H ≥ 0.62</td><td>⚠️ moderada</td><td><span class="ui">Moderate</span>: algo de estructura, quizá gradientes más que grupos discretos.</td></tr>
+        <tr><td>P &gt; 0.05 y H &lt; 0.62</td><td>⛔ débil o nula</td><td><span class="ui">Weak or no clustering tendency</span>: la estructura de vecinos es la de puntos al azar. Cualquier algoritmo devolverá grupos, pero pueden ser arbitrarios.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · la imagen VAT</div>
+    <p>VAT son las siglas en inglés de evaluación visual de la tendencia. La matriz de distancias se reordena de modo que cada objeto quede junto a su vecino más cercano entre los ya colocados (se empieza por el objeto más alejado de todos y se sigue como al construir un árbol de expansión mínima), y se pinta como imagen: en la paleta clásica de grises, <b>oscuro es cerca</b>. Si hay grupos, aparecen <b>bloques oscuros a lo largo de la diagonal</b>, y su número es una primera estimación de <i>k</i>. Si no los hay, la imagen es un degradado sin bloques. Cuando diste una agrupación conocida, una franja de color al lado izquierdo muestra si los bloques coinciden con ella.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-corrvat.png" alt="Mapa de calor de correlaciones e imagen VAT"></div>
+    <figcaption><b>Figura 3.8.</b> A la izquierda, la matriz de correlaciones de Pearson entre las variables numéricas de la matriz de trabajo (azul positivo, rojo negativo; los valores se imprimen hasta con 18 variables). A la derecha, la imagen VAT de las razas de maíz: tres bloques oscuros que coinciden bastante bien con la franja de regiones, aunque los dos primeros se tocan.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-pca.png" alt="Mapa de componentes principales"></div>
+    <figcaption><b>Figura 3.9.</b> El mapa de componentes principales de los objetos (76 % de la varianza en los dos primeros ejes), coloreado por la agrupación conocida y con envolventes por grupo. Con una matriz de distancias el mapa es de coordenadas principales (MDS). Las etiquetas se muestran automáticamente hasta con 60 objetos.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · el mapa engaña menos con el porcentaje a la vista</div>
+    <p>El mapa muestra dos ejes; el porcentaje entre paréntesis dice cuánta varianza reúnen. Con 76 % lo que ves es casi todo lo que hay. Con 49 %, como en el ejemplo binario o en el ruido uniforme, la mitad de la variación está fuera del plano y dos objetos que parecen vecinos pueden no serlo. En esos casos la VAT y el estadístico de Hopkins, que usan todas las dimensiones, pesan más que el mapa.</p>
+  </div>
+
+  <!-- 3.5 -->
+  <h2 id="s3-5"><span class="num">3.5</span>La calificación y la recomendación</h2>
+  <p class="lead">Encabezando la cuarta tarjeta, un veredicto de una letra resume todo lo anterior (figura 3.10): la calificación de <b>preparación</b> (<span class="ui">readiness</span>) de A a D, una frase que la explica, las casillas con las cifras que la sustentan, la lista de comprobaciones y la tarjeta <span class="ui">What to do next</span> con lo que conviene hacer en los bloques 3 a 6.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b2-eda.png" alt="La tarjeta 4 con el veredicto, las casillas y las comprobaciones">
+      <span class="marca" style="left:8%;top:15.5%">1</span>
+      <span class="marca" style="left:4%;top:24%">2</span>
+      <span class="marca" style="left:4%;top:53%">3</span>
+      <span class="marca" style="left:4%;top:92.7%">4</span>
+    </div>
+    <figcaption><b>Figura 3.10.</b> El inicio de la tarjeta <span class="ui">4 · Exploratory analysis and clustering tendency</span> con las razas de maíz.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>La calificación (aquí B) y la línea de preprocesamiento con que se calculó.</li>
+    <li><span class="n">2</span>Ocho casillas de cifras (tabla 3.14); el borde de color repite el semáforo de cada una.</li>
+    <li><span class="n">3</span>Comprobaciones interpretadas (tabla 3.15).</li>
+    <li><span class="n">4</span><span class="ui">What to do next</span>: disimilitud, método, alternativas y por dónde empezar con el número de grupos.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.14.</b> Las casillas de cifras y su semáforo.</caption>
+    <thead><tr><th style="width:30%">Casilla</th><th>Qué es</th><th style="width:30%">Semáforo</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Objects</span></td><td>Objetos en la matriz de trabajo y cuántos se eliminaron por faltantes.</td><td>—</td></tr>
+      <tr><td><span class="ui">Variables in the working matrix</span></td><td>Columnas de la matriz; con nominales indica cuántas son numéricas y cuántas indicadoras.</td><td>—</td></tr>
+      <tr><td><span class="ui">Objects per variable</span></td><td>Cociente <i>n</i> / <i>p</i>, contando cada nominal como una variable.</td><td>verde ≥ 5 · ámbar 3–5 · rojo &lt; 3</td></tr>
+      <tr><td><span class="ui">Hopkins statistic</span></td><td>H, la banda uniforme y el valor P.</td><td>La regla de la sección 3.4.</td></tr>
+      <tr><td><span class="ui">PCA (o MDS): first two axes</span></td><td>Varianza reunida por los dos primeros ejes del mapa.</td><td>verde ≥ 50 % · ámbar 30–50 %</td></tr>
+      <tr><td><span class="ui">Multivariate outliers</span></td><td>Objetos con D² por encima del cuantil 97.5 %, y cuántos son extremos (99.9 %).</td><td>ámbar si pasan del 10 % de los objetos</td></tr>
+      <tr><td><span class="ui">Strongest correlation</span></td><td>La mayor |<i>r</i>| entre variables numéricas y qué par la produce.</td><td>ámbar si |<i>r</i>| &gt; 0.95</td></tr>
+      <tr><td><span class="ui">SD ratio (max / min)</span></td><td>Cociente entre la mayor y la menor desviación estándar en la matriz de trabajo.</td><td>ámbar si &gt; 10</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.15.</b> Comprobaciones de la tarjeta 4 y lo que sugieren.</caption>
+    <thead><tr><th style="width:40%">Comprobación</th><th style="width:8%" class="c">Nivel</th><th>Qué sugiere</th></tr></thead>
+    <tbody>
+      <tr><td>Tendencia clara / modesta / moderada / débil (Hopkins)</td><td class="c">✅ ⚠️ ⛔</td><td>Según la regla de la sección 3.4.</td></tr>
+      <tr><td><span class="ui">N extreme objects (Mahalanobis D² beyond the 99.9 % quantile)</span></td><td class="c">⚠️</td><td>Nombra hasta ocho objetos. Los jerárquicos los aislarán en su rama y k-means arrastrará los centros: considera PAM, un escalado robusto o quitarlos tras revisar los valores.</td></tr>
+      <tr><td><span class="ui">N objects beyond the 97.5 % Mahalanobis quantile</span></td><td class="c">⚠️</td><td>Más del 10 % de objetos lejos del centro: colas pesadas o estructura alargada. PAM y enlace simple sufren menos que k-means y Ward.</td></tr>
+      <tr><td><span class="ui">No extreme multivariate outliers</span></td><td class="c">✅</td><td>Lo que muestra una muestra bien portada.</td></tr>
+      <tr><td><span class="ui">X and Y are nearly redundant (|r| = …)</span></td><td class="c">⚠️</td><td>Dos variables casi iguales cuentan doble en la distancia euclidiana: quita una o agrupa sobre componentes (Bloque 3).</td></tr>
+      <tr><td><span class="ui">No redundant variables</span></td><td class="c">✅</td><td>Cada variable aporta información propia.</td></tr>
+      <tr><td><span class="ui">Variables with very different spreads and no scaling</span></td><td class="c">⛔</td><td>Elegiste no escalar y la mayor DE es más de 10 veces la menor: la distancia es esa variable. Escala y vuelve a aplicar.</td></tr>
+      <tr><td><span class="ui">Spreads still differ after transformation</span></td><td class="c">⚠️</td><td>Aun escaladas, una variable se dispersa mucho más (colas pesadas o muchos valores idénticos); con transformaciones por fila es lo esperado, pero vigila que una sola especie abundante no mande.</td></tr>
+      <tr><td><span class="ui">Many rows dropped for missing values</span></td><td class="c">⚠️</td><td>Se eliminó más del 20 % de los objetos: la imputación los conserva, y Gower puede saltar los pares faltantes.</td></tr>
+      <tr><td><span class="ui">Known grouping with N groups will be used for external validation</span></td><td class="c">ℹ️</td><td>Colorea las figuras y alimenta los índices Rand, ARI y NMI del Bloque 6.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · cómo se calcula la calificación</div>
+    <table class="compacta">
+      <thead><tr><th style="width:12%" class="c">Letra</th><th style="width:38%">Condición</th><th>Frase de la app</th></tr></thead>
+      <tbody>
+        <tr><td class="c"><b>A</b></td><td>Ningún aviso rojo ni ámbar</td><td>Los datos están listos: tendencia clara, variables equilibradas, sin señales de alarma.</td></tr>
+        <tr><td class="c"><b>B</b></td><td>Uno o dos avisos ámbar, ninguno rojo</td><td>Adelante, con las salvedades de la lista; tenlas presentes al interpretar.</td></tr>
+        <tr><td class="c"><b>C</b></td><td>Un aviso rojo, o más de dos ámbar</td><td>Agrupar es posible pero frágil; atiende los puntos marcados o trata los resultados como exploratorios.</td></tr>
+        <tr><td class="c"><b>D</b></td><td>Dos o más avisos rojos</td><td>Estos datos no sostienen un análisis de agrupamientos tal como están.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">Cuentan como rojos: tendencia débil o nula, dispersiones muy distintas sin escalar y menos de 8 objetos. Cuentan como ámbar: tendencia modesta o moderada, atípicos extremos o más del 10 % de sospechosos, variables redundantes, dispersiones distintas tras transformar, más del 20 % de filas eliminadas y menos de 3 objetos por variable.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · la calificación no es una sentencia</div>
+    <p>Una B con "tendencia modesta" es lo más frecuente en datos reales de pocas decenas de objetos: el estadístico de Hopkins es conservador con muestras pequeñas. Lee la calificación junto con el mapa y la VAT. Una C por dispersiones sin escalar se arregla en un clic; una C por tendencia débil merece una pausa: pregúntate si las variables son las adecuadas antes de seguir. Y una D honesta vale más que un dendrograma bonito.</p>
+  </div>
+
+  <!-- 3.6 -->
+  <h2 id="s3-6"><span class="num">3.6</span>Ajustes, tablas y figuras del bloque</h2>
+  <p>El bloque produce seis figuras editables, cada una en su tarjeta con el panel <span class="ui">Edit figure</span> y los controles de descarga descritos en la sección 1.6. La tabla 3.16 resume los controles propios de cada una; los de estilo y tipografía son comunes a todas.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.16.</b> Las seis figuras del bloque y sus controles propios.</caption>
+    <thead><tr><th style="width:28%">Figura</th><th>Qué muestra</th><th style="width:36%">Controles propios</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Spread of every variable after preprocessing</span></td><td>Cajas de cada variable de la matriz de trabajo (figura 3.11).</td><td><span class="ui">Values</span> (después de transformar y escalar, o crudos), <span class="ui">Order</span> (como en la tabla, o por dispersión), <span class="ui">Row height</span>, <span class="ui">Hide dummy columns</span>, <span class="ui">Show mean (◇)</span>, paleta y posición de la leyenda.</td></tr>
+      <tr><td><span class="ui">Correlation between the numeric variables</span></td><td>Matriz de correlaciones de Pearson (figura 3.8, izquierda). No aparece con datos binarios puros ni con matrices de distancia.</td><td><span class="ui">Colour map</span>, <span class="ui">Show values</span>.</td></tr>
+      <tr><td><span class="ui">PCA (o MDS) preview of the objects</span></td><td>Mapa de los objetos en los dos primeros ejes (figura 3.9).</td><td>Títulos de los ejes, <span class="ui">Object labels</span> (automático, todas, ninguna), tamaño de etiquetas y puntos, forma del punto, <span class="ui">Convex hulls per group</span>, color de los puntos cuando no hay grupos, paleta y leyenda.</td></tr>
+      <tr><td><span class="ui">VAT image</span></td><td>Matriz de distancias reordenada (figura 3.8, derecha).</td><td><span class="ui">Colour map</span> (grises clásicos u otra rampa), <span class="ui">Known-group strip</span>, paleta y leyenda.</td></tr>
+      <tr><td><span class="ui">Hopkins statistic</span></td><td>H observado frente a la distribución sin estructura (figura 3.7, izquierda). No aparece con menos de 6 objetos.</td><td>Color del valor observado y de la curva nula.</td></tr>
+      <tr><td><span class="ui">Multivariate outliers</span></td><td>D² de Mahalanobis por objeto (figura 3.7, derecha). No aparece con matrices de distancia ni con menos de 5 objetos.</td><td><span class="ui">Sort objects by D²</span>, tamaño de punto, color de los atípicos, paleta y leyenda.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-varbox.png" alt="Diagrama de cajas de las variables en la matriz de trabajo"></div>
+    <figcaption><b>Figura 3.11.</b> <span class="ui">Spread of every variable after preprocessing</span>: un diagrama de cajas por variable de la matriz de trabajo, con el rombo en la media, coloreado por tipo. Con puntuaciones z todas las cajas quedan centradas en cero y con dispersión comparable; los círculos son valores fuera de los bigotes.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · qué se lleva el informe</div>
+    <p>El Bloque 8 incluye en el informe la tabla de variables, las casillas y comprobaciones de las tarjetas 2 y 4, y las seis figuras <b>tal como las hayas editado</b>. Si cambias un título o una paleta aquí, así saldrán en el informe. El botón <span class="ui">⬇ Download the preprocessed matrix (CSV)</span> guarda la matriz de trabajo con las etiquetas y la agrupación conocida, por si quieres reproducir el análisis en otro programa.</p>
+  </div>
+
+  <!-- 3.7 -->
+  <h2 id="s3-7"><span class="num">3.7</span>Paso a paso con los siete ejemplos</h2>
+  <p class="lead">Cada ejemplo enseña una situación distinta. Los pasos son siempre los mismos: cargar, revisar tipos y papeles, aplicar y leer el veredicto. Las cifras de esta sección son las que da la app con los valores propuestos; los dos ejemplos simulados usan una semilla fija, así que también son reproducibles.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 3.17.</b> Los siete ejemplos de un vistazo, con los valores propuestos por la app.</caption>
+    <thead><tr><th style="width:21%">Ejemplo</th><th class="c" style="width:7%"><i>n</i></th><th class="c" style="width:7%"><i>p</i></th><th style="width:15%">Perfil</th><th style="width:20%">Preprocesamiento</th><th class="c" style="width:9%">H (P)</th><th class="c" style="width:7%">Nota</th></tr></thead>
+    <tbody>
+      <tr><td>Razas de maíz</td><td class="c">44</td><td class="c">8</td><td>Cuantitativo</td><td>z</td><td class="c">0.634 (0.012)</td><td class="c">B</td></tr>
+      <tr><td>Presencia de especies</td><td class="c">30</td><td class="c">22</td><td>Binario</td><td>ninguno</td><td class="c">0.559 (0.012)</td><td class="c">B</td></tr>
+      <tr><td>Abundancia de insectos</td><td class="c">24</td><td class="c">14</td><td>Conteos ecológicos</td><td>Hellinger, sin escalar</td><td class="c">0.533 (0.049)</td><td class="c">B</td></tr>
+      <tr><td>Perfiles de suelo</td><td class="c">36</td><td class="c">14 (8 + 6)</td><td>Mixto</td><td>rango 0–1</td><td class="c">0.815 (0.012)</td><td class="c">A</td></tr>
+      <tr><td>Matriz de distancias</td><td class="c">12</td><td class="c">7 ejes</td><td>Matriz</td><td>ninguno</td><td class="c">0.581 (0.025)</td><td class="c">B</td></tr>
+      <tr><td>Cuatro grupos simulados</td><td class="c">80</td><td class="c">5</td><td>Cuantitativo</td><td>z</td><td class="c">0.784 (0.012)</td><td class="c">A</td></tr>
+      <tr><td>Ruido uniforme</td><td class="c">60</td><td class="c">5</td><td>Cuantitativo</td><td>z</td><td class="c">0.474 (0.840)</td><td class="c">C</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Ejemplo 1 · Razas de maíz: el caso cuantitativo con una celda faltante</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>En la portada pulsa <span class="ui">Start with my data →</span> y, en los ejemplos, <span class="ui">Quantitative · maize landraces</span>. La app lee 45 objetos × 10 columnas con separador decimal de punto y reporta <span class="ui">Tidy table</span>.</li>
+      <li>Revisa la tabla de variables (figura 3.4): <i>Accession</i> es la etiqueta, <i>Region</i> la agrupación conocida (Highland, Valley, Coast) y las ocho medidas son cuantitativas activas. Fíjate en los dos avisos: <i>KernelRows</i> tiene solo cuatro valores enteros (12, 14, 16, 18: hileras de granos, una cuenta que aquí conviene tratar como cuantitativa) y <i>LeafWidth_cm</i> tiene una celda faltante.</li>
+      <li>Lee <span class="ui">Detected structure</span> (figura 3.5): las dispersiones difieren más de 20 veces (la altura de planta se mide en cientos de centímetros; el rendimiento, en unidades de toneladas), así que la ruta propone puntuaciones z.</li>
+      <li>Deja la tarjeta 3 como está (eliminar filas con faltantes, sin transformación, z) y pulsa <span class="ui">Apply and explore →</span>. El mensaje dice que se eliminó 1 fila (2 %) y quedan 44 objetos.</li>
+      <li>Lee el veredicto (figura 3.10): B, con tendencia modesta (H = 0.634, P = 0.012), sin atípicos ni redundancias (correlación máxima 0.79 entre días a floración y ancho de hoja). Mira el mapa (figura 3.9): tres nubes claras por región. La VAT (figura 3.8) muestra tres bloques.</li>
+      <li><span class="ui">What to do next</span>: euclidiana, Ward.D2 seguido de k-means, y empezar con <i>k</i> = 3 por las tres regiones conocidas.</li>
+    </ol>
+  </div>
+  <p><b>Pruébalo tú:</b> cambia <span class="ui">Missing values</span> a <span class="ui">Impute</span> y aplica de nuevo: los 45 objetos se conservan y el mensaje informa de 1 celda imputada con la media. Después prueba <span class="ui">Scaling</span> = <span class="ui">None (raw units)</span>: la casilla <span class="ui">SD ratio</span> se dispara, aparece el aviso rojo de dispersiones sin escalar y la calificación baja a C. Es la demostración más rápida de por qué se estandariza.</p>
+
+  <h3>Ejemplo 2 · Presencia de especies: datos binarios</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Carga <span class="ui">Binary · plant species presence</span>: 30 sitios × 24 columnas.</li>
+      <li>En la tabla de variables, las 22 especies aparecen como <span class="ui">Binary 0/1</span> activas, <i>Site</i> como etiqueta y <i>Habitat</i> (Forest, Grassland, Wetland) como agrupación conocida. La estructura detectada avisa: menos de 3 objetos por variable.</li>
+      <li>La ruta recomendada no escala nada y propone Jaccard (o apareamiento simple si ambos estados informan) con UPGMA. Aplica.</li>
+      <li>Veredicto B: tendencia modesta (H = 0.559, P = 0.012, calculado sobre 10 componentes que reúnen el 89 % de la varianza), sin correlaciones (las binarias no entran en el mapa de calor) y con 49 % de la varianza en los dos primeros ejes.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco" style="width:56%"><img src="../img/b2-binario-vat.png" alt="Imagen VAT del ejemplo binario"></div>
+    <figcaption><b>Figura 3.12.</b> La VAT de los 30 sitios. Con distancia euclidiana sobre ceros y unos los bloques ya se insinúan y siguen la franja de hábitats; el Bloque 3 los hará más nítidos con el coeficiente de Jaccard, que ignora las ausencias compartidas.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Con datos binarios el Bloque 2 no escala y su análisis exploratorio se hace sobre la distancia euclidiana de los 0/1, que equivale a la raíz del número de desacuerdos. Es una vista provisional: la disimilitud definitiva (Jaccard, Dice, apareamiento simple…) la eliges en el Bloque 3 según lo que signifique el cero. Por eso el mapa reúne solo la mitad de la varianza y el H es modesto: no es que los sitios no tengan estructura, es que todavía no se está midiendo con el coeficiente adecuado.</p>
+  </div>
+
+  <h3>Ejemplo 3 · Abundancia de insectos: conteos y Hellinger</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Carga <span class="ui">Counts · insect abundance</span>: 24 sitios × 16 columnas.</li>
+      <li>Las 14 familias de artrópodos aparecen como <span class="ui">Counts</span> con su porcentaje de ceros (de 0 a 17 %); aunque varias no tienen ceros, la regla de las tablas de comunidades las tipifica todas como conteos. <i>Landscape</i> (Organic_field, Conventional, Hedgerow) es la agrupación conocida.</li>
+      <li>La estructura detectada dice <span class="ui">Looks like a community (species × site) table</span> y la ruta propone <b>Hellinger sin escalar</b>, con Bray–Curtis o Ward.D2 sobre Hellinger. Aplica.</li>
+      <li>Veredicto B: H = 0.533 con P = 0.049, justo en el límite; sin atípicos; correlación máxima 0.82 entre áfidos y abejas. El mapa (figura 3.13) reúne el 75 % de la varianza y separa los tres paisajes.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b2-insectos-pca.png" alt="Mapa de componentes principales de los sitios de insectos con Hellinger"></div>
+    <figcaption><b>Figura 3.13.</b> Mapa de componentes principales de los 24 sitios tras la transformación de Hellinger. Los tres paisajes forman nubes separadas; el primer eje (65 %) ordena de setos a campos convencionales.</figcaption>
+  </figure>
+  <p><b>Pruébalo tú:</b> cambia <span class="ui">Transformation</span> a <span class="ui">None</span> y <span class="ui">Scaling</span> a <span class="ui">z-scores</span>, y aplica. Verás que el mapa cambia y que la calificación se resiente: estandarizar por columna da el mismo peso a una familia rara que a una dominante, justo lo contrario de lo que quieren los ecólogos, y las distancias euclidianas crudas hacen parecer similares a dos sitios por las familias que a ambos les faltan. Hellinger evita ambas cosas.</p>
+
+  <h3>Ejemplo 4 · Perfiles de suelo: tipos mezclados</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Carga <span class="ui">Mixed · soil profiles</span>: 36 perfiles × 10 columnas, sin agrupación conocida.</li>
+      <li>Mira la tabla de variables: seis cuantitativas (pH, materia orgánica, arcilla, arena, CIC, pendiente), <i>Texture</i> nominal con 6 niveles, <i>Drainage</i> ordinal con 4 niveles reconocidos (poor &lt; moderate &lt; good &lt; excessive) y <i>Calcareous</i> binaria (no = 0, yes = 1). Todas activas.</li>
+      <li>La estructura detectada avisa <span class="ui">Mixed variable types</span> y la ruta propone rango 0–1, Gower y PAM. Aplica.</li>
+      <li>Veredicto A: tendencia clara (H = 0.815, P = 0.012, sobre 5 componentes con el 93 % de la varianza), sin atípicos, correlación máxima 0.94 entre arcilla y CIC (alta pero por debajo del umbral de redundancia).</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b2-suelos-varbox.png" alt="Cajas de las variables de la matriz de trabajo con tipos mezclados"></div>
+    <figcaption><b>Figura 3.14.</b> La matriz de trabajo de los perfiles de suelo: 8 columnas numéricas (las cuantitativas y el drenaje como rangos, en escala 0–1; la binaria sin escalar) más 6 columnas indicadoras de la textura, en naranja, que valen 0 o 0.7071.</figcaption>
+  </figure>
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · las indicadoras son solo para explorar</div>
+    <p>Las seis columnas <i>Texture=…</i> existen para que el mapa, la VAT y el estadístico de Hopkins puedan calcularse sobre una matriz numérica. La distancia de Gower del Bloque 3 no las usa: compara la textura de dos perfiles preguntando si coincide o no, que es lo que corresponde a una variable nominal.</p>
+  </div>
+
+  <h3>Ejemplo 5 · Matriz de distancias genéticas</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Carga <span class="ui">Distance matrix · 12 cultivars</span>. El mensaje dice que se reconoció como matriz de distancias de 12 objetos y que no aplica escalado.</li>
+      <li>Las tarjetas 2 y 3 no aparecen. La app aplica sola y muestra la tarjeta 4 con un mapa de coordenadas principales (MDS) en lugar del de componentes.</li>
+      <li>Veredicto B: H = 0.581 (P = 0.025) sobre 4 ejes con el 92 % de la varianza; los dos primeros ejes del mapa reúnen el 81 %. No hay casillas de atípicos ni de correlaciones porque no hay variables.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b2-matriz-mds.png" alt="Mapa MDS de los doce cultivares"></div>
+    <figcaption><b>Figura 3.15.</b> Coordenadas principales de los 12 cultivares a partir de la matriz genética: tres grupos apretados de cuatro cultivares cada uno (Azul, Blanco, Cacahuacintle, Chalqueño; Cónico, Elotero, Olotillo, Pepitilla; Tabloncillo, Tuxpeño, Vandeño, Zapalote). Con tan pocos objetos las etiquetas se encima; el editor de la figura permite agrandar el mapa o quitarlas.</figcaption>
+  </figure>
+
+  <h3>Ejemplos 6 y 7 · Cuatro grupos simulados y ruido uniforme</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Carga <span class="ui">Simulated · four clear clusters</span>: 80 objetos × 5 variables generados al momento alrededor de cuatro centros, con la columna <i>Group</i> como agrupación conocida. Aplica con los valores propuestos (z).</li>
+      <li>Veredicto A: H = 0.784 (P = 0.012), 91 % de la varianza en dos ejes, un objeto sospechoso pero ninguno extremo. Guarda mentalmente la figura de Hopkins.</li>
+      <li>Carga ahora <span class="ui">Simulated · uniform noise</span>: 60 objetos × 5 variables al azar. La columna <i>Group</i> vale "none" en todas las filas y por eso aparece como <span class="ui">Empty</span> y excluida (nota de la sección 3.1).</li>
+      <li>Aplica y compara: veredicto C con el aviso rojo <span class="ui">Weak or no clustering tendency</span> (H = 0.474, P = 0.840), 49 % de varianza en dos ejes y correlación máxima 0.19 (figura 3.17).</li>
+    </ol>
+  </div>
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b2-sim-hopkins.png" alt="Hopkins con cuatro grupos simulados"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b2-ruido-hopkins.png" alt="Hopkins con ruido uniforme"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figura 3.16.</b> El estadístico de Hopkins con estructura (izquierda: H = 0.784, muy a la derecha de la banda 0.47–0.52 de los datos uniformes) y sin ella (derecha: H = 0.474, dentro de la banda 0.45–0.53). En el segundo caso la línea observada cae en medio de la curva nula y el valor P de 0.84 dice que 84 de cada 100 tablas al azar dan un H igual o mayor.</figcaption>
+  </figure>
+  <figure>
+    <div class="marco"><img src="../img/b2-ruido-eda.png" alt="Veredicto C del ruido uniforme"></div>
+    <figcaption><b>Figura 3.17.</b> El veredicto del ruido uniforme: C por un solo aviso rojo. Las demás casillas están en verde; nada en los datos, salvo el estadístico de Hopkins, delata que no hay grupos.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Los dos ejemplos simulados son la vara de medir del bloque. El de cuatro grupos muestra cómo se ve una A: H lejos de la banda uniforme, mapa con mucha varianza en dos ejes, VAT con bloques nítidos. El de ruido muestra que una tabla sin ningún grupo puede tener objetos por variable de sobra, ningún atípico y ninguna redundancia, y aun así no merecer un dendrograma. Cuando tus datos reales den un H cercano a 0.5 con P alto, ya sabes qué significa: no hay nada que encontrar con esas variables, y decirlo es un resultado.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · vuelve aquí cuando cambies de idea</div>
+    <p>El Bloque 2 no es de un solo paso. Si en el Bloque 3 descubres que una variable domina, o en el Bloque 7 que un grupo se define por una sola columna, regresa, cambia el tipo, el papel o el escalado, aplica de nuevo y todo lo que sigue se recalcula desde la matriz de trabajo. Los bloques posteriores se desactivan hasta que vuelvas a calcularlos, para que nunca mezcles resultados de dos preprocesamientos distintos.</p>
+  </div>
+
+  <p style="margin-top:0.25in">Con la matriz de trabajo construida y la tendencia comprobada, el siguiente paso es medir cuánto se parecen los objetos entre sí. El capítulo del Bloque 3 presenta los 39 coeficientes de similitud y distancia, explica cuándo usar cada uno según el tipo de dato, cómo diagnosticar una matriz de distancias y cómo comparar coeficientes antes de elegir.</p>
+</section>
+
+</body>
+</html>

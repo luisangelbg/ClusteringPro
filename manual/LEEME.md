@@ -25,7 +25,11 @@ manual/
     02-bloque1.html    capítulo 2 · Bloque 1 "Inicio y teoría": la portada de la app, el demo interactivo con
                        cinco prácticas (cifras reproducibles: semilla fija), tipos de datos y galería de métodos,
                        las trece lecciones de teoría con sus reglas en español, la tabla de elección y cómo citar
-    03-bloque2.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
+    03-bloque2.html    capítulo 3 · Bloque 2 "Datos y análisis exploratorio": formatos y disposición de la tabla,
+                       tipos y papeles de columna con las reglas de detección, faltantes/transformación/escalado,
+                       Hopkins y VAT, calificación A–D y ruta recomendada, figuras del bloque y paso a paso con
+                       los siete ejemplos (cifras reales de la app)
+    04-bloque3.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
     10-apendices.html  apéndices A–F (pendiente)
   en/                  versión en inglés (pendiente)
 ```
@@ -71,7 +75,9 @@ Cada capítulo declara su acento con `style="--acento: var(--bN)"`.
 msedge --headless=new --hide-scrollbars --window-size=1400,860 --force-device-scale-factor=2 --virtual-time-budget=30000 --screenshot=C:\ruta\sin\espacios\salida.png "http://localhost:8900/manual/herramientas/captura.html?w=1400&h=860&do=ex:0;apply;step:3;run:distRunBtn;scroll:%23fig3Heat"
 ```
 
-Pasos disponibles: `ex:N` (carga el ejemplo N, desde 0; los dos últimos son simulados) · `apply` (aplica el preprocesamiento del Bloque 2) · `step:N` · `run:idBoton` (pulsa y espera a que el botón vuelva a habilitarse) · `click:selector` · `wait:ms` · `scroll:selector[,desfase]` · `open:selector` (abre un `<details>`) · `select:selector=valor` · `set:selector=valor` · `check:selector=true|false` · `cfg:figura.clave=valor` (opción del editor de una figura) · `hide:selector` · `frame:selector` (un iframe crece a la altura de su contenido) · `scrollin:iframe|elemento,desfase` · `top` · `report` (la página se convierte en el informe del Bloque 8, para imprimirlo con `--print-to-pdf`). En la dirección, `#` se escribe `%23`, la coma dentro de un valor `%2C` y los espacios `%20`. La ruta de salida no debe tener espacios.
+Pasos disponibles: `ex:N` (carga el ejemplo N, desde 0; los dos últimos son simulados) · `apply` (aplica el preprocesamiento del Bloque 2) · `step:N` · `run:idBoton` (pulsa y espera a que el botón vuelva a habilitarse) · `click:selector` · `wait:ms` · `scroll:selector[,desfase]` · `open:selector` (abre un `<details>`) · `select:selector=valor` · `set:selector=valor` · `check:selector=true|false` · `cfg:figura.clave=valor` (opción del editor de una figura) · `hide:selector` · `frame:selector` (un iframe crece a la altura de su contenido) · `scrollin:iframe|elemento,desfase` · `top` · `scrollx:selector,px` (desplaza en horizontal una tabla ancha, como la de variables) · `report` (la página se convierte en el informe del Bloque 8, para imprimirlo con `--print-to-pdf`). En la dirección, `#` se escribe `%23`, la coma dentro de un valor `%2C` y los espacios `%20`. La ruta de salida no debe tener espacios. El parámetro `w` de la dirección fija el ancho del marco (1400 por defecto); la app limita su ancho de contenido, así que ensanchar el marco no revela columnas ocultas: para eso está `scrollx`.
+
+Cuidado con Bash: en `"…\\$nombre.png"` la barra escapa al signo de dólar y el archivo se llama literalmente `$nombre.png`; arma la ruta en una variable (`f="$OUT"'\'"$nombre.png"`).
 
 Recetas de las capturas actuales (`h` es la altura del marco cuando no es la predeterminada):
 
@@ -93,6 +99,21 @@ Recetas de las capturas actuales (`h` es la altura del marco cuando no es la pre
 | `b1-eleccion.png` | `scroll:table.chooser,96` (ventana 1400 × 600) | 2320 × 1075 desde (240, 20) |
 | `b1-porque.png` | `scroll:.why-grid,110` (ventana 1400 × 590) | 2320 × 945 desde (240, 130) |
 | `b1-cita.png` | `scroll:%23cite,10` (ventana 1400 × 420) | 2320 × 765 desde (240, 20) |
+| `b2-carga.png` | `step:2;scroll:%23dropZone,110` (ventana 1400 × 780) | 2300 × 1400 desde (250, 30) |
+| `b2-mensajes.png` | `ex:0;scroll:%23dataMessages,10` (ventana 1400 × 300) | 2300 × 320 desde (250, 10) |
+| `b2-preview.png` | `ex:0;scroll:%23previewCard,10` (ventana 1400 × 420) | 2300 × 800 desde (250, 20) |
+| `b2-vartabla.png` | `ex:0;scroll:%23varCard,10` (`w=1700`, ventana 1700 × 1300) | 2320 × 1020 desde (540, 740) |
+| `b2-vartabla2.png` | `ex:0;scrollx:%23varTable,900;scroll:%23varTable,10` (ventana 1400 × 760) | 1890 × 1015 desde (600, 20) |
+| `b2-resumen.png` | `ex:0;scroll:%23varSummary,70` (ventana 1400 × 640) | 2300 × 1180 desde (250, 60) |
+| `b2-prep.png` | `ex:0;scroll:%23prepCard,10` (ventana 1400 × 440) | 2300 × 560 desde (250, 20) |
+| `b2-eda.png` | `ex:0;apply;scroll:%23edaCard,10` (ventana 1400 × 1000) | 2300 × 1810 desde (250, 20) |
+| `b2-varbox.png` · `b2-corrvat.png` · `b2-pca.png` · `b2-hopkins.png` | `ex:0;apply;scroll:%23figVarBox,10` (560) · `…%23figCorr,10` (720) · `…%23figPCA,10` (760) · `…%23figHopkins,10` (560) | 2200 de ancho desde x 300; alturas 900, 1300, 1500, 960 |
+| `b2-binario-vat.png` | `ex:1;apply;scroll:%23figVAT,10` (ventana 1400 × 720) | 1090 × 955 desde (300, 20): solo la tarjeta izquierda |
+| `b2-insectos-pca.png` | `ex:2;apply;scroll:%23figPCA,10` (ventana 1400 × 760) | 2200 × 1500 desde (300, 20) |
+| `b2-suelos-varbox.png` | `ex:3;apply;scroll:%23figVarBox,10` (ventana 1400 × 640) | 2200 × 1170 desde (300, 20) |
+| `b2-matriz-mds.png` | `ex:4;scroll:%23figPCA,10` (ventana 1400 × 760; la matriz se aplica sola) | 2200 × 1500 desde (300, 20) |
+| `b2-sim-hopkins.png` · `b2-ruido-hopkins.png` | `ex:5;apply;scroll:%23figHopkins,10` · `ex:6;…` (ventana 1400 × 560) | 1090 × 960 desde (300, 20): solo la tarjeta izquierda |
+| `b2-ruido-eda.png` | `ex:6;apply;scroll:%23edaCard,10` (ventana 1400 × 700) | 2300 × 1380 desde (250, 20) |
 
 Los recortes se hacen con `System.Drawing` desde PowerShell sobre la captura a 2×. Las cifras del demo que cita el capítulo 2 (cofenética por enlace, iteraciones, SS entre/total, silueta y ARI) se obtuvieron de la propia app con la semilla fija del demo; si el demo cambia, hay que recalcularlas.
 

@@ -163,9 +163,14 @@ P2.hopkins = (cfg, eda) => {
   if (band.length > 1) g.appendChild(Fig.el('path', { d: 'M' + band.map(t => `${x(t).toFixed(1)},${y(dens(t)).toFixed(1)}`).join(' L') + ` L${x(band[band.length - 1]).toFixed(1)},${f.y1} L${x(band[0]).toFixed(1)},${f.y1} Z`, fill: Fig.alpha(nullCol, 0.25) }));
   g.appendChild(Fig.el('path', { d: 'M' + grid.map((t, i) => `${x(t).toFixed(1)},${y(dv[i]).toFixed(1)}`).join(' L'), fill: 'none', stroke: nullCol, 'stroke-width': 2 }));
   H.nullH.forEach(h => g.appendChild(Fig.el('line', { x1: x(h), x2: x(h), y1: f.y1 - 8, y2: f.y1 - 1, stroke: nullCol, 'stroke-width': 1, opacity: 0.6 })));
-  const left = H.H > H.nullMean;   /* captions go on the side away from the observed value */
-  g.appendChild(Fig.text(left ? f.x0 + 8 : f.x1 - 8, f.y0 + 16, `uniform data, same n, p and range (${H.nsim} simulations)`, { size: 11, anchor: left ? 'start' : 'end', fill: f.t.muted, font: f.font, role: 'label' }));
-  g.appendChild(Fig.text(left ? f.x0 + 8 : f.x1 - 8, f.y0 + 31, `95 % band ${H.lo.toFixed(2)}–${H.hi.toFixed(2)} · mean ${H.nullMean.toFixed(2)}`, { size: 11, anchor: left ? 'start' : 'end', fill: f.t.muted, font: f.font, role: 'label' }));
+  /* the observed label goes on the side of the line with more room; the null-distribution caption
+     takes the opposite corner, or drops one row when the two texts would collide */
+  const left = x(H.H) - f.x0 > f.x1 - x(H.H);
+  const capW = 6.2 * 52, labW = 7 * 46;
+  const collide = left ? (x(H.H) - 8) > (f.x1 - 8 - capW) : (x(H.H) + 8) < (f.x0 + 8 + capW);
+  const capY = collide ? f.y0 + 48 : f.y0 + 16;
+  g.appendChild(Fig.text(left ? f.x1 - 8 : f.x0 + 8, capY, `uniform data, same n, p and range (${H.nsim} simulations)`, { size: 11, anchor: left ? 'end' : 'start', fill: f.t.muted, font: f.font, role: 'label' }));
+  g.appendChild(Fig.text(left ? f.x1 - 8 : f.x0 + 8, capY + 15, `95 % band ${H.lo.toFixed(2)}–${H.hi.toFixed(2)} · mean ${H.nullMean.toFixed(2)}`, { size: 11, anchor: left ? 'end' : 'start', fill: f.t.muted, font: f.font, role: 'label' }));
   /* observed draws and mean */
   H.runs.forEach(h => g.appendChild(Fig.el('line', { x1: x(h), x2: x(h), y1: f.y1 - 18, y2: f.y1 - 9, stroke: obsCol, 'stroke-width': 1.2, opacity: 0.8 })));
   g.appendChild(Fig.el('line', { x1: x(H.H), x2: x(H.H), y1: f.y0, y2: f.y1, stroke: obsCol, 'stroke-width': 2.2, 'stroke-dasharray': '6 3' }));
