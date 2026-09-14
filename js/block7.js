@@ -166,7 +166,7 @@ function useExample() { el('newData').value = PRF ? [PRF.numNames.join('\t')].co
 
 function refresh() {
   if (!state.dist) return;
-  PRF = null; state.profiles = null; el('prResults').style.display = 'none'; el('ldaCard').style.display = 'none'; el('predCard').style.display = 'none';
+  PRF = null; LDA = null; TREE = null; state.profiles = null; state.lda = null; state.tree = null; state.predictions = null; el('prResults').style.display = 'none'; el('ldaCard').style.display = 'none'; el('predCard').style.display = 'none';
   enableStep(8, false); el('nextBtn7').disabled = true;
   el('prSource').value = state.partition ? 'partition' : 'tree';
   renderVarLists();

@@ -226,7 +226,7 @@ function downloadMerges() {
 
 function refresh() {
   if (!state.dist) return;
-  state.hclust = null; el('hcResults').style.display = 'none'; el('cmp4Card').style.display = 'none'; el('cmp4Results').style.display = 'none'; el('fig4Tangle').style.display = 'none';
+  state.hclust = null; state.hclustCompare = null; el('hcResults').style.display = 'none'; el('cmp4Card').style.display = 'none'; el('cmp4Results').style.display = 'none'; el('fig4Tangle').style.display = 'none';
   enableStep(5, false); el('nextBtn4').disabled = true;
   const d = state.dist, eu = d.diag && d.diag.euclid ? d.diag.euclid.negMass : 0;
   let rec, why;

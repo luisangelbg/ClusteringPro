@@ -413,7 +413,10 @@ Fig.toRaster = (svg, { format = 'png', scale = 4, background = '#ffffff', dpi = 
   new Promise((resolve, reject) => {
     const w = +svg.dataset.w || svg.viewBox.baseVal.width || 900;
     const h = +svg.dataset.h || svg.viewBox.baseVal.height || 600;
-    const src = Fig.serialize(svg);
+    /* a transparent background also needs the figure's own background rectangle removed */
+    let node = svg;
+    if (!background) { node = svg.cloneNode(true); const bg = node.firstElementChild; if (bg && bg.tagName.toLowerCase() === 'rect') bg.setAttribute('fill', 'none'); }
+    const src = Fig.serialize(node);
     const blob = new Blob([src], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const img = new Image();

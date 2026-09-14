@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · Manual de usuario · Bloque 8: informe y exportación</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b8" data-pestana="B8" data-orden="9" style="--acento: var(--b8)">
+  <div class="cap-apertura">
+    <div class="cap-num">B8</div>
+    <div class="cap-etiqueta">Capítulo nueve · Bloque 8 · Report</div>
+    <h1 data-corto="Bloque 8 · Informe y exportación">Informe y exportación</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Un análisis termina cuando se puede comunicar. Este capítulo reúne las herramientas para hacerlo: el editor que ajusta cada figura al estilo de una revista, la exportación en los formatos y resoluciones que piden las editoriales, y el Bloque 8, que junta en un informe autocontenido todas las tablas, comprobaciones y figuras, redacta un borrador de resultados y un párrafo de métodos con tus valores y empaqueta datos, tablas y figuras en un solo archivo.</p>
+    <div class="cap-franja"><span class="k8"></span><span class="k8" style="opacity:.75"></span><span class="k8" style="opacity:.5"></span><span class="k8" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>9.1</b>El editor de figuras</li>
+      <li><b>9.2</b>Exportar para publicar</li>
+      <li><b>9.3</b>El informe automático</li>
+      <li><b>9.4</b>El párrafo de métodos y el paquete ZIP</li>
+      <li><b>9.5</b>Paso a paso</li>
+    </ul>
+  </div>
+
+  <p class="lead">Las secciones 9.1 y 9.2 describen herramientas que están en todos los bloques: cada figura de la app tiene su panel <span class="ui">Edit figure</span> y su barra de descarga. Las secciones 9.3 y 9.4 describen el Bloque 8, que tiene dos tarjetas: <span class="ui">1 · What goes into the report</span>, donde eliges qué incluir y cómo exportarlo, y <span class="ui">2 · Preview</span>, donde ves el informe tal como se guardará. El Bloque 8 se habilita en cuanto el Bloque 7 describe los grupos, o antes si los datos son una matriz de distancias.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.1.</b> Qué produce la app para comunicar un análisis.</caption>
+    <thead><tr><th style="width:28%">Producto</th><th style="width:22%">Dónde</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td>Figura editada (PNG, TIFF, SVG, JPG, WEBP)</td><td>Cualquier bloque</td><td>Una figura suelta para un artículo, una tesis o una presentación.</td></tr>
+      <tr><td>Tabla en CSV</td><td>Bloques 2 a 7</td><td>Pertenencias, perfiles o resultados para otra hoja de cálculo o programa.</td></tr>
+      <tr><td>Informe HTML</td><td>Bloque 8</td><td>Un documento que se abre en cualquier navegador y guarda todo el análisis.</td></tr>
+      <tr><td>Informe en PDF</td><td>Bloque 8</td><td>El mismo informe impreso desde el navegador, para archivar o compartir.</td></tr>
+      <tr><td>Párrafo de métodos</td><td>Bloque 8</td><td>Un texto en inglés con los métodos y valores usados, listo para editar.</td></tr>
+      <tr><td>Paquete ZIP</td><td>Bloque 8</td><td>Informe, datos, tablas y todas las figuras en vector y en alta resolución.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 9.1 -->
+  <h2 id="s9-1"><span class="num">9.1</span>El editor de figuras</h2>
+  <p class="lead">Todas las figuras de ClusteringPro se dibujan como gráficos vectoriales y se redibujan al instante con cada cambio. El panel <span class="ui">Edit figure — titles, colours, fonts, sizes</span>, debajo de cada figura, tiene dos pestañas: una con lo que se dibuja y otra con cómo se ve.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-editor-contenido.png" alt="Pestaña Content & colours del mapa de grupos"></div>
+    <figcaption><b>Figura 9.1.</b> La pestaña <span class="ui">Content &amp; colours</span> del mapa de grupos del Bloque 5 con el maíz. Sus controles son propios de esta figura: título, subtítulo y títulos de los ejes; región y opacidad de los grupos; centros, números y etiquetas; tamaño y forma de los puntos; forma según la agrupación conocida; color del ruido, paleta y posición de la leyenda.</figcaption>
+  </figure>
+
+  <p>La primera pestaña cambia en cada figura, y los capítulos 3 a 8 describen sus controles en las tablas de figuras de cada bloque. Casi todas tienen al menos un <span class="ui">Title</span> y una <span class="ui">Palette</span>. Los cuadros de texto aceptan cualquier título: borrar el de un eje lo sustituye por el título automático.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-editor-estilo.png" alt="Pestaña Style & typography"></div>
+    <figcaption><b>Figura 9.2.</b> La pestaña <span class="ui">Style &amp; typography</span>, igual en todas las figuras.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.2.</b> Los controles de estilo y tipografía.</caption>
+    <thead><tr><th style="width:28%">Control</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Theme</span></td><td><span class="ui">Light</span> (por omisión), <span class="ui">Paper</span> (fondo crema), <span class="ui">Dark</span> (fondo oscuro, para presentaciones), <span class="ui">Minimal</span> (sin cuadrícula) y <span class="ui">Journal (black &amp; white axes)</span>, con ejes negros y sin cuadrícula.</td></tr>
+      <tr><td><span class="ui">Font family</span></td><td>Helvetica, Arial, Georgia, Times New Roman, Segoe UI, Calibri, Cambria o monoespaciada.</td></tr>
+      <tr><td><span class="ui">Font size: all</span></td><td>Escala todos los textos a la vez, de 0.6 a 2.6 veces.</td></tr>
+      <tr><td><span class="ui">Font size: titles</span> · <span class="ui">axes &amp; ticks</span> · <span class="ui">labels &amp; legend</span></td><td>Escalan cada grupo de textos por separado, de 0.6 a 3 veces, sobre la escala general.</td></tr>
+      <tr><td><span class="ui">Bold axis titles</span></td><td>Títulos de los ejes en negritas.</td></tr>
+      <tr><td><span class="ui">Gridlines</span> · <span class="ui">Dashed gridlines</span></td><td>Muestra la cuadrícula y la dibuja punteada.</td></tr>
+      <tr><td><span class="ui">Width (px)</span> · <span class="ui">Height (px)</span></td><td>Tamaño de la figura, de 400 a 2 400 por 300 a 2 000 píxeles. Cambia la proporción y el espacio para las etiquetas, no la nitidez.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · el estilo se recuerda</div>
+    <p>El tema, la tipografía, los tamaños de letra, las negritas y la cuadrícula son preferencias compartidas: al cambiarlos en una figura se aplican a todas las que se dibujen después, y el navegador los recuerda para la próxima sesión. Así, basta ajustar el estilo de una revista una vez. El ancho, el alto y los controles de la primera pestaña, en cambio, son propios de cada figura y vuelven a sus valores iniciales cuando la figura se recalcula.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.3.</b> Paletas de grupos y mapas de color disponibles.</caption>
+    <thead><tr><th style="width:22%">Tipo</th><th>Opciones</th></tr></thead>
+    <tbody>
+      <tr><td>Paletas de grupos (<span class="ui">Palette</span>)</td><td>ClusteringPro, Vivid, Harvest, Soil &amp; crop, Soft, Deep, Pastel, Greyscale y dos seguras para daltonismo: Okabe–Ito y Paul Tol.</td></tr>
+      <tr><td>Mapas de color (<span class="ui">Colour map</span>)</td><td>Viridis, Magma, Inferno, Plasma y Cividis (segura para daltonismo); divergentes Red–Yellow–Blue, Red–Blue, Spectral y Blue–White–Red; secuenciales Greens, Yellow–Green, Browns y Heat.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b8-mapa-original.png" alt="Mapa de grupos con el estilo por omisión"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b8-journal.png" alt="Mapa de grupos con el tema Journal y Times New Roman"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figura 9.3.</b> El mismo mapa con el estilo por omisión (izquierda) y con el tema <span class="ui">Journal</span>, la fuente Times New Roman y sin cuadrícula (derecha): ejes negros, marco de leyenda negro y líneas de referencia punteadas, como piden muchas revistas.</figcaption>
+  </figure>
+
+  <!-- 9.2 -->
+  <h2 id="s9-2"><span class="num">9.2</span>Exportar para publicar</h2>
+  <p class="lead">Debajo del editor, cada figura tiene su barra de descarga: formato, resolución, fondo y el botón <span class="ui">⬇ Download figure</span>. A la derecha, la app calcula el tamaño del archivo resultante en píxeles y en centímetros a la resolución elegida.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-exportar.png" alt="Barra de descarga con TIFF a 600 dpi"></div>
+    <figcaption><b>Figura 9.4.</b> La barra de descarga del mapa de grupos preparada para una revista: TIFF a 600 dpi, fondo blanco. La figura tendrá 7 280 × 4 880 píxeles, 30.8 × 20.7 cm a 600 dpi.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.4.</b> Los formatos de descarga.</caption>
+    <thead><tr><th style="width:24%">Formato</th><th>Características</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">PNG</span></td><td>Sin pérdida y con la resolución grabada en el archivo, de modo que los programas lo colocan al tamaño correcto. Admite fondo transparente. El formato de uso general.</td></tr>
+      <tr><td><span class="ui">TIFF (journal submission)</span></td><td>RGB sin comprimir con la resolución grabada, el formato que exigen muchas editoriales. Los archivos son grandes.</td></tr>
+      <tr><td><span class="ui">SVG (vector, editable)</span></td><td>Vectorial: se amplía sin perder nitidez y se edita en Inkscape, Illustrator o PowerPoint. La resolución no aplica.</td></tr>
+      <tr><td><span class="ui">JPG</span> · <span class="ui">WEBP</span></td><td>Con compresión, para páginas web o presentaciones ligeras. No los uses para artículos.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.5.</b> Las resoluciones: la figura se multiplica por un factor y se graba con los dpi correspondientes. Tamaños para el mapa de grupos, de 910 × 610 píxeles base.</caption>
+    <thead><tr><th style="width:36%">Opción</th><th class="c">Factor</th><th class="c">dpi</th><th class="c">Píxeles</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Screen · 2× (150 dpi)</span></td><td class="c">2</td><td class="c">150</td><td class="c">1 820 × 1 220</td><td>Pantalla y presentaciones.</td></tr>
+      <tr><td><span class="ui">High · 4× (300 dpi)</span></td><td class="c">4</td><td class="c">300</td><td class="c">3 640 × 2 440</td><td>Por omisión; tesis e informes.</td></tr>
+      <tr><td><span class="ui">Very high · 6× (450 dpi)</span></td><td class="c">6</td><td class="c">450</td><td class="c">5 460 × 3 660</td><td>Pósteres.</td></tr>
+      <tr><td><span class="ui">Publication · 8× (600 dpi)</span></td><td class="c">8</td><td class="c">600</td><td class="c">7 280 × 4 880</td><td>Figuras de línea para revistas.</td></tr>
+      <tr><td><span class="ui">Maximum · 12× (900 dpi)</span></td><td class="c">12</td><td class="c">900</td><td class="c">10 920 × 7 320</td><td>Cuando la revista pide más de 600 dpi.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué formato y resolución elegir</div>
+    <table class="compacta">
+      <thead><tr><th style="width:40%">Si la figura va a…</th><th>descarga</th></tr></thead>
+      <tbody>
+        <tr><td>una revista que pide TIFF</td><td>TIFF a 600 dpi, fondo blanco, tema Journal si la revista prefiere ejes en negro.</td></tr>
+        <tr><td>una revista que acepta vectores (PDF, EPS, SVG)</td><td>SVG: se convierte a PDF o EPS en Inkscape sin perder calidad.</td></tr>
+        <tr><td>una tesis o un informe en Word</td><td>PNG a 300 dpi.</td></tr>
+        <tr><td>una presentación sobre fondo de color</td><td>PNG con <span class="ui">Transparent (PNG)</span> y, con fondo oscuro, tema Dark.</td></tr>
+        <tr><td>una figura que editarás después (flechas, rótulos)</td><td>SVG.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">La resolución elegida se recuerda para las siguientes figuras. El fondo transparente solo tiene efecto en PNG; JPG y TIFF siempre llevan fondo blanco.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · los dpi y el tamaño en la página</div>
+    <p>Lo que decide la nitidez es el número de píxeles. La app graba los dpi y calcula los centímetros suponiendo que la figura se imprime a su tamaño base, 910 píxeles como 30.8 cm. Al colocarla en una columna de 8.5 cm, la misma imagen de 3 640 píxeles queda a más de 1 000 dpi efectivos. Si la revista pide un ancho de columna, ajusta la proporción con <span class="ui">Width</span> y <span class="ui">Height</span> antes de exportar y aumenta los tamaños de letra: al reducir la figura, las letras se reducen con ella. Un TIFF sin comprimir ocupa unos 3 bytes por píxel: el de la figura 9.4 pesa unos 100 MB, y a 300 dpi unos 27 MB.</p>
+  </div>
+
+  <!-- 9.3 -->
+  <h2 id="s9-3"><span class="num">9.3</span>El informe automático</h2>
+  <p class="lead">El Bloque 8 no recalcula nada: toma lo que ya está en pantalla. Cada tabla y cada comprobación se copian tal como se ven en su bloque, y cada figura tal como la editaste, como gráfico vectorial. Si cambias algo en otro bloque, basta volver al Bloque 8 y construir el informe de nuevo.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.6.</b> Las secciones del informe.</caption>
+    <thead><tr><th style="width:40%">Casilla</th><th>Contenido</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Data, preprocessing and clustering tendency</span></td><td>Resumen de variables, comprobaciones, tabla de variables, veredicto de preparación, Hopkins y figuras del Bloque 2.</td></tr>
+      <tr><td><span class="ui">Similarity and distance</span></td><td>Casillas, comprobaciones, figuras y comparación de coeficientes del Bloque 3.</td></tr>
+      <tr><td><span class="ui">Hierarchical clustering</span></td><td>Casillas, comprobaciones, grupos del corte, tabla cruzada, figuras y comparación de enlaces del Bloque 4.</td></tr>
+      <tr><td><span class="ui">Partitioning and advanced methods</span></td><td>Casillas, comprobaciones, tabla de grupos, tablas cruzadas, figuras y comparación de métodos del Bloque 5.</td></tr>
+      <tr><td><span class="ui">Number of clusters and validation</span></td><td>Voto, estabilidad, AU/BP, validación externa, clValid y figuras del Bloque 6.</td></tr>
+      <tr><td><span class="ui">Profiles, discriminant analysis and rules</span></td><td>Fichas de los grupos, perfiles, especies indicadoras, discriminante, reglas, asignaciones y figuras del Bloque 7.</td></tr>
+      <tr><td><span class="ui">Executive summary</span></td><td>Casillas con las cifras clave y un borrador de la sección de resultados.</td></tr>
+      <tr><td><span class="ui">Auto-drafted methods paragraph</span></td><td>El párrafo de métodos (sección 9.4).</td></tr>
+      <tr><td><span class="ui">How to cite the software</span></td><td>La cita con su DOI y la entrada BibTeX.</td></tr>
+      <tr><td><span class="ui">Appendix: cluster membership</span></td><td>Una fila por objeto con su grupo conocido, su grupo en el árbol y en la partición y su silueta.</td></tr>
+      <tr><td><span class="ui">Appendix: data as loaded</span></td><td>La tabla original completa; desmarcada por omisión.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b8-tarjeta1.png" alt="La tarjeta 1 · What goes into the report con el maíz">
+      <span class="marca" style="left:1%;top:10%">1</span>
+      <span class="marca" style="left:1%;top:27%">2</span>
+      <span class="marca" style="left:1%;top:40%">3</span>
+      <span class="marca" style="left:1%;top:53%">4</span>
+      <span class="marca" style="left:1%;top:81%">5</span>
+      <span class="marca" style="left:1%;top:92%">6</span>
+    </div>
+    <figcaption><b>Figura 9.5.</b> La tarjeta <span class="ui">1 · What goes into the report</span> con el maíz analizado en los seis bloques: 30 figuras y todas las secciones listas.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Resumen: bloques completados, figuras que entrarán y conjunto de datos.</li>
+    <li><span class="n">2</span><span class="ui">Title</span> y <span class="ui">Author(s)</span>. El título se propone a partir del nombre del archivo y sigue al conjunto de datos hasta que escribes el tuyo.</li>
+    <li><span class="n">3</span><span class="ui">Objective / notes</span>: un párrafo opcional que se imprime bajo el título.</li>
+    <li><span class="n">4</span><span class="ui">Sections</span>: las secciones de los bloques y los complementos (tabla 9.6).</li>
+    <li><span class="n">5</span>Formato y resolución de las figuras rasterizadas del paquete ZIP (sección 9.4).</li>
+    <li><span class="n">6</span>Los botones de exportación (tabla 9.7).</li>
+  </ul>
+
+  <p>Las seis secciones de bloque llevan una etiqueta: <span class="ui">ready</span> si el bloque ya se corrió y <span class="ui">not run yet</span> si no, en cuyo caso la casilla se desactiva. Una sección solo se incluye si tiene algo que mostrar; las tarjetas que no corriste dentro de un bloque, como el bootstrap multiescala, simplemente no aparecen.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.7.</b> Los botones de la tarjeta 1.</caption>
+    <thead><tr><th style="width:30%">Botón</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Build and preview the report</span></td><td>Construye el informe y lo muestra en la tarjeta 2; a la derecha indica su tamaño y cuántas figuras y tablas tiene.</td></tr>
+      <tr><td><span class="ui">⬇ Report (HTML)</span></td><td>Descarga el informe como un solo archivo HTML, con los estilos y las figuras dentro. Se abre en cualquier navegador sin conexión.</td></tr>
+      <tr><td><span class="ui">🖨 Print / save as PDF</span></td><td>Abre el informe en una ventana nueva y lanza la impresión; elige <span class="ui">Guardar como PDF</span> en el diálogo del navegador. Si el navegador bloquea ventanas emergentes, un aviso pide permitirlas.</td></tr>
+      <tr><td><span class="ui">⬇ Full package (ZIP)</span></td><td>Construye y descarga el paquete (sección 9.4); mientras trabaja, el botón dice <span class="ui">Packing…</span>.</td></tr>
+      <tr><td><span class="ui">Copy the methods paragraph</span></td><td>Copia el párrafo de métodos al portapapeles y lo muestra en un cuadro de texto debajo.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-vista.png" alt="Vista previa del informe del maíz"></div>
+    <figcaption><b>Figura 9.6.</b> La tarjeta <span class="ui">2 · Preview</span> con el informe del maíz: título, fecha, datos y métodos principales, índice con enlaces y el resumen ejecutivo con sus casillas coloreadas. Debajo empieza el borrador de resultados.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.8.</b> Las casillas del resumen ejecutivo y sus colores.</caption>
+    <thead><tr><th style="width:26%">Casilla</th><th style="width:28%">Verde</th><th style="width:22%">Ámbar</th><th>Qué dice debajo</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Clustering tendency</span></td><td>Hopkins &gt; 0.75</td><td>&gt; 0.5</td><td>Estructura no aleatoria si p &lt; 0.05.</td></tr>
+      <tr><td><span class="ui">Hierarchical tree</span></td><td>cofenética &gt; 0.75</td><td>&gt; 0.6</td><td>Correlación y tamaños.</td></tr>
+      <tr><td><span class="ui">Partition</span></td><td>silueta &gt; 0.5</td><td>&gt; 0.25</td><td>Silueta con su calificativo y tamaños.</td></tr>
+      <tr><td><span class="ui">Consensus k</span></td><td>la mitad de los votos o más</td><td>menos</td><td>Votos del ganador.</td></tr>
+      <tr><td><span class="ui">Stability</span></td><td>Jaccard medio &gt; 0.75</td><td>&gt; 0.6</td><td>highly stable, stable, only partly stable o unstable.</td></tr>
+      <tr><td><span class="ui">Agreement with known groups</span></td><td>ARI &gt; 0.8</td><td>&gt; 0.5</td><td>Solo si hay agrupación conocida.</td></tr>
+      <tr><td><span class="ui">Discriminability</span></td><td>dejando uno fuera &gt; 90 %</td><td>&gt; 70 %</td><td>Exactitud del discriminante.</td></tr>
+      <tr><td><span class="ui">Most discriminant variables</span></td><td colspan="2">sin color</td><td>Las tres de mayor η².</td></tr>
+    </tbody>
+  </table>
+  <p class="small">Por debajo del umbral ámbar, la casilla va en rojo. Las casillas de objetos y disimilitud no llevan color.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-informe-seccion.png" alt="Sección de agrupamiento jerárquico dentro del informe"></div>
+    <figcaption><b>Figura 9.7.</b> El inicio de la sección <span class="ui">3. Hierarchical clustering</span> del informe del maíz: las casillas y comprobaciones del Bloque 4 tal como se ven en la app, y sus tablas numeradas en orden en todo el informe. Las tablas sin título en la app reciben uno descriptivo. Las figuras siguen con su número y un pie que añade el contexto del análisis, por ejemplo "Ward.D2 linkage on Euclidean dissimilarity, cut at k = 3".</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · cómo redacta el borrador de resultados</div>
+    <p>El borrador tiene un párrafo por bloque corrido, y cada frase elige sus palabras con los mismos umbrales que las comprobaciones de la app: el Hopkins se describe como estructura genuina por encima de 0.75, estructura presente pero poco marcada por encima de 0.5 y reparto casi uniforme por debajo; el árbol es fiel con cofenética mayor que 0.8, aceptable por encima de 0.7 y distorsionado por debajo; la silueta indica estructura fuerte, razonable, débil o sin estructura sustancial con los cortes 0.7, 0.5 y 0.25. El párrafo de validación añade que el <i>k</i> de consenso está en el extremo del rango o que el gap no encontró estructura cuando ocurre, y señala los grupos con Jaccard menor que 0.6. El de perfiles recuerda que los valores P de las variables activas son descriptivos, y avisa si el discriminante se sobreajusta. Está en inglés y cada cifra sale del análisis: edítalo, pero no cambies los números.</p>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · los números de los grupos en el apéndice</div>
+    <p>El apéndice de pertenencias pone lado a lado el grupo del árbol y el de la partición. Sus números son etiquetas independientes: con el maíz, los valles son el grupo 3 del árbol y el grupo 2 de k-means jerárquico, aunque los dos agrupan exactamente las mismas accesiones (ARI = 1.000). Compara los grupos por sus miembros, no por su número.</p>
+  </div>
+
+  <!-- 9.4 -->
+  <h2 id="s9-4"><span class="num">9.4</span>El párrafo de métodos y el paquete ZIP</h2>
+  <p class="lead">La sección de métodos de un artículo de agrupamiento es larga y fácil de dejar incompleta. El Bloque 8 la redacta a partir de lo que realmente corriste, con los valores de cada ajuste, y termina con la cita del programa.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.9.</b> Qué menciona el párrafo de métodos según lo que se corrió.</caption>
+    <thead><tr><th style="width:22%">Bloque</th><th>Contenido</th></tr></thead>
+    <tbody>
+      <tr><td>Datos (2)</td><td>Número de objetos y de variables activas por tipo, variables suplementarias, faltantes (eliminados o imputados), transformación y escalado, estadístico de Hopkins. Con una matriz cargada, solo que se usó tal como se suministró y el Hopkins sobre sus coordenadas.</td></tr>
+      <tr><td>Disimilitud (3)</td><td>Coeficiente, sobre qué matriz se calculó y si es euclidiana.</td></tr>
+      <tr><td>Árbol (4)</td><td>Enlace (con β si es flexible), correlación cofenética, coeficiente aglomerativo o divisivo, <i>k</i> del corte, ARI con los grupos conocidos y, si se compararon, número de enlaces.</td></tr>
+      <tr><td>Partición (5)</td><td>Método, <i>k</i>, espacio, algoritmo y arranques, modelo de la mezcla o ε y minPts de DBSCAN, silueta y ARI con el árbol.</td></tr>
+      <tr><td>Validación (6)</td><td>Rango de <i>k</i>, los criterios y los votos del ganador; réplicas y Jaccard de la estabilidad; réplicas y escalas del AU; índices de la validación externa.</td></tr>
+      <tr><td>Perfiles (7)</td><td>Pruebas usadas, χ² de las categóricas, IndVal, y la lambda de Wilks y la exactitud dejando uno fuera del discriminante, con el árbol.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-informe-metodos.png" alt="Métodos y cita dentro del informe"></div>
+    <figcaption><b>Figura 9.8.</b> Las secciones <span class="ui">Methods</span> y <span class="ui">How to cite</span> del informe del maíz. El párrafo recorre los bloques en orden, desde los datos y su preprocesamiento hasta el discriminante; la cita incluye el DOI de concepto, que siempre apunta a la última versión, y una entrada BibTeX.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-metodos-copiar.png" alt="Párrafo de métodos en el cuadro de texto"></div>
+    <figcaption><b>Figura 9.9.</b> Tras pulsar <span class="ui">Copy the methods paragraph</span>, el texto aparece en un cuadro debajo de los botones. Si el navegador no permite escribir en el portapapeles, como aquí, el aviso pide seleccionarlo y copiarlo a mano.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.10.</b> El contenido del paquete ZIP.</caption>
+    <thead><tr><th style="width:36%">Archivo o carpeta</th><th>Contenido</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">report.html</span></td><td>El informe, idéntico al de <span class="ui">⬇ Report (HTML)</span>.</td></tr>
+      <tr><td><span class="ui">data/data_as_loaded.csv</span></td><td>La tabla tal como se cargó.</td></tr>
+      <tr><td><span class="ui">data/preprocessed_matrix.csv</span></td><td>La matriz de trabajo del Bloque 2 (con una matriz cargada, sus coordenadas MDS), con el grupo conocido.</td></tr>
+      <tr><td><span class="ui">data/dissimilarity_…csv</span></td><td>La matriz de disimilitud completa, con el identificador del coeficiente en el nombre.</td></tr>
+      <tr><td><span class="ui">tables/cluster_membership.csv</span></td><td>Grupo conocido, grupo del árbol, grupo de la partición y silueta de cada objeto.</td></tr>
+      <tr><td><span class="ui">tables/tree_merges.csv</span></td><td>Las fusiones del árbol: paso, las dos ramas y la altura.</td></tr>
+      <tr><td><span class="ui">tables/indices_by_k.csv</span></td><td>Los índices del Bloque 6 para cada <i>k</i>.</td></tr>
+      <tr><td><span class="ui">tables/cluster_profiles.csv</span> · <span class="ui">indicator_values.csv</span></td><td>Los perfiles del Bloque 7 y, si se calcularon, los valores indicadores.</td></tr>
+      <tr><td><span class="ui">figures/svg/</span> · <span class="ui">figures/png/</span> (o tiff, jpg, webp)</td><td>Cada figura mostrada, en vector y en el formato y la resolución de la tarjeta 1.</td></tr>
+      <tr><td><span class="ui">methods.txt</span> · <span class="ui">README.txt</span></td><td>El párrafo de métodos en texto plano y una guía del contenido.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja dato">
+    <div class="dato-cifra">70</div>
+    <div class="dato-txt"><div class="caja-t">Archivos en el paquete del maíz</div>Con los seis bloques corridos, el paquete reúne el informe, 3 archivos de datos, 4 tablas, 30 figuras en SVG, 30 en PNG, los métodos y la guía. A 150 dpi ocupa unos 7 MB; a 600 dpi, varias veces más. Rasterizar tantas figuras lleva de segundos a más de un minuto, según el equipo y la resolución.</div>
+  </div>
+
+  <!-- 9.5 -->
+  <h2 id="s9-5"><span class="num">9.5</span>Paso a paso</h2>
+  <p class="lead">Las prácticas usan los ejemplos preparados como en los capítulos anteriores, con los Bloques 2 a 7 corridos. La tabla 9.11 resume el informe de cada uno con las opciones por omisión.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 9.11.</b> El informe de cinco ejemplos con las secciones por omisión.</caption>
+    <thead><tr><th style="width:20%">Ejemplo</th><th class="c" style="width:12%">Secciones</th><th class="c" style="width:10%">Figuras</th><th style="width:28%">Casillas en rojo o ámbar</th><th>Lo que el borrador advierte</th></tr></thead>
+    <tbody>
+      <tr><td>Razas de maíz</td><td class="c">6</td><td class="c">30</td><td>Hopkins, silueta, consenso</td><td>Estructura presente pero poco marcada; silueta débil.</td></tr>
+      <tr><td>Presencia de especies</td><td class="c">6</td><td class="c">30</td><td>Hopkins, silueta, consenso, discriminabilidad</td><td>El discriminante se sobreajusta (53 % frente a 100 %).</td></tr>
+      <tr><td>Matriz de distancias</td><td class="c">5</td><td class="c">21</td><td>Hopkins</td><td>Matriz no euclidiana; el gap no encontró estructura.</td></tr>
+      <tr><td>Cuatro grupos simulados</td><td class="c">6</td><td class="c">30</td><td>ninguna</td><td>Estructura fuerte en todos los párrafos.</td></tr>
+      <tr><td>Ruido uniforme</td><td class="c">6</td><td class="c">30</td><td>Hopkins, árbol, partición, consenso, estabilidad</td><td>Reparto casi uniforme, árbol distorsionado, consenso en el borde, gap en <i>k</i> = 1, estabilidad parcial.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Práctica 1 · Razas de maíz: del análisis al informe completo</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con el maíz analizado en los Bloques 2 a 7, entra al Bloque 8 (figura 9.5). Las seis secciones están listas y el título propuesto es <i>Cluster analysis of maize landraces morphology</i>. Escribe tu nombre en <span class="ui">Author(s)</span> y el objetivo en <span class="ui">Objective / notes</span>.</li>
+      <li>Pulsa <span class="ui">Build and preview the report</span> (figura 9.6): unos 950 KB, 30 figuras y 12 tablas. Recorre el índice y lee el borrador de resultados.</li>
+      <li>Pulsa <span class="ui">🖨 Print / save as PDF</span> y guarda el PDF desde el diálogo del navegador.</li>
+      <li>Pulsa <span class="ui">⬇ Full package (ZIP)</span> y abre el paquete: comprueba que <span class="ui">tables/cluster_membership.csv</span> tiene las 44 accesiones.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>El informe es el cuaderno de laboratorio del análisis: guarda cada decisión, cada comprobación y cada figura como las dejaste, con la fecha y los datos. Aunque no lo publiques, archívalo con los datos originales: dentro de un año te dirá exactamente qué coeficiente, qué enlace y qué <i>k</i> usaste.</p>
+  </div>
+
+  <h3>Práctica 2 · Una figura para una revista</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>En el Bloque 5, abre <span class="ui">Edit figure</span> del mapa de grupos (figura 9.1). En <span class="ui">Content &amp; colours</span> escribe los títulos de los ejes en el idioma de la revista y elige la paleta <span class="ui">Okabe–Ito</span>.</li>
+      <li>En <span class="ui">Style &amp; typography</span> (figura 9.2) elige el tema <span class="ui">Journal</span>, la fuente Times New Roman y quita la cuadrícula (figura 9.3). Sube <span class="ui">Font size: all</span> a 1.3.</li>
+      <li>En la barra de descarga elige TIFF y <span class="ui">Publication · 8× (600 dpi)</span> (figura 9.4) y pulsa <span class="ui">⬇ Download figure</span>.</li>
+      <li>Ve al Bloque 6 y pulsa otra vez <span class="ui">Evaluate every k →</span>: las figuras que se dibujan de nuevo salen ya con Journal y Times. Las que no recalcules conservan su estilo anterior, y así entran en el informe.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>El estilo compartido ahorra repetir ajustes: una vez fijado el aspecto de la revista, todas las figuras que se dibujen después lo heredan, así que conviene fijarlo antes de correr los bloques o recalcularlos al final. Lo propio de cada figura, como los títulos o la paleta, se ajusta en cada una. Elige una paleta segura para daltonismo cuando los grupos se distinguen solo por color, y sube el tamaño de letra si la figura se reducirá a una columna.</p>
+  </div>
+
+  <h3>Práctica 3 · Matriz de distancias: un informe sin variables</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con la matriz genética analizada hasta el Bloque 6, pasa del Bloque 7 al 8. La sección de perfiles aparece como <span class="ui">not run yet</span>, desactivada; las otras cinco están listas.</li>
+      <li>Construye el informe (figura 9.10). La casilla de objetos dice <span class="ui">dissimilarity matrix supplied</span>, no hay casilla de grupos conocidos ni de discriminante, y el borrador describe la matriz suministrada como no euclidiana.</li>
+      <li>Lee el párrafo de métodos: empieza diciendo que la matriz de 12 objetos se suministró directamente, sin mencionar variables, faltantes ni escalado.</li>
+    </ol>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b8-matriz-resumen.png" alt="Resumen del informe con la matriz de distancias"></div>
+    <figcaption><b>Figura 9.10.</b> El resumen del informe con la matriz de distancias. El párrafo de validación recoge a la vez el voto amplio por <i>k</i> = 3, la advertencia del gap y la estabilidad casi perfecta: los tres datos que el capítulo 7 pedía reportar juntos.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>El informe se adapta a lo que hay: con una matriz de distancias describe lo que se hizo con ella y omite lo que no aplica. Revisa siempre que el título corresponda al conjunto de datos y que ninguna casilla hable de un análisis que no corriste.</p>
+  </div>
+
+  <h3>Práctica 4 · Ruido uniforme: el informe no disimula</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los 60 objetos uniformes analizados en todos los bloques, construye el informe y lee el resumen (figura 9.11).</li>
+      <li>Cuenta las casillas en rojo y ámbar: tendencia, árbol, partición, consenso y estabilidad.</li>
+      <li>Lee el borrador: el Hopkins cercano a 0.5, el árbol distorsionado, la silueta sin estructura sustancial, el consenso en el extremo del rango, el gap en <i>k</i> = 1 y la estabilidad solo parcial.</li>
+      <li>Observa la casilla <span class="ui">Discriminability</span> en verde (91.7 %) y el párrafo de perfiles con cuatro variables "significativas".</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-ruido-resumen.png" alt="Resumen del informe con el ruido uniforme"></div>
+    <figcaption><b>Figura 9.11.</b> El resumen del informe con el ruido uniforme: cinco casillas en rojo o ámbar y un borrador que advierte, párrafo por párrafo, que no hay grupos que interpretar.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Un buen informe no solo presenta resultados: dice cuánto creerles. Las casillas verdes del discriminante y los valores P de los perfiles no contradicen las rojas: miden qué tan bien se reproducen los grupos que el algoritmo trazó, no si existen. Cuando el resumen se llena de ámbar y rojo, la conclusión honesta es que los datos forman un continuo.</p>
+  </div>
+
+  <h3>Práctica 5 · Presencia de especies: cuidado con copiar sin leer</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con la presencia de especies analizada en todos los bloques, construye el informe y lee el borrador de perfiles: 17 taxones indicadores significativos y un discriminante que clasifica bien el 53.3 % dejando uno fuera, contra el 100 % en los sitios de entrenamiento, con la advertencia de que la regla se sobreajusta.</li>
+      <li>Vuelve al Bloque 7, deja marcadas solo las 13 especies con IndVal de al menos 60 % y perfila de nuevo.</li>
+      <li>Regresa al Bloque 8 y construye el informe otra vez: la casilla <span class="ui">Discriminability</span> pasa del rojo al ámbar con 90 % y la advertencia desaparece del borrador.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>El borrador refleja fielmente el estado de la app en el momento de construirlo. Si mejoras un análisis, reconstruye el informe; si copias el borrador a un artículo, revisa que sus advertencias sigan siendo ciertas y no borres las que lo sean.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · antes de publicar</div>
+    <p>Lee el borrador de resultados y el párrafo de métodos de principio a fin: son una base, no un texto final. Comprueba que el título, los autores y el conjunto de datos son los correctos; que las secciones incluidas corresponden a lo que vas a reportar; que las advertencias del borrador aparecen en tu discusión; y que las figuras usan el estilo, el formato y la resolución que pide la revista. Cita el programa con su DOI y guarda el paquete ZIP junto con tus datos: permite a cualquiera reproducir el análisis.</p>
+  </div>
+
+  <p style="margin-top:0.12in">Con este capítulo termina el recorrido por los ocho bloques. Los apéndices reúnen el material de consulta: los formatos de archivo que acepta la app, un resumen de todas las reglas de decisión, un glosario, la solución de los problemas más frecuentes, las referencias de los métodos y los componentes de terceros.</p>
+</section>
+
+</body>
+</html>
