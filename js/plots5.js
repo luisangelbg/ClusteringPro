@@ -123,7 +123,7 @@ P5.bic = (cfg, tab) => {
   Fig.axisX(f, x, Object.assign({}, cfg, { xlab: cfg.xlab || 'number of components k' }), { ticks: ks });
   Fig.axisY(f, y, Object.assign({}, cfg, { ylab: cfg.ylab || 'BIC (higher is better)' }));
   const g = Fig.g();
-  models.forEach((m, mi) => { const pts = ks.map(k => { const t = tab.table.find(q => q.k === k && q.model === m); return t && isFinite(t.bic) ? [x(k), y(t.bic)] : null; }).filter(Boolean); const c = Fig.color(cfg.palette, mi); g.appendChild(Fig.el('path', { d: 'M' + pts.map(p => p.join(',')).join(' L'), fill: 'none', stroke: c, 'stroke-width': 2 })); pts.forEach(p => g.appendChild(Fig.marker(p[0], p[1], 3.5, Fig.shapes[mi % Fig.shapes.length], { fill: c }))); });
+  models.forEach((m, mi) => { const pts = ks.map(k => { const t = tab.table.find(q => q.k === k && q.model === m); return t && isFinite(t.bic) ? [x(k), y(t.bic)] : null; }).filter(Boolean); const c = Fig.color(cfg.palette, mi); if (pts.length) g.appendChild(Fig.el('path', { d: 'M' + pts.map(p => p.join(',')).join(' L'), fill: 'none', stroke: c, 'stroke-width': 2 })); pts.forEach(p => g.appendChild(Fig.marker(p[0], p[1], 3.5, Fig.shapes[mi % Fig.shapes.length], { fill: c }))); });
   if (tab.best) { g.appendChild(Fig.el('circle', { cx: x(tab.best.k), cy: y(tab.best.bic), r: 9, fill: 'none', stroke: '#d64a6a', 'stroke-width': 2 })); g.appendChild(Fig.text(x(tab.best.k) + 12, y(tab.best.bic) - 8, `best: ${tab.best.model}, k = ${tab.best.k}`, { size: 11, weight: 'bold', fill: '#d64a6a', font: f.font, role: 'label', halo: f.t.bg, haloWidth: 3 })); }
   f.g.appendChild(g);
   Fig.legend(f, models.map((m, mi) => ({ label: `${m} · ${PT.gmmModels[m] || ''}`, color: Fig.color(cfg.palette, mi), shape: 'line' })), cfg, { pos: cfg.legendPos || 'bottom' });
