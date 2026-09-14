@@ -5,7 +5,7 @@
 
 const Art = {};
 const CL = ['#4f46a5', '#e0803c', '#1fa39a', '#d64a6a', '#7bb041', '#8a5cd6', '#2b7bb9', '#c9a227'];
-const F = 'font-family="Segoe UI, Helvetica, Arial, sans-serif"';
+const F = 'font-family="system-ui, sans-serif"';
 
 function txt(x, y, s, o) {
   o = o || {};

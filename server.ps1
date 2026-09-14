@@ -4,8 +4,9 @@
 # Luego abre  http://localhost:8900  en Chrome o Edge.
 #
 # ClusteringPro calcula todo en JavaScript, asi que el doble clic en index.html tambien
-# funciona. Se recomienda igual usar este servidor: solo asi cargan los archivos
-# de ejemplo de la carpeta data/ (el navegador bloquea leerlos desde file://).
+# funciona, ejemplos incluidos (van incrustados en js/examples.js). Este servidor es
+# util si el navegador restringe las paginas abiertas desde file:// o para usar la app
+# desde otro equipo de la misma red.
 #
 # Para abrirlo tambien desde un celular o tablet (Android, iPad, Huawei...) en
 # la MISMA red WiFi: ejecuta este script como Administrador (clic derecho >

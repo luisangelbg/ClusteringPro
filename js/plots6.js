@@ -1,5 +1,5 @@
 /* ClusteringPro — Block 6 figures: index curves and small multiples, consensus votes, gap statistic,
-   bootstrap stability, dendrogram with AU/BP values, clValid comparison, external cross-table. */
+   bootstrap stability, dendrogram with AU/BP values, comparison of algorithms, external cross-table. */
 
 const P6 = {};
 const INDEX_META = {
@@ -114,8 +114,8 @@ P6.pvDendro = (cfg, pv, labels) => {
   return svg;
 };
 
-/* ---------- clValid comparison ---------- */
-P6.clValid = (cfg, cv, names) => {
+/* ---------- comparison of algorithms over k ---------- */
+P6.algorithms = (cfg, cv, names) => {
   const measure = cfg.measure || 'silhouette', methods = [...new Set(cv.rows.map(r => r.method))], ks = [...new Set(cv.rows.map(r => r.k))].sort((a, b) => a - b);
   const svg = Fig.svg(cfg.width, cfg.height, cfg.theme);
   const f = Fig.frame(svg, cfg, { margin: { left: 74, right: 24, bottom: 80, top: 56 } });

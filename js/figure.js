@@ -102,18 +102,13 @@ Fig.themes = {
 };
 Fig.themeNames = { light: 'Light', paper: 'Paper', dark: 'Dark', minimal: 'Minimal', journal: 'Journal (black & white axes)' };
 Fig.fonts = {
-  sans: 'Helvetica, Arial, sans-serif',
-  arial: 'Arial, Helvetica, sans-serif',
-  serif: 'Georgia, "Times New Roman", serif',
-  times: '"Times New Roman", Times, serif',
-  segoe: '"Segoe UI", Roboto, sans-serif',
-  calibri: 'Calibri, "Segoe UI", sans-serif',
-  cambria: 'Cambria, Georgia, serif',
-  mono: 'Consolas, "Courier New", monospace',
+  sans: 'sans-serif',
+  system: 'system-ui, sans-serif',
+  serif: 'serif',
+  mono: 'monospace',
 };
 Fig.fontNames = {
-  sans: 'Helvetica', arial: 'Arial', serif: 'Georgia', times: 'Times New Roman', segoe: 'Segoe UI',
-  calibri: 'Calibri', cambria: 'Cambria', mono: 'Monospace',
+  sans: 'Sans-serif', system: 'System interface font', serif: 'Serif', mono: 'Monospace',
 };
 
 /* ================= SVG constructors ================= */
@@ -516,6 +511,8 @@ Fig.mount = (host, spec) => {
   host.classList.add('fig-block');
   const saved = Prefs.get('figstyle', {});
   const cfg = Object.assign({}, SHARED_DEFAULTS, saved, spec.defaults || {});
+  /* font keys of earlier versions, still remembered by some browsers */
+  if (!Fig.fonts[cfg.font]) cfg.font = ({ arial: 'sans', segoe: 'system', calibri: 'system', times: 'serif', cambria: 'serif' })[cfg.font] || 'sans';
   if (cfg.width == null) cfg.width = spec.width || 900;
   if (cfg.height == null) cfg.height = spec.height || 560;
 
@@ -639,7 +636,7 @@ Fig.mount = (host, spec) => {
     const w = +current.dataset.w, h = +current.dataset.h, k = +res.value;
     const dpi = k * 75;
     info.textContent = fmt.value === 'svg'
-      ? 'Vector: scales without loss; editable in Inkscape, Illustrator or PowerPoint.'
+      ? 'Vector: scales without loss; editable in vector drawing and presentation programs.'
       : `${Math.round(w * k)} × ${Math.round(h * k)} px · ${(w * k / dpi * 2.54).toFixed(1)} × ${(h * k / dpi * 2.54).toFixed(1)} cm at ${dpi} dpi`;
   }
   fmt.addEventListener('change', updateInfo);

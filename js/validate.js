@@ -43,7 +43,7 @@ VAL.indices = (X, D, cl, o) => {
   /* Ratkowsky–Lance */
   if (k > 1) { let cbar = 0; for (let j = 0; j < p; j++) { const col = X.map(r => r[j]), gm = S.mean(col); let bgss = 0, tssj = 0; for (let c = 0; c < k; c++) { const m = col.filter((_, i) => cl[i] === c + 1); if (m.length) bgss += m.length * (S.mean(m) - gm) ** 2; } col.forEach(v => tssj += (v - gm) ** 2); cbar += tssj > 0 ? Math.sqrt(bgss / tssj) : 0; } out.rl = cbar / p / Math.sqrt(k); } else out.rl = NaN;
   out.ballhall = wss / k;
-  /* connectivity (clValid) with L neighbours */
+  /* connectivity with L neighbours */
   const L = Math.min(o.L || 10, n - 1); let conn = 0;
   for (let i = 0; i < n; i++) { const nb = D[i].map((d, j) => [d, j]).filter(x => x[1] !== i).sort((a, b) => a[0] - b[0]).slice(0, L); nb.forEach((x, r) => { if (cl[x[1]] !== cl[i]) conn += 1 / (r + 1); }); }
   out.connectivity = conn;
@@ -113,7 +113,7 @@ VAL.sweep = (X, D, ks, gen, o) => {
   return { ks, rows, votes, tally, consensus, gap, n, p, generator: gen.kind };
 };
 
-/* ---------- bootstrap stability of a partition (clusterboot) ---------- */
+/* ---------- bootstrap stability of a partition (cluster-wise Jaccard) ---------- */
 VAL.stability = (D, X, cl, gen, B, seed) => {
   const n = cl.length, k = Math.max(...cl), r = rng(seed || 77), jac = Array.from({ length: k }, () => []);
   for (let b = 0; b < B; b++) {
@@ -133,8 +133,8 @@ VAL.stability = (D, X, cl, gen, B, seed) => {
   return { B, clusters: jac.map((a, c) => ({ cluster: c + 1, n: cl.filter(x => x === c + 1).length, mean: a.length ? S.mean(a) : NaN, min: a.length ? S.min(a) : NaN, dissolved: a.filter(v => v < 0.5).length, recovered: a.filter(v => v > 0.75).length, runs: a.length })) };
 };
 
-/* ---------- multiscale bootstrap for hierarchical clusters (pvclust AU / BP) ---------- */
-VAL.pvclust = (X, method, B, scales, seed, opts) => {
+/* ---------- multiscale bootstrap for hierarchical clusters (AU / BP) ---------- */
+VAL.multiscaleBootstrap = (X, method, B, scales, seed, opts) => {
   opts = opts || {};
   const n = X.length, p = X[0].length, r = rng(seed || 13);
   const D0 = HC.dist(X), h0 = HC.agglomerate(D0, method, opts);
@@ -155,7 +155,7 @@ VAL.pvclust = (X, method, B, scales, seed, opts) => {
   const rEff = scales.map(sc => Math.max(2, Math.round(sc * p)) / p);
   const nodes = mem0.map((m, s) => {
     const bp = counts.map(c => c[s] / B);
-    /* pvclust msfit: weighted least squares of z(r) = v √r + c / √r on the scales with 0 < bp < 1,
+    /* multiscale fit: weighted least squares of z(r) = v √r + c / √r on the scales with 0 < bp < 1,
        r = the real ratio of resampled to original variables; AU = 1 − Φ(v − c), BP = 1 − Φ(v + c) */
     const use = bp.map((q, si) => q > 0 && q < 1 ? si : -1).filter(si => si >= 0);
     let v = 0, c = 0, au, bpFit, fitted = false;
@@ -193,8 +193,8 @@ VAL.external = (a, b) => {
   return { la, lb, M, rand, ari, jaccard, fm, nmi, vi, purity, chi, df, pval, cramer, Ha, Hb, I };
 };
 
-/* ---------- comparison of algorithms over k (clValid) ---------- */
-VAL.clValid = (X, D, ks, methods, hcMethod) => {
+/* ---------- comparison of algorithms over k ---------- */
+VAL.compareAlgorithms = (X, D, ks, methods, hcMethod) => {
   const out = [];
   methods.forEach(m => { const gen = VAL.generator(m, D, X, hcMethod); ks.forEach(k => { const cl = gen.run(k); const ix = VAL.indices(X, D, cl); out.push({ method: m, k, connectivity: ix.connectivity, dunn: ix.dunn, silhouette: ix.silhouette }); }); });
   const best = {};

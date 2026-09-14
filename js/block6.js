@@ -101,7 +101,7 @@ function runStability() {
   document.dispatchEvent(new CustomEvent('validationchange'));
 }
 
-/* ---------- 3. pvclust ---------- */
+/* ---------- 3. multiscale bootstrap of the tree ---------- */
 function runPv() {
   clearMessages('pvMessages');
   const n = state.dist.n;
@@ -113,7 +113,7 @@ function runPv() {
   const method = hcMethod(), B = Math.max(10, Math.min(500, +el('pvB').value || 30));
   const scales = [0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4];
   const t0 = performance.now();
-  const pv = VAL.pvclust(X, method, B, scales, 13, { beta: state.hclust ? state.hclust.beta : undefined });
+  const pv = VAL.multiscaleBootstrap(X, method, B, scales, 13, { beta: state.hclust ? state.hclust.beta : undefined });
   pv.ms = performance.now() - t0; pv.method = method;
   state.validation = Object.assign(state.validation || {}, { pv });
   const thr = +el('pvThr').value || 0.95;
@@ -123,7 +123,7 @@ function runPv() {
   if (state.dist.fam !== 'quant' || !/euclid/.test(state.dist.id)) showMessage('pvMessages', 'info', 'Resampling the variables requires recomputing the distance from them; Euclidean distance on the working variables is used here, which differs from your Block 3 dissimilarity.');
   if (X[0].length < 15) showMessage('pvMessages', 'warning', `Only ${X[0].length} variables: with so few columns the multiscale bootstrap is liberal, and even in random data many clusters reach AU ≥ 95 %. Read AU as a rough guide and rely on the bootstrap of the objects (card 2) to judge the clusters.`);
   el('pvText').innerHTML = `<p class="hint">${sig.length} cluster${sig.length === 1 ? '' : 's'} with AU ≥ ${Math.round(thr * 100)} %. AU (approximately unbiased) corrects the plain bootstrap probability BP for its known bias; an AU of 95 % means the cluster is strongly supported by the variables, not an accident of which variables were measured.</p>`;
-  mount('fig6Pv', { title: 'Tree with bootstrap support', fileName: 'pvclust_tree', width: 960, height: 560, defaults: { palette: 'cluster', title: `Multiscale bootstrap support · ${HC_METHOD_NAMES[method]}`, subtitle: `${B} resamples at ${scales.length} scales · numbers: AU % (red)${''}`, threshold: thr, showAU: true, showBP: false, valueSize: 9, labels: n <= 120 ? 'auto' : 'none', labelSize: 9, branchWidth: 1.6, auColor: '#d64a6a', bpColor: '#2f9e44', boxColor: '#d64a6a', legendPos: 'right' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'subtitle', label: 'Subtitle', type: 'text' }, { key: 'threshold', label: 'AU threshold for boxes', type: 'range', min: 0.5, max: 0.99, step: 0.01 }, { key: 'showAU', label: 'Show AU values', type: 'checkbox' }, { key: 'showBP', label: 'Show BP values', type: 'checkbox' }, { key: 'valueSize', label: 'Value size', type: 'range', min: 6, max: 14, step: 0.5 }, { key: 'labels', label: 'Leaf labels', type: 'select', options: [['auto', 'shown'], ['none', 'hidden']] }, { key: 'labelSize', label: 'Label size', type: 'range', min: 6, max: 14, step: 0.5 }, { key: 'branchWidth', label: 'Branch width', type: 'range', min: 0.5, max: 4, step: 0.1 }, { key: 'auColor', label: 'AU colour', type: 'color' }, { key: 'bpColor', label: 'BP colour', type: 'color' }, { key: 'boxColor', label: 'Box colour', type: 'color' }, pal], render: cfg => P6.pvDendro(cfg, pv, state.dist.labels) });
+  mount('fig6Pv', { title: 'Tree with bootstrap support', fileName: 'multiscale_bootstrap_tree', width: 960, height: 560, defaults: { palette: 'cluster', title: `Multiscale bootstrap support · ${HC_METHOD_NAMES[method]}`, subtitle: `${B} resamples at ${scales.length} scales · numbers: AU % (red)${''}`, threshold: thr, showAU: true, showBP: false, valueSize: 9, labels: n <= 120 ? 'auto' : 'none', labelSize: 9, branchWidth: 1.6, auColor: '#d64a6a', bpColor: '#2f9e44', boxColor: '#d64a6a', legendPos: 'right' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'subtitle', label: 'Subtitle', type: 'text' }, { key: 'threshold', label: 'AU threshold for boxes', type: 'range', min: 0.5, max: 0.99, step: 0.01 }, { key: 'showAU', label: 'Show AU values', type: 'checkbox' }, { key: 'showBP', label: 'Show BP values', type: 'checkbox' }, { key: 'valueSize', label: 'Value size', type: 'range', min: 6, max: 14, step: 0.5 }, { key: 'labels', label: 'Leaf labels', type: 'select', options: [['auto', 'shown'], ['none', 'hidden']] }, { key: 'labelSize', label: 'Label size', type: 'range', min: 6, max: 14, step: 0.5 }, { key: 'branchWidth', label: 'Branch width', type: 'range', min: 0.5, max: 4, step: 0.1 }, { key: 'auColor', label: 'AU colour', type: 'color' }, { key: 'bpColor', label: 'BP colour', type: 'color' }, { key: 'boxColor', label: 'Box colour', type: 'color' }, pal], render: cfg => P6.pvDendro(cfg, pv, state.dist.labels) });
   el('pvResults').style.display = '';
   document.dispatchEvent(new CustomEvent('validationchange'));
 }
@@ -145,18 +145,18 @@ function runExternal() {
   document.dispatchEvent(new CustomEvent('validationchange'));
 }
 
-/* ---------- 5. clValid ---------- */
-function runClValid() {
+/* ---------- 5. comparison of algorithms over k ---------- */
+function runAlgorithms() {
   clearMessages('cvMessages');
   const methods = els('#cvList input:checked').map(i => i.value); if (!methods.length) { showMessage('cvMessages', 'warning', 'Tick at least one method.'); return; }
   const { X } = coordsX(), D = state.dist.D, ks = kRange();
-  const cv = VAL.clValid(X, D, ks, methods, hcMethod());
+  const cv = VAL.compareAlgorithms(X, D, ks, methods, hcMethod());
   const names = { hier: `Hierarchical (${HC_METHOD_NAMES[hcMethod()]})`, kmeans: 'k-means', pam: 'PAM' };
-  state.validation = Object.assign(state.validation || {}, { clValid: Object.assign(cv, { names }) });
-  buildTable('cvTable', [{ key: 'm', label: 'Measure' }, { key: 'best', label: 'Best method' }, { key: 'k', label: 'k', num: true }, { key: 'v', label: 'Value', num: true }], ['connectivity', 'dunn', 'silhouette'].map(m => ({ m: P6.INDEX_META[m].label + (m === 'connectivity' ? ' (lower is better)' : ' (higher is better)'), best: names[cv.best[m].method], k: cv.best[m].k, v: fmtNum(cv.best[m][m], 3) })), { caption: 'Optimal scores (clValid-style)' });
+  state.validation = Object.assign(state.validation || {}, { algorithms: Object.assign(cv, { names }) });
+  buildTable('cvTable', [{ key: 'm', label: 'Measure' }, { key: 'best', label: 'Best method' }, { key: 'k', label: 'k', num: true }, { key: 'v', label: 'Value', num: true }], ['connectivity', 'dunn', 'silhouette'].map(m => ({ m: P6.INDEX_META[m].label + (m === 'connectivity' ? ' (lower is better)' : ' (higher is better)'), best: names[cv.best[m].method], k: cv.best[m].k, v: fmtNum(cv.best[m][m], 3) })), { caption: 'Best method and k for each measure' });
   const full = ks.map(k => { const o = { k }; methods.forEach(m => { const r = cv.rows.find(q => q.method === m && q.k === k); ['connectivity', 'dunn', 'silhouette'].forEach(x => o[m + x] = fmtNum(r[x], 3)); }); return o; });
   buildTable('cvFull', [{ key: 'k', label: 'k', num: true }].concat(methods.flatMap(m => ['connectivity', 'dunn', 'silhouette'].map(x => ({ key: m + x, label: `${names[m].split(' ')[0]} · ${P6.INDEX_META[x].label}`, num: true })))), full, { caption: 'All measures by method and k' });
-  mount('fig6Cv', { title: 'Comparison of algorithms over k', fileName: 'clvalid_comparison', width: 760, height: 460, defaults: { palette: 'cluster', title: 'Internal validation by method and k', measure: 'silhouette', legendPos: 'right' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'measure', label: 'Measure', type: 'select', options: [['silhouette', 'Silhouette'], ['dunn', 'Dunn'], ['connectivity', 'Connectivity']] }, pal, { key: 'legendPos', label: 'Legend position', type: 'select', options: [['bottom', 'Below the plot'], ['right', 'Top right'], ['none', 'Hidden']] }], render: cfg => P6.clValid(cfg, cv, names) });
+  mount('fig6Cv', { title: 'Comparison of algorithms over k', fileName: 'algorithm_comparison', width: 760, height: 460, defaults: { palette: 'cluster', title: 'Internal validation by method and k', measure: 'silhouette', legendPos: 'right' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'measure', label: 'Measure', type: 'select', options: [['silhouette', 'Silhouette'], ['dunn', 'Dunn'], ['connectivity', 'Connectivity']] }, pal, { key: 'legendPos', label: 'Legend position', type: 'select', options: [['bottom', 'Below the plot'], ['right', 'Top right'], ['none', 'Hidden']] }], render: cfg => P6.algorithms(cfg, cv, names) });
   el('cvResults').style.display = '';
 }
 
@@ -183,7 +183,7 @@ function init() {
   el('stRun').addEventListener('click', runStability);
   el('pvRun').addEventListener('click', runPv);
   el('exRun').addEventListener('click', runExternal);
-  el('cvRun').addEventListener('click', runClValid);
+  el('cvRun').addEventListener('click', runAlgorithms);
   el('nextBtn6').addEventListener('click', () => goStep(7));
   document.addEventListener('distchange', refresh);
   document.addEventListener('hclustchange', () => { if (state.dist && !state.validation) el('vkGen').value = defaultGen(); });

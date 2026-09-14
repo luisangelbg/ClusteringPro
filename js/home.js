@@ -3,7 +3,7 @@
 (function () {
 const BLOCKS = [
   { n: 1, title: 'Home & theory', tag: 'Ready', text: 'What clustering is, the families of methods, how to choose distances and linkages, and how to validate what you find.' },
-  { n: 2, title: 'Data & exploratory analysis', tag: 'Ready', text: 'Excel, CSV, JSON… Variable typing (quantitative, binary, nominal, ordinal, counts), roles, missing values, scaling, outliers and clustering tendency (Hopkins, VAT, PCA preview).' },
+  { n: 2, title: 'Data & exploratory analysis', tag: 'Ready', text: 'Spreadsheets, CSV, JSON… Variable typing (quantitative, binary, nominal, ordinal, counts), roles, missing values, scaling, outliers and clustering tendency (Hopkins, VAT, PCA preview).' },
   { n: 3, title: 'Similarity & distance', tag: 'Ready', text: 'Euclidean, Manhattan, Minkowski, correlation, Mahalanobis; Jaccard, Dice, simple matching; Gower for mixed data; Bray–Curtis, Hellinger, chi-square for ecological counts. Distance heat maps and MDS.' },
   { n: 4, title: 'Hierarchical clustering', tag: 'Ready', text: 'Single, complete, UPGMA, WPGMA, centroid, median, Ward, flexible beta; DIANA. Dendrogram studio with palettes, radial and phylogenic layouts, editable labels, legends and axes. Tanglegrams and tree comparison.' },
   { n: 5, title: 'Partitioning & advanced', tag: 'Ready', text: 'k-means (Hartigan–Wong, Lloyd, k-means++), PAM, CLARA, fuzzy c-means, hierarchical k-means, Gaussian mixtures, DBSCAN. Cluster maps on PCA axes with hulls and ellipses.' },

@@ -64,7 +64,7 @@
       <tr><td>Hojas de cálculo <code>.xlsx</code>, <code>.xls</code>, <code>.xlsm</code>, <code>.xlsb</code>, <code>.ods</code></td><td>Con la biblioteca de hojas de cálculo incluida en la app; se toma la primera hoja y aparece el selector <span class="ui">Sheet</span> si hay varias.</td><td>Las celdas combinadas se detectan y se reportan; las fechas no se usan como números.</td></tr>
       <tr><td>Texto delimitado <code>.csv</code>, <code>.tsv</code>, <code>.txt</code>, <code>.dat</code>, <code>.prn</code></td><td>Con el delimitador elegido o detectado; respeta las comillas dobles.</td><td>Se acepta UTF-8 con o sin marca de orden de bytes.</td></tr>
       <tr><td><code>.json</code></td><td>Un arreglo de objetos (un objeto por fila), un arreglo de arreglos, un objeto con <code>columns</code> y <code>data</code>, o un objeto cuyas claves son columnas.</td><td>Cualquier otra disposición produce un mensaje de error.</td></tr>
-      <tr><td>Portapapeles</td><td>Lo que pegues en <span class="ui">Paste from the clipboard instead</span> se lee como texto delimitado (los tabuladores de Excel se detectan solos).</td><td>El archivo se llama <i>pasted-data.txt</i> en los informes.</td></tr>
+      <tr><td>Portapapeles</td><td>Lo que pegues en <span class="ui">Paste from the clipboard instead</span> se lee como texto delimitado (los tabuladores que deja una hoja de cálculo se detectan solos).</td><td>El archivo se llama <i>pasted-data.txt</i> en los informes.</td></tr>
     </tbody>
   </table>
 
@@ -80,7 +80,7 @@
     <thead><tr><th style="width:24%">Dato</th><th>Cómo escribirlo</th></tr></thead>
     <tbody>
       <tr><td>Números</td><td>Con punto o con coma decimal, pero no mezclados en una misma columna. Los separadores de miles se toleran; un signo de porcentaje al final se ignora.</td></tr>
-      <tr><td>Faltantes</td><td>Celda vacía o cualquiera de los códigos: <code>NA</code>, <code>N/A</code>, <code>NaN</code>, <code>null</code>, <code>none</code>, <code>.</code>, <code>-</code>, <code>--</code>, <code>?</code>, <code>ND</code>, <code>S/D</code>, <code>missing</code>, <code>faltante</code>, los errores de Excel (<code>#N/A</code>, <code>#DIV/0!</code>…) e <code>inf</code>.</td></tr>
+      <tr><td>Faltantes</td><td>Celda vacía o cualquiera de los códigos: <code>NA</code>, <code>N/A</code>, <code>NaN</code>, <code>null</code>, <code>none</code>, <code>.</code>, <code>-</code>, <code>--</code>, <code>?</code>, <code>ND</code>, <code>S/D</code>, <code>missing</code>, <code>faltante</code>, los errores de las hojas de cálculo (<code>#N/A</code>, <code>#DIV/0!</code>…) e <code>inf</code>.</td></tr>
       <tr><td>Binarias</td><td>Dos estados: <code>0/1</code>, <code>yes/no</code>, <code>y/n</code>, <code>true/false</code>, <code>present/absent</code>, <code>p/a</code>, <code>+/−</code>, <code>si/no</code>, <code>presence/absence</code>, <code>t/f</code>. El segundo estado de cada par se codifica como 1.</td></tr>
       <tr><td>Nominales</td><td>Texto con hasta 40 categorías. Cuida mayúsculas y acentos: <i>Clay</i> y <i>clay</i> serían dos niveles distintos (la app lo avisa).</td></tr>
       <tr><td>Ordinales</td><td>Niveles de texto reconocidos (por ejemplo <i>low &lt; medium &lt; high</i>, <i>poor &lt; moderate &lt; good &lt; excellent</i>, <i>bajo &lt; medio &lt; alto</i>, <i>early &lt; intermediate &lt; late</i>), o puntuaciones enteras en una columna cuyo nombre contenga <i>score</i>, <i>scale</i>, <i>grade</i>, <i>rating</i>, <i>severity</i>, <i>level</i>, <i>stage</i>, <i>damage</i> o <i>likert</i>.</td></tr>

@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · Manual de usuario · Apéndices</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+<style>
+  td.f { font-family: var(--serif); font-size: 10.5pt; color: var(--negro); }
+  .caja-t .sec-ref { margin-left: auto; letter-spacing: 0.08em; font-size: 7.4pt; opacity: 0.85; }
+  .pre-t { font-family: var(--sans); font-size: 8.5pt; color: var(--gris); margin: 0.12in 0 0; letter-spacing: 0.02em; }
+  .pre-t b { color: var(--negro); font-weight: 500; }
+  pre.archivo { font-family: var(--mono); font-size: 7.9pt; line-height: 1.38; color: var(--negro); background: #f6f8fc; border: 1px solid var(--linea); border-left: 3px solid var(--acento); border-radius: 0 4px 4px 0; padding: 0.07in 0.12in; margin: 0.05in 0 0.18in; white-space: pre-wrap; word-break: break-all; break-inside: avoid; }
+  .ejemplo-archivo { break-inside: avoid; }
+  ul.indice-reglas { list-style: none; padding: 0; margin: 0.12in 0 0.2in; display: grid; grid-template-columns: 1fr 1fr; column-gap: 0.35in; font-family: var(--sans); font-size: 8.8pt; }
+  ul.indice-reglas li { margin: 0; padding: 0.035in 0; border-top: 1px solid var(--linea); break-inside: avoid; }
+  ul.indice-reglas li b { display: inline-block; min-width: 2.7em; color: var(--negro); font-weight: 500; }
+  ul.indice-reglas li.grupo { grid-column: 1 / -1; border-top: 0; padding-top: 0.12in; font-weight: 500; color: var(--negro); }
+  ul.indice-reglas li.grupo .chip { margin-right: 0.55em; }
+  h3.ap-cap { font-size: 13pt; }
+  h3.ap-cap .chip { font-size: 8.5pt; margin-right: 0.55em; position: relative; top: -0.12em; }
+  tr.letra td { background: #eef1f6 !important; font-family: var(--serif); font-size: 12.5pt; font-weight: 600; color: var(--negro); }
+  td.termino b { font-family: var(--serif); font-size: 10.5pt; }
+  ul.refs { list-style: none; padding: 0; margin: 0.12in 0 0.2in; font-size: 9.7pt; line-height: 1.36; }
+  ul.refs li { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 0.32em; break-inside: avoid; text-align: left; hyphens: manual; }
+  ul.refs .doi { font-family: var(--sans); font-size: 0.8em; color: var(--gris); overflow-wrap: anywhere; }
+  ul.refs .m { color: var(--marino); font-size: 0.85em; }
+</style>
+</head>
+<body>
+
+<section class="capitulo" id="apendices" data-pestana="A" data-orden="10" style="--acento: var(--bx)">
+  <div class="cap-apertura">
+    <div class="cap-num">A–F</div>
+    <div class="cap-etiqueta">Apéndices · material de consulta</div>
+    <h1 data-corto="Apéndices">Apéndices</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Los apéndices no se leen de corrido: se consultan. Aquí están las reglas exactas con que la app lee y escribe cada archivo, las reglas de decisión del manual reunidas, un glosario de términos, siglas y símbolos, las soluciones a los problemas más comunes, las referencias completas de los métodos y los componentes de terceros con sus licencias.</p>
+    <div class="cap-franja"><span class="kx"></span><span class="kx" style="opacity:.75"></span><span class="kx" style="opacity:.5"></span><span class="kx" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>A</b>Formatos de archivo</li>
+      <li><b>B</b>Resumen de reglas de decisión</li>
+      <li><b>C</b>Glosario</li>
+      <li><b>D</b>Solución de problemas</li>
+      <li><b>E</b>Referencias</li>
+      <li><b>F</b>Componentes de terceros</li>
+    </ul>
+  </div>
+
+  <!-- ====================================================================== A -->
+  <h2 id="ap-a"><span class="num">A</span>Formatos de archivo</h2>
+  <p class="lead">El capítulo 3 explica cómo acomodar los datos (tablas 3.1 y 3.2) y cómo la app interpreta cada columna (tabla 3.6). Este apéndice reúne las reglas exactas: cómo reconoce cada archivo, qué nombres de columna entiende, qué cuenta como faltante, cuándo una tabla es una matriz de distancias y qué contiene cada archivo que descarga.</p>
+
+  <h3>A.1 Cómo reconoce la app un archivo</h3>
+  <table class="compacta">
+    <caption><b>Tabla A.1.</b> Archivos que se cargan en el Bloque 2 y cómo los lee la app. La extensión decide el lector.</caption>
+    <thead><tr><th style="width:24%">Archivo</th><th style="width:36%">Cómo se lee</th><th>Qué conviene saber</th></tr></thead>
+    <tbody>
+      <tr><td><b>Hoja de cálculo</b><br><code>.xlsx .xls .xlsm .xlsb .ods</code></td><td>Con la biblioteca de hojas de cálculo incluida (apéndice F). Se lee la primera hoja; si hay varias aparece <span class="ui">Sheet</span> para elegir otra.</td><td>Los números se guardan como números, así que el separador decimal no importa. Las fechas no se convierten en números. Las celdas combinadas se detectan (tabla A.3).</td></tr>
+      <tr><td><b>Texto delimitado</b><br><code>.csv .txt .dat .prn</code></td><td>Con el separador de <span class="ui">Text delimiter</span> o, en automático, el que resulte de la regla de la tabla A.2.</td><td>Codificación UTF-8, con o sin marca inicial. Admite campos entre comillas dobles; dos comillas seguidas dentro de un campo son una comilla.</td></tr>
+      <tr><td><b>Texto con tabuladores</b><br><code>.tsv</code></td><td>Siempre con tabulador.</td><td>Lo demás, como en el texto delimitado.</td></tr>
+      <tr><td><b>JSON</b><br><code>.json</code></td><td>Una de cuatro disposiciones (tabla A.7).</td><td>Cualquier otra disposición produce el mensaje <span class="ui">Unrecognised JSON layout</span>.</td></tr>
+      <tr><td><b>Texto pegado</b></td><td>El área <span class="ui">Paste from the clipboard instead</span> se lee como texto delimitado.</td><td>En los informes, el archivo se llama <code>pasted-data.txt</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A.2 Texto delimitado: separadores y números</h3>
+  <table class="compacta">
+    <caption><b>Tabla A.2.</b> Reglas de lectura del texto y de los números.</caption>
+    <thead><tr><th style="width:24%">Aspecto</th><th>Regla</th></tr></thead>
+    <tbody>
+      <tr><td><b>Separador automático</b></td><td>Se prueban coma, punto y coma, tabulador y barra vertical en las primeras 10 líneas con contenido. Cada candidato recibe el número medio de apariciones por línea, reducido a la mitad si no aparece el mismo número de veces en todas; gana el de mayor puntuación. Los espacios nunca separan columnas.</td></tr>
+      <tr><td><b>Separador decimal automático</b></td><td>Se cuentan, en las primeras 500 filas, las celdas de texto con forma <code>12,5</code> y las de forma <code>12.5</code>. Si hay más con coma, toda la tabla se lee con coma decimal; si no, con punto.</td></tr>
+      <tr><td><b>Con coma decimal</b></td><td>Los puntos se toman como separadores de miles y se quitan; la coma pasa a ser el punto decimal: <code>1.234,5</code> vale 1234.5.</td></tr>
+      <tr><td><b>Con punto decimal</b></td><td>Las comas se toman como separadores de miles y se quitan: <code>1,234.5</code> vale 1234.5.</td></tr>
+      <tr><td><b>Otros detalles de los números</b></td><td>Se ignoran los espacios internos y un signo <code>%</code> al final. Se aceptan el signo, los decimales sin cero inicial (<code>.5</code>) y la notación científica (<code>1.2e-3</code>). Un valor que no cumple estas formas no es un número.</td></tr>
+      <tr><td><b>Faltantes</b></td><td>Celda vacía o, sin distinguir mayúsculas: <code>NA</code>, <code>N/A</code>, <code>NaN</code>, <code>null</code>, <code>none</code>, <code>.</code>, <code>-</code>, <code>--</code>, <code>?</code>, <code>ND</code>, <code>S/D</code>, <code>SD</code>, <code>missing</code>, <code>faltante</code>, <code>#N/A</code>, <code>#DIV/0!</code>, <code>#VALUE!</code>, <code>#VALOR!</code>, <code>#REF!</code>, <code>#NAME?</code>, <code>inf</code> y <code>-inf</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · códigos de faltante que también son categorías</div>
+    <p style="margin:0">Las palabras <code>none</code> y <code>SD</code> se leen como faltantes aunque estén en una columna de texto. Si una categoría se llama así (un tratamiento "none", una clase "SD"), cámbiale el nombre antes de cargar la tabla. Lo mismo ocurre con un guion solo, que en algunas tablas significa cero.</p>
+  </div>
+
+  <h3>A.3 La forma de la tabla</h3>
+  <table class="compacta">
+    <caption><b>Tabla A.3.</b> Cómo encuentra la app el encabezado y qué corrige sola. Los avisos se muestran bajo el mensaje de lectura (tabla 3.3).</caption>
+    <thead><tr><th style="width:26%">Situación</th><th>Qué hace la app</th></tr></thead>
+    <tbody>
+      <tr><td><b>Filas vacías</b></td><td>Se ignoran en toda la tabla.</td></tr>
+      <tr><td><b>Filas de título arriba</b></td><td>La fila de encabezado es la primera con al menos la mitad de las celdas de la fila más ancha (y al menos dos). Las anteriores se saltan con un aviso.</td></tr>
+      <tr><td><b>Columna sin nombre</b></td><td>Si es la primera columna se llama <code>Object</code>; las demás, <code>V</code> más su número de columna (<code>V3</code> para la tercera).</td></tr>
+      <tr><td><b>Nombres repetidos</b></td><td>El segundo recibe <code>_2</code>, el tercero <code>_3</code>, y así.</td></tr>
+      <tr><td><b>Filas más largas que el encabezado</b></td><td>Las celdas sobrantes se descartan.</td></tr>
+      <tr><td><b>Filas de resumen</b></td><td>Las filas cuya primera celda dice <code>Total</code>, <code>Mean</code>, <code>Average</code>, <code>Promedio</code>, <code>Suma</code>, <code>Sum</code> o <code>Media</code> se eliminan.</td></tr>
+      <tr><td><b>Celdas combinadas</b></td><td>Solo en hojas de cálculo: se avisa en rojo, porque solo la primera celda del bloque conserva el valor.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A.4 Nombres de columna que la app reconoce</h3>
+  <p>La tabla 3.6 da el orden de las reglas con que se decide el tipo y el papel de cada columna. Varias de ellas dependen del nombre de la columna, que se compara sin distinguir mayúsculas.</p>
+  <table class="compacta">
+    <caption><b>Tabla A.4.</b> Nombres y fragmentos de nombre que cambian la interpretación de una columna.</caption>
+    <thead><tr><th style="width:24%">Para proponer…</th><th>El nombre completo debe ser uno de estos</th></tr></thead>
+    <tbody>
+      <tr><td><b>Etiqueta de objeto</b> (si los valores son todos distintos)</td><td><code>id</code>, <code>code</code>, <code>codigo</code>, <code>código</code>, <code>accession</code>, <code>acc</code>, <code>genotype</code>, <code>genotipo</code>, <code>sample</code>, <code>muestra</code>, <code>site</code>, <code>sitio</code>, <code>plot</code>, <code>parcela</code>, <code>profile</code>, <code>perfil</code>, <code>name</code>, <code>nombre</code>, <code>label</code>, <code>obs</code>, <code>individual</code>, <code>cultivar</code>, <code>line</code>, <code>linea</code>, <code>línea</code>, <code>entry</code>, <code>rowname</code>, <code>row_name</code>, <code>object</code>. Una columna de texto con todos sus valores distintos también se propone como etiqueta, aunque tenga otro nombre.</td></tr>
+      <tr><td><b>Agrupación conocida</b></td><td><code>group</code>, <code>grupo</code>, <code>class</code>, <code>clase</code>, <code>type</code>, <code>tipo</code>, <code>habitat</code>, <code>region</code>, <code>región</code>, <code>origin</code>, <code>origen</code>, <code>landscape</code>, <code>treatment</code>, <code>tratamiento</code>, <code>category</code>, <code>categoria</code>, <code>categoría</code>, <code>species</code>, <code>especie</code>, <code>cluster</code>, <code>population</code>, <code>poblacion</code>, <code>población</code>, <code>site_type</code>, <code>status</code>, <code>zone</code>, <code>zona</code>, <code>country</code>, <code>pais</code>, <code>país</code>, <code>family</code>, <code>familia</code>. Solo la primera columna que cumpla toma ese papel.</td></tr>
+    </tbody>
+  </table>
+  <table class="compacta">
+    <caption><b>Tabla A.5.</b> Fragmentos de nombre y niveles reconocidos.</caption>
+    <thead><tr><th style="width:24%">Para proponer…</th><th>Condición</th></tr></thead>
+    <tbody>
+      <tr><td><b>Conteos</b></td><td>Enteros no negativos con más de dos valores y al menos 15 % de ceros, o con un nombre que termine en <code>_sp</code> o <code>_spp</code>, o que contenga <code>abund</code>, <code>count</code>, <code>conteo</code>, <code>captur</code>, <code>reads</code>, <code>otu</code>, <code>asv</code>, <code>individuals</code> o <code>n_</code>. Además, si al menos 4 columnas numéricas activas (y el 60 % de ellas) son enteros no negativos y un 30 % de esas tiene algún cero, todas pasan a conteos: es una tabla de comunidades.</td></tr>
+      <tr><td><b>Ordinal por puntuación</b></td><td>Enteros con 9 valores distintos o menos (y menos de un tercio de las filas) en una columna cuyo nombre contenga <code>score</code>, <code>scale</code>, <code>grade</code>, <code>rating</code>, <code>sever</code>, <code>level</code>, <code>stage</code>, <code>damage</code> o <code>likert</code>.</td></tr>
+      <tr><td><b>Ordinal por niveles</b></td><td>Todos los niveles pertenecen a una de estas escalas, que dan también el orden: <i>very low · low · medium · high · very high</i>; <i>low · medium · high</i>; <i>low · moderate · high</i>; <i>none · low · medium · high</i>; <i>poor · moderate · good · excellent</i>; <i>poor · moderate · good · excessive</i>; <i>poor · fair · good · excellent</i>; <i>poor · moderate · good</i>; <i>small · medium · large</i>; <i>never · rarely · sometimes · often · always</i>; <i>light · moderate · severe</i>; <i>mild · moderate · severe</i>; <i>resistant · moderately resistant · moderately susceptible · susceptible</i>; <i>early · intermediate · late</i>; <i>bajo · medio · alto</i>.</td></tr>
+      <tr><td><b>Binaria</b></td><td>Exactamente dos niveles de un mismo par; el segundo se codifica como 1: <i>0/1</i>, <i>no/yes</i>, <i>n/y</i>, <i>false/true</i>, <i>absent/present</i>, <i>a/p</i>, <i>−/+</i>, <i>no/si</i>, <i>no/sí</i>, <i>absence/presence</i>, <i>f/t</i>.</td></tr>
+      <tr><td><b>Numérica</b></td><td>Al menos 90 % de los valores no faltantes se leen como números, y al menos dos. Por debajo, la columna es de texto.</td></tr>
+      <tr><td><b>Excluida</b></td><td>Columnas vacías, numéricas constantes, de texto con más de 40 categorías y una segunda columna de texto con todos sus valores distintos.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A.5 Matriz de distancias</h3>
+  <p>Una tabla se toma como matriz de distancias, en lugar de como tabla de objetos, cuando cumple todas estas condiciones: tiene al menos 3 filas; el encabezado tiene una celda más que filas; la primera columna repite, en el mismo orden, los nombres del encabezado a partir de la segunda celda (sin distinguir mayúsculas ni espacios en los extremos); todas las demás celdas son números no negativos; y la diagonal vale cero. Si <i>d<sub>ij</sub></i> y <i>d<sub>ji</sub></i> difieren en más de una millonésima relativa, se reemplazan por su promedio y el mensaje de lectura lo dice. Si falla cualquier condición, la tabla se lee como una tabla de objetos ordinaria.</p>
+
+  <div class="ejemplo-archivo">
+  <p class="pre-t"><b>genetic_distance_matrix.csv</b> · las tres primeras filas y las cinco primeras columnas</p>
+  <pre class="archivo">Cultivar,Cv_Azul,Cv_Blanco,Cv_Cacahuacintle,Cv_Chalqueno,…
+Cv_Azul,0,0.16,0.21,0.19,…
+Cv_Blanco,0.16,0,0.18,0.22,…
+Cv_Cacahuacintle,0.21,0.18,0,0.17,…</pre>
+  </div>
+
+  <h3>A.6 Tablas de objetos: ejemplos</h3>
+  <div class="ejemplo-archivo">
+  <p class="pre-t"><b>maize_landraces_morphology.csv</b> · etiqueta, agrupación conocida y variables cuantitativas</p>
+  <pre class="archivo">Accession,Region,PlantHeight_cm,EarHeight_cm,DaysToFlower,EarLength_cm,KernelRows,KernelWeight_g,GrainYield_t_ha,LeafWidth_cm
+ACC-001,Highland,182.7,78.7,89,11.1,12,33,4.1,9
+ACC-002,Highland,206.1,92.6,91,14.6,14,33.9,2.1,9.5</pre>
+  </div>
+  <div class="ejemplo-archivo">
+  <p class="pre-t"><b>plant_species_presence.csv</b> · presencia y ausencia codificadas como 0 y 1 (primeras columnas)</p>
+  <pre class="archivo">Site,Habitat,Quercus_sp,Pinus_sp,Alnus_sp,Salix_sp,Typha_sp,Cyperus_sp,Juncus_sp,…
+S01,Forest,1,1,1,0,0,0,0,…
+S02,Forest,1,1,1,0,0,0,0,…</pre>
+  </div>
+  <div class="ejemplo-archivo">
+  <p class="pre-t"><b>soil_profiles_mixed.csv</b> · cuantitativas, una nominal (<i>Texture</i>), una ordinal (<i>Drainage</i>) y una binaria (<i>Calcareous</i>)</p>
+  <pre class="archivo">Profile,pH,OrganicMatter_pct,Clay_pct,Sand_pct,CEC_cmol_kg,Texture,Drainage,Calcareous,Slope_pct
+PR-01,5.3,6.9,47,14,29.6,Clay,Poor,yes,4
+PR-02,5.5,6.8,45,27,29.9,Clay loam,Moderate,no,8</pre>
+  </div>
+
+  <h3>A.7 JSON y objetos nuevos</h3>
+  <table class="compacta">
+    <caption><b>Tabla A.6.</b> Las cuatro disposiciones de JSON que acepta el Bloque 2.</caption>
+    <thead><tr><th style="width:34%">Disposición</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>Arreglo de objetos (una fila por objeto)</td><td><code>[{"Site":"S01","pH":6.1}, {"Site":"S02","pH":5.8}]</code></td></tr>
+      <tr><td>Arreglo de arreglos (la primera fila es el encabezado)</td><td><code>[["Site","pH"], ["S01",6.1], ["S02",5.8]]</code></td></tr>
+      <tr><td>Objeto con columnas y datos</td><td><code>{"columns":["Site","pH"], "data":[["S01",6.1], ["S02",5.8]]}</code></td></tr>
+      <tr><td>Objeto con una lista por columna</td><td><code>{"Site":["S01","S02"], "pH":[6.1,5.8]}</code></td></tr>
+    </tbody>
+  </table>
+  <p>En un arreglo de objetos, las columnas son la unión de las claves de todos los objetos, en el orden en que aparecen; una clave ausente en un objeto queda como celda vacía.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla A.7.</b> La tabla de objetos nuevos de la tarjeta 4 del Bloque 7 (sección 8.6).</caption>
+    <thead><tr><th style="width:24%">Aspecto</th><th>Regla</th></tr></thead>
+    <tbody>
+      <tr><td><b>Origen</b></td><td>Texto pegado o archivo <code>.csv</code>, <code>.tsv</code> o <code>.txt</code>, con el separador detectado como en la tabla A.2.</td></tr>
+      <tr><td><b>Encabezado</b></td><td>La primera fila. Cada variable cuantitativa del perfil se busca por su nombre, sin distinguir mayúsculas.</td></tr>
+      <tr><td><b>Etiqueta</b></td><td>La primera columna cuyo nombre no es una variable del perfil. Sin ella, los objetos se llaman <code>new 1</code>, <code>new 2</code>…</td></tr>
+      <tr><td><b>Valores</b></td><td>Se leen con separador decimal automático por celda. Una variable ausente, una celda vacía o un valor que no es número se reemplazan por la media general de esa variable; las variables ausentes se nombran en un aviso.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="ejemplo-archivo">
+  <p class="pre-t"><b>Objetos nuevos para el maíz</b> · con etiqueta; también pueden ir separados por tabuladores</p>
+  <pre class="archivo">Object,PlantHeight_cm,EarHeight_cm,DaysToFlower,EarLength_cm,KernelRows,KernelWeight_g,GrainYield_t_ha,LeafWidth_cm
+Lote-A,177.8,80.1,91.8,12.5,12,30.9,2.79,7.9
+Lote-B,230.0,125.0,80.3,17.8,14.3,38.0,5.24,10.1</pre>
+  </div>
+
+  <h3>A.8 Archivos que produce la app</h3>
+  <table class="compacta">
+    <caption><b>Tabla A.8.</b> Formato de cada archivo que se descarga. El paquete ZIP se describe en la tabla 9.10 y las figuras en la sección 9.2.</caption>
+    <thead><tr><th style="width:28%">Archivo</th><th>Contenido y formato</th></tr></thead>
+    <tbody>
+      <tr><td><b>Todas las tablas</b> (<code>.csv</code>)</td><td>Separadas por comas, con punto decimal, en UTF-8 con marca inicial y fin de línea de Windows, para que las hojas de cálculo reconozcan los acentos. Un campo con coma, punto y coma, comillas o salto de línea va entre comillas. El nombre empieza con el del archivo de datos sin extensión, sin acentos y con <code>_</code> en lugar de espacios y signos (60 caracteres como máximo).</td></tr>
+      <tr><td><b>Bloque 2</b> · <code>_preprocessed.csv</code></td><td><code>Object</code>, <code>Group</code> (si hay agrupación conocida) y las columnas de la matriz de trabajo, con 6 decimales.</td></tr>
+      <tr><td><b>Bloque 3</b> · <code>_&lt;coeficiente&gt;_distance.csv</code></td><td>Matriz cuadrada con los nombres de los objetos en la primera fila y la primera columna y 6 decimales. Se vuelve a cargar como matriz de distancias (sección A.5).</td></tr>
+      <tr><td><b>Bloque 4</b> · <code>_&lt;enlace&gt;_k&lt;k&gt;_clusters.csv</code></td><td><code>Object</code>, <code>Group</code> y <code>Cluster</code>.</td></tr>
+      <tr><td><b>Bloque 4</b> · <code>_&lt;enlace&gt;_merges.csv</code></td><td>Una fila por fusión: <code>Step</code>, <code>Left</code> y <code>Right</code> (un objeto o <code>node</code> y el paso que lo formó), <code>Height</code> (6 cifras significativas) y <code>Size</code>.</td></tr>
+      <tr><td><b>Bloque 5</b> · <code>_&lt;método&gt;_k&lt;k&gt;.csv</code></td><td><code>Object</code>, <code>Group</code>, <code>Cluster</code> (0 = ruido de DBSCAN), <code>u_C1</code>… (pertenencias de fuzzy c-means) o <code>P_C1</code>… (probabilidades de la mezcla) y <code>Silhouette</code>, con 4 decimales.</td></tr>
+      <tr><td><b>Bloque 7</b> · <code>_cluster_profiles.csv</code></td><td>Por variable: <code>Overall_mean</code>, <code>Overall_SD</code>; por grupo, <code>C1_n</code>, <code>C1_mean</code>, <code>C1_SD</code>, <code>C1_vtest</code>…; y <code>F</code>, <code>p_ANOVA</code>, <code>eta2</code>, <code>H_Kruskal</code>, <code>p_Kruskal</code>.</td></tr>
+      <tr><td><b>Bloque 7</b> · <code>_new_assignments.csv</code></td><td><code>Object</code>, <code>LDA_cluster</code>, <code>Posterior</code>, <code>Centroid_cluster</code>, <code>Tree_cluster</code> y los valores usados de cada variable.</td></tr>
+      <tr><td><b>Bloque 8</b> · informe (<code>.html</code>) y paquete (<code>_package.zip</code>)</td><td>El nombre sale del título del informe. El HTML lleva estilos y figuras dentro y no necesita otros archivos.</td></tr>
+      <tr><td><b>Figuras</b></td><td>El nombre interno de la figura (por ejemplo <code>cluster_map</code>) con su extensión. PNG con la resolución grabada en el archivo y fondo opcionalmente transparente; TIFF RGB sin compresión con etiquetas de resolución; SVG vectorial; JPG y WEBP con compresión ligera.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ====================================================================== B -->
+  <h2 id="ap-b" data-nueva-hoja><span class="num">B</span>Resumen de reglas de decisión</h2>
+  <p class="lead">Las reglas de decisión del manual, en el orden de la app. Cada recuadro indica la sección donde se explica la teoría que lo sustenta. Léelas como guías para interpretar, no como leyes: el conocimiento de tus objetos siempre tiene la última palabra.</p>
+<!-- reglas: inicio (lo escribe herramientas/reunir-reglas.pl; no editar a mano) -->
+  <ul class="indice-reglas">
+    <li class="grupo"><span class="chip k0">1</span>Introducción a ClusteringPro</li>
+    <li><b>1.8</b>¿Cuántos objetos y cuántas variables?</li>
+    <li><b>1.9</b>Lectura de la silueta media</li>
+    <li class="grupo"><span class="chip k1">B1</span>Inicio y teoría</li>
+    <li><b>2.2</b>Una cifra alta no significa grupos correctos</li>
+    <li><b>2.4</b>Umbrales que conviene memorizar</li>
+    <li class="grupo"><span class="chip k2">B2</span>Datos y análisis exploratorio</li>
+    <li><b>3.2</b>Qué escalado propone la app para datos cuantitativos</li>
+    <li><b>3.4</b>Cómo lee la app el estadístico de Hopkins</li>
+    <li><b>3.5</b>Cómo se calcula la calificación</li>
+    <li class="grupo"><span class="chip k3">B3</span>Similitud y distancia</li>
+    <li><b>4.3</b>Qué hacer según el diagnóstico</li>
+    <li><b>4.6</b>Cómo leer el estrés del mapa</li>
+    <li class="grupo"><span class="chip k4">B4</span>Agrupamiento jerárquico</li>
+    <li><b>5.1</b>Qué regla propone la app</li>
+    <li><b>5.4</b>Cómo lee la app la tabla cruzada</li>
+    <li class="grupo"><span class="chip k5">B5</span>Particionamiento y métodos avanzados</li>
+    <li><b>6</b>Qué método propone la app</li>
+    <li class="grupo"><span class="chip k6">B6</span>Número de grupos y validación</li>
+    <li><b>7.1</b>Qué generador de particiones propone la app</li>
+    <li><b>7.3</b>El veredicto de cada grupo</li>
+    <li class="grupo"><span class="chip k7">B7</span>Perfiles, interpretación y predicción</li>
+    <li><b>8.1</b>Qué variables ofrece la tarjeta 1</li>
+    <li class="grupo"><span class="chip k8">B8</span>Informe y exportación</li>
+    <li><b>9.2</b>Qué formato y resolución elegir</li>
+  </ul>
+
+  <h3 class="ap-cap"><span class="chip k0">1</span>Introducción a ClusteringPro</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · ¿cuántos objetos y cuántas variables?<span class="sec-ref">Sección 1.8</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:30%">Situación</th><th style="width:20%">Lectura</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td><b>Al menos 5 a 10 objetos por grupo esperado</b></td><td>Adecuado</td><td>Los criterios de <i>k</i>, la silueta y el remuestreo son informativos. Con 30 objetos y 3 grupos esperados ya se trabaja bien.</td></tr>
+      <tr><td><b>Menos de 5 objetos por grupo</b></td><td>Limitado</td><td>Los grupos pequeños se disuelven al remuestrear y cualquier atípico forma su propio grupo. Interpreta el árbol, no la partición.</td></tr>
+      <tr><td><b>Más variables que objetos</b></td><td>Cautela</td><td>Las distancias se parecen todas entre sí. Elimina variables redundantes o agrupa sobre los primeros componentes principales (Bloque 3).</td></tr>
+      <tr><td><b>Variables irrelevantes para la pregunta</b></td><td>Riesgo</td><td>Cada variable de "ruido" diluye la estructura que traen las útiles. Déjalas como suplementarias: no se usan para agrupar, pero sí para describir los grupos.</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">La app marca en el Bloque 2 la razón objetos/variables y en el Bloque 5 los grupos con menos de tres objetos.</p>
+  </div>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · lectura de la silueta media<span class="sec-ref">Sección 1.9</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:24%">Silueta media</th><th style="width:28%">Estructura</th><th>Cómo redactarlo</th></tr></thead>
+    <tbody>
+      <tr><td><b>0.71 a 1.00</b></td><td>Fuerte</td><td>"Se encontró una estructura de grupos fuerte y bien separada".</td></tr>
+      <tr><td><b>0.51 a 0.70</b></td><td>Razonable</td><td>"La partición es clara, con algunos objetos cerca de los límites".</td></tr>
+      <tr><td><b>0.26 a 0.50</b></td><td>Débil</td><td>"Los grupos se traslapan; la partición es exploratoria". Compruébala con la estabilidad del Bloque 6.</td></tr>
+      <tr><td><b>≤ 0.25</b></td><td>Sin estructura sustancial</td><td>No afirmes que hay grupos. Prueba otro coeficiente, otro método u otro número de grupos, o acepta que los datos forman un gradiente.</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">Los umbrales son los de Kaufman y Rousseeuw (1990). En datos biológicos reales, con muchas variables, una silueta de 0.4 ya suele acompañar a grupos interpretables.</p>
+  </div>
+
+  <h3 class="ap-cap"><span class="chip k1">B1</span>Inicio y teoría</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla · una cifra alta no significa grupos correctos<span class="sec-ref">Sección 2.2</span></div>
+  <p style="margin:0;padding:0.08in 0.16in 0.1in">El enlace simple es el único que recupera las lunas y, sin embargo, tiene la cofenética <b>más baja</b> (0.651 frente a 0.751 de UPGMA). La cofenética mide qué tan bien el árbol reproduce las distancias entre pares, no si los grupos son los verdaderos. Del mismo modo, la silueta de k-means (0.453) no es despreciable aunque la partición sea absurda: la silueta premia grupos compactos y redondos. Con formas curvas o alargadas, mira siempre la figura antes que el índice.</p>
+  </div>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Reglas · umbrales que conviene memorizar<span class="sec-ref">Sección 2.4</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:24%">Medida</th><th>Umbrales y lectura</th><th style="width:11%" class="c">Lección</th></tr></thead>
+    <tbody>
+      <tr><td><b>Hopkins</b></td><td>Cerca de 0.5 los datos parecen uniformes; por debajo de 0.75 sé cauto; por encima de 0.9 hay estructura clara.</td><td class="c">2</td></tr>
+      <tr><td><b>Objetos por grupo</b></td><td>Al menos 5 a 10 objetos por cada grupo que esperes. Muchas variables están bien, siempre que todas sean pertinentes.</td><td class="c">2</td></tr>
+      <tr><td><b>Correlación cofenética</b></td><td>Por encima de 0.75 el árbol es un resumen fiel de las distancias. El coeficiente aglomerativo crece con el tamaño de la muestra: compáralo solo entre árboles de los mismos datos.</td><td class="c">5</td></tr>
+      <tr><td><b>Gap</b></td><td>Elige el menor <i>k</i> cuyo gap esté a un error estándar del máximo.</td><td class="c">10</td></tr>
+      <tr><td><b>Silueta media</b></td><td>0.7 o más, estructura fuerte; 0.5, razonable; menos de 0.25, no hay estructura sustancial. Una silueta negativa señala un objeto probablemente mal asignado.</td><td class="c">11</td></tr>
+      <tr><td><b>Estabilidad de Jaccard</b></td><td>Por encima de 0.75 un grupo es estable; por debajo de 0.5 es dudoso.</td><td class="c">11</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 class="ap-cap"><span class="chip k2">B2</span>Datos y análisis exploratorio</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué escalado propone la app para datos cuantitativos<span class="sec-ref">Sección 3.2</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:44%">Si las desviaciones estándar de las variables activas…</th><th>entonces</th></tr></thead>
+    <tbody>
+      <tr><td>difieren más de 20 veces (máxima / mínima &gt; 20)</td><td>Puntuaciones z, con aviso: sin estandarizar una sola variable domina.</td></tr>
+      <tr><td>difieren entre 3 y 20 veces</td><td>Puntuaciones z; conserva las unidades crudas solo si todas comparten unidad y quieres que las mayores pesen más.</td></tr>
+      <tr><td>son parecidas (menos de 3 veces)</td><td>Puntuaciones z de todos modos: cambia poco y mantiene el análisis comparable.</td></tr>
+      <tr><td>y además alguna variable tiene asimetría mayor que 1.5</td><td>Se propone log(<i>x</i> + 1) antes de escalar.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · cómo lee la app el estadístico de Hopkins<span class="sec-ref">Sección 3.4</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:38%">Si…</th><th style="width:14%">Nivel</th><th>Lectura</th></tr></thead>
+    <tbody>
+      <tr><td>P ≤ 0.05 y H ≥ 0.70</td><td>✅ clara</td><td><span class="ui">Clear clustering tendency</span>: los datos están lejos de la aleatoriedad espacial; vale la pena buscar grupos.</td></tr>
+      <tr><td>P ≤ 0.05 pero H &lt; 0.70</td><td>⚠️ modesta</td><td><span class="ui">Detectable but modest</span>: más de lo que da el azar, pero no por mucho. Espera pocos grupos bien poblados o gradientes. Con pocos objetos por grupo H se queda modesto aunque el mapa muestre nubes claras: deja que el mapa y la VAT opinen.</td></tr>
+      <tr><td>P &gt; 0.05 pero H ≥ 0.62</td><td>⚠️ moderada</td><td><span class="ui">Moderate</span>: algo de estructura, quizá gradientes más que grupos discretos.</td></tr>
+      <tr><td>P &gt; 0.05 y H &lt; 0.62</td><td>⛔ débil o nula</td><td><span class="ui">Weak or no clustering tendency</span>: la estructura de vecinos es la de puntos al azar. Cualquier algoritmo devolverá grupos, pero pueden ser arbitrarios.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · cómo se calcula la calificación<span class="sec-ref">Sección 3.5</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:12%" class="c">Letra</th><th style="width:38%">Condición</th><th>Frase de la app</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><b>A</b></td><td>Ningún aviso rojo ni ámbar</td><td>Los datos están listos: tendencia clara, variables equilibradas, sin señales de alarma.</td></tr>
+      <tr><td class="c"><b>B</b></td><td>Uno o dos avisos ámbar, ninguno rojo</td><td>Adelante, con las salvedades de la lista; tenlas presentes al interpretar.</td></tr>
+      <tr><td class="c"><b>C</b></td><td>Un aviso rojo, o más de dos ámbar</td><td>Agrupar es posible pero frágil; atiende los puntos marcados o trata los resultados como exploratorios.</td></tr>
+      <tr><td class="c"><b>D</b></td><td>Dos o más avisos rojos</td><td>Estos datos no sostienen un análisis de agrupamientos tal como están.</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">Cuentan como rojos: tendencia débil o nula, dispersiones muy distintas sin escalar y menos de 8 objetos. Cuentan como ámbar: tendencia modesta o moderada, atípicos extremos o más del 10 % de sospechosos, variables redundantes, dispersiones distintas tras transformar, más del 20 % de filas eliminadas y menos de 3 objetos por variable.</p>
+  </div>
+
+  <h3 class="ap-cap"><span class="chip k3">B3</span>Similitud y distancia</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué hacer según el diagnóstico<span class="sec-ref">Sección 4.3</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:34%">Si la matriz…</th><th>entonces</th></tr></thead>
+    <tbody>
+      <tr><td>es euclidiana (masa negativa &lt; 1 %)</td><td>Todo vale: Ward, k-means sobre los ejes del PCoA, porcentajes del PCoA.</td></tr>
+      <tr><td>es casi euclidiana (1–10 %)</td><td>Ward y el PCoA son aceptables; los porcentajes son aproximados.</td></tr>
+      <tr><td>no es euclidiana (≥ 10 %)</td><td>Prefiere UPGMA, enlace completo o PAM. Si quieres Ward o k-means, marca <span class="ui">Take the square root of the dissimilarity (√d)</span> en la tarjeta 1 y vuelve a calcular (con una matriz cargada, elige <span class="ui">Square root</span> en la pestaña <span class="ui">Supplied matrix</span>).</td></tr>
+      <tr><td>no es métrica (viola el triángulo)</td><td>Los jerárquicos funcionan (los enlaces de centroide y mediana pueden mostrar inversiones); k-means necesita coordenadas: usa PAM o un PCoA.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · cómo leer el estrés del mapa<span class="sec-ref">Sección 4.6</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:22%">Estrés</th><th>Lectura</th></tr></thead>
+    <tbody>
+      <tr><td>&lt; 0.10</td><td>El mapa reproduce bien las distancias: puedes razonar sobre él.</td></tr>
+      <tr><td>0.10–0.20</td><td>Representación aceptable; lee los pares lejanos con cautela y confirma en el mapa de calor.</td></tr>
+      <tr><td>≥ 0.20</td><td>Mala representación en dos dimensiones: confía en la matriz (mapa de calor, tabla de vecinos, árbol), no en el mapa.</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">El estrés se calcula después de reescalar linealmente las distancias del mapa, porque el PCoA clásico siempre las encoge un poco; así mide solo la deformación, no ese encogimiento inofensivo.</p>
+  </div>
+
+  <h3 class="ap-cap"><span class="chip k4">B4</span>Agrupamiento jerárquico</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué regla propone la app<span class="sec-ref">Sección 5.1</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:40%">Si la matriz del Bloque 3…</th><th>entonces</th></tr></thead>
+    <tbody>
+      <tr><td>es euclidiana o casi (masa negativa &lt; 5 %)</td><td>Ward.D2: grupos compactos y de varianza parecida. La alternativa es UPGMA si lo que importa es la fidelidad del árbol a las distancias. Con tablas de comunidades añade que UPGMA sobre Bray–Curtis sigue siendo la elección clásica.</td></tr>
+      <tr><td>no es euclidiana (masa negativa ≥ 5 %)</td><td>UPGMA (promedio), que solo necesita la matriz. Si quieres Ward, vuelve al Bloque 3 y marca la raíz cuadrada (√<i>d</i>).</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · cómo lee la app la tabla cruzada<span class="sec-ref">Sección 5.4</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:22%">ARI</th><th>Frase de la app</th></tr></thead>
+    <tbody>
+      <tr><td>&gt; 0.80</td><td><span class="ui">The tree recovers your known grouping almost exactly.</span></td></tr>
+      <tr><td>0.50–0.80</td><td><span class="ui">Substantial agreement with the known grouping, with some objects placed differently.</span></td></tr>
+      <tr><td>0.20–0.50</td><td><span class="ui">Partial agreement: the clusters and the known grouping capture different structure.</span></td></tr>
+      <tr><td>&lt; 0.20</td><td><span class="ui">The clusters are unrelated to the known grouping</span> (un ARI cerca de 0 es lo que dan etiquetas al azar).</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">La pureza es la proporción de objetos que caen en el grupo conocido mayoritario de su grupo. Un ARI bajo no significa que el árbol esté mal: puede estar encontrando otra estructura, igual de real, que la clasificación previa no recoge.</p>
+  </div>
+
+  <h3 class="ap-cap"><span class="chip k5">B5</span>Particionamiento y métodos avanzados</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué método propone la app<span class="sec-ref">Capítulo 6</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:44%">Si…</th><th>propone</th></tr></thead>
+    <tbody>
+      <tr><td>la entrada es una matriz de distancias</td><td>PAM: trabaja sobre la matriz y sus medoides son objetos reales.</td></tr>
+      <tr><td>los datos son mixtos, nominales, binarios u ordinales</td><td>PAM, por la misma razón: el coeficiente del Bloque 3 no es una distancia euclidiana entre coordenadas.</td></tr>
+      <tr><td>es una tabla de comunidades</td><td>PAM sobre Bray–Curtis (o k-means sobre datos con Hellinger).</td></tr>
+      <tr><td>el Bloque 2 marcó atípicos extremos</td><td>PAM: los medoides resisten los atípicos mejor que los centroides.</td></tr>
+      <tr><td>son cuantitativos y hay árbol en el Bloque 4</td><td>k-means jerárquico: sembrado con los centroides del corte, reproducible.</td></tr>
+      <tr><td>son cuantitativos sin árbol</td><td>k-means (Hartigan–Wong, muchos arranques).</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">La fuente de coordenadas se fija sola: la matriz de trabajo si el coeficiente del Bloque 3 es euclidiano (o una matriz cargada), los ejes del PCoA en cualquier otro caso. El valor inicial de <i>k</i> es el corte del Bloque 4, o el número de grupos conocidos, o 3.</p>
+  </div>
+
+  <h3 class="ap-cap"><span class="chip k6">B6</span>Número de grupos y validación</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué generador de particiones propone la app<span class="sec-ref">Sección 7.1</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:44%">Si…</th><th>propone</th></tr></thead>
+    <tbody>
+      <tr><td>construiste un árbol en el Bloque 4</td><td><span class="ui">Cutting the Block 4 tree</span>: los grupos de cada <i>k</i> son cortes del mismo árbol, anidados y reproducibles.</td></tr>
+      <tr><td>no hay árbol y el coeficiente es euclidiano (o una matriz cargada)</td><td><span class="ui">k-means</span>, con 5 arranques y semilla 1.</td></tr>
+      <tr><td>no hay árbol y el coeficiente no es euclidiano</td><td><span class="ui">PAM</span>, que trabaja directamente sobre la matriz del Bloque 3.</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">La propuesta se actualiza al construir el árbol mientras no hayas evaluado ningún rango. Puedes cambiarla: si piensas usar PAM en el Bloque 5, elige PAM aquí para evaluar el número de grupos con el mismo método.</p>
+  </div>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · el veredicto de cada grupo<span class="sec-ref">Sección 7.3</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:26%">Jaccard medio</th><th style="width:22%">Veredicto</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>≥ 0.85</td><td>highly stable</td><td>Interprétalo con confianza.</td></tr>
+      <tr><td>0.75 a 0.85</td><td>stable</td><td>Interprétalo.</td></tr>
+      <tr><td>0.60 a 0.75</td><td>some pattern</td><td>Hay algo, pero sus límites dependen de la muestra.</td></tr>
+      <tr><td>0.50 a 0.60</td><td>doubtful</td><td>No lo describas como un grupo sin más evidencia.</td></tr>
+      <tr><td>&lt; 0.50</td><td>dissolved</td><td>No es un grupo: depende de unos pocos objetos.</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">La comprobación de arriba cuenta los grupos estables (≥ 0.75), los que solo muestran algún patrón y los dudosos o disueltos (&lt; 0.6). Se vuelve una advertencia si hay alguno de estos últimos.</p>
+  </div>
+
+  <h3 class="ap-cap"><span class="chip k7">B7</span>Perfiles, interpretación y predicción</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué variables ofrece la tarjeta 1<span class="sec-ref">Sección 8.1</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:40%">Columna del Bloque 1</th><th>Aparece como</th></tr></thead>
+    <tbody>
+      <tr><td>Activa cuantitativa, de conteo, binaria u ordinal</td><td>Variable cuantitativa, con sus valores originales (no los transformados del Bloque 2).</td></tr>
+      <tr><td>Activa nominal</td><td>Variable categórica.</td></tr>
+      <tr><td>Suplementaria</td><td>Cuantitativa o categórica según su tipo, marcada <span class="ui">supplementary</span>; los faltantes se sustituyen por la media o forman la categoría <span class="ui">(missing)</span>.</td></tr>
+      <tr><td>Etiqueta, grupos conocidos o excluida</td><td>No aparece.</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">La casilla de especies indicadoras aparece cuando hay al menos dos variables de conteo o binarias, y viene marcada si el Bloque 2 reconoció una tabla ecológica o binaria. Con DBSCAN, el ruido se describe como un grupo más, el último.</p>
+  </div>
+
+  <h3 class="ap-cap"><span class="chip k8">B8</span>Informe y exportación</h3>
+
+  <div class="caja regla">
+  <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué formato y resolución elegir<span class="sec-ref">Sección 9.2</span></div>
+  <table class="compacta">
+    <thead><tr><th style="width:40%">Si la figura va a…</th><th>descarga</th></tr></thead>
+    <tbody>
+      <tr><td>una revista que pide TIFF</td><td>TIFF a 600 dpi, fondo blanco, tema Journal si la revista prefiere ejes en negro.</td></tr>
+      <tr><td>una revista que acepta vectores (PDF, EPS, SVG)</td><td>SVG: se convierte a PDF o EPS en un programa de dibujo vectorial sin perder calidad.</td></tr>
+      <tr><td>una tesis o un informe en un procesador de textos</td><td>PNG a 300 dpi.</td></tr>
+      <tr><td>una presentación sobre fondo de color</td><td>PNG con <span class="ui">Transparent (PNG)</span> y, con fondo oscuro, tema Dark.</td></tr>
+      <tr><td>una figura que editarás después (flechas, rótulos)</td><td>SVG.</td></tr>
+    </tbody>
+  </table>
+  <p class="regla-pie">La resolución elegida se recuerda para las siguientes figuras. El fondo transparente solo tiene efecto en PNG; JPG y TIFF siempre llevan fondo blanco.</p>
+  </div>
+<!-- reglas: fin -->
+
+  <!-- ====================================================================== C -->
+  <h2 id="ap-c" data-nueva-hoja><span class="num">C</span>Glosario</h2>
+  <p class="lead">Los términos, siglas y símbolos del manual con una definición breve y la sección donde se explican con calma. Debajo de cada término va su nombre en inglés, tal como aparece en la app o en la literatura.</p>
+
+  <h3>C.1 Siglas</h3>
+  <table class="compacta">
+    <caption><b>Tabla C.1.</b> Siglas del manual y de la app. Los formatos de archivo se describen en el apéndice A.</caption>
+    <thead><tr><th style="width:11%">Sigla</th><th style="width:39%">Significado</th><th style="width:11%">Sigla</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td><b>ARI</b></td><td>Índice de Rand ajustado</td><td><b>LD1, LD2</b></td><td>Primer y segundo eje discriminante</td></tr>
+      <tr><td><b>AU</b></td><td>Probabilidad aproximadamente insesgada del bootstrap multiescala</td><td><b>LDA</b></td><td>Análisis discriminante lineal</td></tr>
+      <tr><td><b>BIC</b></td><td>Criterio de información bayesiano</td><td><b>MDS</b></td><td>Escalamiento multidimensional</td></tr>
+      <tr><td><b>BP</b></td><td>Probabilidad bootstrap de una rama</td><td><b>NMI</b></td><td>Información mutua normalizada</td></tr>
+      <tr><td><b>CLARA</b></td><td>Agrupamiento de aplicaciones grandes: PAM sobre muestras</td><td><b>PAM</b></td><td>Partición alrededor de medoides</td></tr>
+      <tr><td><b>CSV</b></td><td>Valores separados por comas</td><td><b>PBM</b></td><td>Índice de Pakhira, Bandyopadhyay y Maulik</td></tr>
+      <tr><td><b>DBSCAN</b></td><td>Agrupamiento espacial por densidad con ruido</td><td><b>PCA</b></td><td>Análisis de componentes principales</td></tr>
+      <tr><td><b>DE</b></td><td>Desviación estándar (<i>SD</i> en la app)</td><td><b>PCoA</b></td><td>Análisis de coordenadas principales</td></tr>
+      <tr><td><b>DIANA</b></td><td>Análisis divisivo</td><td><b>PNG · TIFF · SVG</b></td><td>Formatos de imagen (sección 9.2)</td></tr>
+      <tr><td><b>dpi</b></td><td>Puntos por pulgada</td><td><b>UPGMA · WPGMA</b></td><td>Enlace promedio no ponderado · ponderado</td></tr>
+      <tr><td><b>EM</b></td><td>Algoritmo de esperanza-maximización</td><td><b>UPGMC · WPGMC</b></td><td>Enlace de centroides · de medianas</td></tr>
+      <tr><td><b>η²</b></td><td>Proporción de la variación explicada por los grupos</td><td><b>VAT</b></td><td>Evaluación visual de la tendencia al agrupamiento</td></tr>
+      <tr><td><b>IndVal</b></td><td>Valor indicador de una especie</td><td><b>VI</b></td><td>Variación de la información</td></tr>
+      <tr><td><b>IQR</b></td><td>Rango intercuartílico</td><td><b>VII, VVI, VVV…</b></td><td>Modelos de covarianza de las mezclas gaussianas (sección 6.4)</td></tr>
+      <tr><td><b>JSON</b></td><td>Formato de texto para datos estructurados (tabla A.6)</td><td><b>WSS</b></td><td>Suma de cuadrados dentro de los grupos</td></tr>
+    </tbody>
+  </table>
+
+  <h3>C.2 Términos</h3>
+  <table class="compacta">
+    <caption><b>Tabla C.2.</b> Glosario en orden alfabético.</caption>
+    <thead><tr><th style="width:25%">Término</th><th>Definición</th><th style="width:9%" class="c">Sección</th></tr></thead>
+    <tbody>
+      <tr class="letra"><td colspan="3">A</td></tr>
+      <tr><td class="termino"><b>Agrupación conocida</b><br><span class="small">known grouping</span></td><td>Una clasificación previa de los objetos (región, especie, hábitat). Nunca se usa para formar los grupos: colorea las figuras y sirve para la validación externa.</td><td class="c">3.2</td></tr>
+      <tr><td class="termino"><b>Agrupamiento aglomerativo y divisivo</b><br><span class="small">agglomerative, divisive</span></td><td>El aglomerativo parte de cada objeto solo y fusiona los dos grupos más parecidos hasta tener uno; el divisivo (DIANA) parte de todos juntos y divide.</td><td class="c">5.1</td></tr>
+      <tr><td class="termino"><b>Análisis discriminante lineal</b><br><span class="small">linear discriminant analysis</span></td><td>Busca las combinaciones de variables que mejor separan grupos ya formados y da una regla para clasificar objetos, con probabilidades posteriores.</td><td class="c">8.4</td></tr>
+      <tr><td class="termino"><b>Árbol de clasificación</b><br><span class="small">classification tree</span></td><td>Divide los objetos con preguntas de sí o no sobre una variable a la vez, eligiendo cada corte por la impureza de Gini. Cada camino hasta una hoja es una regla.</td><td class="c">8.5</td></tr>
+      <tr><td class="termino"><b>Atípico multivariado</b><br><span class="small">multivariate outlier</span></td><td>Objeto muy alejado del centro de los datos considerando todas las variables a la vez; se mide con la distancia de Mahalanobis al cuadrado.</td><td class="c">3.5</td></tr>
+      <tr><td class="termino"><b>AU y BP</b><br><span class="small">approximately unbiased, bootstrap probability</span></td><td>Soporte de una rama del árbol al remuestrear las variables: BP es la frecuencia con que reaparece; AU corrige su sesgo con el bootstrap multiescala.</td><td class="c">7.4</td></tr>
+      <tr class="letra"><td colspan="3">B</td></tr>
+      <tr><td class="termino"><b>BIC</b><br><span class="small">Bayesian information criterion</span></td><td>Compromiso entre el ajuste de un modelo y su número de parámetros. En las mezclas gaussianas elige el número de componentes y el modelo de covarianza.</td><td class="c">6.4</td></tr>
+      <tr><td class="termino"><b>Bootstrap</b><br><span class="small">bootstrap</span></td><td>Remuestreo con reemplazo de los datos para ver cuánto cambia un resultado. La app remuestrea objetos (estabilidad) o variables (AU y BP).</td><td class="c">7.3</td></tr>
+      <tr><td class="termino"><b>Bray–Curtis</b><br><span class="small">Bray–Curtis dissimilarity</span></td><td>Disimilitud para abundancias: suma de diferencias absolutas entre suma de abundancias. No cuenta las ausencias compartidas.</td><td class="c">4.2</td></tr>
+      <tr class="letra"><td colspan="3">C</td></tr>
+      <tr><td class="termino"><b>Calinski–Harabasz</b><br><span class="small">Calinski–Harabasz index</span></td><td>Cociente de la dispersión entre grupos y dentro de ellos, cada una entre sus grados de libertad. Vota por su máximo.</td><td class="c">7.1</td></tr>
+      <tr><td class="termino"><b>Centroide</b><br><span class="small">centroid</span></td><td>El promedio de las coordenadas de los objetos de un grupo; no tiene por qué coincidir con ningún objeto.</td><td class="c">6.1</td></tr>
+      <tr><td class="termino"><b>Coeficiente aglomerativo</b><br><span class="small">agglomerative coefficient</span></td><td>Resume, de 0 a 1, qué tan marcada es la estructura jerárquica: cerca de 1, los objetos se unen pronto a su grupo y los grupos tarde entre sí.</td><td class="c">5.3</td></tr>
+      <tr><td class="termino"><b>Codo</b><br><span class="small">elbow</span></td><td>El punto de la curva de la suma de cuadrados dentro de los grupos a partir del cual añadir grupos casi no la reduce.</td><td class="c">7.1</td></tr>
+      <tr><td class="termino"><b>Conectividad</b><br><span class="small">connectivity</span></td><td>Cuántos de los vecinos más cercanos de cada objeto quedaron en otro grupo, con más peso para los más cercanos. Menor es mejor.</td><td class="c">7.6</td></tr>
+      <tr><td class="termino"><b>Consenso</b><br><span class="small">consensus k</span></td><td>El número de grupos con más votos entre los trece criterios del Bloque 6.</td><td class="c">7.1</td></tr>
+      <tr><td class="termino"><b>Coordenadas principales</b><br><span class="small">principal coordinates, classical MDS</span></td><td>Ejes que reproducen en un mapa las disimilitudes de una matriz. Con una matriz no euclidiana, algunos valores propios son negativos.</td><td class="c">4.3</td></tr>
+      <tr><td class="termino"><b>Correlación cofenética</b><br><span class="small">cophenetic correlation</span></td><td>Correlación entre las disimilitudes originales y la altura a la que cada par de objetos se une en el árbol: qué tan fiel es el árbol a la matriz.</td><td class="c">5.3</td></tr>
+      <tr><td class="termino"><b>Corte del árbol</b><br><span class="small">tree cut</span></td><td>Una línea horizontal a cierta altura, o en cierto número de grupos, que convierte el árbol en una partición.</td><td class="c">5.4</td></tr>
+      <tr><td class="termino"><b>C-index</b><br><span class="small">C-index</span></td><td>Compara la suma de distancias dentro de los grupos con las sumas mínima y máxima posibles para ese número de pares. Vota por su mínimo.</td><td class="c">7.1</td></tr>
+      <tr class="letra"><td colspan="3">D</td></tr>
+      <tr><td class="termino"><b>Davies–Bouldin</b><br><span class="small">Davies–Bouldin index</span></td><td>Promedio, sobre los grupos, de la peor razón entre dispersión conjunta y distancia entre centroides. Vota por su mínimo.</td><td class="c">7.1</td></tr>
+      <tr><td class="termino"><b>DBSCAN</b><br><span class="small">density-based clustering</span></td><td>Forma grupos con las regiones densas: un objeto es núcleo si tiene al menos minPts objetos a distancia ε; los que no alcanzan ningún núcleo son ruido.</td><td class="c">6.5</td></tr>
+      <tr><td class="termino"><b>Dendrograma</b><br><span class="small">dendrogram</span></td><td>El dibujo del árbol jerárquico: la altura de cada unión es la disimilitud a la que se fusionaron los grupos.</td><td class="c">5.5</td></tr>
+      <tr><td class="termino"><b>Disimilitud y distancia</b><br><span class="small">dissimilarity, distance</span></td><td>Número que crece cuanto más diferentes son dos objetos. Una distancia es una disimilitud que además cumple la desigualdad triangular.</td><td class="c">4.1</td></tr>
+      <tr><td class="termino"><b>Dunn</b><br><span class="small">Dunn index</span></td><td>La menor distancia entre grupos dividida entre el mayor diámetro de un grupo. Vota por su máximo.</td><td class="c">7.1</td></tr>
+      <tr class="letra"><td colspan="3">E</td></tr>
+      <tr><td class="termino"><b>Enlace, regla de</b><br><span class="small">linkage</span></td><td>Cómo se mide la disimilitud entre dos grupos al construir el árbol: vecino más cercano, más lejano, promedio, Ward, centroide y otras.</td><td class="c">5.2</td></tr>
+      <tr><td class="termino"><b>Escalado</b><br><span class="small">scaling</span></td><td>Llevar las variables a unidades comparables (puntuaciones <i>z</i>, rango 0–1, mediana y rango intercuartílico) para que ninguna domine por sus unidades.</td><td class="c">3.3</td></tr>
+      <tr><td class="termino"><b>Especificidad y fidelidad</b><br><span class="small">specificity, fidelity</span></td><td>Las dos partes del valor indicador: qué parte de la abundancia de una especie está en un grupo y en qué proporción de sus sitios aparece.</td><td class="c">8.3</td></tr>
+      <tr><td class="termino"><b>Estabilidad</b><br><span class="small">cluster stability</span></td><td>El Jaccard medio con que cada grupo reaparece en las réplicas bootstrap: por encima de 0.75 es estable; por debajo de 0.5 se disuelve.</td><td class="c">7.3</td></tr>
+      <tr><td class="termino"><b>Estadístico gap</b><br><span class="small">gap statistic</span></td><td>Diferencia entre el logaritmo de la suma de cuadrados dentro de los grupos esperada con datos uniformes y la observada. Puede concluir que no hay grupos.</td><td class="c">7.2</td></tr>
+      <tr><td class="termino"><b>Estrés</b><br><span class="small">stress</span></td><td>Qué tan mal reproduce un mapa de dos ejes las disimilitudes originales; se lee con el diagrama de Shepard.</td><td class="c">4.6</td></tr>
+      <tr><td class="termino"><b>Euclidiana, matriz</b><br><span class="small">Euclidean-embeddable matrix</span></td><td>Una matriz de disimilitud que puede representarse exactamente con puntos en un espacio euclidiano. Ward y k-means la suponen.</td><td class="c">4.3</td></tr>
+      <tr class="letra"><td colspan="3">F</td></tr>
+      <tr><td class="termino"><b>Fuzzy c-means</b><br><span class="small">fuzzy c-means</span></td><td>Variante de k-means en la que cada objeto tiene un grado de pertenencia a cada grupo; el exponente <i>m</i> controla qué tan difusa es la partición.</td><td class="c">6.3</td></tr>
+      <tr class="letra"><td colspan="3">G</td></tr>
+      <tr><td class="termino"><b>Gower</b><br><span class="small">Gower dissimilarity</span></td><td>Disimilitud para datos mixtos: promedia una diferencia de 0 a 1 propia de cada tipo de variable.</td><td class="c">4.2</td></tr>
+      <tr><td class="termino"><b>Grupo</b><br><span class="small">cluster</span></td><td>Conjunto de objetos más parecidos entre sí que al resto.</td><td class="c">1.3</td></tr>
+      <tr class="letra"><td colspan="3">H</td></tr>
+      <tr><td class="termino"><b>Hellinger, transformación de</b><br><span class="small">Hellinger transformation</span></td><td>Raíz cuadrada de las abundancias relativas de cada sitio. Hace que la distancia euclidiana sea adecuada para tablas de especies.</td><td class="c">3.3</td></tr>
+      <tr><td class="termino"><b>Hopkins, estadístico de</b><br><span class="small">Hopkins statistic</span></td><td>Compara las distancias de puntos al azar y de objetos reales a su vecino más cercano. Cerca de 0.5, los datos no están más agrupados que al azar.</td><td class="c">3.4</td></tr>
+      <tr class="letra"><td colspan="3">I</td></tr>
+      <tr><td class="termino"><b>Índice de Rand y Rand ajustado</b><br><span class="small">Rand index, adjusted Rand index</span></td><td>Proporción de pares de objetos que dos agrupaciones tratan igual; el ajustado resta lo esperado al azar y vale 0 con etiquetas aleatorias y 1 con agrupaciones idénticas.</td><td class="c">7.5</td></tr>
+      <tr><td class="termino"><b>IndVal</b><br><span class="small">indicator value</span></td><td>Especificidad por fidelidad de una especie en un grupo, con su prueba de permutación.</td><td class="c">8.3</td></tr>
+      <tr class="letra"><td colspan="3">J</td></tr>
+      <tr><td class="termino"><b>Jaccard</b><br><span class="small">Jaccard coefficient</span></td><td>Similitud entre dos conjuntos: elementos compartidos entre elementos presentes en alguno. Se usa con presencia y ausencia y para comparar grupos.</td><td class="c">4.2</td></tr>
+      <tr class="letra"><td colspan="3">K</td></tr>
+      <tr><td class="termino"><b>k-means</b><br><span class="small">k-means</span></td><td>Método de particionamiento que alterna asignar cada objeto al centroide más cercano y recalcular los centroides, minimizando la suma de cuadrados dentro de los grupos.</td><td class="c">6.1</td></tr>
+      <tr><td class="termino"><b>k-means jerárquico</b><br><span class="small">hierarchical k-means</span></td><td>k-means que parte de los centroides del corte del árbol del Bloque 4, en lugar de arranques al azar.</td><td class="c">6.1</td></tr>
+      <tr><td class="termino"><b>Kruskal–Wallis</b><br><span class="small">Kruskal–Wallis test</span></td><td>Prueba con rangos de si una variable difiere entre grupos; la alternativa sin supuesto de normalidad al ANOVA.</td><td class="c">8.1</td></tr>
+      <tr class="letra"><td colspan="3">L</td></tr>
+      <tr><td class="termino"><b>Lambda de Wilks</b><br><span class="small">Wilks' lambda</span></td><td>Proporción de la variación que los ejes discriminantes no explican: cerca de 0, los grupos están muy separados.</td><td class="c">8.4</td></tr>
+      <tr><td class="termino"><b>Lance y Williams, fórmula de</b><br><span class="small">Lance–Williams recurrence</span></td><td>Fórmula general que actualiza las disimilitudes tras cada fusión y reproduce casi todas las reglas de enlace; con β libre da el enlace flexible.</td><td class="c">5.2</td></tr>
+      <tr class="letra"><td colspan="3">M</td></tr>
+      <tr><td class="termino"><b>Matriz de trabajo</b><br><span class="small">working matrix</span></td><td>Los datos después de tratar faltantes, transformar y escalar en el Bloque 2; es la base de los coeficientes cuantitativos y de los métodos de coordenadas.</td><td class="c">3.3</td></tr>
+      <tr><td class="termino"><b>Medoide</b><br><span class="small">medoid</span></td><td>El objeto real de un grupo con la menor disimilitud total a los demás; el centro que usan PAM y CLARA.</td><td class="c">6.2</td></tr>
+      <tr><td class="termino"><b>Mezcla gaussiana</b><br><span class="small">Gaussian mixture model</span></td><td>Modelo en el que los datos provienen de varias distribuciones normales; da a cada objeto su probabilidad de pertenecer a cada componente.</td><td class="c">6.4</td></tr>
+      <tr class="letra"><td colspan="3">N</td></tr>
+      <tr><td class="termino"><b>NMI</b><br><span class="small">normalised mutual information</span></td><td>Cuánto dice una agrupación de la otra, de 0 (nada) a 1 (lo mismo).</td><td class="c">7.5</td></tr>
+      <tr class="letra"><td colspan="3">O</td></tr>
+      <tr><td class="termino"><b>Objeto</b><br><span class="small">object</span></td><td>Cada fila de la tabla: la unidad que se agrupa (accesión, sitio, muestra, perfil).</td><td class="c">1.3</td></tr>
+      <tr class="letra"><td colspan="3">P</td></tr>
+      <tr><td class="termino"><b>PAM y CLARA</b><br><span class="small">partitioning around medoids</span></td><td>Particionamiento alrededor de medoides con cualquier disimilitud; CLARA aplica PAM a muestras para tablas grandes.</td><td class="c">6.2</td></tr>
+      <tr><td class="termino"><b>Particionamiento</b><br><span class="small">partitioning</span></td><td>Métodos que dividen los objetos directamente en <i>k</i> grupos, sin construir un árbol.</td><td class="c">6.1</td></tr>
+      <tr><td class="termino"><b>Probabilidad posterior</b><br><span class="small">posterior probability</span></td><td>Probabilidad de que un objeto pertenezca a cada grupo según un modelo (mezcla gaussiana o análisis discriminante).</td><td class="c">6.4, 8.4</td></tr>
+      <tr><td class="termino"><b>Pureza</b><br><span class="small">purity</span></td><td>Proporción de objetos que pertenecen a la clase más frecuente de su grupo; favorece a las particiones con muchos grupos.</td><td class="c">7.5</td></tr>
+      <tr class="letra"><td colspan="3">R</td></tr>
+      <tr><td class="termino"><b>Resustitución y dejando uno fuera</b><br><span class="small">resubstitution, leave-one-out</span></td><td>Exactitud de una regla de clasificación con los mismos objetos que la ajustaron (optimista) o clasificando cada objeto con una regla ajustada sin él (honesta).</td><td class="c">8.4</td></tr>
+      <tr><td class="termino"><b>Ruido</b><br><span class="small">noise</span></td><td>En DBSCAN, los objetos que no están cerca de ningún núcleo y no pertenecen a ningún grupo; en los archivos se codifican como grupo 0.</td><td class="c">6.5</td></tr>
+      <tr class="letra"><td colspan="3">S</td></tr>
+      <tr><td class="termino"><b>Semilla aleatoria</b><br><span class="small">random seed</span></td><td>Número que fija el azar de un cálculo: con la misma semilla, los mismos datos y los mismos ajustes, el resultado se repite.</td><td class="c">1.6</td></tr>
+      <tr><td class="termino"><b>Shepard, diagrama de</b><br><span class="small">Shepard diagram</span></td><td>Gráfico de las disimilitudes originales frente a las distancias en el mapa: cuanto más pegados a la diagonal, más fiel es el mapa.</td><td class="c">4.6</td></tr>
+      <tr><td class="termino"><b>Silueta</b><br><span class="small">silhouette</span></td><td>Para cada objeto, (<i>b</i> − <i>a</i>)/máx(<i>a</i>, <i>b</i>): cercanía a su grupo frente al vecino. La media resume la partición: 0.7 fuerte, 0.5 razonable, 0.25 débil.</td><td class="c">1.9, 6.7</td></tr>
+      <tr><td class="termino"><b>Suplementaria, variable</b><br><span class="small">supplementary variable</span></td><td>Variable que no interviene en formar los grupos y se usa solo para describirlos; sus pruebas en el Bloque 7 sí tienen valor inferencial.</td><td class="c">3.2, 8.1</td></tr>
+      <tr class="letra"><td colspan="3">T</td></tr>
+      <tr><td class="termino"><b>Tanglegrama</b><br><span class="small">tanglegram</span></td><td>Dos dendrogramas enfrentados con líneas que unen cada objeto consigo mismo; los cruces muestran dónde difieren.</td><td class="c">5.7</td></tr>
+      <tr><td class="termino"><b>Tendencia al agrupamiento</b><br><span class="small">clustering tendency</span></td><td>Si los datos contienen grupos o están repartidos de forma casi uniforme; se evalúa antes de agrupar con Hopkins y VAT.</td><td class="c">3.4</td></tr>
+      <tr class="letra"><td colspan="3">U</td></tr>
+      <tr><td class="termino"><b>UPGMA</b><br><span class="small">average linkage</span></td><td>Enlace promedio: la disimilitud entre dos grupos es la media de las disimilitudes entre sus objetos.</td><td class="c">5.2</td></tr>
+      <tr class="letra"><td colspan="3">V</td></tr>
+      <tr><td class="termino"><b>Validación externa</b><br><span class="small">external validation</span></td><td>Comparar una partición con una agrupación conocida, o dos particiones entre sí, con índices como ARI y NMI.</td><td class="c">7.5</td></tr>
+      <tr><td class="termino"><b>Valor de prueba</b><br><span class="small">test value v</span></td><td>La diferencia entre la media de un grupo y la general, en unidades de su error estándar; |<i>v</i>| ≥ 1.96 señala una variable que caracteriza al grupo.</td><td class="c">8.1</td></tr>
+      <tr><td class="termino"><b>Variación de la información</b><br><span class="small">variation of information</span></td><td>Distancia entre dos agrupaciones basada en la información que se pierde y se gana al pasar de una a otra; 0 si son idénticas.</td><td class="c">7.5</td></tr>
+      <tr><td class="termino"><b>VAT</b><br><span class="small">visual assessment of tendency</span></td><td>La matriz de disimilitud reordenada como imagen: bloques oscuros en la diagonal indican grupos.</td><td class="c">3.4</td></tr>
+      <tr><td class="termino"><b>V de Cramér</b><br><span class="small">Cramér's V</span></td><td>Fuerza de la asociación entre dos variables categóricas, de 0 a 1, a partir del χ² de su tabla cruzada.</td><td class="c">8.2</td></tr>
+      <tr class="letra"><td colspan="3">W</td></tr>
+      <tr><td class="termino"><b>Ward</b><br><span class="small">Ward's minimum variance</span></td><td>Enlace que fusiona los grupos cuya unión menos aumenta la suma de cuadrados dentro de los grupos. Ward.D2 aplica el criterio sobre distancias al cuadrado.</td><td class="c">5.2</td></tr>
+    </tbody>
+  </table>
+
+  <h3>C.3 Símbolos con más de un significado</h3>
+  <table class="compacta">
+    <caption><b>Tabla C.3.</b> La literatura usa las mismas letras para cantidades distintas; la sección aclara cuál es.</caption>
+    <thead><tr><th style="width:10%">Símbolo</th><th>Significados (sección)</th></tr></thead>
+    <tbody>
+      <tr><td class="f">k</td><td>Número de grupos (1.3) · número de vecinos del gráfico de distancias de DBSCAN (6.5) · número de niveles de una variable ordinal (4.2).</td></tr>
+      <tr><td class="f">B</td><td>Suma de cuadrados entre grupos (6.1) · número de réplicas bootstrap o de conjuntos de referencia (7.2, 7.3) · fidelidad del valor indicador (8.3) · matriz de covarianza entre grupos del discriminante (8.4).</td></tr>
+      <tr><td class="f">W</td><td>Suma de cuadrados dentro de los grupos (6.1, 7.1) · matriz de covarianza dentro de los grupos del discriminante (8.4).</td></tr>
+      <tr><td class="f">H</td><td>Estadístico de Hopkins (3.4) · índice de Hartigan (7.1) · estadístico de Kruskal–Wallis (8.1).</td></tr>
+      <tr><td class="f">s</td><td>Silueta de un objeto (6.7) · error estándar del gap, <i>s<sub>k</sub></i> (7.2).</td></tr>
+      <tr><td class="f">a, b</td><td>Distancia media de un objeto a su grupo y al grupo vecino, en la silueta (6.7) · presencias compartidas y exclusivas de la tabla de dos por dos de los coeficientes binarios, con <i>c</i> y <i>d</i> (4.2).</td></tr>
+      <tr><td class="f">v</td><td>Valor de prueba (8.1) · pendiente del ajuste del bootstrap multiescala, con la curvatura <i>c</i> (7.4).</td></tr>
+      <tr><td class="f">r</td><td>Coeficiente de correlación (1.9, 5.3) · proporción de variables sorteadas en el bootstrap multiescala (7.4).</td></tr>
+      <tr><td class="f">A</td><td>Especificidad del valor indicador (8.3) · probabilidad AU, escrita con dos letras (7.4).</td></tr>
+      <tr><td class="f">λ, Λ</td><td>Valores propios de los ejes discriminantes y lambda de Wilks (8.4) · valores propios del mapa de coordenadas principales (4.3).</td></tr>
+      <tr><td class="f">m</td><td>Exponente de difusión de fuzzy c-means (6.3).</td></tr>
+      <tr><td class="f">ε</td><td>Radio de vecindad de DBSCAN (6.5).</td></tr>
+      <tr><td class="f">β</td><td>Parámetro del enlace flexible de Lance y Williams (5.2).</td></tr>
+      <tr><td class="f">D</td><td>Matriz de disimilitud (4.1) · distancia de Mahalanobis, <i>D</i>² (3.5).</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ====================================================================== D -->
+  <h2 id="ap-d" data-nueva-hoja><span class="num">D</span>Solución de problemas</h2>
+  <p class="lead">Los problemas más comunes, agrupados por el momento en que aparecen. Los mensajes de la app van en inglés, tal como se ven en pantalla; <code>…</code> marca una parte que cambia.</p>
+
+  <h3>D.1 Abrir la app y conservar el trabajo</h3>
+  <table class="compacta">
+    <caption><b>Tabla D.1.</b> Problemas al abrir la app y al volver a ella.</caption>
+    <thead><tr><th style="width:28%">Síntoma o mensaje</th><th style="width:27%">Causa</th><th>Qué hacer</th><th style="width:7%" class="c">Ver</th></tr></thead>
+    <tbody>
+      <tr><td>La página se ve sin colores ni botones, o los botones no responden.</td><td>Faltan carpetas (<code>css/</code>, <code>js/</code>, <code>vendor/</code>) o el navegador es muy antiguo.</td><td>Copia la carpeta completa y usa un navegador actualizado.</td><td class="c">1.5</td></tr>
+      <tr><td><span class="ui">Could not load the example. Open the app through Open ClusteringPro.bat or check that the js/ folder is complete.</span></td><td>Falta <code>js/examples.js</code>, donde van incrustados los ejemplos.</td><td>Vuelve a copiar la carpeta <code>js/</code>, o abre la app con <code>Open ClusteringPro.bat</code>, que los lee de <code>data/</code>.</td><td class="c">1.5</td></tr>
+      <tr><td><code>Open ClusteringPro.bat</code> se cierra o no abre la dirección.</td><td>El puerto 8900 está ocupado, casi siempre por otra copia abierta.</td><td>Cierra la otra ventana, o inicia el servidor con otro puerto (<code>-Port 9001</code>) y abre esa dirección.</td><td class="c">1.5</td></tr>
+      <tr><td>Los resultados desaparecen al recargar o cerrar la pestaña.</td><td>La app no guarda los análisis.</td><td>Descarga las tablas que necesites, o el informe y el paquete del Bloque 8, antes de cerrar.</td><td class="c">9.3</td></tr>
+      <tr><td>El estilo de las figuras vuelve al original.</td><td>Se guarda en el navegador, por separado para cada navegador y para cada forma de abrir la app (doble clic o servidor). Borrar los datos de navegación lo elimina.</td><td>Vuelve a elegirlo una vez; se recuerda para las siguientes figuras.</td><td class="c">9.1</td></tr>
+      <tr><td>Un bloque aparece desactivado en la barra de pasos.</td><td>Depende de un paso anterior que aún no se corrió.</td><td>Sigue el orden: el Bloque 3 necesita datos preprocesados; los Bloques 4 a 6, una matriz; el 7, una partición; el 8, el Bloque 7 (o una matriz de distancias).</td><td class="c">1.8</td></tr>
+      <tr><td>Un resultado cambia al repetir el análisis.</td><td>Cambió la semilla, un ajuste o los datos.</td><td>Anota la semilla y los ajustes; con los mismos valores el resultado se repite.</td><td class="c">1.6</td></tr>
+    </tbody>
+  </table>
+
+  <h3>D.2 Cargar los datos</h3>
+  <table class="compacta">
+    <caption><b>Tabla D.2.</b> Problemas al leer un archivo en el Bloque 2.</caption>
+    <thead><tr><th style="width:28%">Síntoma o mensaje</th><th style="width:27%">Causa</th><th>Qué hacer</th><th style="width:7%" class="c">Ver</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">The file has no data.</span></td><td>El archivo o la hoja no tienen filas con contenido.</td><td>Revisa que elegiste la hoja correcta en <span class="ui">Sheet</span>.</td><td class="c">A.1</td></tr>
+      <tr><td><span class="ui">Could not read the text file: …</span> · <span class="ui">the spreadsheet: …</span> · <span class="ui">the JSON file: …</span></td><td>El archivo está dañado, protegido con contraseña o no corresponde a su extensión.</td><td>Ábrelo en su programa y guárdalo de nuevo como CSV en UTF-8.</td><td class="c">A.1</td></tr>
+      <tr><td><span class="ui">Unrecognised JSON layout. Use an array of objects (one object per row).</span></td><td>El JSON no tiene ninguna de las cuatro disposiciones aceptadas.</td><td>Conviértelo a un arreglo de objetos.</td><td class="c">A.7</td></tr>
+      <tr><td>Toda la tabla queda en una sola columna.</td><td>El separador detectado no es el del archivo (por ejemplo, textos con muchas comas en un archivo con punto y coma).</td><td>Elige el separador en <span class="ui">Text delimiter</span> y vuelve a cargar.</td><td class="c">A.2</td></tr>
+      <tr><td>Una columna de números aparece como categórica.</td><td>Mezcla coma y punto decimal, o menos del 90 % de sus valores se leen como números (unidades o anotaciones en las celdas).</td><td>Usa un solo separador decimal, elígelo en <span class="ui">Decimal separator</span> y deja solo números en la columna.</td><td class="c">A.2</td></tr>
+      <tr><td>Una categoría se convierte en celda vacía.</td><td>Su nombre es un código de faltante (<code>none</code>, <code>SD</code>, <code>-</code>).</td><td>Renómbrala en el archivo.</td><td class="c">A.2</td></tr>
+      <tr><td>Una matriz de distancias se lee como tabla de objetos.</td><td>No cumple alguna condición: nombres distintos entre filas y columnas, diagonal distinta de cero, valores negativos o celdas vacías.</td><td>Corrige la matriz (tabla A.5) y vuelve a cargarla.</td><td class="c">A.5</td></tr>
+      <tr><td><span class="ui">… merged cell ranges detected</span></td><td>Celdas combinadas en la hoja de cálculo.</td><td>Descombínalas y rellena cada fila.</td><td class="c">3.1</td></tr>
+      <tr><td><span class="ui">… summary rows (Total / Mean) inside the data</span></td><td>Filas de totales o promedios.</td><td>Ya se eliminaron; quítalas también del archivo original.</td><td class="c">A.3</td></tr>
+      <tr><td>La columna de etiquetas o la de grupos no se reconoce.</td><td>Su nombre no está en la lista de la tabla A.4, o las etiquetas se repiten.</td><td>Asígnale el papel a mano en la tabla de variables.</td><td class="c">3.2</td></tr>
+    </tbody>
+  </table>
+
+  <h3>D.3 Tipos, papeles y preprocesamiento</h3>
+  <table class="compacta">
+    <caption><b>Tabla D.3.</b> Problemas en las tarjetas 2 y 3 del Bloque 2.</caption>
+    <thead><tr><th style="width:28%">Síntoma o mensaje</th><th style="width:27%">Causa</th><th>Qué hacer</th><th style="width:7%" class="c">Ver</th></tr></thead>
+    <tbody>
+      <tr><td>Códigos enteros de categoría (1, 2, 3) se tratan como cantidades.</td><td>Son números y el nombre de la columna no indica que sean clases.</td><td>Cambia su tipo a <span class="ui">Nominal</span> en la tabla de variables; la app sugiere hacerlo cuando hay pocos valores distintos.</td><td class="c">3.2</td></tr>
+      <tr><td><span class="ui">Nothing left to analyse: no objects or no active variables.</span></td><td>Con <span class="ui">Drop objects with any missing active value</span>, una variable con muchos faltantes eliminó casi todas las filas, o no quedó ninguna variable activa.</td><td>Excluye esa variable o elige <span class="ui">Impute</span>; revisa los papeles.</td><td class="c">3.3</td></tr>
+      <tr><td><span class="ui">Some values are negative: the transformation was applied only where possible …</span></td><td>Las transformaciones por fila y los logaritmos suponen valores no negativos.</td><td>Usa esas transformaciones solo con abundancias o conteos.</td><td class="c">3.3</td></tr>
+      <tr><td>La calificación del Bloque 2 baja por escalas muy distintas.</td><td>Variables con unidades muy distintas sin estandarizar.</td><td>Elige <span class="ui">z-scores</span> o <span class="ui">Robust</span> en <span class="ui">Scaling</span>.</td><td class="c">3.5</td></tr>
+    </tbody>
+  </table>
+
+  <h3>D.4 Análisis</h3>
+  <table class="compacta">
+    <caption><b>Tabla D.4.</b> Mensajes de los Bloques 3 a 7.</caption>
+    <thead><tr><th style="width:36%">Mensaje o síntoma</th><th>Causa y qué hacer</th><th style="width:7%" class="c">Ver</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">No variables of the required type (nominal, ordinal or binary) are active.</span></td><td>El coeficiente elegido es para categóricas y no hay ninguna activa. Elige un coeficiente de la familia de tus datos.</td><td class="c">4.2</td></tr>
+      <tr><td><span class="ui">Correlation-type distances need several variables per object …</span></td><td>Con menos de tres variables una correlación entre objetos no tiene sentido. Usa una distancia euclidiana o de Manhattan.</td><td class="c">4.2</td></tr>
+      <tr><td><span class="ui">Tick at least two coefficients.</span> · <span class="ui">Tick at least two methods.</span> · <span class="ui">Tick at least one method.</span></td><td>Las comparaciones necesitan opciones marcadas.</td><td class="c">4.5</td></tr>
+      <tr><td><span class="ui">More than 1500 objects: the agglomeration is O(n³) in this version …</span></td><td>El árbol sería demasiado lento. Reduce los objetos o usa k-means o CLARA en el Bloque 5.</td><td class="c">5.1</td></tr>
+      <tr><td><span class="ui">Comparison of all methods is limited to 600 objects.</span> · <span class="ui">Choose two different linkages.</span></td><td>Límite de la comparación de enlaces; el tanglegrama necesita dos reglas distintas.</td><td class="c">5.7</td></tr>
+      <tr><td><span class="ui">Build a tree in Block 4 first: hierarchical k-means starts from its cut.</span></td><td>k-means jerárquico usa el corte del árbol. Construye el árbol o usa k-means.</td><td class="c">6.1</td></tr>
+      <tr><td><span class="ui">PAM is limited to 800 objects here; use CLARA.</span> · <span class="ui">Spectral clustering is limited to 500 objects here.</span></td><td>Límites de tamaño de estos métodos.</td><td class="c">6.2, 6.5</td></tr>
+      <tr><td><span class="ui">No mixture could be fitted (singular covariances). Try spherical or diagonal models.</span> · <span class="ui">Tick at least one covariance model.</span></td><td>Con pocos objetos por componente, las covarianzas completas no se pueden estimar. Marca VII o VVI, o baja el número de componentes.</td><td class="c">6.4</td></tr>
+      <tr><td><span class="ui">DBSCAN found no cluster with ε = … and minPts = …: every object is noise.</span></td><td>El radio es demasiado pequeño para esa densidad. Sube ε (usa la rodilla del gráfico de vecinos) o baja minPts.</td><td class="c">6.5</td></tr>
+      <tr><td><span class="ui">Use a range of at least three values of k.</span></td><td>El voto necesita un rango. Amplía <span class="ui">k from</span> y <span class="ui">k to</span>.</td><td class="c">7.1</td></tr>
+      <tr><td><span class="ui">No partition yet: cut the tree in Block 4 or run a method in Block 5.</span></td><td>La estabilidad y los perfiles necesitan una partición.</td><td class="c">7.3, 8.1</td></tr>
+      <tr><td><span class="ui">Variables are needed to resample: not available for a supplied distance matrix.</span> · <span class="ui">Multiscale bootstrap is limited to 200 objects here.</span> · <span class="ui">At least three variables are needed.</span></td><td>Condiciones del bootstrap multiescala. Con una matriz de distancias, usa la estabilidad por bootstrap de los objetos.</td><td class="c">7.4</td></tr>
+      <tr><td><span class="ui">Only … variables: with so few columns the multiscale bootstrap is liberal …</span></td><td>Con menos de 15 variables el AU se infla. Juzga los grupos con la tarjeta 2.</td><td class="c">7.4</td></tr>
+      <tr><td><span class="ui">One of the two labellings is not available yet.</span> · <span class="ui">Choose two different labellings.</span></td><td>Falta el corte, la partición o la agrupación conocida, o elegiste la misma dos veces.</td><td class="c">7.5</td></tr>
+      <tr><td><span class="ui">Select at least one variable.</span></td><td>No hay variables marcadas en la tarjeta 1 del Bloque 7.</td><td class="c">8.1</td></tr>
+      <tr><td><span class="ui">Your data are a distance matrix: there are no variables to describe the clusters with …</span></td><td>No es un error: sin variables no hay perfiles. El informe sigue disponible.</td><td class="c">8.8</td></tr>
+      <tr><td><span class="ui">Some cluster has fewer than 2 objects …</span> · <span class="ui">Few objects for … variables …</span> · <span class="ui">Resubstitution accuracy … is much higher than leave-one-out …</span></td><td>El discriminante no tiene información suficiente o se sobreajusta. Usa menos variables, las más discriminantes.</td><td class="c">8.4</td></tr>
+      <tr><td><span class="ui">None of the variables was found. Expected columns: …</span> · <span class="ui">Missing columns filled with the overall mean: …</span></td><td>Los nombres de la tabla de objetos nuevos no coinciden con las variables del perfil.</td><td class="c">A.7</td></tr>
+    </tbody>
+  </table>
+
+  <h3>D.5 Figuras, informe y paquete</h3>
+  <table class="compacta">
+    <caption><b>Tabla D.5.</b> Problemas al exportar.</caption>
+    <thead><tr><th style="width:28%">Síntoma o mensaje</th><th style="width:27%">Causa</th><th>Qué hacer</th><th style="width:7%" class="c">Ver</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Figure "…" could not be drawn: …</span></td><td>Un ajuste deja la figura sin datos que dibujar (por ejemplo, un solo grupo).</td><td>Vuelve a los ajustes del bloque o de la figura; el resto del bloque sigue funcionando.</td><td class="c">9.1</td></tr>
+      <tr><td>Las etiquetas se enciman.</td><td>Muchos objetos para el tamaño de la figura.</td><td>Aumenta <span class="ui">Width</span> y <span class="ui">Height</span>, baja el tamaño de las etiquetas u ocúltalas.</td><td class="c">9.1</td></tr>
+      <tr><td>La leyenda tapa parte de la figura.</td><td>La posición automática no encontró espacio libre.</td><td>Cambia <span class="ui">Legend position</span> a <span class="ui">Below the plot</span>.</td><td class="c">5.5</td></tr>
+      <tr><td>El PNG transparente sale con fondo en JPG o TIFF.</td><td>Solo PNG admite transparencia.</td><td>Exporta en PNG.</td><td class="c">9.2</td></tr>
+      <tr><td>El TIFF pesa decenas de megabytes.</td><td>Va sin compresión.</td><td>Es lo que piden las editoriales; para uso diario, PNG.</td><td class="c">9.2</td></tr>
+      <tr><td><span class="ui">Allow pop-ups to print.</span></td><td>El navegador bloqueó la ventana del informe.</td><td>Permite las ventanas emergentes para la app, o descarga el HTML e imprímelo desde ahí.</td><td class="c">9.3</td></tr>
+      <tr><td>Una sección aparece como <span class="ui">not run yet</span>.</td><td>Ese bloque no se corrió con los datos actuales.</td><td>Córrelo y vuelve a construir el informe.</td><td class="c">9.3</td></tr>
+      <tr><td>El informe muestra resultados que ya cambiaste.</td><td>Se construyó antes del cambio.</td><td>Pulsa de nuevo <span class="ui">Build and preview the report</span>.</td><td class="c">9.3</td></tr>
+      <tr><td><span class="ui">Select and copy the text below.</span></td><td>El navegador no permite escribir en el portapapeles.</td><td>Selecciona el párrafo en el cuadro y cópialo.</td><td class="c">9.4</td></tr>
+      <tr><td>El paquete ZIP tarda mucho, o <span class="ui">Could not build the package: …</span></td><td>Rasterizar todas las figuras a alta resolución consume tiempo y memoria.</td><td>Baja la resolución del ZIP o elige <span class="ui">SVG only</span>.</td><td class="c">9.4</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ====================================================================== E -->
+  <h2 id="ap-e" data-nueva-hoja><span class="num">E</span>Referencias</h2>
+  <p class="lead">Las obras que describen los métodos, coeficientes e índices que calcula la app, con sus datos completos.</p>
+  <p>El símbolo <span class="m" style="color:var(--marino)">◆</span> marca las que corresponden a métodos que puede nombrar el párrafo de métodos del Bloque 8: con ellas completas la lista de referencias de tu artículo (sección 9.4). Los registros se comprobaron contra las bases de datos de las editoriales y de las revistas. Siete títulos originales incluyen el nombre de un programa; en su lugar va <b>[…]</b>.</p>
+<!-- referencias: inicio -->
+  <ul class="refs">
+    <li>Arthur, D. y Vassilvitskii, S. (2007). k-means++: the advantages of careful seeding. En: <i>Proceedings of the Eighteenth Annual ACM-SIAM Symposium on Discrete Algorithms</i>, pp. 1027–1035. Society for Industrial and Applied Mathematics, Filadelfia.</li>
+    <li>Baker, F.B. (1974). Stability of two hierarchical grouping techniques case I: sensitivity to data errors. <i>Journal of the American Statistical Association</i> 69: 440–445. <span class="doi">doi:10.1080/01621459.1974.10482971</span> <span class="m">◆</span></li>
+    <li>Ball, G.H. y Hall, D.J. (1965). <i>ISODATA, a novel method of data analysis and pattern classification</i>. Informe técnico AD 699616, Stanford Research Institute, Menlo Park. <span class="m">◆</span></li>
+    <li>Bezdek, J.C. (1981). <i>Pattern Recognition with Fuzzy Objective Function Algorithms</i>. Plenum Press, Nueva York. <span class="doi">doi:10.1007/978-1-4757-0450-1</span> <span class="m">◆</span></li>
+    <li>Bezdek, J.C. y Hathaway, R.J. (2002). VAT: a tool for visual assessment of (cluster) tendency. En: <i>Proceedings of the 2002 International Joint Conference on Neural Networks</i>, vol. 3, pp. 2225–2230. IEEE, Piscataway. <span class="doi">doi:10.1109/IJCNN.2002.1007487</span> <span class="m">◆</span></li>
+    <li>Bray, J.R. y Curtis, J.T. (1957). An ordination of the upland forest communities of southern Wisconsin. <i>Ecological Monographs</i> 27: 325–349. <span class="doi">doi:10.2307/1942268</span> <span class="m">◆</span></li>
+    <li>Breiman, L., Friedman, J.H., Olshen, R.A. y Stone, C.J. (1984). <i>Classification and Regression Trees</i>. Wadsworth, Belmont. <span class="m">◆</span></li>
+    <li>Brock, G., Pihur, V., Datta, S. y Datta, S. (2008). […]: an […] package for cluster validation. <i>Journal of Statistical Software</i> 25(4): 1–22. <span class="doi">doi:10.18637/jss.v025.i04</span></li>
+    <li>Caliński, T. y Harabasz, J. (1974). A dendrite method for cluster analysis. <i>Communications in Statistics</i> 3: 1–27. <span class="doi">doi:10.1080/03610927408827101</span> <span class="m">◆</span></li>
+    <li>Charrad, M., Ghazzali, N., Boiteau, V. y Niknafs, A. (2014). […]: an […] package for determining the relevant number of clusters in a data set. <i>Journal of Statistical Software</i> 61(6): 1–36. <span class="doi">doi:10.18637/jss.v061.i06</span> <span class="m">◆</span></li>
+    <li>Cramér, H. (1946). <i>Mathematical Methods of Statistics</i>. Princeton University Press, Princeton.</li>
+    <li>Davies, D.L. y Bouldin, D.W. (1979). A cluster separation measure. <i>IEEE Transactions on Pattern Analysis and Machine Intelligence</i> PAMI-1: 224–227. <span class="doi">doi:10.1109/TPAMI.1979.4766909</span> <span class="m">◆</span></li>
+    <li>Dempster, A.P., Laird, N.M. y Rubin, D.B. (1977). Maximum likelihood from incomplete data via the EM algorithm. <i>Journal of the Royal Statistical Society, Series B</i> 39: 1–22. <span class="doi">doi:10.1111/j.2517-6161.1977.tb01600.x</span> <span class="m">◆</span></li>
+    <li>Dice, L.R. (1945). Measures of the amount of ecologic association between species. <i>Ecology</i> 26: 297–302. <span class="doi">doi:10.2307/1932409</span> <span class="m">◆</span></li>
+    <li>Dufrêne, M. y Legendre, P. (1997). Species assemblages and indicator species: the need for a flexible asymmetrical approach. <i>Ecological Monographs</i> 67: 345–366. <span class="doi">doi:10.1890/0012-9615(1997)067[0345:SAAIST]2.0.CO;2</span> <span class="m">◆</span></li>
+    <li>Dunn, J.C. (1974). Well-separated clusters and optimal fuzzy partitions. <i>Journal of Cybernetics</i> 4: 95–104. <span class="doi">doi:10.1080/01969727408546059</span> <span class="m">◆</span></li>
+    <li>Ester, M., Kriegel, H.-P., Sander, J. y Xu, X. (1996). A density-based algorithm for discovering clusters in large spatial databases with noise. En: <i>Proceedings of the Second International Conference on Knowledge Discovery and Data Mining</i>, pp. 226–231. AAAI Press, Menlo Park. <span class="m">◆</span></li>
+    <li>Fisher, R.A. (1936). The use of multiple measurements in taxonomic problems. <i>Annals of Eugenics</i> 7: 179–188. <span class="doi">doi:10.1111/j.1469-1809.1936.tb02137.x</span> <span class="m">◆</span></li>
+    <li>Fowlkes, E.B. y Mallows, C.L. (1983). A method for comparing two hierarchical clusterings. <i>Journal of the American Statistical Association</i> 78: 553–569. <span class="doi">doi:10.1080/01621459.1983.10478008</span></li>
+    <li>Fraley, C. y Raftery, A.E. (2002). Model-based clustering, discriminant analysis, and density estimation. <i>Journal of the American Statistical Association</i> 97: 611–631. <span class="doi">doi:10.1198/016214502760047131</span> <span class="m">◆</span></li>
+    <li>Gower, J.C. (1966). Some distance properties of latent root and vector methods used in multivariate analysis. <i>Biometrika</i> 53: 325–338. <span class="doi">doi:10.1093/biomet/53.3-4.325</span></li>
+    <li>Gower, J.C. (1971). A general coefficient of similarity and some of its properties. <i>Biometrics</i> 27: 857–871. <span class="doi">doi:10.2307/2528823</span> <span class="m">◆</span></li>
+    <li>Gower, J.C. y Legendre, P. (1986). Metric and Euclidean properties of dissimilarity coefficients. <i>Journal of Classification</i> 3: 5–48. <span class="doi">doi:10.1007/BF01896809</span></li>
+    <li>Handl, J., Knowles, J. y Kell, D.B. (2005). Computational cluster validation in post-genomic data analysis. <i>Bioinformatics</i> 21: 3201–3212. <span class="doi">doi:10.1093/bioinformatics/bti517</span></li>
+    <li>Hartigan, J.A. (1975). <i>Clustering Algorithms</i>. Wiley, Nueva York. <span class="m">◆</span></li>
+    <li>Hartigan, J.A. y Wong, M.A. (1979). Algorithm AS 136: a K-means clustering algorithm. <i>Journal of the Royal Statistical Society, Series C (Applied Statistics)</i> 28: 100–108. <span class="doi">doi:10.2307/2346830</span> <span class="m">◆</span></li>
+    <li>Hennig, C. (2007). Cluster-wise assessment of cluster stability. <i>Computational Statistics &amp; Data Analysis</i> 52: 258–271. <span class="doi">doi:10.1016/j.csda.2006.11.025</span> <span class="m">◆</span></li>
+    <li>Hopkins, B. y Skellam, J.G. (1954). A new method for determining the type of distribution of plant individuals. <i>Annals of Botany</i> 18: 213–227. <span class="doi">doi:10.1093/oxfordjournals.aob.a083391</span> <span class="m">◆</span></li>
+    <li>Horn, H.S. (1966). Measurement of "overlap" in comparative ecological studies. <i>The American Naturalist</i> 100: 419–424. <span class="doi">doi:10.1086/282436</span> <span class="m">◆</span></li>
+    <li>Hubert, L. y Arabie, P. (1985). Comparing partitions. <i>Journal of Classification</i> 2: 193–218. <span class="doi">doi:10.1007/BF01908075</span> <span class="m">◆</span></li>
+    <li>Hubert, L.J. y Levin, J.R. (1976). A general statistical framework for assessing categorical clustering in free recall. <i>Psychological Bulletin</i> 83: 1072–1080. <span class="doi">doi:10.1037/0033-2909.83.6.1072</span> <span class="m">◆</span></li>
+    <li>Jaccard, P. (1912). The distribution of the flora in the alpine zone. <i>New Phytologist</i> 11: 37–50. <span class="doi">doi:10.1111/j.1469-8137.1912.tb05611.x</span> <span class="m">◆</span></li>
+    <li>Kaufman, L. y Rousseeuw, P.J. (1990). <i>Finding Groups in Data: An Introduction to Cluster Analysis</i>. Wiley, Nueva York. <span class="doi">doi:10.1002/9780470316801</span> <span class="m">◆</span></li>
+    <li>Kruskal, J.B. (1964). Multidimensional scaling by optimizing goodness of fit to a nonmetric hypothesis. <i>Psychometrika</i> 29: 1–27. <span class="doi">doi:10.1007/BF02289565</span></li>
+    <li>Kruskal, W.H. y Wallis, W.A. (1952). Use of ranks in one-criterion variance analysis. <i>Journal of the American Statistical Association</i> 47: 583–621. <span class="doi">doi:10.1080/01621459.1952.10483441</span> <span class="m">◆</span></li>
+    <li>Krzanowski, W.J. y Lai, Y.T. (1988). A criterion for determining the number of groups in a data set using sum-of-squares clustering. <i>Biometrics</i> 44: 23–34. <span class="doi">doi:10.2307/2531893</span> <span class="m">◆</span></li>
+    <li>Kulczyński, S. (1928). Die Pflanzenassoziationen der Pieninen. <i>Bulletin International de l'Académie Polonaise des Sciences et des Lettres, Classe des Sciences Mathématiques et Naturelles, Série B</i>, Supplément II (1927): 57–203. <span class="m">◆</span></li>
+    <li>Lance, G.N. y Williams, W.T. (1966). Computer programs for hierarchical polythetic classification ("similarity analyses"). <i>The Computer Journal</i> 9: 60–64. <span class="doi">doi:10.1093/comjnl/9.1.60</span> <span class="m">◆</span></li>
+    <li>Lance, G.N. y Williams, W.T. (1967). A general theory of classificatory sorting strategies: 1. Hierarchical systems. <i>The Computer Journal</i> 9: 373–380. <span class="doi">doi:10.1093/comjnl/9.4.373</span> <span class="m">◆</span></li>
+    <li>Lê, S., Josse, J. y Husson, F. (2008). […]: an […] package for multivariate analysis. <i>Journal of Statistical Software</i> 25(1): 1–18. <span class="doi">doi:10.18637/jss.v025.i01</span> <span class="m">◆</span></li>
+    <li>Legendre, P. y Gallagher, E.D. (2001). Ecologically meaningful transformations for ordination of species data. <i>Oecologia</i> 129: 271–280. <span class="doi">doi:10.1007/s004420100716</span> <span class="m">◆</span></li>
+    <li>Legendre, P. y Legendre, L. (2012). <i>Numerical Ecology</i>, 3.ª ed. Elsevier, Ámsterdam.</li>
+    <li>Lloyd, S.P. (1982). Least squares quantization in PCM. <i>IEEE Transactions on Information Theory</i> 28: 129–137. <span class="doi">doi:10.1109/TIT.1982.1056489</span> <span class="m">◆</span></li>
+    <li>MacQueen, J. (1967). Some methods for classification and analysis of multivariate observations. En: Le Cam, L.M. y Neyman, J. (eds.), <i>Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability</i>, vol. 1, pp. 281–297. University of California Press, Berkeley. <span class="m">◆</span></li>
+    <li>Mahalanobis, P.C. (1936). On the generalised distance in statistics. <i>Proceedings of the National Institute of Sciences of India</i> 2: 49–55. <span class="m">◆</span></li>
+    <li>McClain, J.O. y Rao, V.R. (1975). […]: a program to test for the quality of clustering of a set of objects. <i>Journal of Marketing Research</i> 12: 456–460. <span class="m">◆</span></li>
+    <li>McQuitty, L.L. (1966). Similarity analysis by reciprocal pairs for discrete and continuous data. <i>Educational and Psychological Measurement</i> 26: 825–831. <span class="doi">doi:10.1177/001316446602600402</span> <span class="m">◆</span></li>
+    <li>Meilă, M. (2007). Comparing clusterings—an information based distance. <i>Journal of Multivariate Analysis</i> 98: 873–895. <span class="doi">doi:10.1016/j.jmva.2006.11.013</span></li>
+    <li>Morisita, M. (1959). Measuring of interspecific association and similarity between communities. <i>Memoirs of the Faculty of Science, Kyushu University, Series E (Biology)</i> 3: 65–80. <span class="m">◆</span></li>
+    <li>Murtagh, F. y Legendre, P. (2014). Ward's hierarchical agglomerative clustering method: which algorithms implement Ward's criterion? <i>Journal of Classification</i> 31: 274–295. <span class="doi">doi:10.1007/s00357-014-9161-z</span> <span class="m">◆</span></li>
+    <li>Ng, A.Y., Jordan, M.I. y Weiss, Y. (2002). On spectral clustering: analysis and an algorithm. En: Dietterich, T.G., Becker, S. y Ghahramani, Z. (eds.), <i>Advances in Neural Information Processing Systems 14</i>, pp. 849–856. MIT Press, Cambridge (Massachusetts). <span class="m">◆</span></li>
+    <li>Nuñez, J.R., Anderton, C.R. y Renslow, R.S. (2018). Optimizing colormaps with consideration for color vision deficiency to enable accurate interpretation of scientific data. <i>PLoS ONE</i> 13(7): e0199239. <span class="doi">doi:10.1371/journal.pone.0199239</span></li>
+    <li>Ochiai, A. (1957). Zoogeographical studies on the soleoid fishes found in Japan and its neighbouring regions—II. <i>Bulletin of the Japanese Society of Scientific Fisheries</i> 22: 526–530. <span class="doi">doi:10.2331/suisan.22.526</span> <span class="m">◆</span></li>
+    <li>Okabe, M. e Ito, K. (2008). […]: how to make figures and presentations that are friendly to colorblind people. Página web (versión original de 2002, modificada en 2008). https://jfly.uni-koeln.de/color/</li>
+    <li>Orlóci, L. (1967). An agglomerative method for classification of plant communities. <i>Journal of Ecology</i> 55: 193–206. <span class="doi">doi:10.2307/2257725</span> <span class="m">◆</span></li>
+    <li>Pakhira, M.K., Bandyopadhyay, S. y Maulik, U. (2004). Validity index for crisp and fuzzy clusters. <i>Pattern Recognition</i> 37: 487–501. <span class="doi">doi:10.1016/j.patcog.2003.06.005</span> <span class="m">◆</span></li>
+    <li>Podani, J. (1999). Extending Gower's general coefficient of similarity to ordinal characters. <i>Taxon</i> 48: 331–340. <span class="doi">doi:10.2307/1224438</span></li>
+    <li>Rand, W.M. (1971). Objective criteria for the evaluation of clustering methods. <i>Journal of the American Statistical Association</i> 66: 846–850. <span class="doi">doi:10.1080/01621459.1971.10482356</span></li>
+    <li>Ratkowsky, D.A. y Lance, G.N. (1978). A criterion for determining the number of groups in a classification. <i>Australian Computer Journal</i> 10: 115–117. <span class="m">◆</span></li>
+    <li>Rogers, D.J. y Tanimoto, T.T. (1960). A computer program for classifying plants. <i>Science</i> 132: 1115–1118. <span class="doi">doi:10.1126/science.132.3434.1115</span> <span class="m">◆</span></li>
+    <li>Rousseeuw, P.J. (1987). Silhouettes: a graphical aid to the interpretation and validation of cluster analysis. <i>Journal of Computational and Applied Mathematics</i> 20: 53–65. <span class="doi">doi:10.1016/0377-0427(87)90125-7</span> <span class="m">◆</span></li>
+    <li>Russell, P.F. y Rao, T.R. (1940). On habitat and association of species of anopheline larvae in south-eastern Madras. <i>Journal of the Malaria Institute of India</i> 3: 153–178. <span class="m">◆</span></li>
+    <li>Ružička, M. (1958). Anwendung mathematisch-statistischer Methoden in der Geobotanik (synthetische Bearbeitung von Aufnahmen). <i>Biológia (Bratislava)</i> 13: 647–661. <span class="m">◆</span></li>
+    <li>Schwarz, G. (1978). Estimating the dimension of a model. <i>The Annals of Statistics</i> 6: 461–464. <span class="doi">doi:10.1214/aos/1176344136</span> <span class="m">◆</span></li>
+    <li>Shimodaira, H. (2004). Approximately unbiased tests of regions using multistep-multiscale bootstrap resampling. <i>The Annals of Statistics</i> 32: 2616–2641. <span class="doi">doi:10.1214/009053604000000823</span> <span class="m">◆</span></li>
+    <li>Smith, N.J. y van der Walt, S. (2015). A better default colormap for […]. Charla en una conferencia de computación científica, Austin (Texas). Presentó los mapas de color magma, inferno, plasma y viridis (este último con la colaboración de E. Firing), publicados con la dedicación al dominio público CC0.</li>
+    <li>Sokal, R.R. y Michener, C.D. (1958). A statistical method for evaluating systematic relationships. <i>University of Kansas Science Bulletin</i> 38: 1409–1438. <span class="m">◆</span></li>
+    <li>Sokal, R.R. y Rohlf, F.J. (1962). The comparison of dendrograms by objective methods. <i>Taxon</i> 11: 33–40. <span class="doi">doi:10.2307/1217208</span> <span class="m">◆</span></li>
+    <li>Sokal, R.R. y Sneath, P.H.A. (1963). <i>Principles of Numerical Taxonomy</i>. W.H. Freeman, San Francisco. <span class="m">◆</span></li>
+    <li>Sørensen, T. (1948). A method of establishing groups of equal amplitude in plant sociology based on similarity of species content and its application to analyses of the vegetation on Danish commons. <i>Kongelige Danske Videnskabernes Selskab, Biologiske Skrifter</i> 5(4): 1–34. <span class="m">◆</span></li>
+    <li>Strehl, A. y Ghosh, J. (2002). Cluster ensembles—a knowledge reuse framework for combining multiple partitions. <i>Journal of Machine Learning Research</i> 3: 583–617. <span class="m">◆</span></li>
+    <li>Suzuki, R. y Shimodaira, H. (2006). […]: an […] package for assessing the uncertainty in hierarchical clustering. <i>Bioinformatics</i> 22: 1540–1542. <span class="doi">doi:10.1093/bioinformatics/btl117</span> <span class="m">◆</span></li>
+    <li>Tibshirani, R., Walther, G. y Hastie, T. (2001). Estimating the number of clusters in a data set via the gap statistic. <i>Journal of the Royal Statistical Society, Series B</i> 63: 411–423. <span class="doi">doi:10.1111/1467-9868.00293</span> <span class="m">◆</span></li>
+    <li>Tol, P. (2021). <i>Colour schemes</i>. Nota técnica SRON/EPS/TN/09-002, edición 3.2, 18 de agosto de 2021. SRON Netherlands Institute for Space Research.</li>
+    <li>Torgerson, W.S. (1952). Multidimensional scaling: I. Theory and method. <i>Psychometrika</i> 17: 401–419. <span class="doi">doi:10.1007/BF02288916</span></li>
+    <li>von Luxburg, U. (2007). A tutorial on spectral clustering. <i>Statistics and Computing</i> 17: 395–416. <span class="doi">doi:10.1007/s11222-007-9033-z</span></li>
+    <li>Ward, J.H. (1963). Hierarchical grouping to optimize an objective function. <i>Journal of the American Statistical Association</i> 58: 236–244. <span class="doi">doi:10.1080/01621459.1963.10500845</span> <span class="m">◆</span></li>
+    <li>Yule, G.U. (1900). On the association of attributes in statistics: with illustrations from the material of the Childhood Society, &amp;c. <i>Philosophical Transactions of the Royal Society of London, Series A</i> 194: 257–319. <span class="doi">doi:10.1098/rsta.1900.0019</span> <span class="m">◆</span></li>
+  </ul>
+<!-- referencias: fin -->
+
+  <!-- ====================================================================== F -->
+  <h2 id="ap-f" data-nueva-hoja><span class="num">F</span>Componentes de terceros</h2>
+  <p class="lead">ClusteringPro es obra original: su código, su motor de figuras, sus paletas y escalas de color, sus ilustraciones y sus datos de práctica se hicieron para este programa. Un solo componente de programa es de terceros. La app y el manual usan además algunos diseños publicados, que se declaran aquí con sus condiciones de uso.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla F.1.</b> Componente de programa de terceros incluido en la app.</caption>
+    <thead><tr><th style="width:27%">Componente</th><th style="width:9%">Versión</th><th style="width:15%">Licencia</th><th>Uso y aviso</th></tr></thead>
+    <tbody>
+      <tr><td><b>Biblioteca de lectura de hojas de cálculo</b><br><code>vendor/xlsx.full.min.js</code></td><td>0.18.5</td><td>Apache 2.0</td><td>Lee los libros <code>.xlsx</code>, <code>.xls</code>, <code>.xlsm</code>, <code>.xlsb</code> y <code>.ods</code> en el Bloque 2. Es una copia sin modificar que no forma parte de la obra original; su licencia completa y su aviso de derechos van en <code>vendor/THIRD-PARTY-NOTICES.txt</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla F.2.</b> Diseños publicados que usa la app.</caption>
+    <thead><tr><th style="width:24%">Recurso</th><th style="width:28%">Autoría</th><th style="width:24%">Condiciones</th><th>Dónde se usa</th></tr></thead>
+    <tbody>
+      <tr><td><b>Paleta segura para daltonismo</b></td><td>Okabe e Ito (2008): ocho colores; la app añade un gris y un café oscuro.</td><td>Guía de acceso libre; se cita a sus autores.</td><td>Paleta <span class="ui">Okabe–Ito (colour-blind safe)</span>.</td></tr>
+      <tr><td><b>Esquema de color cualitativo</b></td><td>Tol (2021): esquema <i>bright</i> más negro y dos colores del esquema <i>vibrant</i>.</td><td>Nota técnica de acceso libre; se cita al autor.</td><td>Paleta <span class="ui">Paul Tol (colour-blind safe)</span>.</td></tr>
+      <tr><td><b>Mapas de color Viridis, Magma, Inferno y Plasma</b></td><td>Smith y van der Walt, con Firing en Viridis (2015).</td><td>Dedicados al dominio público (CC0 1.0); sus autores agradecen el crédito.</td><td>Escalas continuas de los mapas de calor (cinco colores de cada una).</td></tr>
+      <tr><td><b>Mapa de color Cividis</b></td><td>Nuñez, Anderton y Renslow (2018).</td><td>Artículo dedicado al dominio público (CC0); se cita.</td><td>Escala <span class="ui">Cividis (colour-blind safe)</span>.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Las otras ocho escalas de los mapas de calor (<span class="ui">Red–Yellow–Blue</span>, <span class="ui">Red–Blue</span>, <span class="ui">Spectral</span>, <span class="ui">Blue–White–Red</span>, <span class="ui">Greens</span>, <span class="ui">Yellow–Green</span>, <span class="ui">Browns</span> y <span class="ui">Heat</span>) y las paletas <span class="ui">ClusteringPro</span>, <span class="ui">Vivid</span>, <span class="ui">Harvest</span>, <span class="ui">Soil &amp; crop</span>, <span class="ui">Soft</span>, <span class="ui">Deep</span>, <span class="ui">Pastel</span> y <span class="ui">Greyscale</span> son originales de la app. Las escalas parten de colores anclados en un espacio de color perceptual: en las divergentes, la luminosidad sube hacia el centro y baja igual hacia los extremos, y sus extremos se siguen distinguiendo con daltonismo rojo–verde; en las secuenciales, baja de forma continua. Las familias de letra de las figuras son genéricas: cada equipo usa las suyas.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla F.3.</b> Recursos del manual.</caption>
+    <thead><tr><th style="width:27%">Recurso</th><th style="width:33%">Autoría y licencia</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td><b>Tipografías</b> Cormorant, Crimson Pro y Jost</td><td>Christian Thalmann; Jacques Le Bailly; Owen Earl. Licencia de Tipografías Abiertas SIL (OFL), versión 1.1.</td><td>Títulos, texto y rótulos. Las páginas HTML las cargan de un servicio público de tipografías y el PDF las incrusta, como permite la licencia; sin conexión, el navegador usa tipografías del sistema.</td></tr>
+      <tr><td><b>Ilustraciones y esquemas</b></td><td>Originales de este manual.</td><td>Portada vectorial y figuras explicativas.</td></tr>
+      <tr><td><b>Datos de práctica</b></td><td>Incluidos con la app: cinco archivos de la carpeta <code>data/</code> y dos conjuntos que la app simula en el navegador con semillas fijas.</td><td>Ejemplos de la app y de las prácticas del manual.</td></tr>
+      <tr><td><b>Capturas de pantalla</b></td><td>De la propia app.</td><td>Figuras de los capítulos.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · al compartir o redistribuir la app</div>
+    <p style="margin:0">El código de ClusteringPro se distribuye con la Licencia Pública General de GNU, versión 3 o posterior (archivo <code>LICENSE</code>). Si compartes la carpeta, consérvala completa: <code>LICENSE</code>, <code>vendor/THIRD-PARTY-NOTICES.txt</code> y la biblioteca de <code>vendor/</code> deben viajar juntas. Si publicas una figura hecha con la paleta de Okabe e Ito, la de Tol o la escala Cividis, cita a sus autores.</p>
+  </div>
+
+  <p style="margin-top:0.25in">Con este apéndice termina la versión en español del manual.</p>
+</section>
+
+</body>
+</html>

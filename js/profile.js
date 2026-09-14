@@ -24,11 +24,11 @@ PR.kruskal = (groups) => {
   return { H, p: 1 - S.pchisq(H, k - 1) };
 };
 
-/* ---------- quantitative profiles with v-tests (catdes) ---------- */
+/* ---------- quantitative profiles with test values ---------- */
 PR.quantProfiles = (X, names, cl, k) => {
   const N = X.length;
   return names.map((name, j) => {
-    const col = X.map(r => r[j]), m = S.mean(col), sd = S.sd(col), v2 = S.variance(col) * (N - 1) / N; /* catdes uses the variance with denominator N */
+    const col = X.map(r => r[j]), m = S.mean(col), sd = S.sd(col), v2 = S.variance(col) * (N - 1) / N; /* the test value uses the variance with denominator N */
     const groups = Array.from({ length: k }, (_, c) => col.filter((_, i) => cl[i] === c + 1));
     const clusters = groups.map((a, c) => { const nc = a.length, mc = nc ? S.mean(a) : NaN; const se = nc && v2 > 0 && N > 1 ? Math.sqrt(v2 / nc * (N - nc) / (N - 1)) : NaN; const v = isFinite(se) && se > 0 ? (mc - m) / se : (isFinite(mc) && mc !== m ? Infinity * Math.sign(mc - m) : 0); return { cluster: c + 1, n: nc, mean: mc, sd: nc > 1 ? S.sd(a) : NaN, se: nc > 1 ? S.sd(a) / Math.sqrt(nc) : NaN, median: nc ? S.median(a) : NaN, min: nc ? S.min(a) : NaN, max: nc ? S.max(a) : NaN, vtest: v, p: isFinite(v) ? 2 * (1 - S.pnorm(Math.abs(v))) : 0, z: sd > 0 ? (mc - m) / sd : 0 }; });
     return Object.assign({ name, mean: m, sd, groups }, PR.anova(groups), { kw: PR.kruskal(groups), clusters });
@@ -121,7 +121,7 @@ PR.ldaValidate = (X, cl, k, o) => {
   return Object.assign(model, { pred, confusion: M, accuracy: acc, loo: n <= 600 ? loo / n : NaN, looPred, confusionLoo: Mloo });
 };
 
-/* ---------- classification tree (CART, Gini) ---------- */
+/* ---------- classification tree (Gini impurity) ---------- */
 PR.tree = (X, names, cl, k, o) => {
   o = o || {}; const maxDepth = o.maxDepth || 3, minLeaf = o.minLeaf || 3;
   const gini = idx => { const cnt = new Array(k).fill(0); idx.forEach(i => cnt[cl[i] - 1]++); return 1 - cnt.reduce((s, c) => s + (c / idx.length) ** 2, 0); };

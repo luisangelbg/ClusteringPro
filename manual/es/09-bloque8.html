@@ -66,7 +66,7 @@
     <thead><tr><th style="width:28%">Control</th><th>Qué hace</th></tr></thead>
     <tbody>
       <tr><td><span class="ui">Theme</span></td><td><span class="ui">Light</span> (por omisión), <span class="ui">Paper</span> (fondo crema), <span class="ui">Dark</span> (fondo oscuro, para presentaciones), <span class="ui">Minimal</span> (sin cuadrícula) y <span class="ui">Journal (black &amp; white axes)</span>, con ejes negros y sin cuadrícula.</td></tr>
-      <tr><td><span class="ui">Font family</span></td><td>Helvetica, Arial, Georgia, Times New Roman, Segoe UI, Calibri, Cambria o monoespaciada.</td></tr>
+      <tr><td><span class="ui">Font family</span></td><td><span class="ui">Sans-serif</span> (sin remates, por omisión), <span class="ui">System interface font</span> (la del sistema operativo), <span class="ui">Serif</span> (con remates) o <span class="ui">Monospace</span>. Son familias genéricas: cada equipo usa la suya.</td></tr>
       <tr><td><span class="ui">Font size: all</span></td><td>Escala todos los textos a la vez, de 0.6 a 2.6 veces.</td></tr>
       <tr><td><span class="ui">Font size: titles</span> · <span class="ui">axes &amp; ticks</span> · <span class="ui">labels &amp; legend</span></td><td>Escalan cada grupo de textos por separado, de 0.6 a 3 veces, sobre la escala general.</td></tr>
       <tr><td><span class="ui">Bold axis titles</span></td><td>Títulos de los ejes en negritas.</td></tr>
@@ -94,11 +94,11 @@
       <div class="marco"><img src="../img/b8-mapa-original.png" alt="Mapa de grupos con el estilo por omisión"></div>
     </figure>
     <figure style="margin:0">
-      <div class="marco"><img src="../img/b8-journal.png" alt="Mapa de grupos con el tema Journal y Times New Roman"></div>
+      <div class="marco"><img src="../img/b8-journal.png" alt="Mapa de grupos con el tema Journal y letra con remates"></div>
     </figure>
   </div>
   <figure style="margin-top:0.06in">
-    <figcaption><b>Figura 9.3.</b> El mismo mapa con el estilo por omisión (izquierda) y con el tema <span class="ui">Journal</span>, la fuente Times New Roman y sin cuadrícula (derecha): ejes negros, marco de leyenda negro y líneas de referencia punteadas, como piden muchas revistas.</figcaption>
+    <figcaption><b>Figura 9.3.</b> El mismo mapa con el estilo por omisión (izquierda) y con el tema <span class="ui">Journal</span>, la familia <span class="ui">Serif</span> y sin cuadrícula (derecha): ejes negros, marco de leyenda negro y líneas de referencia punteadas, como piden muchas revistas.</figcaption>
   </figure>
 
   <!-- 9.2 -->
@@ -116,7 +116,7 @@
     <tbody>
       <tr><td><span class="ui">PNG</span></td><td>Sin pérdida y con la resolución grabada en el archivo, de modo que los programas lo colocan al tamaño correcto. Admite fondo transparente. El formato de uso general.</td></tr>
       <tr><td><span class="ui">TIFF (journal submission)</span></td><td>RGB sin comprimir con la resolución grabada, el formato que exigen muchas editoriales. Los archivos son grandes.</td></tr>
-      <tr><td><span class="ui">SVG (vector, editable)</span></td><td>Vectorial: se amplía sin perder nitidez y se edita en Inkscape, Illustrator o PowerPoint. La resolución no aplica.</td></tr>
+      <tr><td><span class="ui">SVG (vector, editable)</span></td><td>Vectorial: se amplía sin perder nitidez y se edita en programas de dibujo vectorial y de presentaciones. La resolución no aplica.</td></tr>
       <tr><td><span class="ui">JPG</span> · <span class="ui">WEBP</span></td><td>Con compresión, para páginas web o presentaciones ligeras. No los uses para artículos.</td></tr>
     </tbody>
   </table>
@@ -139,8 +139,8 @@
       <thead><tr><th style="width:40%">Si la figura va a…</th><th>descarga</th></tr></thead>
       <tbody>
         <tr><td>una revista que pide TIFF</td><td>TIFF a 600 dpi, fondo blanco, tema Journal si la revista prefiere ejes en negro.</td></tr>
-        <tr><td>una revista que acepta vectores (PDF, EPS, SVG)</td><td>SVG: se convierte a PDF o EPS en Inkscape sin perder calidad.</td></tr>
-        <tr><td>una tesis o un informe en Word</td><td>PNG a 300 dpi.</td></tr>
+        <tr><td>una revista que acepta vectores (PDF, EPS, SVG)</td><td>SVG: se convierte a PDF o EPS en un programa de dibujo vectorial sin perder calidad.</td></tr>
+        <tr><td>una tesis o un informe en un procesador de textos</td><td>PNG a 300 dpi.</td></tr>
         <tr><td>una presentación sobre fondo de color</td><td>PNG con <span class="ui">Transparent (PNG)</span> y, con fondo oscuro, tema Dark.</td></tr>
         <tr><td>una figura que editarás después (flechas, rótulos)</td><td>SVG.</td></tr>
       </tbody>
@@ -165,7 +165,7 @@
       <tr><td><span class="ui">Similarity and distance</span></td><td>Casillas, comprobaciones, figuras y comparación de coeficientes del Bloque 3.</td></tr>
       <tr><td><span class="ui">Hierarchical clustering</span></td><td>Casillas, comprobaciones, grupos del corte, tabla cruzada, figuras y comparación de enlaces del Bloque 4.</td></tr>
       <tr><td><span class="ui">Partitioning and advanced methods</span></td><td>Casillas, comprobaciones, tabla de grupos, tablas cruzadas, figuras y comparación de métodos del Bloque 5.</td></tr>
-      <tr><td><span class="ui">Number of clusters and validation</span></td><td>Voto, estabilidad, AU/BP, validación externa, clValid y figuras del Bloque 6.</td></tr>
+      <tr><td><span class="ui">Number of clusters and validation</span></td><td>Voto, estabilidad, AU/BP, validación externa, comparación de algoritmos y figuras del Bloque 6.</td></tr>
       <tr><td><span class="ui">Profiles, discriminant analysis and rules</span></td><td>Fichas de los grupos, perfiles, especies indicadoras, discriminante, reglas, asignaciones y figuras del Bloque 7.</td></tr>
       <tr><td><span class="ui">Executive summary</span></td><td>Casillas con las cifras clave y un borrador de la sección de resultados.</td></tr>
       <tr><td><span class="ui">Auto-drafted methods paragraph</span></td><td>El párrafo de métodos (sección 9.4).</td></tr>
@@ -331,9 +331,9 @@
     <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
     <ol class="pasos" style="margin-bottom:0">
       <li>En el Bloque 5, abre <span class="ui">Edit figure</span> del mapa de grupos (figura 9.1). En <span class="ui">Content &amp; colours</span> escribe los títulos de los ejes en el idioma de la revista y elige la paleta <span class="ui">Okabe–Ito</span>.</li>
-      <li>En <span class="ui">Style &amp; typography</span> (figura 9.2) elige el tema <span class="ui">Journal</span>, la fuente Times New Roman y quita la cuadrícula (figura 9.3). Sube <span class="ui">Font size: all</span> a 1.3.</li>
+      <li>En <span class="ui">Style &amp; typography</span> (figura 9.2) elige el tema <span class="ui">Journal</span>, la familia <span class="ui">Serif</span> y quita la cuadrícula (figura 9.3). Sube <span class="ui">Font size: all</span> a 1.3.</li>
       <li>En la barra de descarga elige TIFF y <span class="ui">Publication · 8× (600 dpi)</span> (figura 9.4) y pulsa <span class="ui">⬇ Download figure</span>.</li>
-      <li>Ve al Bloque 6 y pulsa otra vez <span class="ui">Evaluate every k →</span>: las figuras que se dibujan de nuevo salen ya con Journal y Times. Las que no recalcules conservan su estilo anterior, y así entran en el informe.</li>
+      <li>Ve al Bloque 6 y pulsa otra vez <span class="ui">Evaluate every k →</span>: las figuras que se dibujan de nuevo salen ya con el tema Journal y la familia Serif. Las que no recalcules conservan su estilo anterior, y así entran en el informe.</li>
     </ol>
   </div>
   <div class="caja teoria">

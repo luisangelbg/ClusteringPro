@@ -37,7 +37,7 @@
         <p class="lead">From the raw table to a publication-ready dendrogram: check whether your data are <b>clusterable</b>,
           pick the right <b>similarity coefficient</b> for quantitative, binary, categorical, mixed or ecological data,
           compare <b>hierarchical and partitioning</b> methods, decide <b>how many clusters</b> to keep, validate them
-          and export <b>beautiful, fully editable figures</b>. No R or Python required.</p>
+          and export <b>beautiful, fully editable figures</b>. No programming required.</p>
         <div class="hero-cta">
           <button class="btn btn-primary btn-lg" id="startBtn">Start with my data →</button>
           <button class="btn btn-secondary btn-lg" id="playBtn">Try the live demo</button>
@@ -263,7 +263,7 @@
       <summary>8 · Partitioning: k-means, PAM, CLARA and fuzzy clustering <span class="acc-tag">non-hierarchical</span></summary>
       <div class="acc-body clearfix">
         <div class="theory-fig wide" data-fig="kmeans"><div class="cap">One k-means run: assign each point to the nearest centre, move the centres, repeat.</div></div>
-        <p><b>k-means</b> chooses <i>k</i> centres and alternates two steps until nothing changes: assign every object to its nearest centre, then move each centre to the mean of its objects. It minimises the total within-cluster sum of squares, is fast for large data and has no tree. Variants: <b>Hartigan–Wong</b> (default in R, usually best), <b>Lloyd/Forgy</b>, <b>MacQueen</b>; smarter starts with <b>k-means++</b>; many random starts (<code>nstart</code>) to avoid poor local optima.</p>
+        <p><b>k-means</b> chooses <i>k</i> centres and alternates two steps until nothing changes: assign every object to its nearest centre, then move each centre to the mean of its objects. It minimises the total within-cluster sum of squares, is fast for large data and has no tree. Variants: <b>Hartigan–Wong</b> (the usual default, usually best), <b>Lloyd/Forgy</b>, <b>MacQueen</b>; smarter starts with <b>k-means++</b>; many random starts (<code>nstart</code>) to avoid poor local optima.</p>
         <ul>
           <li><b>k-medoids (PAM)</b>: centres are real observations (medoids), so any distance works, including Gower and Bray–Curtis, and outliers weigh less.</li>
           <li><b>CLARA</b>: PAM on repeated samples, for thousands of objects.</li>
@@ -292,9 +292,9 @@
         <ul>
           <li><b>Elbow</b>: total within-cluster sum of squares drops fast until the true <i>k</i>, then flattens. Subjective when the bend is gentle.</li>
           <li><b>Average silhouette</b>: how well each object sits in its cluster compared with the nearest alternative (lesson 11); pick the <i>k</i> that maximises the mean.</li>
-          <li><b>Gap statistic</b>: compares the within-cluster dispersion with what is expected under no structure (bootstrap of uniform data); choose the smallest <i>k</i> whose gap is within one standard error of the maximum.</li>
-          <li><b>Calinski–Harabasz</b> (ratio of between to within dispersion), <b>Davies–Bouldin</b> (lower is better), <b>Dunn</b> (higher is better), plus the Hartigan, Ratkowsky, Ball, Duda–Hart, C-index and other indices of the NbClust family: the app tallies the votes.</li>
-          <li>For hierarchies: the <b>largest jump in merge heights</b> and the <b>inconsistency coefficient</b> of each node.</li>
+          <li><b>Gap statistic</b>: compares the within-cluster dispersion with what is expected under no structure (bootstrap of uniform data); choose the smallest <i>k</i> whose gap is at least the gap of <i>k</i> + 1 minus one standard error. Unlike the other criteria it can also answer <i>k</i> = 1: no structure.</li>
+          <li><b>Calinski–Harabasz</b> (ratio of between to within dispersion), <b>Davies–Bouldin</b> (lower is better), <b>Dunn</b> (higher is better), plus the C-index, McClain–Rao, PBM, Ratkowsky–Lance, Hartigan, Krzanowski–Lai and Ball–Hall indices: thirteen criteria in all, and the app tallies their votes.</li>
+          <li>For hierarchies: the <b>largest jumps in merge heights</b>, and the support of each node by multiscale bootstrap.</li>
           <li>For model-based clustering: <b>BIC</b>. For DBSCAN: the knee of the kNN-distance plot.</li>
         </ul>
         <div class="callout"><b>Then look</b> A clustering that scores well but cannot be described in terms of the variables is not useful. Block 7 profiles every cluster so you can name it.</div>
@@ -317,7 +317,7 @@
           <li><b>Variable removal</b>: clusters that vanish when one variable is dropped depend on that variable alone.</li>
         </ul>
         <p><b>External validation</b> compares the clusters with a known grouping (species, origin, treatment): <b>Rand</b> and <b>adjusted Rand</b> index, <b>normalised mutual information</b>, <b>purity</b>, <b>variation of information</b>, plus a cross-table with a chi-square test. The same indices compare two clusterings with each other.</p>
-        <p><b>Comparing algorithms.</b> Run hierarchical, k-means, PAM and model-based side by side over a range of <i>k</i> and rank them by connectivity, Dunn and silhouette (the <i>clValid</i> approach) before you commit.</p>
+        <p><b>Comparing algorithms.</b> Run hierarchical, k-means, PAM and model-based side by side over a range of <i>k</i> and rank them by connectivity, Dunn and silhouette before you commit.</p>
       </div>
     </details>
 
@@ -385,7 +385,7 @@
   <div class="why-grid">
     <div class="why"><div class="w-icon">🌿</div><h4>Built for life-science data</h4><p>Binary markers, species tables, morphometrics, soil and yield data, gene expression: each with the right coefficient and the right warnings.</p></div>
     <div class="why"><div class="w-icon">🧭</div><h4>Guided, not just computed</h4><p>Every block explains the theory in plain language and tells you whether your data are clusterable, which distance fits and how many groups to keep.</p></div>
-    <div class="why"><div class="w-icon">🔬</div><h4>Validated numerics</h4><p>Distances, linkages, indices and p-values computed in the browser and checked against R reference values.</p></div>
+    <div class="why"><div class="w-icon">🔬</div><h4>Validated numerics</h4><p>Distances, linkages, indices and p-values computed in the browser and checked against independent reference implementations.</p></div>
     <div class="why"><div class="w-icon">🌳</div><h4>Dendrograms worth publishing</h4><p>Rectangular, radial and phylogenic layouts, palettes, gradients, coloured labels, cut lines, legends, boxes: all editable, all exportable at up to 900 dpi.</p></div>
     <div class="why"><div class="w-icon">⚖️</div><h4>Compare, don't trust</h4><p>Tanglegrams, cophenetic and Baker correlations, consensus of indices, bootstrap stability and side-by-side algorithms.</p></div>
     <div class="why"><div class="w-icon">🔒</div><h4>Private and offline</h4><p>Nothing is uploaded. Works without internet, from a USB stick or a shared folder.</p></div>
@@ -492,7 +492,7 @@
         <span class="field-help">Only for .csv / .txt files.</span></div>
       <div class="field"><label>Decimal separator</label>
         <select id="decimalSel"><option value="auto">Auto-detect</option><option value="dot">Point (4.65)</option><option value="comma">Comma (4,65)</option></select>
-        <span class="field-help">Latin American Excel often exports with a comma.</span></div>
+        <span class="field-help">Spreadsheets set to Spanish or Portuguese often export with a comma.</span></div>
       <div class="field" id="sheetPicker" style="display:none"><label>Sheet</label><select id="sheetSelect"></select><span class="field-help">The workbook has several sheets.</span></div>
     </div>
     <details class="acc"><summary>Paste from the clipboard instead</summary>
@@ -889,21 +889,21 @@
     <details class="acc" open>
       <summary>1 · How many clusters? Thirteen criteria and a vote</summary>
       <div class="acc-body">
-        <p>For every k in a range, a partition is produced (the tree cut, k-means or PAM) and each criterion selects its own k: <b>silhouette</b>, <b>Calinski–Harabasz</b>, <b>PBM</b>, <b>Ratkowsky–Lance</b>, <b>Dunn</b> and <b>Krzanowski–Lai</b> at their maximum; <b>Davies–Bouldin</b>, <b>C-index</b> and <b>McClain–Rao</b> at their minimum; <b>Hartigan</b> at the first k with H ≤ 10; <b>Ball–Hall</b> at the largest drop; the <b>elbow</b> at the knee of the WSS curve; and the <b>gap statistic</b> by Tibshirani's first-SE rule against uniform reference data. The tally of votes is the consensus, in the spirit of NbClust.</p>
+        <p>For every k in a range, a partition is produced (the tree cut, k-means or PAM) and each criterion selects its own k: <b>silhouette</b>, <b>Calinski–Harabasz</b>, <b>PBM</b>, <b>Ratkowsky–Lance</b>, <b>Dunn</b> and <b>Krzanowski–Lai</b> at their maximum; <b>Davies–Bouldin</b>, <b>C-index</b> and <b>McClain–Rao</b> at their minimum; <b>Hartigan</b> at the first k with H ≤ 10; <b>Ball–Hall</b> at the largest drop; the <b>elbow</b> at the knee of the WSS curve; and the <b>gap statistic</b> by Tibshirani's first-SE rule against uniform reference data. The tally of votes is the consensus.</p>
       </div>
     </details>
     <details class="acc">
       <summary>2 · Are the clusters stable?</summary>
       <div class="acc-body">
-        <p><b>Bootstrap stability</b> (clusterboot): the objects are resampled, the clustering is recomputed and each original cluster is matched to its most similar bootstrap cluster by the Jaccard index. Mean Jaccard above 0.85 = highly stable, 0.75 = stable, 0.6 = some pattern, below 0.5 = the cluster dissolves and should not be interpreted.</p>
-        <p><b>Multiscale bootstrap for trees</b> (pvclust): the <i>variables</i> are resampled at several sizes, the tree is rebuilt and the frequency of each cluster is tracked. The AU value corrects the bias of the plain bootstrap probability BP; clusters with AU ≥ 95 % are strongly supported by the data.</p>
+        <p><b>Bootstrap stability</b>: the objects are resampled, the clustering is recomputed and each original cluster is matched to its most similar bootstrap cluster by the Jaccard index. Mean Jaccard above 0.85 = highly stable, 0.75 = stable, 0.6 = some pattern, below 0.5 = the cluster dissolves and should not be interpreted.</p>
+        <p><b>Multiscale bootstrap for trees</b>: the <i>variables</i> are resampled at several sizes, the tree is rebuilt and the frequency of each cluster is tracked. The AU value corrects the bias of the plain bootstrap probability BP; clusters with AU ≥ 95 % are strongly supported by the data.</p>
       </div>
     </details>
     <details class="acc">
       <summary>3 · External validation and comparison of algorithms</summary>
       <div class="acc-body">
         <p>Against a known grouping (or between two partitions): <b>Rand</b> and <b>adjusted Rand</b>, <b>NMI</b>, <b>variation of information</b>, <b>Jaccard</b>, <b>Fowlkes–Mallows</b>, <b>purity</b> and a χ² test with Cramér's V.</p>
-        <p><b>Comparison of algorithms</b> (clValid): hierarchical, k-means and PAM over the range of k, scored by connectivity (lower is better), Dunn and silhouette (higher is better).</p>
+        <p><b>Comparison of algorithms</b>: hierarchical, k-means and PAM over the range of k, scored by connectivity (lower is better), Dunn and silhouette (higher is better).</p>
       </div>
     </details>
   </div>
@@ -993,7 +993,7 @@
   <div class="card theory-card">
     <div class="card-head"><div><h2>From labels to meaning</h2><p class="hint">Lesson 12 on the home page introduces these tools.</p></div></div>
     <details class="acc" open>
-      <summary>1 · Describing clusters (catdes)</summary>
+      <summary>1 · Describing clusters with test values</summary>
       <div class="acc-body">
         <p>For every quantitative variable the <b>test value v</b> compares the cluster mean with the overall mean, accounting for the cluster size: |v| ≥ 1.96 marks a variable that characterises the cluster (higher when v &gt; 0, lower when v &lt; 0). A one-way <b>ANOVA</b> (and its rank-based counterpart, <b>Kruskal–Wallis</b>) tells which variables separate the clusters at all, with η² as effect size. Categorical variables get the same treatment on proportions, plus a χ² test with Cramér's V.</p>
         <div class="callout warn"><b>A caveat</b> Clusters were built to differ on the active variables, so their p-values are descriptive, not inferential. Supplementary variables (not used for clustering) are the ones that support genuine claims.</div>
@@ -1132,6 +1132,7 @@
 <script src="js/art.js"></script>
 <script src="js/playground.js"></script>
 <script src="js/plots2.js"></script>
+<script src="js/examples.js"></script>
 <script src="js/data.js"></script>
 <script src="js/dist.js"></script>
 <script src="js/plots3.js"></script>

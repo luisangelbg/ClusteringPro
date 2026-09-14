@@ -78,7 +78,7 @@ function finish(res, space) {
   R.name = NAME[R.method]; R.labels = state.dist.labels; R.groups = state.groups;
   R.sil = PT.silhouette(state.dist.D, cl);
   if (space) { R.space = space.name; R.coords = space.map.map(p => [p[0], p[1] == null ? 0 : p[1]]); R.axisNames = space.axisNames; R.ssq = PT.ss(space.X, cl); }
-  else { R.space = state.dist.fam === 'given' ? 'supplied dissimilarity matrix' : state.dist.name + ' dissimilarity matrix'; R.coords = state.dist.mds.points.map(p => [p[0], p[1] == null ? 0 : p[1]]); R.axisNames = [`PCoA 1 (${fmtPct(state.dist.mds.pct[0] || 0, 1)})`, `PCoA 2 (${fmtPct(state.dist.mds.pct[1] || 0, 1)})`]; }
+  else { R.space = state.dist.fam === 'given' ? ({ given_sqrt: 'square root of the supplied dissimilarity matrix', given_sq: 'square of the supplied dissimilarity matrix' })[state.dist.id] || 'supplied dissimilarity matrix' : state.dist.name + ' dissimilarity matrix'; R.coords = state.dist.mds.points.map(p => [p[0], p[1] == null ? 0 : p[1]]); R.axisNames = [`PCoA 1 (${fmtPct(state.dist.mds.pct[0] || 0, 1)})`, `PCoA 2 (${fmtPct(state.dist.mds.pct[1] || 0, 1)})`]; }
   R.centers2d = Array.from({ length: R.k }, (_, c) => { if (R.medoids) return R.coords[R.medoids[c]]; const pts = R.coords.filter((_, i) => cl[i] === c + 1); return pts.length ? [S.mean(pts.map(p => p[0])), S.mean(pts.map(p => p[1]))] : null; });
   R.sizes = PT.sizes(cl);
   if (state.groups && R.k > 1) R.ariGroups = HC.ari(cl, state.groups);

@@ -51,7 +51,7 @@
 
   <!-- 7.1 -->
   <h2 id="s7-1"><span class="num">7.1</span>¿Cuántos grupos? Trece criterios y un voto</h2>
-  <p class="lead">No existe un criterio único para el número de grupos. Cada índice mide algo distinto (compacidad, separación, ganancia al añadir un grupo) y cada uno falla en situaciones distintas. La app los calcula todos para cada <i>k</i> del rango y deja que voten, al estilo de NbClust: el <i>k</i> con más votos es el consenso.</p>
+  <p class="lead">No existe un criterio único para el número de grupos. Cada índice mide algo distinto (compacidad, separación, ganancia al añadir un grupo) y cada uno falla en situaciones distintas. La app los calcula todos para cada <i>k</i> del rango y deja que voten: el <i>k</i> con más votos es el consenso.</p>
 
   <figure>
     <div class="marco" style="position:relative">
@@ -205,7 +205,7 @@
 
   <!-- 7.3 -->
   <h2 id="s7-3"><span class="num">7.3</span>Estabilidad por bootstrap</h2>
-  <p class="lead">Un grupo real debe reaparecer si repites el análisis con una muestra ligeramente distinta de objetos. La tarjeta 2 hace exactamente eso, al estilo de clusterboot: remuestrea, vuelve a agrupar y busca cada grupo original entre los nuevos.</p>
+  <p class="lead">Un grupo real debe reaparecer si repites el análisis con una muestra ligeramente distinta de objetos. La tarjeta 2 hace exactamente eso: remuestrea, vuelve a agrupar y busca cada grupo original entre los nuevos.</p>
 
   <div class="caja teoria">
     <div class="caja-t"><span class="ico">θ</span>Teoría en breve · el Jaccard de cada grupo</div>
@@ -255,7 +255,7 @@
 
   <!-- 7.4 -->
   <h2 id="s7-4"><span class="num">7.4</span>Soporte de los grupos del árbol (AU y BP)</h2>
-  <p class="lead">La tarjeta 3 responde una pregunta distinta: si midieras otras variables del mismo tipo, ¿aparecería la misma rama? Remuestrea las <b>variables</b>, no los objetos, a varias escalas, al estilo de pvclust, y da a cada rama del árbol dos valores: BP y AU.</p>
+  <p class="lead">La tarjeta 3 responde una pregunta distinta: si midieras otras variables del mismo tipo, ¿aparecería la misma rama? Remuestrea las <b>variables</b>, no los objetos, a varias escalas, y da a cada rama del árbol dos valores: BP y AU.</p>
 
   <div class="caja teoria">
     <div class="caja-t"><span class="ico">θ</span>Teoría en breve · bootstrap multiescala</div>
@@ -336,7 +336,7 @@
 
   <!-- 7.6 -->
   <h2 id="s7-6"><span class="num">7.6</span>Comparar algoritmos a lo largo de k</h2>
-  <p class="lead">La tarjeta 5 sigue la idea de clValid: en lugar de fijar un <i>k</i> y un método, recorre el rango de la tarjeta 1 con el árbol (con el enlace del Bloque 4), k-means (5 arranques, semilla 1) y PAM, y puntúa cada combinación con tres medidas.</p>
+  <p class="lead">La tarjeta 5 compara algoritmos: en lugar de fijar un <i>k</i> y un método, recorre el rango de la tarjeta 1 con el árbol (con el enlace del Bloque 4), k-means (5 arranques, semilla 1) y PAM, y puntúa cada combinación con tres medidas.</p>
 
   <table class="compacta">
     <caption><b>Tabla 7.10.</b> Las tres medidas de la comparación.</caption>
@@ -354,12 +354,12 @@
   </div>
 
   <figure>
-    <div class="marco"><img src="../img/b6-clvalid.png" alt="Tablas de la comparación de algoritmos con el maíz"></div>
+    <div class="marco"><img src="../img/b6-algoritmos.png" alt="Tablas de la comparación de algoritmos con el maíz"></div>
     <figcaption><b>Figura 7.13.</b> La comparación con el maíz. Arriba, el mejor método y <i>k</i> para cada medida: la conectividad es mínima con dos grupos, Dunn es máximo con k-means en diez y la silueta con el árbol en tres. Abajo, todas las medidas por método y <i>k</i>, en una tabla que se desplaza en horizontal hasta las columnas de PAM; el árbol y k-means dan las mismas particiones hasta <i>k</i> = 5.</figcaption>
   </figure>
 
   <figure class="media">
-    <div class="marco"><img src="../img/b6-clvalid-fig.png" alt="Silueta por método y k"></div>
+    <div class="marco"><img src="../img/b6-algoritmos-fig.png" alt="Silueta por método y k"></div>
     <figcaption><b>Figura 7.14.</b> <span class="ui">Comparison of algorithms over k</span> con la silueta: una línea por método y un círculo en el mejor. PAM cae antes que los otros dos a partir de <i>k</i> = 4.</figcaption>
   </figure>
 

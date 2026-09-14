@@ -31,7 +31,7 @@ S.mad = a => { const m = S.median(a); return 1.4826 * S.median(a.map(v => Math.a
 S.cv = a => 100 * S.sd(a) / S.mean(a);
 S.geomean = a => a.every(v => v > 0) ? Math.exp(S.mean(a.map(Math.log))) : NaN;
 S.harmean = a => a.every(v => v > 0) ? a.length / S.sum(a.map(v => 1 / v)) : NaN;
-/* sample skewness (G1) and excess kurtosis (G2), bias-corrected as in SAS / Excel */
+/* sample skewness (G1) and excess kurtosis (G2), bias-corrected (adjusted Fisher–Pearson coefficients) */
 S.skewness = a => {
   const n = a.length; if (n < 3) return NaN;
   const m = S.mean(a), sd = S.sd(a); if (!sd) return 0;
@@ -212,7 +212,7 @@ S.qchisq = (p, df) => S.invert(x => S.pchisq(x, df), p, 0, Math.max(10, df * 3))
 S.qf = (p, d1, d2) => S.invert(f => S.pf(f, d1, d2), p, 0, 10);
 
 /* Studentized range distribution (Tukey). Numerical integration following
-   Copenhaver & Holland (1988) as implemented in R's ptukey (single-group case). */
+   Copenhaver & Holland (1988), single-group case. */
 S.ptukey = (q, k, df) => {
   if (q <= 0) return 0;
   if (!isFinite(q)) return 1;

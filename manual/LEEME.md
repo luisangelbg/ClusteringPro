@@ -11,6 +11,8 @@ manual/
   herramientas/
     captura.html       abre la app en un marco, ejecuta una receta de pasos y deja la vista lista para la captura
     unir-manual.pl     une portada y partes en es/manual-completo.html para imprimir el manual completo
+    reunir-reglas.pl   copia las reglas de decisión de los capítulos al apéndice B (perl herramientas/reunir-reglas.pl es)
+    incrustar-ejemplos.pl  regenera js/examples.js a partir de data/*.csv (correr desde la raíz de la app)
   es/
     00-portada.html    portada blanca: título en español e inglés; un dendrograma cortado en cuatro grupos cuyas
                        hojas son una orquídea, un tulipán, una flor de loto, una rama de café, una libélula,
@@ -46,7 +48,9 @@ manual/
                        de objetos nuevos y siete prácticas
     09-bloque8.html    capítulo 9 · Bloque 8 "Informe y exportación": editor de figuras, formatos y
                        resoluciones, informe automático, párrafo de métodos, paquete ZIP y cinco prácticas
-    10-apendices.html  apéndices A–F (pendiente)
+    10-apendices.html  apéndices A–F: formatos de archivo, 16 reglas de decisión reunidas (entre las marcas
+                       "reglas: inicio/fin", las escribe reunir-reglas.pl), glosario, solución de problemas,
+                       78 referencias verificadas con DOI y componentes de terceros
   en/                  versión en inglés (pendiente)
 ```
 
@@ -142,7 +146,7 @@ Recetas de las capturas actuales (`h` es la altura del marco cuando no es la pre
 | `b5-*.png` (21 capturas) | prefijo `ex:N;apply;step:3;run:distRunBtn;step:4;[select:%23hcMethod=average;]run:hcRun;step:5` y luego `select:%23ptMethod=kmeans|pam|fcm|gmm|dbscan`, `select:%23ptSource=pcoa`, `set:%23dbMinPts=3|6`, `run:ptRun`, `run:cmp5Run`; `scroll:` a `%23ptReco,70`, `%23ptResults`, `%23fig5Map`, `%23fig5Sil`, `%23fig5Extra`, `%23fig5Bic`, `%23cmp5Card`, `%23cmp5Results` (ventanas 1400 × 560–1250) | tarjetas 2300 de ancho desde (250, 0–20); mapas 2200 × 1310 desde (300, 20); siluetas solo la tarjeta izquierda, 1086 de ancho desde (300, 20) |
 | `b6-*.png` (20 capturas) | prefijo `P = ex:N;apply;step:3;run:distRunBtn;step:4;[select:%23hcMethod=average;]run:hcRun;step:5;run:ptRun;step:6` (sin `apply` con la matriz; UPGMA en los ejemplos 1 y 2) y luego `run:vkRun`, `run:stRun`, `run:pvRun`, `run:exRun`, `run:cvRun`; `scroll:` a `%23panel-6,10`, `%23vkTiles,60`, `%23fig6Panel`, `%23fig6Votes`, `%23fig6Elbow`, `%23fig6Gap`, `%23stSource,60`, `%23pvCard`, `%23fig6Pv`, `%23exA,60`, `%23cvList,60`, `%23fig6Cv` (ventanas 1400 × 560–1200; tres grupos de capturas en paralelo con perfiles `--user-data-dir` distintos) | tarjetas y tablas 2200 de ancho desde (300, 110–300); paneles 2140 × 1180 desde (330, 120); votos 1600 × 830 desde (560, 120); gap 1300 × 780 desde (740, 120); codo y silueta 2110 × 630 desde (330, 120) |
 | `b7-*.png` (19 capturas) | prefijo `ex:N;apply;step:3;run:distRunBtn;step:4;[select:%23hcMethod=average;]run:hcRun;step:5;run:ptRun;step:6;run:vkRun;step:7` (suelos con `click:%23adoptK;wait:1500;step:5;run:ptRun` antes de `step:7`) y luego `run:prRun`, `click:%23predExample;click:%23predictBtn`; `scroll:` a `%23prSource,110`, `%23prTiles,60`, `%23prQuantTable`, `%23fig7Heat`, `%23fig7Radar`, `%23fig7Boxes`, `%23prIndTable`, `%23fig7Indval`, `%23fig7Cats`, `%23ldaCard`, `%23fig7LDA`, `%23treeRules,70`, `%23predCard` (ventanas 1400 × 560–1100) | tarjetas y tablas 2200 de ancho desde (300, 20–310); radar y coordenadas paralelas son dos recortes de 1040 de ancho desde x = 330 y x = 1430 |
-| `b8-*.png` (12 recortes de 11 capturas) | prefijo `ex:N;apply;step:3;run:distRunBtn;step:4;run:hcRun;step:5;run:ptRun;step:6;run:vkRun;run:stRun;run:exRun;step:7;run:prRun;step:8` (sin `apply` ni `prRun` con la matriz); editor con `open:%23fig5Map%20details.fig-editor` y `click:%23fig5Map%20.fig-tab:nth-child(2)`; tema con `cfg:fig5Map.theme=journal;cfg:fig5Map.font=times;cfg:fig5Map.grid=false`; barra con `select:%23fig5Map%20.fig-tools%20select=tiff`; informe con `run:rpPreview;frame:%23rpFrame;scrollin:%23rpFrame|%23s3` (o `%23methods`, `%23summary`) | editor 2170 de ancho desde (320, 1340–1350); mapas 2140 × 1230 desde (330, 90); informe 2040 de ancho desde (380, 20) |
+| `b8-*.png` (12 recortes de 11 capturas) | prefijo `ex:N;apply;step:3;run:distRunBtn;step:4;run:hcRun;step:5;run:ptRun;step:6;run:vkRun;run:stRun;run:exRun;step:7;run:prRun;step:8` (sin `apply` ni `prRun` con la matriz); editor con `open:%23fig5Map%20details.fig-editor` y `click:%23fig5Map%20.fig-tab:nth-child(2)`; tema con `cfg:fig5Map.theme=journal;cfg:fig5Map.font=serif;cfg:fig5Map.grid=false`; barra con `select:%23fig5Map%20.fig-tools%20select=tiff`; informe con `run:rpPreview;frame:%23rpFrame;scrollin:%23rpFrame|%23s3` (o `%23methods`, `%23summary`) | editor 2170 de ancho desde (320, 1340–1350); mapas 2140 × 1230 desde (330, 90); informe 2040 de ancho desde (380, 20) |
 
 Los recortes se hacen con `System.Drawing` desde PowerShell sobre la captura a 2×. Las cifras del demo que cita el capítulo 2 (cofenética por enlace, iteraciones, SS entre/total, silueta y ARI) se obtuvieron de la propia app con la semilla fija del demo; si el demo cambia, hay que recalcularlas.
 

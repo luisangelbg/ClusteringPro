@@ -1,8 +1,8 @@
 /* ClusteringPro — small clustering engine used by the home page (illustrations and playground).
-   Later blocks extend it; the API is kept deliberately close to R's hclust()/cutree()/kmeans().
+   Later blocks extend it; the API follows the usual merge-matrix representation of a tree.
 
    HC.dist(points, metric)            -> n×n distance matrix
-   HC.agglomerate(D, method)          -> {n, merge, height, order, method}   (merge uses R's sign convention)
+   HC.agglomerate(D, method)          -> {n, merge, height, order, method}   (merge: negative = original object, positive = earlier merge)
    HC.cutree(hc, k)                   -> array of cluster ids 1..k (by observation)
    HC.layout(hc)                      -> {leafX[obs], nodes[step] = {x, y, l, r, members}}
    HC.cophenetic(hc)                  -> n×n cophenetic matrix

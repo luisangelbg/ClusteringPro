@@ -44,7 +44,7 @@ function drawScatter() {
     let d = ''; for (let t = 0; t < 8; t++) { const a = -Math.PI / 2 + t * Math.PI / 4, rr = t % 2 ? 4.5 : 10; d += (t ? 'L' : 'M') + (c[0] + rr * Math.cos(a)).toFixed(1) + ',' + (c[1] + rr * Math.sin(a)).toFixed(1); }
     g += `<path d="${d}Z" fill="${CL[j % CL.length]}" stroke="#fff" stroke-width="1.5"/>`;
   });
-  g += `<text x="${W - PAD}" y="${H - 5}" text-anchor="end" font-size="9" class="art-mut" ${'font-family="Segoe UI, Helvetica, Arial, sans-serif"'}>click anywhere to add a point</text>`;
+  g += `<text x="${W - PAD}" y="${H - 5}" text-anchor="end" font-size="9" class="art-mut" ${'font-family="system-ui, sans-serif"'}>click anywhere to add a point</text>`;
   svg.innerHTML = g;
 }
 
@@ -55,8 +55,8 @@ function drawTree() {
   const body = Art.dendro(pg.hc, { x: 34, y: 16, w: W - 50, h: H - 60, k: Math.min(pg.k, n), stroke: n > 80 ? 1.2 : n > 40 ? 1.6 : 2.2, cut: true, leafDot: n > 80 ? 1.6 : 2.6, axis: true, neutral: '#a4a4b8' });
   const maxH = Math.max(...pg.hc.height) * 1.06;
   let ticks = '';
-  for (let t = 0; t <= 4; t++) { const y = 16 + (H - 60) - t / 4 * (H - 60); ticks += `<text x="24" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="8" class="art-mut" font-family="Segoe UI, Helvetica, Arial, sans-serif">${(maxH * t / 4).toFixed(0)}</text>`; }
-  svg.innerHTML = body + ticks + `<text x="${W / 2}" y="${H - 8}" text-anchor="middle" font-size="9.5" class="art-mut" font-family="Segoe UI, Helvetica, Arial, sans-serif">${labelOf(pg.linkage)} · ${n} leaves · cut at k = ${Math.min(pg.k, n)}</text>`;
+  for (let t = 0; t <= 4; t++) { const y = 16 + (H - 60) - t / 4 * (H - 60); ticks += `<text x="24" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="8" class="art-mut" font-family="system-ui, sans-serif">${(maxH * t / 4).toFixed(0)}</text>`; }
+  svg.innerHTML = body + ticks + `<text x="${W / 2}" y="${H - 8}" text-anchor="middle" font-size="9.5" class="art-mut" font-family="system-ui, sans-serif">${labelOf(pg.linkage)} · ${n} leaves · cut at k = ${Math.min(pg.k, n)}</text>`;
 }
 function labelOf(m) { return { single: 'Single linkage', complete: 'Complete linkage', average: 'UPGMA (average)', weighted: 'WPGMA (weighted)', centroid: 'Centroid (UPGMC)', median: 'Median (WPGMC)', 'ward.D': 'Ward.D', 'ward.D2': 'Ward.D2' }[m] || m; }
 

@@ -318,9 +318,11 @@ function loadPasted() {
 function loadExample(path, name) {
   clearMessages('dataMessages');
   showMessage('dataMessages', 'info', '<span class="loading"></span> Loading example…');
+  const embedded = window.EXAMPLE_DATA && window.EXAMPLE_DATA[path];
+  if (embedded) { setTimeout(() => afterLoad(parseCSV(embedded, ','), name), 0); return; }
   fetch(path).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
     .then(txt => afterLoad(parseCSV(txt, ','), name))
-    .catch(() => { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not load the example. Open the app through <b>server.ps1</b> (examples cannot be read from file://).'); });
+    .catch(() => { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not load the example. Open the app through <b>Open ClusteringPro.bat</b> or check that the js/ folder is complete.'); });
 }
 /* simulated datasets, generated in the browser */
 function simulate(kind) {
