@@ -13,6 +13,9 @@ an automatic report.
 
 Developed as a teaching and research tool for biology, ecology, agronomy and related sciences.
 
+**User manual (Spanish):** [PDF](manual/ClusteringPro%20User%27s%20Manual.pdf) ·
+[HTML](https://luisangelbg.github.io/ClusteringPro/manual/es/manual-completo.html)
+
 ## Use it online
 
 **https://luisangelbg.github.io/ClusteringPro/** — nothing to install; the app runs in your browser and your data never leave your computer (the page is static: there is no server-side computation and nothing is uploaded).
@@ -96,6 +99,12 @@ vendor/xlsx.full.min.js   local copy of SheetJS
 ```
 
 Everything is plain JavaScript without modules, so the app also runs from `file://`.
+
+## User manual
+
+A user manual in Spanish walks through every block with worked examples, the decision rules behind each
+interpretation, file formats, a glossary, troubleshooting and the full reference list: `manual/ClusteringPro User's Manual.pdf`
+(239 pages) or, chapter by chapter, `manual/es/`.
 
 ## Third-party code
 

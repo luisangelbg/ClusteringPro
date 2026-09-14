@@ -1,8 +1,8 @@
 #!/usr/bin/perl
-# PopGeneticsPro · manual de usuario: une las partes de un idioma en un solo documento para imprimirlo a PDF.
+# ClusteringPro · manual de usuario: une las partes de un idioma en un solo documento para imprimirlo a PDF.
 # Uso, desde la carpeta manual/:   perl herramientas/unir-manual.pl es
 # Escribe es/manual-completo.html con la portada (00-portada.html) como primera hoja, las secciones de
-# 01-introduccion.html a 12-apendices.html en orden, los estilos propios de cada parte y un solo paginar.js:
+# 01-introduccion.html a 10-apendices.html en orden, los estilos propios de cada parte y un solo paginar.js:
 # la numeración de páginas es continua, el índice general encuentra las páginas de todos los capítulos y,
 # al imprimir el documento de una sola vez, sus enlaces siguen funcionando en el PDF.
 use strict; use warnings; use utf8;
@@ -78,7 +78,7 @@ my $html = <<"HTML";
 <html lang="$lang">
 <head>
 <meta charset="utf-8">
-<title>PopGeneticsPro · Manual de usuario</title>
+<title>ClusteringPro · Manual de usuario</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- documento generado por herramientas/unir-manual.pl: no se edita a mano; se corrigen las partes -->
 $links

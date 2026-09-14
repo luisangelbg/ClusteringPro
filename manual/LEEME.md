@@ -51,6 +51,8 @@ manual/
     10-apendices.html  apéndices A–F: formatos de archivo, 16 reglas de decisión reunidas (entre las marcas
                        "reglas: inicio/fin", las escribe reunir-reglas.pl), glosario, solución de problemas,
                        78 referencias verificadas con DOI y componentes de terceros
+    manual-completo.html  portada y partes unidas por unir-manual.pl, para imprimir el PDF (no se edita)
+  ClusteringPro User's Manual.pdf   el manual completo en español
   en/                  versión en inglés (pendiente)
 ```
 
@@ -151,6 +153,20 @@ Recetas de las capturas actuales (`h` es la altura del marco cuando no es la pre
 Los recortes se hacen con `System.Drawing` desde PowerShell sobre la captura a 2×. Las cifras del demo que cita el capítulo 2 (cofenética por enlace, iteraciones, SS entre/total, silueta y ARI) se obtuvieron de la propia app con la semilla fija del demo; si el demo cambia, hay que recalcularlas.
 
 Dos trucos de paginación aprendidos con el capítulo 2: una tabla con `rowspan` se rompe cuando el paginador la parte entre hojas (mejor repetir la familia en la primera fila de cada grupo y dejar celdas vacías), y una caja `regla` no lleva relleno interior porque está pensada para una tabla (un párrafo suelto necesita su propio `padding`).
+
+## Cómo obtener el PDF del manual completo
+
+Primero se unen las partes en un solo documento y después se imprime de una vez, con el servidor local en marcha:
+
+```
+perl herramientas/unir-manual.pl es
+msedge --headless=new --no-pdf-header-footer --virtual-time-budget=180000 --print-to-pdf=C:\ruta\sin\espacios\manual-es.pdf "http://localhost:8900/manual/es/manual-completo.html"
+```
+
+- `unir-manual.pl` escribe `es/manual-completo.html` con la portada, las 10 partes de `01-introduccion.html` a `10-apendices.html` y los estilos propios de cada parte. Una regla que un capítulo define distinto se limita a las hojas de ese capítulo. Ese archivo no se edita: se corrigen las partes y se vuelve a generar. Antes, si cambió alguna regla de decisión, se corre `reunir-reglas.pl`.
+- Hay que imprimirlo de una sola vez. Unir PDF sueltos pierde los enlaces del índice y reinicia la numeración.
+- Edge no escribe el PDF si la ruta de `--print-to-pdf` tiene espacios; imprime en una carpeta sin espacios y copia el archivo.
+- El resultado va en `manual/ClusteringPro User's Manual.pdf`: 239 hojas (portada, 5 preliminares con números romanos y 233 numeradas) y 95 enlaces internos (índice general y entradas de cada capítulo).
 
 ## Cómo revisar una parte o imprimir la portada
 
