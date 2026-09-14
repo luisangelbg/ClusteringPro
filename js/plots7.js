@@ -16,7 +16,7 @@ P7.meansHeat = (cfg, PRF) => {
   const vals = vars.flatMap(v => v.clusters.map((_, c) => val(v, c))).filter(isFinite);
   const lim = kind === 'mean' ? null : Math.max(...vals.map(Math.abs), 1e-9);
   const cm = Fig.colormaps[cfg.cmap] || Fig.colormaps.rdbu, g = Fig.g();
-  vars.forEach((v, j) => { const mn = kind === 'mean' ? Math.min(...v.clusters.map(c => c.mean)) : 0, mx = kind === 'mean' ? Math.max(...v.clusters.map(c => c.mean)) : 0; for (let c = 0; c < k; c++) { const x = val(v, c); const t = kind === 'mean' ? (mx > mn ? (x - mn) / (mx - mn) : 0.5) : 0.5 + 0.5 * Math.max(-1, Math.min(1, x / lim)); const col = cm(kind === 'mean' ? t : 1 - t); g.appendChild(Fig.el('rect', { x: f.x0 + j * cw, y: f.y0 + c * ch, width: cw - 1.5, height: ch - 1.5, fill: col, rx: 2 })); if (cfg.values !== false && cw > 34) g.appendChild(Fig.text(f.x0 + j * cw + cw / 2, f.y0 + c * ch + ch / 2 + 4, kind === 'mean' ? fmtNum(x, 2) : x.toFixed(1), { size: Math.min(10, cw * 0.28), anchor: 'middle', fill: Fig.onColor(col), font: f.font, role: 'label', weight: kind === 'vtest' && Math.abs(x) > 1.96 ? 'bold' : 'normal' })); } g.appendChild(Fig.text(f.x0 + j * cw + cw / 2 + 4, f.y0 + k * ch + 8, v.name, { size: 10, anchor: 'end', rotate: -60, fill: f.t.fg, font: f.font, role: 'tick' })); });
+  vars.forEach((v, j) => { const mn = kind === 'mean' ? Math.min(...v.clusters.map(c => c.mean)) : 0, mx = kind === 'mean' ? Math.max(...v.clusters.map(c => c.mean)) : 0; for (let c = 0; c < k; c++) { const x = val(v, c); const t = kind === 'mean' ? (mx > mn ? (x - mn) / (mx - mn) : 0.5) : 0.5 + 0.5 * Math.max(-1, Math.min(1, x / lim)); const col = cm(kind === 'mean' ? t : 1 - t); g.appendChild(Fig.el('rect', { x: f.x0 + j * cw, y: f.y0 + c * ch, width: cw - 1.5, height: ch - 1.5, fill: col, rx: 2 })); if (cfg.values !== false && cw > 34) g.appendChild(Fig.text(f.x0 + j * cw + cw / 2, f.y0 + c * ch + ch / 2 + 4, kind === 'mean' ? fmtNum(x, 2) : (Math.abs(x) < 0.05 ? '0.0' : x.toFixed(1)), { size: Math.min(10, cw * 0.28), anchor: 'middle', fill: Fig.onColor(col), font: f.font, role: 'label', weight: kind === 'vtest' && Math.abs(x) > 1.96 ? 'bold' : 'normal' })); } g.appendChild(Fig.text(f.x0 + j * cw + cw / 2 + 4, f.y0 + k * ch + 8, v.name, { size: 10, anchor: 'end', rotate: -60, fill: f.t.fg, font: f.font, role: 'tick' })); });
   for (let c = 0; c < k; c++) g.appendChild(Fig.text(f.x0 - 8, f.y0 + c * ch + ch / 2 + 4, `Cluster ${c + 1} (n = ${PRF.sizes[c + 1] || 0})`, { size: 11, anchor: 'end', fill: Fig.color(cfg.palette, c), font: f.font, weight: 'bold', role: 'tick' }));
   const bx = f.x1 + 20, bh = k * ch;
   for (let q = 0; q < 40; q++) g.appendChild(Fig.el('rect', { x: bx, y: f.y0 + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(kind === 'mean' ? 1 - q / 39 : q / 39) }));
@@ -50,7 +50,9 @@ P7.parallel = (cfg, PRF) => {
   const f = Fig.frame(svg, cfg, { margin: { left: 60, right: 24, bottom: 90, top: 56 } });
   const xs = vars.map((_, i) => f.x0 + (vars.length === 1 ? 0.5 : i / (vars.length - 1)) * (f.x1 - f.x0));
   const zObj = (v, i) => v.sd > 0 ? (v.groups.flat()[i] - v.mean) / v.sd : 0;
-  const lim = Math.max(2.5, ...vars.flatMap(v => v.clusters.map(c => Math.abs(c.z))));
+  let lim = Math.max(2.5, ...vars.flatMap(v => v.clusters.map(c => Math.abs(c.z))));
+  /* the faint object lines must stay inside the axis: widen the range to the most extreme object */
+  if (cfg.objects && PRF.X) vars.forEach(v => { if (v.sd > 0) PRF.X.forEach(r => { lim = Math.max(lim, Math.abs((r[v.index] - v.mean) / v.sd)); }); });
   const y = Fig.scaleLinear(-lim, lim, f.y1, f.y0);
   Fig.axisY(f, y, Object.assign({}, cfg, { ylab: cfg.ylab || 'standardised value (z)' }));
   const g = Fig.g();
@@ -150,7 +152,7 @@ P7.tree = (cfg, T, k) => {
   const leaves = []; const count = nd => nd.left ? count(nd.left) + count(nd.right) : 1; const nLeaves = count(root);
   const svg = Fig.svg(cfg.width, cfg.height, cfg.theme);
   const f = Fig.frame(svg, cfg, { margin: { left: 20, right: 20, bottom: 20, top: 56 } });
-  const depthMax = T.depth, levelH = (f.y1 - f.y0 - 40) / Math.max(depthMax, 1), colW = (f.x1 - f.x0) / nLeaves;
+  const depthOf = nd => nd.left ? 1 + Math.max(depthOf(nd.left), depthOf(nd.right)) : 0, depthMax = depthOf(root), levelH = (f.y1 - f.y0 - 40) / Math.max(depthMax, 1), colW = (f.x1 - f.x0) / nLeaves;
   const g = Fig.g(); let cursor = 0;
   const layout = nd => { if (!nd.left) { nd.x = f.x0 + (cursor + 0.5) * colW; cursor++; } else { layout(nd.left); layout(nd.right); nd.x = (nd.left.x + nd.right.x) / 2; } nd.y = f.y0 + 20 + nd.depth * levelH; };
   layout(root);

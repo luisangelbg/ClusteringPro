@@ -66,7 +66,7 @@ function describeCluster(c) {
   const q = PRF.quant.map(v => ({ v, cc: v.clusters[c - 1] })).filter(x => isFinite(x.cc.vtest) && Math.abs(x.cc.vtest) >= 1.96).sort((a, b) => Math.abs(b.cc.vtest) - Math.abs(a.cc.vtest));
   const hi = q.filter(x => x.cc.vtest > 0).slice(0, 4), lo = q.filter(x => x.cc.vtest < 0).slice(0, 4);
   if (hi.length) parts.push(`<b>higher</b> ${hi.map(x => `${esc(x.v.name)} (${fmtNum(x.cc.mean, 3)} vs ${fmtNum(x.v.mean, 3)} overall, v = ${x.cc.vtest.toFixed(1)})`).join('; ')}`);
-  if (lo.length) parts.push(`<b>lower</b> ${lo.map(x => `${esc(x.v.name)} (${fmtNum(x.cc.mean, 3)} vs ${fmtNum(x.v.mean, 3)}, v = ${x.cc.vtest.toFixed(1)})`).join('; ')}`);
+  if (lo.length) parts.push(`<b>lower</b> ${lo.map(x => `${esc(x.v.name)} (${fmtNum(x.cc.mean, 3)} vs ${fmtNum(x.v.mean, 3)} overall, v = ${x.cc.vtest.toFixed(1)})`).join('; ')}`);
   const cats = [];
   PRF.cats.forEach(cv => cv.rows.forEach(r => { const cc = r.clusters[c - 1]; if (cc.vtest >= 1.96 && cc.count >= 2) cats.push(`${esc(cv.name)} = ${esc(String(r.level))} (${Math.round(cc.propInCluster * 100)} % of the cluster vs ${Math.round(r.total / PRF.n * 100)} % overall)`); }));
   if (cats.length) parts.push(`<b>over-represented categories</b>: ${cats.slice(0, 5).join('; ')}`);
@@ -121,14 +121,16 @@ function runLDA() {
   LDA.cl = cl; LDA.labels = PRF.labels; LDA.model = LDA; LDA.ms = performance.now() - t0;
   TREE = PR.tree(X, PRF.numNames, cl, k, { maxDepth: +el('treeDepth').value || 3, minLeaf: +el('treeLeaf').value || 3 });
   state.lda = LDA; state.tree = TREE;
-  statTiles('ldaTiles', [['Wilks Λ', fmtFixed(LDA.wilks, 3), `χ² ${fmtNum(LDA.chi, 1)}, df ${LDA.df}, p ${fmtP(LDA.pWilks)}`, LDA.pWilks < 0.05 ? 'ok' : 'warn'], ['Resubstitution accuracy', fmtPct(LDA.accuracy, 1), 'objects re-classified into their own cluster'], ['Leave-one-out accuracy', isFinite(LDA.loo) ? fmtPct(LDA.loo, 1) : '—', 'honest estimate for new objects', LDA.loo > 0.9 ? 'ok' : LDA.loo > 0.7 ? 'warn' : 'bad'], ['Discriminant axes', LDA.axes.length, LDA.pct.map((v, i) => `LD${i + 1} ${fmtPct(v, 0)}`).join(' · ')], ['Tree rules', TREE.rules.length, `depth ≤ ${TREE.depth} · accuracy ${fmtPct(TREE.accuracy, 0)}`]]);
+  const wilksTxt = LDA.wilks < 0.001 ? LDA.wilks.toExponential(1) : fmtFixed(LDA.wilks, 3);
+  statTiles('ldaTiles', [['Wilks Λ', wilksTxt, `χ² ${fmtNum(LDA.chi, 1)}, df ${LDA.df}, p ${fmtP(LDA.pWilks)}`, LDA.pWilks < 0.05 ? 'ok' : 'warn'], ['Resubstitution accuracy', fmtPct(LDA.accuracy, 1), 'objects re-classified into their own cluster'], ['Leave-one-out accuracy', isFinite(LDA.loo) ? fmtPct(LDA.loo, 1) : '—', 'honest estimate for new objects', LDA.loo > 0.9 ? 'ok' : LDA.loo > 0.7 ? 'warn' : 'bad'], ['Discriminant axes', LDA.axes.length, LDA.pct.map((v, i) => `LD${i + 1} ${fmtPct(v, 0)}`).join(' · ')], ['Tree rules', TREE.rules.length, `depth ≤ ${TREE.depth} · accuracy ${fmtPct(TREE.accuracy, 0)}`]]);
+  if (isFinite(LDA.loo) && LDA.accuracy - LDA.loo > 0.15) showMessage('ldaMessages', 'warning', `Resubstitution accuracy (${fmtPct(LDA.accuracy, 0)}) is much higher than leave-one-out (${fmtPct(LDA.loo, 0)}): with ${p} variables for ${n} objects the rule memorises the training objects. Use fewer, more discriminating variables before assigning new objects.`);
   const M = LDA.confusion, Ml = LDA.confusionLoo;
   buildTable('ldaConfusion', [{ key: 'c', label: 'Cluster \\ predicted' }].concat(Array.from({ length: k }, (_, j) => ({ key: 'p' + j, label: `C${j + 1}`, num: true, html: true }))), M.map((r, i) => { const o = { c: `Cluster ${i + 1}` }; r.forEach((v, j) => o['p' + j] = i === j ? `<b>${v}</b>${isFinite(LDA.loo) ? ` <span class="hint" style="margin:0">(${Ml[i][j]})</span>` : ''}` : `${v}${isFinite(LDA.loo) ? ` <span class="hint" style="margin:0">(${Ml[i][j]})</span>` : ''}`); return o; }), { caption: 'Confusion matrix: resubstitution (leave-one-out in parentheses)' });
   buildTable('ldaCoef', [{ key: 'v', label: 'Variable' }].concat(LDA.axes.map((_, t) => ({ key: 'a' + t, label: `LD${t + 1} std. coef.`, num: true }))).concat(LDA.axes.map((_, t) => ({ key: 's' + t, label: `LD${t + 1} structure r`, num: true }))), PRF.numNames.map((nm, j) => { const o = { v: nm }; LDA.axes.forEach((_, t) => { o['a' + t] = fmtFixed(LDA.stdCoef[t][j], 3); o['s' + t] = fmtFixed(LDA.structure[t][j], 3); }); return o; }), { caption: 'Standardised discriminant coefficients (weight of each variable) and structure correlations (variable vs. axis)' });
   el('treeRules').innerHTML = '<ol>' + TREE.rules.map(r => `<li><b>Cluster ${r.cluster}</b> ${r.conditions.length ? 'if ' + r.conditions.map(esc).join(' and ') : '(everything)'} <span class="hint" style="margin:0">— n = ${r.n}, ${Math.round(r.purity * 100)} % pure</span></li>`).join('') + '</ol>';
   const mount = (id, spec) => { try { Fig.mount(id, spec); } catch (e) { console.error(id, e); el(id).innerHTML = `<div class="msg msg-error">${esc(e.message)}</div>`; } };
   const pal = { key: 'palette', label: 'Palette', type: 'select', options: Object.entries(Fig.paletteNames) };
-  mount('fig7LDA', { title: 'Discriminant map', fileName: 'lda_map', width: 900, height: 600, defaults: { palette: 'cluster', title: 'Linear discriminant analysis of the clusters', subtitle: `Wilks Λ = ${LDA.wilks.toFixed(3)} · leave-one-out accuracy ${isFinite(LDA.loo) ? fmtPct(LDA.loo, 0) : '—'}`, ellipses: true, labels: 'auto', labelSize: 9, pointSize: 4.5, legendPos: 'right' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'subtitle', label: 'Subtitle', type: 'text' }, { key: 'ellipses', label: '95 % ellipses', type: 'checkbox' }, { key: 'labels', label: 'Object labels', type: 'select', options: [['auto', 'automatic (n ≤ 60)'], ['all', 'all'], ['none', 'none']] }, { key: 'labelSize', label: 'Label size', type: 'range', min: 6, max: 16, step: 0.5 }, { key: 'pointSize', label: 'Point size', type: 'range', min: 2, max: 10, step: 0.5 }, pal, { key: 'legendPos', label: 'Legend position', type: 'select', options: [['right', 'Top right'], ['left', 'Top left'], ['bottom', 'Below the plot'], ['none', 'Hidden']] }], render: cfg => P7.lda(cfg, LDA) });
+  mount('fig7LDA', { title: 'Discriminant map', fileName: 'lda_map', width: 900, height: 600, defaults: { palette: 'cluster', title: 'Linear discriminant analysis of the clusters', subtitle: `Wilks Λ = ${wilksTxt} · leave-one-out accuracy ${isFinite(LDA.loo) ? fmtPct(LDA.loo, 0) : '—'}`, ellipses: true, labels: 'auto', labelSize: 9, pointSize: 4.5, legendPos: 'right' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'subtitle', label: 'Subtitle', type: 'text' }, { key: 'ellipses', label: '95 % ellipses', type: 'checkbox' }, { key: 'labels', label: 'Object labels', type: 'select', options: [['auto', 'automatic (n ≤ 60)'], ['all', 'all'], ['none', 'none']] }, { key: 'labelSize', label: 'Label size', type: 'range', min: 6, max: 16, step: 0.5 }, { key: 'pointSize', label: 'Point size', type: 'range', min: 2, max: 10, step: 0.5 }, pal, { key: 'legendPos', label: 'Legend position', type: 'select', options: [['right', 'Top right'], ['left', 'Top left'], ['bottom', 'Below the plot'], ['none', 'Hidden']] }], render: cfg => P7.lda(cfg, LDA) });
   mount('fig7Tree', { title: 'Classification tree', fileName: 'classification_tree', width: 960, height: 420, defaults: { palette: 'cluster', title: 'Decision rules that reproduce the clusters', legendPos: 'right' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, pal], render: cfg => P7.tree(cfg, TREE, k) });
 }
 
@@ -168,6 +170,13 @@ function refresh() {
   enableStep(8, false); el('nextBtn7').disabled = true;
   el('prSource').value = state.partition ? 'partition' : 'tree';
   renderVarLists();
+  clearMessages('prMessages');
+  const V = variables();
+  if (!V.num.length && !V.cat.length) {
+    /* a supplied distance matrix has no variables: nothing to profile, but the report must stay reachable */
+    showMessage('prMessages', 'info', 'Your data are a distance matrix: there are no variables to describe the clusters with. The partition and its validation are still reported in Block 8.');
+    enableStep(8, true); el('nextBtn7').disabled = false;
+  }
 }
 function init() {
   if (!el('prRun')) return;

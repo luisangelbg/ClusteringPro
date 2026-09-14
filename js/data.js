@@ -542,7 +542,7 @@ function applyPrep() {
   if (state.isDistance) {
     const dm = state.distInput;
     const mds = S.cmdscale(dm.D);
-    Object.assign(state, { X: mds.points, Xnames: mds.points[0].map((_, j) => 'MDS' + (j + 1)), Xkinds: mds.points[0].map(() => 'quant'), Xdummy: mds.points[0].map(() => false), labels: dm.labels, groups: null, rowIndex: dm.labels.map((_, i) => i), cat: [], catNames: [], numRaw: null, D0: dm.D, mdsPct: mds.pct });
+    Object.assign(state, { X: mds.points, Xnames: mds.points[0].map((_, j) => 'MDS' + (j + 1)), Xkinds: mds.points[0].map(() => 'quant'), Xdummy: mds.points[0].map(() => false), labels: dm.labels, groups: null, rowIndex: dm.labels.map((_, i) => i), cat: [], catNames: [], numNames: [], numKinds: [], numRaw: null, D0: dm.D, mdsPct: mds.pct });
     prep.dropped = 0; prep.imputed = 0;
     runEDA();
     return;

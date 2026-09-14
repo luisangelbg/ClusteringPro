@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · Manual de usuario · Bloque 7: perfiles, interpretación y predicción</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b7" data-pestana="B7" data-orden="8" style="--acento: var(--b7)">
+  <div class="cap-apertura">
+    <div class="cap-num">B7</div>
+    <div class="cap-etiqueta">Capítulo ocho · Bloque 7 · Profiles</div>
+    <h1 data-corto="Bloque 7 · Perfiles, interpretación y predicción">Perfiles, interpretación y predicción</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Un grupo solo tiene valor cuando se le puede poner nombre. Este bloque convierte las etiquetas "grupo 1, grupo 2" en descripciones: qué variables están por encima o por debajo de la media en cada grupo, qué categorías y qué especies lo caracterizan, qué reglas sencillas lo reconocen y cómo asignar a los grupos objetos que no participaron en el análisis.</p>
+    <div class="cap-franja"><span class="k7"></span><span class="k7" style="opacity:.75"></span><span class="k7" style="opacity:.5"></span><span class="k7" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>8.1</b>Describir los grupos: valores de prueba</li>
+      <li><b>8.2</b>Variables categóricas</li>
+      <li><b>8.3</b>Especies indicadoras</li>
+      <li><b>8.4</b>Análisis discriminante</li>
+      <li><b>8.5</b>Reglas del árbol de clasificación</li>
+      <li><b>8.6</b>Asignar nuevas observaciones</li>
+      <li><b>8.7</b>Ajustes, tablas y figuras del bloque</li>
+      <li><b>8.8</b>Paso a paso</li>
+    </ul>
+  </div>
+
+  <p class="lead">El Bloque 7 tiene una tarjeta de teoría y cuatro tarjetas de trabajo. En <span class="ui">1 · Profile the clusters</span> eliges la partición y las variables. <span class="ui">2 · What characterises each cluster</span> describe cada grupo con casillas, fichas escritas, tablas y figuras. <span class="ui">3 · Discriminant analysis and classification rules</span> ajusta un análisis discriminante lineal y un árbol de clasificación que reproducen los grupos. <span class="ui">4 · Assign new observations</span> usa esas reglas para clasificar objetos nuevos. Las tarjetas 2 a 4 aparecen al pulsar <span class="ui">Profile →</span>; ese mismo botón habilita el Bloque 8.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 8.1.</b> Las herramientas del bloque y la pregunta que responde cada una.</caption>
+    <thead><tr><th style="width:30%">Herramienta</th><th style="width:30%">Pregunta</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr><td>Valor de prueba <i>v</i>, ANOVA y Kruskal–Wallis</td><td>¿Qué variables distinguen cada grupo?</td><td>Medias por grupo con su <i>v</i>; <i>F</i>, η² y valores P por variable.</td></tr>
+      <tr><td>Proporciones y χ²</td><td>¿Qué categorías abundan en cada grupo?</td><td>Categorías sobre y subrepresentadas; V de Cramér.</td></tr>
+      <tr><td>Valor indicador (IndVal)</td><td>¿Qué especies indican cada grupo?</td><td>Especificidad, fidelidad y prueba de permutación.</td></tr>
+      <tr><td>Análisis discriminante lineal</td><td>¿Qué combinación de variables separa los grupos?</td><td>Ejes discriminantes, pesos, exactitud y mapa.</td></tr>
+      <tr><td>Árbol de clasificación</td><td>¿Qué reglas simples reconocen cada grupo?</td><td>Reglas del tipo "Grupo 3 si DaysToFlower ≤ 73".</td></tr>
+      <tr><td>Asignación de objetos nuevos</td><td>¿A qué grupo pertenece un objeto nuevo?</td><td>Tres asignaciones y su acuerdo.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 8.1 -->
+  <h2 id="s8-1"><span class="num">8.1</span>Describir los grupos: valores de prueba</h2>
+  <p class="lead">Describir un grupo es decir en qué se aparta del conjunto. Como la función catdes de FactoMineR, la app compara la media de cada grupo con la general mediante un valor de prueba.</p>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué variables ofrece la tarjeta 1</div>
+    <table class="compacta">
+      <thead><tr><th style="width:40%">Columna del Bloque 1</th><th>Aparece como</th></tr></thead>
+      <tbody>
+        <tr><td>Activa cuantitativa, de conteo, binaria u ordinal</td><td>Variable cuantitativa, con sus valores originales (no los transformados del Bloque 2).</td></tr>
+        <tr><td>Activa nominal</td><td>Variable categórica.</td></tr>
+        <tr><td>Suplementaria</td><td>Cuantitativa o categórica según su tipo, marcada <span class="ui">supplementary</span>; los faltantes se sustituyen por la media o forman la categoría <span class="ui">(missing)</span>.</td></tr>
+        <tr><td>Etiqueta, grupos conocidos o excluida</td><td>No aparece.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">La casilla de especies indicadoras aparece cuando hay al menos dos variables de conteo o binarias, y viene marcada si el Bloque 2 reconoció una tabla ecológica o binaria. Con DBSCAN, el ruido se describe como un grupo más, el último.</p>
+  </div>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b7-tarjeta1.png" alt="La tarjeta 1 · Profile the clusters con los insectos">
+      <span class="marca" style="left:10.5%;top:19%">1</span>
+      <span class="marca" style="left:64%;top:19%">2</span>
+      <span class="marca" style="left:20.5%;top:45%">3</span>
+      <span class="marca" style="left:1%;top:86%">4</span>
+    </div>
+    <figcaption><b>Figura 8.1.</b> La tarjeta <span class="ui">1 · Profile the clusters</span> con la abundancia de insectos: 14 familias de conteos, todas marcadas, y la casilla de especies indicadoras activada.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Partition</span>: la del Bloque 5 (si existe) o el corte del árbol del Bloque 4.</li>
+    <li><span class="n">2</span><span class="ui">Indicator species</span>: trata los conteos y las variables binarias como especies y calcula su IndVal con el número de <span class="ui">Permutations</span> indicado (sección 8.3).</li>
+    <li><span class="n">3</span><span class="ui">Quantitative variables</span> y, si las hay, <span class="ui">Categorical variables</span>: todas vienen marcadas; la etiqueta de color dice el tipo de cada una.</li>
+    <li><span class="n">4</span><span class="ui">Profile →</span>.</li>
+  </ul>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · el valor de prueba</div>
+    <p>Si un grupo de <i>n<sub>k</sub></i> objetos se sacara al azar de los <i>N</i>, su media variaría alrededor de la media general con una varianza <i>s</i>²/<i>n<sub>k</sub></i> · (<i>N</i> − <i>n<sub>k</sub></i>)/(<i>N</i> − 1), donde <i>s</i>² es la varianza de la variable con denominador <i>N</i>. El <b>valor de prueba</b> es la diferencia entre la media del grupo y la general dividida entre esa desviación típica: <i>v</i> = (<i>x̄<sub>k</sub></i> − <i>x̄</i>)/√[<i>s</i>²/<i>n<sub>k</sub></i> · (<i>N</i> − <i>n<sub>k</sub></i>)/(<i>N</i> − 1)]. Se lee como un valor <i>z</i>: |<i>v</i>| ≥ 1.96 señala una variable que caracteriza al grupo, por arriba si <i>v</i> &gt; 0 y por abajo si <i>v</i> &lt; 0. Para cada variable, además, un <b>ANOVA</b> de una vía dice si separa los grupos en conjunto, con η² (proporción de la variación explicada) como tamaño del efecto, y la prueba de <b>Kruskal–Wallis</b> da la misma respuesta con rangos.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-resultados.png" alt="Casillas y fichas de los grupos con el maíz"></div>
+    <figcaption><b>Figura 8.2.</b> Las casillas y las fichas de los grupos con el maíz (k-means jerárquico, tres grupos). Cada ficha enumera hasta cuatro variables por arriba y cuatro por abajo con |<i>v</i>| ≥ 1.96, ordenadas por |<i>v</i>|, con la media del grupo frente a la general.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 8.2.</b> Las casillas de la tarjeta 2.</caption>
+    <thead><tr><th style="width:30%">Casilla</th><th>Qué muestra</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Partition</span></td><td>La partición descrita y el número de objetos.</td></tr>
+      <tr><td><span class="ui">Clusters</span></td><td>El número de grupos y sus tamaños.</td></tr>
+      <tr><td><span class="ui">Discriminating variables</span></td><td>Cuántas variables cuantitativas tienen ANOVA con p &lt; 0.05; en ámbar si ninguna.</td></tr>
+      <tr><td><span class="ui">Strongest separator</span></td><td>La variable de mayor <i>F</i>, con su η².</td></tr>
+      <tr><td><span class="ui">Associated categorical variables</span></td><td>Cuántas categóricas tienen χ² con p &lt; 0.05 (sección 8.2).</td></tr>
+      <tr><td><span class="ui">Indicator species</span></td><td>Cuántas especies son indicadoras con p &lt; 0.05 (sección 8.3).</td></tr>
+    </tbody>
+  </table>
+
+  <p>Las fichas traducen la tabla a frases. Con el maíz, el grupo 1 (14 accesiones del altiplano) florece tarde, 95.5 días frente a 80.6 (<i>v</i> = 5.4), y tiene hojas más angostas, mazorcas más bajas, plantas más bajas y mazorcas más cortas. El grupo 2 (15 de los valles) rinde más, 5.24 t/ha frente a 4.08 (<i>v</i> = 5.4), con granos más pesados y plantas y mazorcas más altas. El grupo 3 (15 de la costa) tiene más hileras y hojas más anchas, y florece antes: 66.9 días (<i>v</i> = −5.2). Una ficha sin ninguna variable significativa dice que se trata de un grupo "promedio" o pequeño.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-tabla.png" alt="Tabla de variables cuantitativas por grupo"></div>
+    <figcaption><b>Figura 8.3.</b> <span class="ui">Quantitative variables by cluster</span> con el maíz, ordenada de mayor a menor <i>F</i>. En cada grupo, la media y su <i>v</i> entre paréntesis; las medias con |<i>v</i>| ≥ 1.96 van en negritas y el <i>v</i> en verde si es positivo o en rojo si es negativo. Los días a floración separan los grupos mejor que ninguna otra variable (<i>F</i> = 156.3, η² = 0.88); las hileras, peor (<i>F</i> = 18.3, η² = 0.47).</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · los valores P de las variables activas son descriptivos</div>
+    <p>Los grupos se construyeron precisamente para que difieran en las variables activas, así que esas variables siempre saldrán "significativas". Con el ruido uniforme de la práctica 7, que no tiene grupos, cuatro de las cinco variables tienen ANOVA con p &lt; 0.05. Usa <i>v</i>, <i>F</i> y η² para <b>ordenar</b> y <b>describir</b>, no como prueba de que los grupos existen: eso lo dice el Bloque 6. Solo las variables <b>suplementarias</b>, que no intervinieron en el agrupamiento, permiten afirmaciones inferenciales, como "los grupos difieren en altitud" cuando la altitud no se usó para formarlos.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-heat.png" alt="Mapa de calor de los perfiles"></div>
+    <figcaption><b>Figura 8.4.</b> <span class="ui">Cluster profiles as a heat map</span>: la media de cada grupo en unidades de desviación estándar (<i>z</i>), en azul por encima de la media general y en rojo por debajo, con las variables ordenadas por <i>F</i>. Se lee de un vistazo: el altiplano en rojo salvo en floración, los valles en azul salvo en floración e hileras, y la costa con floración y peso de grano en rojo.</figcaption>
+  </figure>
+
+  <!-- 8.2 -->
+  <h2 id="s8-2"><span class="num">8.2</span>Variables categóricas</h2>
+  <p class="lead">Las variables nominales se describen con proporciones. Para cada categoría y cada grupo, la app compara la proporción de la categoría dentro del grupo con su proporción en todos los datos, con un valor de prueba construido igual que el de las medias.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · categorías sobre y subrepresentadas</div>
+    <p>Si una categoría ocupa la proporción <i>p</i> de los <i>N</i> objetos y el grupo tiene <i>n<sub>k</sub></i>, la proporción dentro del grupo tendría, al azar, una varianza <i>p</i>(1 − <i>p</i>)/<i>n<sub>k</sub></i> · (<i>N</i> − <i>n<sub>k</sub></i>)/(<i>N</i> − 1). El valor de prueba es la diferencia de proporciones entre su desviación típica, una aproximación normal a la prueba hipergeométrica: <i>v</i> ≥ 1.96 marca una categoría <b>sobrerrepresentada</b> (▲) y <i>v</i> ≤ −1.96 una <b>subrepresentada</b> (▼). Para la variable completa, la prueba de χ² de la tabla grupos × categorías dice si hay asociación, y la V de Cramér (de 0 a 1) cuánta.</p>
+  </div>
+
+  <p>Cada variable categórica tiene su propia tabla: una fila por categoría y una columna por grupo con el conteo y el porcentaje del grupo, las marcas ▲ y ▼, y el χ² con la V de Cramér en el título. Las fichas de los grupos añaden las categorías sobrerrepresentadas que aparecen al menos dos veces, con el porcentaje en el grupo frente al general. Con los perfiles de suelo en tres grupos (práctica 4), la textura tiene χ² = 72 con 10 grados de libertad y V = 1.00: cada textura cae en un solo grupo.</p>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b7-suelos-catsfig.png" alt="Composición de la textura por grupo"></div>
+    <figcaption><b>Figura 8.5.</b> <span class="ui">Composition of the categorical variables by cluster</span> con los suelos en tres grupos: una barra apilada por grupo con la proporción de cada textura. El grupo 1 es de francos (83 %) y francos limosos, el 2 de arcillas y francos arcillosos, y el 3 de francos arenosos (75 %) y arenas.</figcaption>
+  </figure>
+
+  <!-- 8.3 -->
+  <h2 id="s8-3"><span class="num">8.3</span>Especies indicadoras</h2>
+  <p class="lead">En ecología de comunidades, la pregunta natural no es qué media es alta sino qué especie <b>indica</b> cada grupo: una especie que vive casi solo en ese grupo y está en casi todos sus sitios. El valor indicador de Dufrêne y Legendre, IndVal, mide exactamente eso.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · especificidad por fidelidad</div>
+    <p>Para una especie y un grupo, la <b>especificidad A</b> es la parte de la abundancia media de la especie que corresponde a ese grupo: la media en el grupo dividida entre la suma de sus medias en todos los grupos. La <b>fidelidad B</b> es la proporción de sitios del grupo donde la especie aparece. IndVal = A × B, de 0 a 100 %. Cada especie se asigna al grupo donde su IndVal es máximo. La significancia se obtiene permutando las etiquetas de los grupos: el valor P es la proporción de permutaciones (más la observada) en que el IndVal máximo iguala o supera al observado. Con 499 permutaciones el valor P más pequeño posible es 0.002.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Tabla 8.3.</b> Cómo leer el IndVal.</caption>
+    <thead><tr><th style="width:26%">Patrón</th><th>Lectura</th></tr></thead>
+    <tbody>
+      <tr><td>A alto, B alto</td><td>Indicadora ideal: exclusiva y constante (<i>Sagittaria</i>, 100 × 90).</td></tr>
+      <tr><td>A alto, B bajo</td><td>Exclusiva pero rara: su presencia delata el grupo, su ausencia no dice nada (<i>Nymphaea</i>, 100 × 70).</td></tr>
+      <tr><td>A bajo, B alto</td><td>Constante pero compartida: frecuente en el grupo y también fuera (<i>Salix</i>, 71 × 100).</td></tr>
+      <tr><td>IndVal &gt; 50 % y p &lt; 0.05</td><td>Buena indicadora para describir o reconocer el grupo en campo.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-indval.png" alt="Tabla de valores indicadores con la presencia de especies"></div>
+    <figcaption><b>Figura 8.6.</b> La tabla <span class="ui">Indicator value (Dufrêne–Legendre)</span> con la presencia de especies (PAM, tres grupos), ordenada por IndVal; se ven las siete primeras de 22. <i>Sagittaria</i> es la indicadora más fuerte del grupo 2, los humedales: está en 9 de sus 10 sitios (B = 90 %) y en ningún otro (A = 100 %), IndVal = 90 %.</figcaption>
+  </figure>
+
+  <figure class="media" style="width:72%">
+    <div class="marco"><img src="../img/b7-indval-fig.png" alt="Gráfico de valores indicadores"></div>
+    <figcaption><b>Figura 8.7.</b> <span class="ui">Indicator species</span>: una barra por especie, coloreada por el grupo que indica, con A y B a la derecha y un asterisco si p &lt; 0.05. Las barras desvaídas del final (<i>Opuntia</i>, <i>Agave</i>, <i>Lupinus</i>) no son indicadoras. Diecisiete de las 22 especies lo son.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · con abundancias, la fidelidad pesa poco</div>
+    <p>La fidelidad cuenta presencias. En una tabla de abundancias donde casi todas las especies aparecen en todos los sitios, como la de insectos, B vale 100 % para todas y el IndVal se reduce a la especificidad: una familia es indicadora porque se concentra en un grupo, no porque falte en los demás. Con presencia y ausencia las dos partes cuentan.</p>
+  </div>
+
+  <!-- 8.4 -->
+  <h2 id="s8-4"><span class="num">8.4</span>Análisis discriminante</h2>
+  <p class="lead">Los valores de prueba miran una variable a la vez. El análisis discriminante lineal (LDA) busca la <b>combinación</b> de variables que mejor separa los grupos, y con ella una regla para clasificar cualquier objeto. La tarjeta 3 aparece cuando hay al menos una variable cuantitativa marcada.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · ejes que separan grupos</div>
+    <p>El LDA calcula la matriz de covarianza <b>dentro</b> de los grupos, <i>W</i>, y la matriz <b>entre</b> grupos, <i>B</i>, y busca los ejes que maximizan la varianza entre grupos relativa a la de dentro: los vectores propios de <i>W</i>⁻¹<i>B</i>. Hay a lo sumo <i>k</i> − 1 ejes (LD1, LD2…), y el porcentaje de cada uno dice qué parte de la separación explica. La <b>lambda de Wilks</b>, Λ = ∏ 1/(1 + λ<sub>i</sub>), va de 0 (separación total) a 1 (ninguna) y se prueba con la χ² de Bartlett. Para clasificar, cada objeto recibe la probabilidad posterior de pertenecer a cada grupo, suponiendo grupos normales con covarianza común; las probabilidades previas son proporcionales a los tamaños o iguales. Si <i>W</i> es casi singular, la app le suma una pequeña cresta (10⁻⁴ de su traza media).</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-lda.png" alt="Casillas y tablas del análisis discriminante con el maíz"></div>
+    <figcaption><b>Figura 8.8.</b> El análisis discriminante con el maíz. Λ = 2.2 × 10⁻⁵ (χ² = 402.8 con 16 grados de libertad), 100 % de acierto por resustitución y también dejando uno fuera. LD1 explica 67 % de la separación y LD2 33 %. La matriz de confusión da la resustitución y, entre paréntesis, la validación dejando uno fuera.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 8.4.</b> Casillas y tablas de la tarjeta 3.</caption>
+    <thead><tr><th style="width:30%">Elemento</th><th>Qué es</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Wilks Λ</span></td><td>La lambda con su χ², grados de libertad y valor P; en verde si p &lt; 0.05. Los valores muy pequeños se escriben en notación científica.</td></tr>
+      <tr><td><span class="ui">Resubstitution accuracy</span></td><td>Proporción de objetos que la regla devuelve a su propio grupo usando todos los datos. Siempre optimista.</td></tr>
+      <tr><td><span class="ui">Leave-one-out accuracy</span></td><td>Cada objeto se clasifica con una regla ajustada sin él: la estimación honesta para objetos nuevos. Verde &gt; 90 %, ámbar &gt; 70 %. Se calcula hasta 600 objetos.</td></tr>
+      <tr><td><span class="ui">Discriminant axes</span></td><td>Número de ejes y porcentaje de cada uno.</td></tr>
+      <tr><td><span class="ui">Tree rules</span></td><td>Reglas del árbol, profundidad y acierto (sección 8.5).</td></tr>
+      <tr><td>Coeficientes estandarizados</td><td>El peso de cada variable en cada eje, en unidades de desviación estándar dentro de grupos. Dicen qué variables usa la regla, pero se reparten entre variables correlacionadas.</td></tr>
+      <tr><td>Correlaciones de estructura</td><td>La correlación de cada variable con cada eje. Dicen qué <b>significa</b> el eje y son más estables que los coeficientes.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Con el maíz, LD1 correlaciona sobre todo con el rendimiento (<i>r</i> = 0.86), la altura de mazorca (0.84) y la de planta (0.82): es un eje de vigor que separa los valles del altiplano. LD2 correlaciona con los días a floración (0.77) y el peso de grano (0.73), y en sentido contrario con las hileras (−0.56): separa la costa, precoz y de muchas hileras, de los otros dos.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-lda-map.png" alt="Mapa discriminante del maíz"></div>
+    <figcaption><b>Figura 8.9.</b> <span class="ui">Discriminant map</span>: los objetos sobre LD1 y LD2 con su elipse del 95 % y el centroide de cada grupo (rombo). Una cruz marcaría un objeto mal clasificado; con el maíz no hay ninguno. Con solo dos grupos hay un único eje, y el mapa se convierte en una curva de densidad por grupo sobre LD1.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · muchas variables y pocos objetos</div>
+    <p>La regla discriminante tiene tantos parámetros como variables por grupo, y con muchas variables se aprende de memoria los objetos de entrenamiento. Dos avisos lo vigilan: <span class="ui">Few objects for … variables</span>, cuando hay menos objetos que variables más grupos, y <span class="ui">Resubstitution accuracy … is much higher than leave-one-out</span>, cuando la diferencia supera 15 puntos. Con la presencia de especies (22 variables, 30 sitios) la resustitución es perfecta, pero dejando uno fuera acierta solo el 53 % (práctica 2). Antes de clasificar objetos nuevos, desmarca en la tarjeta 1 las variables que no discriminan y vuelve a pulsar <span class="ui">Profile →</span>.</p>
+  </div>
+
+  <!-- 8.5 -->
+  <h2 id="s8-5"><span class="num">8.5</span>Reglas del árbol de clasificación</h2>
+  <p class="lead">Un árbol de clasificación resume los grupos en preguntas de sí o no sobre una variable a la vez. Pierde algo de exactitud frente al LDA, pero se explica en una frase y se aplica en campo sin calculadora.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · particiones sucesivas con el índice de Gini</div>
+    <p>El árbol empieza con todos los objetos y prueba cada variable y cada punto de corte (el punto medio entre dos valores observados consecutivos). Elige el corte que más reduce la <b>impureza de Gini</b>, 1 − Σ <i>p<sub>c</sub></i>², donde <i>p<sub>c</sub></i> es la proporción de cada grupo en el nodo. Repite el proceso en cada rama hasta que el nodo es puro, alcanza la profundidad máxima, tiene menos del doble del mínimo de objetos por hoja o ningún corte mejora la impureza. Cada hoja predice su grupo mayoritario, y cada camino de la raíz a una hoja es una regla.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-arbol.png" alt="Reglas y árbol de clasificación del maíz"></div>
+    <figcaption><b>Figura 8.10.</b> Las reglas y el árbol con el maíz. Bastan dos variables: las accesiones que florecen en 73 días o menos son de la costa (grupo 3); entre las tardías, las de 211 cm de altura o menos son del altiplano (grupo 1) y las más altas de los valles (grupo 2). Las tres hojas son puras. Cada nodo muestra la variable o el grupo, el número de objetos, el porcentaje del grupo mayoritario y una barra con la composición.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 8.5.</b> Controles de la tarjeta 3.</caption>
+    <thead><tr><th style="width:30%">Control</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Prior probabilities</span></td><td><span class="ui">Proportional to cluster sizes</span> (por omisión) o <span class="ui">Equal</span>. Con grupos de tamaños muy distintos, las previas iguales evitan que la regla favorezca al grupo grande.</td></tr>
+      <tr><td><span class="ui">Tree depth</span></td><td>De 1 a 6 niveles; 3 por omisión. Más profundidad, más reglas y más riesgo de ajustar el ruido.</td></tr>
+      <tr><td><span class="ui">Minimum objects per leaf</span></td><td>De 1 a 50; 3 por omisión. Evita reglas que describen uno o dos objetos.</td></tr>
+      <tr><td><span class="ui">Recompute</span></td><td>Vuelve a ajustar el LDA y el árbol con los controles nuevos, sin repetir los perfiles.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 8.6 -->
+  <h2 id="s8-6"><span class="num">8.6</span>Asignar nuevas observaciones</h2>
+  <p class="lead">Una tipología sirve de verdad cuando permite clasificar lo que venga después: una accesión nueva, un sitio muestreado el año siguiente, un suelo de otra parcela. La tarjeta 4 asigna objetos nuevos con tres reglas a la vez, y su acuerdo dice cuánto confiar en la asignación.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-predecir.png" alt="La tarjeta 4 con tres accesiones nuevas"></div>
+    <figcaption><b>Figura 8.11.</b> La tarjeta <span class="ui">4 · Assign new observations</span> tras pulsar <span class="ui">Fill with an example</span> y <span class="ui">Assign to clusters</span>. El ejemplo fabrica tres objetos cerca de las medias de los grupos 1, 2 y 3; las tres reglas los asignan a esos grupos con probabilidad posterior 1.000.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 8.6.</b> Las tres reglas de asignación y cómo preparar la tabla.</caption>
+    <thead><tr><th style="width:26%">Elemento</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">LDA cluster</span> · <span class="ui">Posterior</span></td><td>El grupo de mayor probabilidad posterior en el análisis discriminante, y esa probabilidad.</td></tr>
+      <tr><td><span class="ui">Nearest centroid</span></td><td>El grupo cuyo centroide está más cerca, tras estandarizar con la media y la desviación de los datos originales.</td></tr>
+      <tr><td><span class="ui">Tree rule</span></td><td>El grupo de la hoja a la que llega el objeto en el árbol.</td></tr>
+      <tr><td><span class="ui">Agreement</span></td><td><span class="ui">all three agree</span> o <span class="ui">methods differ</span>. Un desacuerdo señala un objeto entre grupos; la probabilidad posterior dice cuán dudoso es.</td></tr>
+      <tr><td>La tabla</td><td>Pégala o cárgala con <span class="ui">Elegir archivo</span> (CSV, TSV o texto). La primera fila debe tener los nombres de las variables, sin importar mayúsculas; una columna con otro nombre se toma como etiqueta. Las variables que falten se rellenan con la media general, con un aviso.</td></tr>
+      <tr><td><span class="ui">⬇ Assignments (CSV)</span></td><td>Guarda por objeto las tres asignaciones, la probabilidad y los valores usados.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · los objetos nuevos no cambian los grupos</div>
+    <p>Asignar no es volver a agrupar: los centroides, la regla discriminante y el árbol quedan fijos. Un objeto muy distinto de todos se asignará igualmente al grupo menos lejano, con posterior alta si está lejos en la dirección de ese grupo. Si esperas objetos de un tipo que no estaba en los datos, compara sus valores con los perfiles de la tarjeta 2 y, si hace falta, repite el análisis con ellos incluidos.</p>
+  </div>
+
+  <!-- 8.7 -->
+  <h2 id="s8-7"><span class="num">8.7</span>Ajustes, tablas y figuras del bloque</h2>
+  <p>El bloque produce hasta ocho figuras, todas editables y exportables con el estudio de figuras (capítulo 2). Las cuatro primeras aparecen con variables cuantitativas; la de categorías, con categóricas; la de especies, con IndVal; las dos últimas, con la tarjeta 3.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 8.7.</b> Las figuras del bloque y sus controles propios.</caption>
+    <thead><tr><th style="width:28%">Figura</th><th style="width:30%">Qué muestra</th><th>Controles propios</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cluster profiles as a heat map</span></td><td>Medias por grupo y variable (figura 8.4).</td><td><span class="ui">Cell value</span> (<i>z</i>, valor de prueba <i>v</i> o media escalada por variable), <span class="ui">Colour map</span>, mostrar valores, todas las variables o las 30 más discriminantes.</td></tr>
+      <tr><td><span class="ui">Radar of cluster means</span></td><td>Un polígono por grupo con las medias escaladas de 0 a 1 (figura 8.12).</td><td>Número de variables (las más discriminantes), escala por el rango de las medias o de los datos, opacidad del relleno, grosor de línea, tamaño de etiquetas, leyenda.</td></tr>
+      <tr><td><span class="ui">Parallel coordinates</span></td><td>Las medias en <i>z</i> unidas por líneas, con los objetos en trazo tenue (figura 8.13).</td><td>Número de variables, dibujar los objetos (por omisión hasta 200), grosor de línea.</td></tr>
+      <tr><td><span class="ui">Distribution of each variable by cluster</span></td><td>Diagramas de caja por grupo, las variables más discriminantes primero (figura 8.14).</td><td>Número de variables (hasta 24).</td></tr>
+      <tr><td><span class="ui">Composition of the categorical variables</span></td><td>Barras apiladas por grupo (figura 8.5).</td><td>Número de variables, paleta de categorías.</td></tr>
+      <tr><td><span class="ui">Indicator species</span></td><td>IndVal por especie (figura 8.7).</td><td>Número de especies, nombres en cursiva.</td></tr>
+      <tr><td><span class="ui">Discriminant map</span></td><td>Objetos en LD1 y LD2 (figura 8.9).</td><td>Elipses del 95 %, etiquetas (automáticas hasta 60), tamaño de etiquetas y de puntos, leyenda.</td></tr>
+      <tr><td><span class="ui">Classification tree</span></td><td>El árbol con la composición de cada nodo (figura 8.10).</td><td>Título, paleta y leyenda.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · qué se descarga y qué pasa al Bloque 8</div>
+    <p><span class="ui">⬇ Profile table (CSV)</span> guarda, por variable cuantitativa, la media y la desviación generales; por grupo, el tamaño, la media, la desviación y el valor de prueba; y el <i>F</i>, su valor P, η², la <i>H</i> de Kruskal–Wallis y su valor P. El informe del Bloque 8 incluye las fichas de los grupos, las tablas y las figuras tal como las editaste. Si el Bloque 3 recalcula la matriz, los resultados del Bloque 7 se borran y hay que volver a pulsar <span class="ui">Profile →</span>.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b7-radar.png" alt="Radar de los perfiles del maíz"></div>
+    <figcaption><b>Figura 8.12.</b> <span class="ui">Radar of cluster means</span> con el maíz. Cada eje va del grupo con la media menor (centro) al de la mayor (borde): los valles forman el polígono grande, el altiplano solo sale hacia la floración y la costa hacia las hileras y el ancho de hoja. El radar exagera diferencias pequeñas; úsalo para comunicar, no para medir.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-paralelo.png" alt="Coordenadas paralelas del maíz"></div>
+    <figcaption><b>Figura 8.13.</b> <span class="ui">Parallel coordinates of the cluster means</span>: la línea gruesa de cada grupo sobre las 44 accesiones en trazo tenue. Muestra a la vez el perfil medio y cuánto se dispersan los objetos a su alrededor.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-cajas.png" alt="Diagramas de caja por grupo"></div>
+    <figcaption><b>Figura 8.14.</b> <span class="ui">Distribution of each variable by cluster</span>: un panel por variable con su valor P del ANOVA. Las cajas muestran lo que las medias esconden: los tres grupos apenas se solapan en floración, y en hileras el grupo de los valles ocupa casi todo el rango de los otros dos.</figcaption>
+  </figure>
+
+  <!-- 8.8 -->
+  <h2 id="s8-8"><span class="num">8.8</span>Paso a paso</h2>
+  <p class="lead">Con cada ejemplo preparado como en los capítulos anteriores (UPGMA en el Bloque 4 para la presencia de especies y los insectos, el método propuesto en el Bloque 5 y el Bloque 6 evaluado), la tabla 8.8 resume lo que dice el Bloque 7 con todas las variables marcadas. Las prácticas se detienen en cada caso.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 8.8.</b> Los siete ejemplos en el Bloque 7.</caption>
+    <thead><tr><th style="width:17%">Ejemplo</th><th class="c" style="width:9%"><i>k</i></th><th style="width:22%">Mejor separador</th><th class="c" style="width:13%">Discriminantes</th><th class="c" style="width:14%">LDA dejando uno fuera</th><th>Árbol</th></tr></thead>
+    <tbody>
+      <tr><td>Razas de maíz</td><td class="c">3</td><td>DaysToFlower (η² 0.88)</td><td class="c">8 de 8</td><td class="c">100 %</td><td>3 reglas, 100 %</td></tr>
+      <tr><td>Presencia de especies</td><td class="c">3</td><td><i>Sagittaria</i> (η² 0.86)</td><td class="c">17 de 22</td><td class="c">53.3 %</td><td>5 reglas, 93 %</td></tr>
+      <tr><td>Abundancia de insectos</td><td class="c">3</td><td>Carabidae (η² 0.77)</td><td class="c">14 de 14</td><td class="c">100 %</td><td>3 reglas, 100 %</td></tr>
+      <tr><td>Perfiles de suelo</td><td class="c">3</td><td>CEC_cmol_kg (η² 0.96)</td><td class="c">8 de 8</td><td class="c">100 %</td><td>3 reglas, 100 %</td></tr>
+      <tr><td>Matriz de distancias</td><td class="c">3</td><td colspan="4">Sin variables: no hay perfiles; el Bloque 8 queda habilitado.</td></tr>
+      <tr><td>Cuatro grupos simulados</td><td class="c">4</td><td>V5 (η² 0.94)</td><td class="c">5 de 5</td><td class="c">100 %</td><td>4 reglas, 100 %</td></tr>
+      <tr><td>Ruido uniforme</td><td class="c">3</td><td>V5 (η² 0.63)</td><td class="c">4 de 5</td><td class="c">91.7 %</td><td>6 reglas, 95 %</td></tr>
+    </tbody>
+  </table>
+  <p class="small">Los suelos, con los tres grupos adoptados en el Bloque 6 (práctica 4 del capítulo 7). "Discriminantes" cuenta las variables con ANOVA p &lt; 0.05.</p>
+
+  <h3>Práctica 1 · Razas de maíz: tres tipos con nombre</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con el maíz y k-means jerárquico con tres grupos, entra al Bloque 7. La partición propuesta es la del Bloque 5 y las ocho variables vienen marcadas. Pulsa <span class="ui">Profile →</span> (figuras 8.2 a 8.4).</li>
+      <li>Lee las fichas y ponles nombre: el grupo 1 es tardío y de porte bajo, el 2 vigoroso y rendidor, el 3 precoz. Comprueba en el Bloque 6 que coinciden con el altiplano, los valles y la costa.</li>
+      <li>Baja a la tarjeta 3 (figuras 8.8 a 8.10): Λ = 2.2 × 10⁻⁵, 100 % dejando uno fuera y un árbol de tres reglas con floración y altura de planta.</li>
+      <li>En la tarjeta 4 pulsa <span class="ui">Fill with an example</span> y <span class="ui">Assign to clusters</span> (figura 8.11). Cambia a mano la floración del primer objeto a 70 y vuelve a asignar: el árbol y el discriminante lo mandan a la costa (posterior 0.989), el centroide lo deja en el altiplano y la columna de acuerdo dice <span class="ui">methods differ</span>.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Los perfiles convierten números en tipos reconocibles: maíces de altura, tardíos y bajos; de valle, altos y rendidores; de costa, precoces. El árbol muestra que dos mediciones de campo bastan para reconocerlos, y el desacuerdo al alterar un objeto enseña por qué conviene usar las tres reglas: el árbol decide con un solo umbral, el discriminante da mucho peso a la floración y el centroide pesa por igual las ocho variables. Un objeto precoz pero con el resto de rasgos del altiplano queda, con razón, marcado como dudoso.</p>
+  </div>
+
+  <h3>Práctica 2 · Presencia de especies: indicadoras y una regla sobreajustada</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Jaccard, UPGMA y PAM, entra al Bloque 7: la casilla de especies indicadoras ya viene marcada. Pulsa <span class="ui">Profile →</span> (figuras 8.6 y 8.7): 17 de 22 especies son indicadoras.</li>
+      <li>Lee las fichas: el grupo 1 son pastizales (<i>Bouteloua</i>, <i>Muhlenbergia</i>, <i>Bromus</i>, <i>Festuca</i>), el 2 humedales (<i>Sagittaria</i>, <i>Typha</i>, <i>Polygonum</i>, <i>Salix</i>, <i>Nymphaea</i>) y el 3 bosques (<i>Pinus</i>, <i>Arbutus</i>, <i>Quercus</i>, <i>Alnus</i>).</li>
+      <li>Baja a la tarjeta 3 (figura 8.15): 100 % por resustitución, 53.3 % dejando uno fuera, y el aviso de que la regla memoriza los sitios.</li>
+      <li>Desmarca en la tarjeta 1 las especies que no son indicadoras o tienen IndVal menor que 60 %; quedan 13. Vuelve a perfilar: la exactitud dejando uno fuera sube de 53.3 % a 90 % y el aviso desaparece.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-binario-lda.png" alt="Aviso de sobreajuste en el discriminante con la presencia de especies"></div>
+    <figcaption><b>Figura 8.15.</b> El discriminante con 22 especies y 30 sitios: Wilks muy significativo y resustitución perfecta, pero dejando uno fuera la matriz de confusión reparte los sitios entre grupos equivocados (entre paréntesis). El aviso ámbar lo explica.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Con comunidades, las especies indicadoras son la mejor descripción: dicen qué buscar en campo para reconocer cada hábitat. La regla discriminante con todas las especies, en cambio, es un espejismo: con más parámetros que información se ajusta a los 30 sitios y falla con cualquiera nuevo. La exactitud dejando uno fuera es la única que importa para predecir, y la de resustitución solo sirve para compararla.</p>
+  </div>
+
+  <h3>Práctica 3 · Abundancia de insectos: un grupo que no tiene rasgos propios</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Bray–Curtis, UPGMA y PAM con tres grupos (4 / 8 / 12), pulsa <span class="ui">Profile →</span> con las 14 familias y las especies indicadoras marcadas (figuras 8.1 y 8.16).</li>
+      <li>Lee las fichas: el grupo 2 (los 8 campos convencionales) tiene más chicharritas, larvas de lepidóptero, pulgones y crisomélidos, y menos ácaros, carábidos, colémbolos y arañas. El grupo 3 (setos y cuatro campos orgánicos) tiene más carábidos, abejas, ácaros y arañas.</li>
+      <li>El grupo 1, los otros cuatro campos orgánicos, solo tiene menos curculiónidos (<i>v</i> = −2.0) y ninguna especie indicadora.</li>
+      <li>En la tarjeta 3, el árbol lo resume en dos variables: Apidae &gt; 6.5 da el grupo 3; con menos abejas, Staphylinidae &gt; 4.5 da el grupo 1 y el resto el 2.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-insectos-narr.png" alt="Fichas de los grupos con los insectos"></div>
+    <figcaption><b>Figura 8.16.</b> Las fichas con los insectos. Los grupos 2 y 3 tienen perfiles opuestos y muchas indicadoras; el grupo 1 apenas se aparta de la media.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Un grupo sin rasgos propios es un grupo <b>intermedio</b>: sus objetos están entre los extremos y no tienen nada que los caracterice por sí mismos. Es la misma señal que dieron el Bloque 5 (campos orgánicos repartidos) y el Bloque 6 (su grupo, dudoso por bootstrap). Coherentes entre sí, las tres evidencias apoyan describir un gradiente de manejo más que tres tipos nítidos.</p>
+  </div>
+
+  <h3>Práctica 4 · Perfiles de suelo: un grupo que se define por su textura</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con Gower y PAM, adopta en el Bloque 6 los tres grupos que propuso el voto y vuelve a correr PAM en el Bloque 5. En el Bloque 7 aparecen ocho variables cuantitativas (el drenaje ordinal y la variable calcárea binaria incluidas) y la textura como categórica.</li>
+      <li>Pulsa <span class="ui">Profile →</span> (figuras 8.5 y 8.17). El grupo 2 es arcilloso y ácido: 43 % de arcilla, pH 5.4, 6.3 % de materia orgánica, mal drenaje y poca pendiente. El grupo 3 es arenoso y alcalino: 73 % de arena, pH 7.9, más pendiente y casi siempre calcáreo.</li>
+      <li>La ficha del grupo 1 no tiene ninguna variable cuantitativa: solo dice que es franco (83 %) o franco limoso. En la tabla, todas sus medias quedan entre las de los otros dos, con |<i>v</i>| ≤ 1.2.</li>
+      <li>En la tarjeta 3, el árbol separa los tres con pH ≤ 6.3 y arena ≤ 61 %, sin errores.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-suelos-narr.png" alt="Fichas de los grupos con los suelos"></div>
+    <figcaption><b>Figura 8.17.</b> Los suelos en tres grupos. La capacidad de intercambio catiónico es el mejor separador (<i>F</i> = 354.2, η² = 0.96). El grupo 1 se describe solo por su textura.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Un grupo intermedio en todas las variables numéricas puede ser un tipo perfectamente real: aquí son los suelos francos, estables en el Bloque 6 con Jaccard 1.000. Lo que lo define es una variable categórica. Por eso conviene perfilar con todas las variables disponibles, también las suplementarias, y no solo con las que tienen medias extremas.</p>
+  </div>
+
+  <h3>Práctica 5 · Matriz de distancias: nada que perfilar</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Carga la matriz genética y entra al Bloque 7 después de los Bloques 4 a 6 (figura 8.18). No hay variables que marcar, y un aviso lo explica.</li>
+      <li>El botón <span class="ui">Continue to the report →</span> ya está habilitado: el informe del Bloque 8 incluye la partición y su validación.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-matriz.png" alt="El Bloque 7 con una matriz de distancias"></div>
+    <figcaption><b>Figura 8.18.</b> El Bloque 7 con la matriz de distancias: sin variables, con el aviso y con el paso al informe habilitado.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Una matriz de distancias permite agrupar y validar, pero no describir: para decir en qué difieren los grupos hacen falta las variables. Si tienes datos de los objetos (origen, año, rasgos morfológicos), cárgalos como tabla con la matriz aparte, o bien úsalos fuera de la app para interpretar los grupos obtenidos.</p>
+  </div>
+
+  <h3>Práctica 6 · Cuatro grupos simulados: cada grupo, una combinación</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los 80 objetos y k-means jerárquico con cuatro grupos, perfila: las cinco variables separan los grupos con η² de 0.92 a 0.94.</li>
+      <li>Lee las fichas: ningún grupo se define por una sola variable. El grupo 1 tiene V1 baja y V2 alta; el 2, V2 y V4 bajas y V1 y V3 altas; el 3, V5 muy baja y V3 y V4 altas; el 4, V1, V2 y V5 altas.</li>
+      <li>En la tarjeta 3: tres ejes discriminantes (69 %, 25 % y 6 %), 100 % dejando uno fuera, y un árbol de cuatro reglas con V1 y V2.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Los grupos reales suelen distinguirse por combinaciones, no por una variable. Por eso la ficha enumera varias, el LDA necesita tres ejes y el árbol usa la misma variable en dos niveles. Si el Bloque 6 dijo que la estructura es fuerte, el Bloque 7 debe poder describirla con claridad; si no puede, revisa las variables elegidas.</p>
+  </div>
+
+  <h3>Práctica 7 · Ruido uniforme: perfiles que no significan nada</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los 60 objetos uniformes y k-means jerárquico con tres grupos, perfila (figura 8.19): cuatro de las cinco variables tienen ANOVA con p &lt; 0.05, y V5 separa con <i>F</i> = 48.6.</li>
+      <li>Las fichas describen tres grupos con variables "características", como si fueran tipos.</li>
+      <li>En la tarjeta 3: Λ = 2.4 × 10⁻⁴, 91.7 % de acierto dejando uno fuera y seis reglas con 95 % de acierto.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-ruido.png" alt="Tabla de variables con el ruido uniforme"></div>
+    <figcaption><b>Figura 8.19.</b> La tabla de variables con el ruido uniforme. El agrupamiento cortó el espacio por V5 y V1, así que esas variables "separan" los grupos con valores P diminutos. Nada de esto prueba que existan.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Es la advertencia de la sección 8.1 hecha realidad. Cualquier partición, incluso de datos sin estructura, produce perfiles convincentes, variables significativas y reglas que se reconocen a sí mismas con alta exactitud. Solo el Bloque 6 (silueta baja, gap en <i>k</i> = 1, grupos inestables) revela que no hay grupos. Nunca interpretes el Bloque 7 sin haber mirado antes el Bloque 6.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · lo que hay que reportar de este bloque</div>
+    <p>En la sección de métodos: que los grupos se describieron con valores de prueba (catdes), ANOVA y Kruskal–Wallis; que los valores P de las variables activas son descriptivos; el número de permutaciones del IndVal, si lo usaste; y, para el discriminante, las probabilidades previas y la validación dejando uno fuera. En resultados: una descripción de cada grupo con sus variables y categorías principales, las especies indicadoras con su IndVal y valor P, y la exactitud dejando uno fuera. Por ejemplo: "El grupo 1 (<i>n</i> = 14) se caracterizó por una floración más tardía (95.5 frente a 80.6 días; <i>v</i> = 5.4) y plantas más bajas; un análisis discriminante clasificó correctamente el 100 % de las accesiones en validación dejando una fuera". El párrafo del Bloque 8 lo redacta con tus valores.</p>
+  </div>
+
+  <p style="margin-top:0.12in">Con los grupos descritos, solo falta reunirlo todo. El siguiente capítulo presenta el informe del Bloque 8: qué secciones incluye, cómo elegirlas, los párrafos de métodos y resultados que redacta con tus valores y cómo exportar el informe y las figuras.</p>
+</section>
+
+</body>
+</html>
