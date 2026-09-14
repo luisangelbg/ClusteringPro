@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · Manual de usuario · Bloque 4: agrupamiento jerárquico</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b4" data-pestana="B4" data-orden="5" style="--acento: var(--b4)">
+  <div class="cap-apertura">
+    <div class="cap-num">B4</div>
+    <div class="cap-etiqueta">Capítulo cinco · Bloque 4 · Hierarchical</div>
+    <h1 data-corto="Bloque 4 · Agrupamiento jerárquico">Agrupamiento jerárquico</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Con la matriz del Bloque 3 se construye un árbol: cada objeto empieza solo y los grupos se van uniendo hasta formar uno. Este capítulo explica las diez reglas que decide cómo se unen, los tres números que dicen si el árbol merece confianza, cómo cortarlo, el estudio de dendrogramas con sus seis disposiciones y más de cuarenta ajustes, el mapa de calor con árboles y la comparación de reglas mediante tanglegramas.</p>
+    <div class="cap-franja"><span class="k4"></span><span class="k4" style="opacity:.75"></span><span class="k4" style="opacity:.5"></span><span class="k4" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>5.1</b>Aglomerativo y divisivo</li>
+      <li><b>5.2</b>Las reglas de enlace</li>
+      <li><b>5.3</b>Correlación cofenética y coeficientes del árbol</li>
+      <li><b>5.4</b>Cortar el árbol</li>
+      <li><b>5.5</b>El estudio de dendrogramas</li>
+      <li><b>5.6</b>Mapa de calor con árboles</li>
+      <li><b>5.7</b>Comparar enlaces y tanglegramas</li>
+      <li><b>5.8</b>Paso a paso</li>
+    </ul>
+  </div>
+
+  <p class="lead">El Bloque 4 tiene tres tarjetas. En <span class="ui">1 · Build the tree</span> eliges la regla de enlace y construyes el árbol. En <span class="ui">2 · The tree and its cut</span> lo evalúas, lo cortas en grupos y lo dibujas. En <span class="ui">3 · Compare linkage rules and draw tanglegrams</span> lo comparas con los árboles de otras reglas. Arriba, la tarjeta de teoría resume en tres lecciones qué mirar antes de confiar en un árbol. El bloque se activa en cuanto el Bloque 3 calcula una matriz de disimilitudes.</p>
+
+  <!-- 5.1 -->
+  <h2 id="s5-1"><span class="num">5.1</span>Aglomerativo y divisivo</h2>
+  <p>Un agrupamiento jerárquico no produce una partición, sino una familia completa de particiones anidadas: desde <i>n</i> grupos de un objeto hasta un solo grupo con todos. Se representa con un <b>dendrograma</b>, en el que la altura de cada unión es la disimilitud a la que se juntaron las dos ramas. Hay dos maneras de construirlo (figura 5.1).</p>
+
+  <figure>
+    <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Agrupamiento aglomerativo frente a divisivo">
+      <defs><marker id="fl4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7e3fb0"/></marker></defs>
+      <text x="175" y="20" text-anchor="middle" font-size="12" font-weight="600" fill="#111">Aglomerativo · de abajo hacia arriba</text>
+      <text x="525" y="20" text-anchor="middle" font-size="12" font-weight="600" fill="#111">Divisivo (DIANA) · de arriba hacia abajo</text>
+      <line x1="350" y1="30" x2="350" y2="240" stroke="#d8dbe3"/>
+      <!-- agglomerative tree -->
+      <g stroke="#7e3fb0" stroke-width="2.2" fill="none">
+        <path d="M70 200 V170 H110 V200"/><path d="M150 200 V150 H190 V200"/><path d="M230 200 V175 H270 V200"/>
+        <path d="M90 170 V110 H170 V150"/><path d="M130 110 V60 H250 V175"/>
+      </g>
+      <g fill="#4f46a5"><circle cx="70" cy="206" r="5"/><circle cx="110" cy="206" r="5"/><circle cx="150" cy="206" r="5"/><circle cx="190" cy="206" r="5"/><circle cx="230" cy="206" r="5"/><circle cx="270" cy="206" r="5"/></g>
+      <g font-size="9.5" fill="#5d6472"><text x="60" y="228">cada objeto empieza solo</text></g>
+      <path d="M306 205 V70" stroke="#7e3fb0" stroke-width="1.6" marker-end="url(#fl4)"/>
+      <text x="314" y="140" font-size="9.5" fill="#7e3fb0" transform="rotate(-90 314 140)" text-anchor="middle">une los dos más cercanos</text>
+      <!-- divisive -->
+      <g stroke="#b4234a" stroke-width="2.2" fill="none">
+        <path d="M420 200 V170 H460 V200"/><path d="M500 200 V150 H540 V200"/><path d="M580 200 V175 H620 V200"/>
+        <path d="M440 170 V110 H520 V150"/><path d="M480 110 V60 H600 V175"/>
+      </g>
+      <g fill="#4f46a5"><circle cx="420" cy="206" r="5"/><circle cx="460" cy="206" r="5"/><circle cx="500" cy="206" r="5"/><circle cx="540" cy="206" r="5"/><circle cx="580" cy="206" r="5"/><circle cx="620" cy="206" r="5"/></g>
+      <path d="M660 60 V195" stroke="#b4234a" stroke-width="1.6" marker-end="url(#fl4)"/>
+      <text x="672" y="128" font-size="9.5" fill="#b4234a" transform="rotate(-90 672 128)" text-anchor="middle">separa el grupo más ancho</text>
+      <g font-size="9.5" fill="#5d6472"><text x="415" y="228">todos empiezan juntos</text></g>
+      <text x="540" y="52" font-size="9.5" fill="#22252c">se sigue hasta un objeto por grupo</text>
+      <text x="190" y="52" font-size="9.5" fill="#22252c" text-anchor="middle">se sigue hasta un solo grupo</text>
+    </svg>
+    <figcaption><b>Figura 5.1.</b> Las dos formas de construir una jerarquía. Ambas dan un árbol del mismo tipo, con una altura en cada unión, y todo lo que ofrece el bloque (corte, estudio, comparación) se aplica igual a los dos.</figcaption>
+  </figure>
+
+  <ul>
+    <li>El método <b>aglomerativo</b> empieza con cada objeto en su propio grupo y, en cada paso, une los dos grupos más cercanos y recalcula la distancia del grupo nuevo a todos los demás. Tras <i>n</i> − 1 uniones queda un solo grupo. Qué significa "más cercanos" lo decide la <b>regla de enlace</b> (sección 5.2). ClusteringPro implementa nueve reglas aglomerativas.</li>
+    <li>El método <b>divisivo</b> DIANA hace el camino contrario. Empieza con todos juntos, toma el grupo de mayor <b>diámetro</b> (la mayor disimilitud entre dos de sus miembros), inicia un grupo escindido con el objeto más alejado en promedio de los demás y le va pasando los objetos que quedan más cerca de él que del resto. Repite hasta que cada objeto queda solo. Suele recuperar mejor unos pocos grupos grandes, porque sus primeras decisiones, las de arriba del árbol, se toman mirando a todos los objetos.</li>
+  </ul>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-construir.png" alt="La tarjeta 1 · Build the tree"></div>
+    <figcaption><b>Figura 5.2.</b> La tarjeta <span class="ui">1 · Build the tree</span> con las razas de maíz. La recomendación sale del diagnóstico del Bloque 3: con una matriz euclidiana propone Ward.D2 y explica por qué. Al elegir <span class="ui">Flexible beta (Lance–Williams)</span> aparece además el campo <span class="ui">β for flexible linkage</span>.</figcaption>
+  </figure>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · qué regla propone la app</div>
+    <table class="compacta">
+      <thead><tr><th style="width:40%">Si la matriz del Bloque 3…</th><th>entonces</th></tr></thead>
+      <tbody>
+        <tr><td>es euclidiana o casi (masa negativa &lt; 5 %)</td><td>Ward.D2: grupos compactos y de varianza parecida. La alternativa es UPGMA si lo que importa es la fidelidad del árbol a las distancias. Con tablas de comunidades añade que UPGMA sobre Bray–Curtis sigue siendo la elección clásica.</td></tr>
+        <tr><td>no es euclidiana (masa negativa ≥ 5 %)</td><td>UPGMA (promedio), que solo necesita la matriz. Si quieres Ward, vuelve al Bloque 3 y marca la raíz cuadrada (√<i>d</i>).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · tamaño y tiempo</div>
+    <p>La aglomeración trabaja con la matriz completa y su costo crece con el cubo del número de objetos. Con unos cientos de objetos el árbol tarda menos de un segundo; la app admite hasta 1500. La comparación de reglas de la tarjeta 3 se limita a 600 objetos. Con tablas más grandes, usa los métodos de particionamiento del Bloque 5.</p>
+  </div>
+
+  <!-- 5.2 -->
+  <h2 id="s5-2"><span class="num">5.2</span>Las reglas de enlace</h2>
+  <p class="lead">Cuando dos grupos se unen, hay que decidir a qué distancia queda el grupo nuevo de cada uno de los demás. Esa decisión es la regla de enlace, y cambia la forma de los grupos que produce el árbol (figura 5.3). Todas las reglas aglomerativas de la app se calculan con la fórmula de actualización de Lance y Williams (tabla 5.1), la misma que usan los programas estadísticos de referencia.</p>
+
+  <figure>
+    <svg viewBox="0 0 700 215" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Qué mide cada regla de enlace">
+      <g font-size="11" font-weight="600" fill="#111" text-anchor="middle">
+        <text x="85" y="18">Simple</text><text x="255" y="18">Completo</text><text x="425" y="18">Promedio (UPGMA)</text><text x="600" y="18">Centroide y Ward</text>
+      </g>
+      <g id="dosgrupos">
+        <ellipse cx="45" cy="110" rx="32" ry="48" fill="#4f46a5" fill-opacity="0.08" stroke="#4f46a5" stroke-opacity="0.5"/>
+        <ellipse cx="130" cy="110" rx="32" ry="48" fill="#e0803c" fill-opacity="0.08" stroke="#e0803c" stroke-opacity="0.5"/>
+      </g>
+      <!-- simple -->
+      <g fill="#4f46a5"><circle cx="35" cy="80" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="40" cy="135" r="4"/><circle cx="62" cy="128" r="4"/></g>
+      <g fill="#e0803c"><circle cx="112" cy="100" r="4"/><circle cx="140" cy="80" r="4"/><circle cx="135" cy="140" r="4"/><circle cx="148" cy="115" r="4"/></g>
+      <line x1="62" y1="128" x2="112" y2="100" stroke="#b4234a" stroke-width="2"/>
+      <text x="85" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">el par más cercano</text>
+      <text x="85" y="199" text-anchor="middle" font-size="9" fill="#5d6472">encadena; halla formas alargadas</text>
+      <!-- complete -->
+      <g transform="translate(170 0)">
+        <ellipse cx="45" cy="110" rx="32" ry="48" fill="#4f46a5" fill-opacity="0.08" stroke="#4f46a5" stroke-opacity="0.5"/>
+        <ellipse cx="130" cy="110" rx="32" ry="48" fill="#e0803c" fill-opacity="0.08" stroke="#e0803c" stroke-opacity="0.5"/>
+        <g fill="#4f46a5"><circle cx="35" cy="80" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="40" cy="135" r="4"/><circle cx="62" cy="128" r="4"/></g>
+        <g fill="#e0803c"><circle cx="112" cy="100" r="4"/><circle cx="140" cy="80" r="4"/><circle cx="135" cy="140" r="4"/><circle cx="148" cy="115" r="4"/></g>
+        <line x1="40" y1="135" x2="140" y2="80" stroke="#b4234a" stroke-width="2"/>
+        <text x="85" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">el par más lejano</text>
+        <text x="85" y="199" text-anchor="middle" font-size="9" fill="#5d6472">grupos compactos; sensible a atípicos</text>
+      </g>
+      <!-- average -->
+      <g transform="translate(340 0)">
+        <ellipse cx="45" cy="110" rx="32" ry="48" fill="#4f46a5" fill-opacity="0.08" stroke="#4f46a5" stroke-opacity="0.5"/>
+        <ellipse cx="130" cy="110" rx="32" ry="48" fill="#e0803c" fill-opacity="0.08" stroke="#e0803c" stroke-opacity="0.5"/>
+        <g stroke="#b4234a" stroke-width="0.8" stroke-opacity="0.7">
+          <line x1="35" y1="80" x2="112" y2="100"/><line x1="35" y1="80" x2="140" y2="80"/><line x1="35" y1="80" x2="135" y2="140"/><line x1="35" y1="80" x2="148" y2="115"/>
+          <line x1="55" y1="105" x2="112" y2="100"/><line x1="55" y1="105" x2="140" y2="80"/><line x1="55" y1="105" x2="135" y2="140"/><line x1="55" y1="105" x2="148" y2="115"/>
+          <line x1="40" y1="135" x2="112" y2="100"/><line x1="40" y1="135" x2="140" y2="80"/><line x1="40" y1="135" x2="135" y2="140"/><line x1="40" y1="135" x2="148" y2="115"/>
+          <line x1="62" y1="128" x2="112" y2="100"/><line x1="62" y1="128" x2="140" y2="80"/><line x1="62" y1="128" x2="135" y2="140"/><line x1="62" y1="128" x2="148" y2="115"/>
+        </g>
+        <g fill="#4f46a5"><circle cx="35" cy="80" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="40" cy="135" r="4"/><circle cx="62" cy="128" r="4"/></g>
+        <g fill="#e0803c"><circle cx="112" cy="100" r="4"/><circle cx="140" cy="80" r="4"/><circle cx="135" cy="140" r="4"/><circle cx="148" cy="115" r="4"/></g>
+        <text x="85" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">la media de todos los pares</text>
+        <text x="85" y="199" text-anchor="middle" font-size="9" fill="#5d6472">equilibrado; el más fiel a las distancias</text>
+      </g>
+      <!-- centroid / ward -->
+      <g transform="translate(515 0)">
+        <ellipse cx="45" cy="110" rx="32" ry="48" fill="#4f46a5" fill-opacity="0.08" stroke="#4f46a5" stroke-opacity="0.5"/>
+        <ellipse cx="130" cy="110" rx="32" ry="48" fill="#e0803c" fill-opacity="0.08" stroke="#e0803c" stroke-opacity="0.5"/>
+        <g fill="#4f46a5" fill-opacity="0.45"><circle cx="35" cy="80" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="40" cy="135" r="4"/><circle cx="62" cy="128" r="4"/></g>
+        <g fill="#e0803c" fill-opacity="0.45"><circle cx="112" cy="100" r="4"/><circle cx="140" cy="80" r="4"/><circle cx="135" cy="140" r="4"/><circle cx="148" cy="115" r="4"/></g>
+        <path d="M48 103 l6 -6 l-6 -6 l-6 6 z" fill="#4f46a5" transform="translate(0 8)"/>
+        <path d="M134 104 l6 -6 l-6 -6 l-6 6 z" fill="#e0803c" transform="translate(0 7)"/>
+        <line x1="48" y1="103" x2="134" y2="103" stroke="#b4234a" stroke-width="2"/>
+        <text x="85" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">entre centroides · aumento de varianza</text>
+        <text x="85" y="199" text-anchor="middle" font-size="9" fill="#5d6472">necesitan geometría euclidiana</text>
+      </g>
+    </svg>
+    <figcaption><b>Figura 5.3.</b> Qué mide cada regla entre dos grupos. La línea roja es la distancia que la regla usa para decidir si esos dos grupos son los próximos en unirse. Ward no mide una distancia sino cuánto crecería la suma de cuadrados dentro de los grupos al unirlos, que depende de la distancia entre centroides y del tamaño de los grupos.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · la fórmula de Lance y Williams</div>
+    <p>Si los grupos <i>i</i> y <i>j</i>, con <i>n</i><sub>i</sub> y <i>n</i><sub>j</sub> objetos, se unen, la distancia del grupo nuevo a cualquier otro grupo <i>k</i> se calcula a partir de las distancias que ya se conocían:</p>
+    <p style="text-align:center"><i>d</i>(<i>ij</i>, <i>k</i>) = α<sub>i</sub> <i>d</i>(<i>i</i>, <i>k</i>) + α<sub>j</sub> <i>d</i>(<i>j</i>, <i>k</i>) + β <i>d</i>(<i>i</i>, <i>j</i>) + γ |<i>d</i>(<i>i</i>, <i>k</i>) − <i>d</i>(<i>j</i>, <i>k</i>)|</p>
+    <p>Cada regla es una elección de los cuatro coeficientes (tabla 5.1). No hace falta volver a los datos originales en ningún paso, y por eso cualquier regla puede aplicarse a una matriz de disimilitudes, aunque las de centroide, mediana y Ward solo tienen sentido geométrico si esa matriz es euclidiana. Para esas tres la app eleva las distancias al cuadrado antes de aglomerar y saca la raíz de las alturas, de modo que el eje del dendrograma queda en las unidades de la matriz.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Tabla 5.1.</b> Las diez reglas del menú <span class="ui">Linkage rule</span>, con sus coeficientes de Lance y Williams (para centroide, mediana y Ward se aplican a distancias al cuadrado; <i>n</i><sub>ijk</sub> = <i>n</i><sub>i</sub> + <i>n</i><sub>j</sub> + <i>n</i><sub>k</sub>).</caption>
+    <thead><tr><th style="width:23%">En la app</th><th style="width:31%">α<sub>i</sub> · β · γ</th><th>Carácter</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Ward.D2 (minimum variance)</span></td><td>(<i>n</i><sub>i</sub> + <i>n</i><sub>k</sub>)/<i>n</i><sub>ijk</sub> · −<i>n</i><sub>k</sub>/<i>n</i><sub>ijk</sub> · 0</td><td>Une los grupos que menos aumentan la varianza interna. Grupos compactos y de tamaños parecidos. Requiere distancias euclidianas.</td></tr>
+      <tr><td><span class="ui">Average · UPGMA</span></td><td><i>n</i><sub>i</sub>/(<i>n</i><sub>i</sub> + <i>n</i><sub>j</sub>) · 0 · 0</td><td>Media de todas las disimilitudes entre miembros. Equilibrado, suele dar la mayor correlación cofenética. Clásico en taxonomía y ecología.</td></tr>
+      <tr><td><span class="ui">Complete (farthest neighbour)</span></td><td>½ · 0 · +½</td><td>Distancia del par más lejano. Grupos compactos de diámetro parecido; un atípico retrasa la unión de su grupo.</td></tr>
+      <tr><td><span class="ui">Single (nearest neighbour)</span></td><td>½ · 0 · −½</td><td>Distancia del par más cercano. Recupera formas alargadas o curvas, pero tiende a encadenar objetos uno por uno.</td></tr>
+      <tr><td><span class="ui">Weighted · WPGMA (McQuitty)</span></td><td>½ · 0 · 0</td><td>Como UPGMA, pero cada subgrupo pesa lo mismo sin importar su tamaño.</td></tr>
+      <tr><td><span class="ui">Centroid · UPGMC</span></td><td><i>n</i><sub>i</sub>/(<i>n</i><sub>i</sub> + <i>n</i><sub>j</sub>) · −<i>n</i><sub>i</sub><i>n</i><sub>j</sub>/(<i>n</i><sub>i</sub> + <i>n</i><sub>j</sub>)² · 0</td><td>Distancia entre centroides. Puede producir inversiones (sección 5.3).</td></tr>
+      <tr><td><span class="ui">Median · WPGMC</span></td><td>½ · −¼ · 0</td><td>Centroide sin ponderar por tamaño. Mismo riesgo de inversiones.</td></tr>
+      <tr><td><span class="ui">Ward.D (on unsquared d)</span></td><td>como Ward.D2, sobre <i>d</i> sin elevar</td><td>La fórmula de Ward aplicada a distancias sin elevar. Solo para reproducir análisis antiguos.</td></tr>
+      <tr><td><span class="ui">Flexible beta (Lance–Williams)</span></td><td>(1 − β)/2 · β · 0</td><td>Un parámetro ajustable. Con β = −0.25 se comporta como un promedio que conserva el espacio; más negativo, más compacto (parecido a Ward).</td></tr>
+      <tr><td><span class="ui">DIANA (divisive)</span></td><td>— (no aglomera)</td><td>Divisiones sucesivas por diámetro. Bueno para pocos grupos grandes.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja dato">
+    <div class="dato-cifra">D2</div>
+    <div class="dato-txt">
+      <div class="caja-t">Dato · Ward.D frente a Ward.D2</div>
+      El criterio de Ward se define sobre distancias euclidianas al cuadrado. <b>Ward.D2</b> las eleva por ti y devuelve alturas en las unidades de la matriz: es la versión correcta. <b>Ward.D</b> aplica la misma fórmula a distancias sin elevar; da árboles parecidos pero con otra escala de alturas y, a veces, otro orden de uniones. Existe porque durante años fue lo que hacían algunos programas. Úsala solo si necesitas reproducir un resultado publicado con ella.
+    </div>
+  </div>
+
+  <!-- 5.3 -->
+  <h2 id="s5-3"><span class="num">5.3</span>Correlación cofenética y coeficientes del árbol</h2>
+  <p class="lead">Al pulsar <span class="ui">Build the tree →</span> aparece la segunda tarjeta. Antes de mirar el dendrograma, cinco casillas y una lista de comprobaciones dicen si el árbol es un buen resumen de la matriz (figura 5.4).</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b4-resultados.png" alt="Casillas y comprobaciones del árbol">
+      <span class="marca" style="left:2.5%;top:16.5%">1</span>
+      <span class="marca" style="left:22%;top:16.5%">2</span>
+      <span class="marca" style="left:41%;top:16.5%">3</span>
+      <span class="marca" style="left:60%;top:16.5%">4</span>
+      <span class="marca" style="left:79%;top:16.5%">5</span>
+      <span class="marca" style="left:2%;top:58%">6</span>
+    </div>
+    <figcaption><b>Figura 5.4.</b> Las casillas y comprobaciones del árbol de Ward.D2 con las razas de maíz.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Method</span>: la regla, el número de objetos y el coeficiente de disimilitud.</li>
+    <li><span class="n">2</span><span class="ui">Cophenetic correlation</span>, con semáforo.</li>
+    <li><span class="n">3</span><span class="ui">Agglomerative coefficient</span> (o <span class="ui">Divisive coefficient</span> con DIANA).</li>
+    <li><span class="n">4</span><span class="ui">Suggested k (height jumps)</span>: los tres <i>k</i> con los mayores saltos de altura.</li>
+    <li><span class="n">5</span><span class="ui">Reversals</span>: uniones que ocurren más abajo que una anterior.</li>
+    <li><span class="n">6</span>Comprobaciones interpretadas (tabla 5.3).</li>
+  </ul>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · los tres números de un árbol</div>
+    <p>La <b>distancia cofenética</b> entre dos objetos es la altura a la que se unen en el árbol. La <b>correlación cofenética</b> es la correlación de Pearson entre esas alturas y las disimilitudes originales de la matriz: mide cuánto de la matriz sobrevive al resumirla en un árbol. UPGMA suele dar la más alta, porque su regla promedia distancias; Ward y el enlace completo sacrifican fidelidad a cambio de grupos compactos.</p>
+    <p>El <b>coeficiente aglomerativo</b> es el promedio, sobre todos los objetos, de 1 − (altura de la primera unión del objeto / altura de la última unión del árbol). Cerca de 1 los objetos se unen muy pronto respecto de la unión final: estructura clara. Crece con el número de objetos y depende mucho de la regla (Ward lo infla), así que solo sirve para comparar árboles de los mismos datos con la misma regla. Con DIANA se calcula igual y se llama <b>coeficiente divisivo</b>.</p>
+    <p>Una <b>inversión</b> ocurre cuando un grupo se une a una altura menor que la de una unión anterior que lo formó: la rama "baja" en vez de subir. Solo las reglas de centroide y mediana pueden producirlas. Hacen ambiguo el corte por altura.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Tabla 5.2.</b> Semáforo de las casillas.</caption>
+    <thead><tr><th style="width:32%">Casilla</th><th>Verde</th><th>Ámbar</th><th>Rojo</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cophenetic correlation</span></td><td>≥ 0.75</td><td>0.60–0.75</td><td>&lt; 0.60</td></tr>
+      <tr><td><span class="ui">Agglomerative coefficient</span></td><td>≥ 0.70</td><td>0.50–0.70</td><td>—</td></tr>
+      <tr><td><span class="ui">Reversals</span></td><td>0</td><td>1 o más</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Tabla 5.3.</b> Comprobaciones del árbol y qué sugieren.</caption>
+    <thead><tr><th style="width:38%">Comprobación</th><th style="width:8%" class="c">Nivel</th><th>Qué sugiere</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">The tree is a faithful summary of the dissimilarities</span></td><td class="c">✅</td><td>Las distancias leídas en el dendrograma son fiables.</td></tr>
+      <tr><td><span class="ui">Moderate cophenetic correlation</span></td><td class="c">⚠️</td><td>El árbol deforma algunas distancias. Compara reglas en la tarjeta 3: UPGMA suele maximizar la correlación.</td></tr>
+      <tr><td><span class="ui">Low cophenetic correlation</span></td><td class="c">⛔</td><td>El dendrograma representa mal la matriz. Prueba otra regla, otro coeficiente (Bloque 3) o un método de particionamiento (Bloque 5).</td></tr>
+      <tr><td><span class="ui">N reversals in the tree</span></td><td class="c">⚠️</td><td>Corta por número de grupos y no por altura, o usa promedio o Ward.</td></tr>
+      <tr><td><span class="ui">Chaining</span></td><td class="c">⚠️</td><td>Más del 70 % de las uniones de la mitad superior del árbol añaden un solo objeto a un grupo que crece: cadenas en vez de grupos compactos. Típico del enlace simple sobre gradientes.</td></tr>
+      <tr><td><span class="ui">This linkage assumes Euclidean distances</span></td><td class="c">⚠️</td><td>Ward, centroide o mediana sobre una matriz no euclidiana (masa negativa ≥ 10 %): toma √<i>d</i> en el Bloque 3 o usa promedio o completo.</td></tr>
+      <tr><td><span class="ui">Divisive analysis</span></td><td class="c">ℹ️</td><td>Recuerda cómo trabaja DIANA y que su coeficiente divisivo sustituye al aglomerativo.</td></tr>
+      <tr><td><span class="ui">Weak hierarchical structure</span></td><td class="c">ℹ️</td><td>Coeficiente &lt; 0.5: los objetos se unen tarde respecto de la unión final; los datos se parecen más a un gradiente que a grupos anidados.</td></tr>
+      <tr><td><span class="ui">Cut suggestions</span></td><td class="c">ℹ️</td><td>Los tres saltos de altura mayores, con su tamaño relativo a la altura del árbol (sección 5.4).</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-diana.png" alt="Casillas y comprobaciones de DIANA"></div>
+    <figcaption><b>Figura 5.5.</b> El mismo maíz con DIANA: correlación cofenética 0.844 (casi igual a la de Ward.D2) y coeficiente divisivo 0.772. La comprobación <span class="ui">Divisive analysis</span> recuerda qué hace el método; los saltos de altura sugieren otra vez <i>k</i> = 3, 2 y 4.</figcaption>
+  </figure>
+
+  <!-- 5.4 -->
+  <h2 id="s5-4"><span class="num">5.4</span>Cortar el árbol</h2>
+  <p class="lead">Cortar el dendrograma a una altura produce una partición: cada rama que atraviesa la línea de corte es un grupo. El bloque ofrece una figura para decidir dónde cortar, un control para hacerlo y dos tablas para ver el resultado.</p>
+
+  <p>Al construir el árbol la app ya lo corta: en tantos grupos como tenga la agrupación conocida, si la hay, o en el primer <i>k</i> sugerido. Los grupos se numeran de izquierda a derecha en el orden de las hojas, así que el grupo 1 es siempre el de la izquierda del dendrograma. Si cortas por altura, la app calcula cuántas ramas cruza y actualiza <i>k</i>; si cortas por <i>k</i>, la línea se coloca a medio camino entre las dos uniones que separan <i>k</i> − 1 de <i>k</i> grupos.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · leer los saltos</div>
+    <p>Un tramo vertical largo sin uniones en el dendrograma significa que los grupos de abajo están bien separados. En la figura de alturas, ese tramo aparece como un <b>salto</b> grande entre la barra de <i>k</i> − 1 y la de <i>k</i>. La app ordena los saltos de mayor a menor entre <i>k</i> = 2 y <i>k</i> = 12 y resalta los tres primeros; la casilla <span class="ui">Suggested k</span> y la comprobación <span class="ui">Cut suggestions</span> dan los mismos tres, con el tamaño del salto como porcentaje de la altura total. Es una primera idea: el Bloque 6 la contrasta con la silueta, el estadístico gap, la estabilidad y otros diez criterios.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-alturas.png" alt="Alturas de unión según el número de grupos"></div>
+    <figcaption><b>Figura 5.6.</b> <span class="ui">Merge heights: where to cut</span> con el árbol de Ward.D2 del maíz. Cada barra es la altura de la unión que deja <i>k</i> grupos; en naranja, los tres mayores saltos entre barras consecutivas. De <i>k</i> = 2 a <i>k</i> = 3 la altura baja de unos 12 a unos 6, y de ahí en adelante las barras apenas bajan: por debajo de tres grupos las uniones son largas, por encima son todas cortas.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b4-corte.png" alt="Controles del corte y tablas de la partición">
+      <span class="marca" style="left:1%;top:14%">1</span>
+      <span class="marca" style="left:32.3%;top:14%">2</span>
+      <span class="marca" style="left:64.3%;top:14%">3</span>
+      <span class="marca" style="left:1%;top:22%">4</span>
+      <span class="marca" style="left:1%;top:59%">5</span>
+    </div>
+    <figcaption><b>Figura 5.7.</b> <span class="ui">Cut the tree</span> con el maíz cortado en tres grupos.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Cut by</span>: <span class="ui">Number of clusters</span> o <span class="ui">Height</span>.</li>
+    <li><span class="n">2</span>El valor de <i>k</i> (o la altura, según el modo).</li>
+    <li><span class="n">3</span><span class="ui">Apply the cut</span>: recalcula las tablas, mueve el corte en el estudio y en el mapa de calor, y avisa a los bloques siguientes.</li>
+    <li><span class="n">4</span>La partición: miembros de cada grupo y altura del corte.</li>
+    <li><span class="n">5</span>Si hay agrupación conocida, la tabla cruzada con el índice de Rand ajustado (ARI) y la pureza, y una frase que los interpreta.</li>
+  </ul>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Regla de decisión · cómo lee la app la tabla cruzada</div>
+    <table class="compacta">
+      <thead><tr><th style="width:22%">ARI</th><th>Frase de la app</th></tr></thead>
+      <tbody>
+        <tr><td>&gt; 0.80</td><td><span class="ui">The tree recovers your known grouping almost exactly.</span></td></tr>
+        <tr><td>0.50–0.80</td><td><span class="ui">Substantial agreement with the known grouping, with some objects placed differently.</span></td></tr>
+        <tr><td>0.20–0.50</td><td><span class="ui">Partial agreement: the clusters and the known grouping capture different structure.</span></td></tr>
+        <tr><td>&lt; 0.20</td><td><span class="ui">The clusters are unrelated to the known grouping</span> (un ARI cerca de 0 es lo que dan etiquetas al azar).</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">La pureza es la proporción de objetos que caen en el grupo conocido mayoritario de su grupo. Un ARI bajo no significa que el árbol esté mal: puede estar encontrando otra estructura, igual de real, que la clasificación previa no recoge.</p>
+  </div>
+
+  <!-- 5.5 -->
+  <h2 id="s5-5"><span class="num">5.5</span>El estudio de dendrogramas</h2>
+  <p class="lead">El estudio es la figura central del bloque. Por defecto dibuja un dendrograma rectangular con las ramas coloreadas por grupo, cajas sombreadas, la línea de corte, los números de grupo, las hojas con su nombre y, si hay agrupación conocida, un punto de color debajo de cada hoja (figura 5.8). Todo se cambia desde <span class="ui">Edit figure</span> y cada ajuste se guarda para el informe.</p>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · el orden izquierda–derecha no significa cercanía</div>
+    <p>Cualquier nodo del árbol puede girarse sin cambiar nada: un dendrograma de <i>n</i> hojas tiene 2<sup><i>n</i>−1</sup> dibujos equivalentes, y <span class="ui">Leaf order</span> elige uno. Dos hojas vecinas en la fila pueden unirse muy arriba; dos hojas separadas pueden estar en la misma rama baja. Lo único que se lee en un dendrograma es <b>la altura a la que se unen dos objetos</b>. Usa el orden de hojas para que la figura sea legible (por ejemplo, alineada con el primer eje del PCoA), nunca como resultado.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-dendro.png" alt="Dendrograma de Ward.D2 del maíz"></div>
+    <figcaption><b>Figura 5.8.</b> El estudio con los valores iniciales. El árbol de Ward.D2 del maíz cortado en <i>k</i> = 3: tres cajas (C1, C2, C3), la línea de corte con su rótulo, las etiquetas coloreadas por grupo, los puntos de las hojas coloreados por región y la leyenda con los tamaños de los grupos y las regiones. Los puntos confirman lo que dice el ARI: cada caja contiene una sola región.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 5.4.</b> Los controles propios del estudio, agrupados por función.</caption>
+    <thead><tr><th style="width:18%">Grupo</th><th style="width:34%">Controles</th><th>Qué hacen</th></tr></thead>
+    <tbody>
+      <tr><td><b>Disposición</b></td><td><span class="ui">Layout</span></td><td>Seis disposiciones: rectangular con las hojas abajo, triangular, horizontal con las hojas a la derecha, horizontal triangular, radial (circular) y radial triangular (abanico).</td></tr>
+      <tr><td><b>Corte</b></td><td><span class="ui">Clusters k (cut)</span>, <span class="ui">Cut by</span>, <span class="ui">Cut height</span></td><td>Cortan solo la figura, sin tocar la partición del bloque; útil para ver cómo quedaría otro <i>k</i> antes de aplicarlo.</td></tr>
+      <tr><td><b>Color de ramas</b></td><td><span class="ui">Colour branches by</span>, <span class="ui">Cluster palette</span>, <span class="ui">Known-group palette</span>, <span class="ui">Gradient colour map</span>, <span class="ui">Colour above the cut</span>, <span class="ui">Single colour</span></td><td>Por grupo del corte, por agrupación conocida (la rama se colorea si todas sus hojas son del mismo grupo), por gradiente de altura o de un solo color; las ramas por encima del corte usan el color neutro.</td></tr>
+      <tr><td><b>Ramas</b></td><td><span class="ui">Branch width</span></td><td>Grosor de 0.5 a 5 px.</td></tr>
+      <tr><td><b>Etiquetas</b></td><td><span class="ui">Leaf labels</span>, <span class="ui">Label size</span>, <span class="ui">Label colour</span>, <span class="ui">Label angle offset</span>, <span class="ui">Italic labels (taxa)</span></td><td>Mostrar (automático hasta 120 hojas), tamaño, color por grupo, por agrupación conocida o liso, giro adicional y cursiva para nombres científicos.</td></tr>
+      <tr><td><b>Símbolos de hoja</b></td><td><span class="ui">Leaf symbols</span>, <span class="ui">Symbol size</span>, <span class="ui">Different shapes per group</span></td><td>Un punto bajo cada hoja coloreado por agrupación conocida o por grupo, y formas distintas por grupo conocido para impresión en gris.</td></tr>
+      <tr><td><b>Corte y cajas</b></td><td><span class="ui">Show cut line</span>, <span class="ui">Cut line colour</span>, <span class="ui">Cluster boxes</span>, <span class="ui">Box fill opacity</span>, <span class="ui">Dashed boxes</span>, <span class="ui">Cluster numbers</span></td><td>La línea discontinua del corte (un círculo en las disposiciones radiales), las cajas sombreadas por grupo (sectores en radial) y los rótulos C1, C2…</td></tr>
+      <tr><td><b>Simplificar</b></td><td><span class="ui">Collapse clusters into triangles</span>, <span class="ui">Hang leaves</span></td><td>Sustituye cada grupo por un triángulo con su tamaño; cuelga las hojas a una fracción de la altura en vez de alinearlas en cero.</td></tr>
+      <tr><td><b>Orden de hojas</b></td><td><span class="ui">Leaf order</span>, <span class="ui">Reverse order</span></td><td>Gira las ramas sin cambiar el árbol: orden por defecto, a lo largo del primer eje del PCoA, por agrupación conocida, grupos compactos primero o alfabético donde se pueda.</td></tr>
+      <tr><td><b>Eje</b></td><td><span class="ui">Height axis</span>, <span class="ui">Axis title</span>, <span class="ui">Guide circles (radial)</span></td><td>El eje de alturas (círculos guía en radial) y su título.</td></tr>
+      <tr><td><b>Radial</b></td><td><span class="ui">Inner radius %</span>, <span class="ui">Start angle</span>, <span class="ui">Sweep angle</span></td><td>Hueco central, ángulo de inicio y apertura del círculo (de 90 a 360°; con menos de 360 queda un abanico).</td></tr>
+      <tr><td><b>Leyenda</b></td><td><span class="ui">Legend content</span>, <span class="ui">Legend position</span></td><td>Grupos, grupos conocidos, ambos o ninguno; automática, arriba a la derecha o a la izquierda, debajo de la figura u oculta.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-dendro-editor.png" alt="El panel Edit figure del estudio de dendrogramas"></div>
+    <figcaption><b>Figura 5.9.</b> La pestaña <span class="ui">Content &amp; colours</span> del panel <span class="ui">Edit figure</span> del estudio. La pestaña <span class="ui">Style &amp; typography</span> tiene los ajustes comunes a todas las figuras (tema, tipografías, tamaños, márgenes) descritos en la sección 1.6.</figcaption>
+  </figure>
+
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b4-dendro-radial.png" alt="Dendrograma radial"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b4-dendro-horizontal.png" alt="Dendrograma horizontal con grupos colapsados"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figura 5.10.</b> El mismo árbol con dos disposiciones más. A la izquierda, <span class="ui">Radial / circular</span> con círculos guía: el corte es la circunferencia discontinua y las cajas son sectores. A la derecha, <span class="ui">Horizontal</span> con <span class="ui">Collapse clusters into triangles</span>: cada grupo se reduce a un triángulo con su tamaño, lo que deja ver la parte alta del árbol cuando hay muchas hojas.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · cuando la leyenda tapa ramas</div>
+    <p>La posición automática coloca la leyenda arriba a la derecha dentro del área del gráfico. Si el árbol es alto en ese lado, la leyenda puede tapar ramas o el rótulo del corte. Cámbiala a <span class="ui">Below the plot</span> en <span class="ui">Legend position</span>, o reduce su contenido con <span class="ui">Legend content</span>. En la práctica 1 de la sección 5.8 se usa esa opción.</p>
+  </div>
+
+  <!-- 5.6 -->
+  <h2 id="s5-6"><span class="num">5.6</span>Mapa de calor con árboles</h2>
+  <p class="lead">Debajo del estudio, <span class="ui">Heat map of the variables with the object tree</span> cruza los objetos, ordenados por el árbol, con las variables numéricas de la matriz de trabajo (figura 5.11). Es la forma más directa de ver <i>qué variables</i> distinguen a los grupos. No aparece cuando la entrada es una matriz de distancias ni con menos de dos variables numéricas.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-heatmap.png" alt="Mapa de calor con dendrogramas de objetos y variables"></div>
+    <figcaption><b>Figura 5.11.</b> El mapa de calor del maíz: 44 objetos × 8 variables en puntuaciones z (rojo alto, azul bajo). A la izquierda, el árbol de objetos coloreado por grupo; arriba, un árbol UPGMA de las variables; a la derecha, las franjas de región y de grupo. Se lee por bloques: el grupo de arriba (tierras altas) tiene floración tardía y plantas bajas; el de abajo (valles), plantas altas, mazorcas largas, granos pesados y alto rendimiento.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 5.5.</b> Controles propios del mapa de calor.</caption>
+    <thead><tr><th style="width:34%">Control</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Clusters k</span></td><td>Corte del árbol de objetos para colorearlo (independiente del corte del bloque).</td></tr>
+      <tr><td><span class="ui">Cell colour map</span></td><td>La rampa de colores de las celdas.</td></tr>
+      <tr><td><span class="ui">z-score the variables</span></td><td>Estandariza cada columna para que todas usen la escala completa; desmárcalo para ver los valores de la matriz de trabajo.</td></tr>
+      <tr><td><span class="ui">Cluster the variables too</span></td><td>Ordena las columnas con un árbol UPGMA de distancias euclidianas entre variables estandarizadas y lo dibuja arriba.</td></tr>
+      <tr><td><span class="ui">Object labels</span>, <span class="ui">Label size</span>, <span class="ui">Label colour</span></td><td>Etiquetas de fila (automáticas hasta 80 objetos), tamaño y color por grupo o liso.</td></tr>
+      <tr><td><span class="ui">Tree size (px)</span>, <span class="ui">Leaf order</span></td><td>Ancho del árbol de objetos y orden de las hojas, como en el estudio.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Nota · descargas del bloque</div>
+    <p>Debajo del mapa de calor, <span class="ui">⬇ Cluster membership (CSV)</span> guarda el grupo de cada objeto (con la agrupación conocida, si existe) y <span class="ui">⬇ Merge table (CSV)</span> guarda las <i>n</i> − 1 uniones del árbol con su paso, las dos ramas unidas, la altura y el tamaño del grupo resultante. Esa tabla permite rehacer el dendrograma en otro programa. El botón <span class="ui">Continue to partitioning methods →</span> lleva al Bloque 5.</p>
+  </div>
+
+  <!-- 5.7 -->
+  <h2 id="s5-7"><span class="num">5.7</span>Comparar enlaces y tanglegramas</h2>
+  <p class="lead">Distintas reglas dan árboles distintos de los mismos datos. En lugar de confiar en uno, la tercera tarjeta los calcula todos sobre la misma matriz y mide cuánto coinciden. Una estructura que sobrevive a todas las reglas es real; una que aparece con una sola merece sospecha.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 5.6.</b> Columnas de la tabla de comparación y medidas de acuerdo entre árboles.</caption>
+    <thead><tr><th style="width:30%">Medida</th><th>Qué compara</th><th style="width:22%">Lectura</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cophenetic r</span></td><td>Cada árbol con la matriz original (sección 5.3).</td><td>Mayor = árbol más fiel.</td></tr>
+      <tr><td><span class="ui">Aggl./div. coefficient</span></td><td>Fuerza de la estructura jerárquica de cada árbol.</td><td>Solo entre árboles de la misma regla.</td></tr>
+      <tr><td><span class="ui">Reversals</span></td><td>Inversiones de cada árbol.</td><td>Lo deseable es 0.</td></tr>
+      <tr><td><span class="ui">Cluster sizes at k</span></td><td>Tamaños de los grupos al cortar cada árbol en el <i>k</i> actual.</td><td>Muy desiguales (58 / 1 / 1) delatan encadenamiento.</td></tr>
+      <tr><td><span class="ui">ARI vs</span> (regla actual)</td><td>La partición en <i>k</i> de cada árbol frente a la del árbol de la tarjeta 1.</td><td>1 = misma partición.</td></tr>
+      <tr><td><span class="ui">Fowlkes–Mallows B<sub>k</sub></span></td><td>Proporción de pares de objetos que están juntos en ambos árboles cortados en <i>k</i>.</td><td>1 = misma partición; 0 = nada en común.</td></tr>
+      <tr><td><span class="ui">ARI vs known groups</span></td><td>Cada partición frente a la agrupación conocida.</td><td>Qué regla la recupera mejor.</td></tr>
+      <tr><td><b>γ de Baker</b> (figura 5.13)</td><td>Correlación de rangos del <i>paso</i> en que cada par de objetos queda por primera vez en el mismo grupo, en uno y otro árbol.</td><td>Mide toda la jerarquía, no solo el corte.</td></tr>
+      <tr><td><b>Cofenética entre árboles</b> (figura 5.13)</td><td>Correlación de Pearson entre las alturas de unión de cada par en ambos árboles.</td><td>Alternativa a Baker en el editor de la figura.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-comparar.png" alt="Tabla de comparación de reglas de enlace"></div>
+    <figcaption><b>Figura 5.12.</b> La tarjeta <span class="ui">3 · Compare linkage rules and draw tanglegrams</span> con el maíz. Vienen marcadas seis reglas (Ward.D2, promedio, completo, simple, ponderado y DIANA); el párrafo interpreta el resultado y la tabla da, para cada regla, su fidelidad y su acuerdo con el árbol construido en la tarjeta 1.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · poca concordancia de Baker no siempre significa grupos distintos</div>
+    <p>En el maíz, WPGMA tiene un γ de Baker de 0.63 con las demás reglas y, sin embargo, al cortar en tres grupos todas dan exactamente la misma partición (ARI y Fowlkes–Mallows = 1.000). La diferencia está en el <b>orden de las uniones</b>: WPGMA, que no pondera por el tamaño de los grupos, ordena de otra manera las uniones que ocurren dentro de cada región y por encima de ellas. La γ de Baker es sensible a esos cambios de orden porque trabaja con pasos, no con alturas. Cuando las particiones coinciden, la app lo dice expresamente en el párrafo de la tarjeta; léelo junto con las columnas de ARI antes de concluir que "los grupos cambian con la regla".</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b4-metodos.png" alt="Matriz de acuerdo entre reglas de enlace"></div>
+    <figcaption><b>Figura 5.13.</b> <span class="ui">Agreement between linkage methods</span>: la γ de Baker entre cada par de árboles del maíz. Cinco reglas coinciden por encima de 0.98; WPGMA se aparta (0.63–0.64). El editor permite cambiar a la correlación entre matrices cofenéticas.</figcaption>
+  </figure>
+
+  <h3>El tanglegrama</h3>
+  <p>El tanglegrama pone dos árboles frente a frente, con las mismas hojas conectadas por líneas (figura 5.14). Elige los árboles en <span class="ui">Left tree</span> y <span class="ui">Right tree</span> (por defecto, el de la tarjeta 1 y el de promedio, o Ward.D2 si el de la tarjeta 1 ya es promedio) y pulsa <span class="ui">Draw the tanglegram</span>. La app gira las ramas de ambos árboles, sin cambiarlos, para que las líneas se crucen lo menos posible, y resume el resultado al pie de la figura.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Teoría en breve · entrelazamiento y desenredado</div>
+    <p>El <b>entrelazamiento</b> mide cuánto se desplaza cada hoja entre su posición en el árbol izquierdo y en el derecho, con las diferencias elevadas a 1.5 y divididas por el peor caso posible (el orden invertido): 0 es el mismo orden, 1 es el orden al revés. Como el orden de las hojas es arbitrario (sección 5.5), el entrelazamiento solo tiene sentido después de <b>desenredar</b>: la app gira las ramas de un árbol para seguir el orden del otro, luego las del otro, y repite, quedándose con la mejor combinación. El número de <b>cruces</b> cuenta los pares de líneas que se cortan.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-tangle.png" alt="Tanglegrama Ward.D2 frente a promedio"></div>
+    <figcaption><b>Figura 5.14.</b> Tanglegrama de Ward.D2 frente a promedio con el maíz. Las líneas y las ramas se colorean por los grupos del árbol izquierdo en <i>k</i> = 3. Casi todas las líneas son horizontales: solo hay 9 cruces, todos dentro de un mismo grupo. Al pie: entrelazamiento 0.005, γ de Baker 0.995, correlación cofenética entre árboles 0.992 y Fowlkes–Mallows 1.000.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Tabla 5.7.</b> Controles propios del tanglegrama.</caption>
+    <thead><tr><th style="width:36%">Control</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Colour by clusters of the left tree (k)</span></td><td>Colorea ramas y líneas por los grupos del árbol izquierdo; con <i>k</i> = 1 todo va del color de <span class="ui">Connector colour</span>.</td></tr>
+      <tr><td><span class="ui">Untangle (rotate branches)</span></td><td>Activa el desenredado; desmárcalo para ver los dos árboles con su orden por defecto.</td></tr>
+      <tr><td><span class="ui">Labels</span>, <span class="ui">Label size</span></td><td>Nombres de las hojas junto a cada árbol (visibles por defecto hasta 80 hojas).</td></tr>
+      <tr><td><span class="ui">Space between trees</span>, <span class="ui">Branch width</span>, <span class="ui">Connector width</span></td><td>Proporción del ancho dedicada a las líneas y grosores.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 5.8 -->
+  <h2 id="s5-8"><span class="num">5.8</span>Paso a paso</h2>
+  <p class="lead">Con cada ejemplo preparado en los Bloques 2 y 3 con los valores propuestos, la tabla 5.8 resume lo que da el Bloque 4. Las prácticas se detienen en lo que enseña cada caso; en varias se cambia la regla propuesta a propósito.</p>
+
+  <table class="compacta">
+    <caption><b>Tabla 5.8.</b> Los siete ejemplos en el Bloque 4. Regla usada, fidelidad, corte automático y comparación.</caption>
+    <thead><tr><th style="width:15%">Ejemplo</th><th style="width:14%">Regla</th><th class="c" style="width:9%">Cofenética</th><th class="c" style="width:10%">Coef.</th><th class="c" style="width:11%">Saltos</th><th class="c" style="width:14%"><i>k</i> · ARI</th><th>Comparación</th></tr></thead>
+    <tbody>
+      <tr><td>Razas de maíz</td><td>Ward.D2</td><td class="c">0.843</td><td class="c">0.911</td><td class="c">3 · 2 · 4</td><td class="c">3 · 1.000</td><td>UPGMA la más fiel (0.848); misma partición con las seis reglas</td></tr>
+      <tr><td>Presencia de especies</td><td>UPGMA*</td><td class="c">0.890</td><td class="c">0.588</td><td class="c">2 · 3 · 4</td><td class="c">3 · 0.898</td><td>Ward.D2 recupera los hábitats (ARI 1.000); simple encadena</td></tr>
+      <tr><td>Abundancia de insectos</td><td>UPGMA*</td><td class="c">0.901</td><td class="c">0.671</td><td class="c">2 · 4 · 6</td><td class="c">3 · 0.419</td><td>Ward.D2 recupera los paisajes (ARI 1.000)</td></tr>
+      <tr><td>Perfiles de suelo</td><td>UPGMA</td><td class="c">0.898</td><td class="c">0.856</td><td class="c">2 · 3 · 4</td><td class="c">2 · —</td><td>Todas coinciden (γ de Baker ≥ 0.92)</td></tr>
+      <tr><td>Matriz de distancias</td><td>UPGMA</td><td class="c">0.990</td><td class="c">0.701</td><td class="c">3 · 6 · 11</td><td class="c">3 · —</td><td>Todas dan la misma partición</td></tr>
+      <tr><td>Cuatro grupos simulados</td><td>Ward.D2</td><td class="c">0.902</td><td class="c">0.974</td><td class="c">4 · 2 · 3</td><td class="c">4 · 1.000</td><td>Misma partición con las seis reglas</td></tr>
+      <tr><td>Ruido uniforme</td><td>Ward.D2</td><td class="c">0.488</td><td class="c">0.856</td><td class="c">3 · 6 · 4</td><td class="c">3 · —</td><td>γ de Baker hasta −0.02; simple da 58 / 1 / 1</td></tr>
+    </tbody>
+  </table>
+  <p class="small">* La app propone Ward.D2 para estas dos matrices casi euclidianas; en las prácticas se construye primero UPGMA, la elección clásica para Jaccard y Bray–Curtis, y se compara con Ward.D2.</p>
+
+  <h3>Práctica 1 · Presencia de especies: UPGMA, Ward y el sitio que no encaja</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con el ejemplo binario y Jaccard calculado, entra al Bloque 4. La recomendación dice Ward.D2 porque Jaccard es casi euclidiana (4.7 % de masa negativa). Cambia <span class="ui">Linkage rule</span> a <span class="ui">Average · UPGMA</span> y pulsa <span class="ui">Build the tree →</span>.</li>
+      <li>Casillas: cofenética 0.890 (muy fiel), coeficiente aglomerativo 0.588, saltos en <i>k</i> = 2, 3 y 4, sin inversiones. La app corta en tres grupos porque hay tres hábitats.</li>
+      <li>La tabla cruzada da ARI 0.898 y pureza 97 %: el grupo de humedal y el de bosque son puros, pero el tercero tiene 10 sitios de pastizal y <b>un sitio de bosque, S05</b>.</li>
+      <li>En el estudio, cambia <span class="ui">Legend position</span> a <span class="ui">Below the plot</span> para que la leyenda no tape la parte alta del árbol (figura 5.15). S05 es la última hoja de la derecha, con su punto rojo entre puntos azules, y se une al grupo de pastizal muy arriba.</li>
+      <li>Pulsa <span class="ui">Compare the ticked rules</span>. Ward.D2, completo y WPGMA separan los tres hábitats exactamente (ARI 1.000, tamaños 10 / 10 / 10); el enlace simple encadena (20 / 7 / 3, cofenética 0.541) y la γ de Baker entre simple y DIANA baja a 0.34.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b4-binario-dendro.png" alt="Dendrograma UPGMA de Jaccard de los 30 sitios"></div>
+    <figcaption><b>Figura 5.15.</b> UPGMA sobre Jaccard con los 30 sitios, cortado en tres grupos y con la leyenda debajo. Las hojas S21 y S24, y S02 y S09, se unen a altura cero: son los pares de sitios idénticos que detectó el Bloque 3. S05, un sitio de bosque (punto rojo), queda al final del grupo de pastizal.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>UPGMA reproduce mejor las distancias (0.890 frente a 0.833 de Ward.D2), pero Ward.D2 recupera mejor los hábitats. No hay contradicción: UPGMA dibuja fielmente que S05 está a medio camino entre bosque y pastizal, y la regla de Ward, que prefiere grupos de tamaño parecido, lo asigna al bosque. Qué árbol reportar depende de la pregunta. Si quieres describir la similitud florística entre sitios, UPGMA; si quieres una partición en tipos de vegetación, Ward y, en el Bloque 6, la estabilidad de ese sitio dudoso.</p>
+  </div>
+
+  <h3>Práctica 2 · Abundancia de insectos: el mismo árbol, dos cortes distintos</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los insectos y Bray–Curtis, construye el árbol con <span class="ui">Average · UPGMA</span>: cofenética 0.901, saltos en <i>k</i> = 2 (42 % de la altura), 4 y 6.</li>
+      <li>La app corta en tres grupos (hay tres paisajes) y la tabla cruzada dice ARI 0.419: un grupo de 16 sitios que mezcla 8 orgánicos y 8 de setos, y los 8 convencionales partidos en 3 y 5.</li>
+      <li>Compara reglas: todas coinciden en la jerarquía (γ de Baker ≥ 0.88), pero Ward.D2 y WPGMA, cortados en tres, dan 8 / 8 / 8 y recuperan los paisajes (ARI 1.000).</li>
+      <li>Dibuja el tanglegrama de promedio frente a Ward.D2 (figura 5.16): <b>cero cruces</b> y entrelazamiento 0.000, pero Fowlkes–Mallows en <i>k</i> = 3 de solo 0.653.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b4-insectos-tangle.png" alt="Tanglegrama promedio frente a Ward.D2 con los insectos"></div>
+    <figcaption><b>Figura 5.16.</b> Promedio (izquierda) frente a Ward.D2 (derecha) con los 24 sitios. El orden de las hojas es idéntico y ninguna línea se cruza, pero los colores, que marcan los tres grupos del árbol izquierdo, muestran dónde cae el corte: UPGMA separa primero los dos subgrupos de campos convencionales (naranja y verde); Ward separa primero campos orgánicos de setos, dentro del grupo morado.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Dos árboles pueden tener la misma forma y producir particiones distintas al cortarlos en el mismo <i>k</i>, porque lo que cambia es la <b>altura relativa</b> de las uniones. En UPGMA, la diferencia entre los dos subgrupos de campos convencionales es mayor que la diferencia entre campos orgánicos y setos; en Ward, que penaliza los grupos grandes y heterogéneos, ocurre al revés. El salto de altura más grande de UPGMA está en <i>k</i> = 2 (campos convencionales frente a campos orgánicos y setos), no en <i>k</i> = 3: el árbol sugiere que la estructura principal de estas comunidades tiene dos niveles, no tres.</p>
+  </div>
+
+  <h3>Práctica 3 · Perfiles de suelo: colorear por altura</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los suelos y Gower, la recomendación es UPGMA (Gower tiene 5.1 % de masa negativa). Construye: cofenética 0.898, coeficiente 0.856, saltos en <i>k</i> = 2 (35 %), 3 (21 %) y 4. Sin agrupación conocida, la app corta en el primer salto: dos grupos de 12 y 24 perfiles.</li>
+      <li>En el estudio, cambia <span class="ui">Colour branches by</span> a <span class="ui">height gradient</span> y <span class="ui">Leaf symbols</span> a <span class="ui">coloured by cluster</span> (figura 5.17).</li>
+      <li>Compara reglas: γ de Baker ≥ 0.92 en todos los pares; solo DIANA mueve un perfil al cortar en dos (23 / 13).</li>
+      <li>Prueba <span class="ui">Clusters k (cut)</span> = 3 en el editor: el grupo de 24 se divide en dos de 12 perfiles, justo en el segundo salto.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b4-suelos-dendro.png" alt="Dendrograma de Gower coloreado por altura"></div>
+    <figcaption><b>Figura 5.17.</b> UPGMA sobre Gower con las ramas coloreadas por un gradiente de altura (viridis: morado bajo, amarillo alto) y los puntos de las hojas por grupo. El gradiente hace visibles los tres niveles del árbol: uniones bajas dentro de cada tipo de suelo, una unión intermedia hacia 0.43 y la unión final hacia 0.66.</figcaption>
+  </figure>
+
+  <h3>Práctica 4 · Matriz genética: un abanico con nombres en cursiva</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con la matriz de 12 cultivares usada tal cual, construye UPGMA (propuesto): cofenética 0.990, saltos en <i>k</i> = 3 (64 % de la altura), 6 y 11. Corte en tres grupos de cuatro cultivares.</li>
+      <li>En el estudio, elige <span class="ui">Layout</span> = <span class="ui">Radial triangular (fan)</span> y marca <span class="ui">Italic labels (taxa)</span> (figura 5.18).</li>
+      <li>Compara reglas: las seis dan la misma partición y la misma cofenética (0.990). La γ de Baker baja a 0.55 entre simple y DIANA; el párrafo de la app aclara que la diferencia está en el orden de las uniones, no en los grupos.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b4-matriz-dendro.png" alt="Dendrograma radial triangular de la matriz genética"></div>
+    <figcaption><b>Figura 5.18.</b> Los 12 cultivares en abanico radial con etiquetas en cursiva. Sin eje de alturas el radial es sobre todo una figura de presentación: para leer alturas, activa <span class="ui">Guide circles (radial)</span>.</figcaption>
+  </figure>
+
+  <h3>Práctica 5 · Cuatro grupos simulados: colapsar para ver la cima</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con los cuatro grupos simulados y la euclidiana, construye Ward.D2: cofenética 0.902, coeficiente 0.974, saltos en <i>k</i> = 4 (58 % de la altura), 2 y 3. Corte en cuatro grupos de 20 con ARI 1.000.</li>
+      <li>En el estudio, marca <span class="ui">Collapse clusters into triangles</span> (figura 5.19): los 80 nombres desaparecen y se ve la parte alta del árbol.</li>
+      <li>Compara reglas: las seis dan exactamente los cuatro grupos simulados. El tanglegrama de Ward.D2 frente a promedio tiene 81 cruces, pero entrelazamiento 0.015 y γ de Baker 0.991: todos los cruces ocurren dentro de los grupos.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b4-sim-dendro.png" alt="Dendrograma con grupos colapsados en triángulos"></div>
+    <figcaption><b>Figura 5.19.</b> Ward.D2 con los cuatro grupos colapsados. Cada triángulo lleva su número y su tamaño; la altura de su vértice es la de la última unión interna del grupo (hacia 2) y el corte cae muy por encima (7.4). Así se ve un salto de 58 %.</figcaption>
+  </figure>
+
+  <h3>Práctica 6 · Ruido uniforme: un árbol que no resume nada</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Paso a paso</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Con el ruido uniforme y la euclidiana, construye Ward.D2. Aparece un aviso rojo: cofenética 0.488. Sin embargo, el coeficiente aglomerativo es 0.856, casi como el del maíz.</li>
+      <li>Mira la figura de alturas (figura 5.20): las barras bajan poco a poco, sin un escalón claro; el "mejor" salto, en <i>k</i> = 3, es solo el 22 % de la altura.</li>
+      <li>Compara reglas: la γ de Baker llega a −0.02 entre simple y WPGMA, y cada regla cortada en tres grupos da tamaños distintos (24 / 18 / 18 con Ward, 58 / 1 / 1 con simple).</li>
+      <li>Construye ahora con <span class="ui">Single (nearest neighbour)</span> (figura 5.21): cofenética 0.427 en rojo y el aviso <span class="ui">Weak hierarchical structure</span> con coeficiente 0.374.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b4-ruido-alturas.png" alt="Alturas de unión del árbol de Ward sobre ruido"></div>
+    <figcaption><b>Figura 5.20.</b> Las alturas de Ward.D2 con ruido uniforme: una escalera suave, sin el precipicio que se ve en el maíz (figura 5.6) o en los grupos simulados. Los tres saltos resaltados son apenas mayores que los demás.</figcaption>
+  </figure>
+  <figure>
+    <div class="marco"><img src="../img/b4-ruido-single.png" alt="Diagnóstico del enlace simple sobre ruido"></div>
+    <figcaption><b>Figura 5.21.</b> El enlace simple sobre el mismo ruido: cofenética 0.427, coeficiente 0.374 con el aviso de estructura débil, y una figura de alturas casi plana a partir de <i>k</i> = 3.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Lo que aprendiste</div>
+    <p>Un coeficiente aglomerativo alto no demuestra que haya grupos: Ward lo infla siempre, porque su criterio hace que la última unión sea mucho más alta que las primeras aunque los datos sean ruido. La correlación cofenética, la forma de la figura de alturas y el desacuerdo entre reglas son los que delatan la falta de estructura. Esta es la tercera señal, después del estadístico de Hopkins del Bloque 2 y del desacuerdo entre coeficientes del Bloque 3.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Importante · lo que hay que reportar de este bloque</div>
+    <p>En la sección de métodos: la regla de enlace (con β si usaste la flexible), el coeficiente de disimilitud sobre el que se construyó, la correlación cofenética, el criterio y la altura del corte y el número de grupos. Si comparaste reglas, la regla más fiel y si las particiones coinciden. Una frase basta: "El árbol se construyó con UPGMA sobre distancias de Bray–Curtis (correlación cofenética 0.901) y se cortó en dos grupos en el mayor salto de altura; las reglas de Ward, completa, simple, ponderada y DIANA produjeron jerarquías concordantes (γ de Baker ≥ 0.88)". El párrafo automático del Bloque 8 la redacta con tus valores.</p>
+  </div>
+
+  <p style="margin-top:0.25in">Con el árbol construido, cortado y comparado, el siguiente capítulo presenta la otra gran familia: los métodos que buscan directamente <i>k</i> grupos sin construir una jerarquía. k-means y sus variantes, PAM y CLARA, el agrupamiento difuso, las mezclas gaussianas, DBSCAN y el agrupamiento espectral, con la comparación de todos ellos a igual <i>k</i>.</p>
+</section>
+
+</body>
+</html>

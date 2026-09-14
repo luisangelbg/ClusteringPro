@@ -183,7 +183,9 @@ function compareMethods() {
   } catch (e) { console.error(e); }
   const best = rows.slice().sort((a, b) => +b.coph - +a.coph)[0];
   let lo = 1, pair = null; for (let a = 0; a < ids.length; a++) for (let b = a + 1; b < ids.length; b++) if (baker[a][b] < lo) { lo = baker[a][b]; pair = [names[a], names[b]]; }
-  el('cmp4Text').innerHTML = `<p><b>${esc(best.method)}</b> gives the highest cophenetic correlation (${best.coph}). ${lo > 0.8 ? `All the trees agree closely (lowest Baker γ ${lo.toFixed(2)} between ${esc(pair[0])} and ${esc(pair[1])}): the structure is robust to the linkage rule.` : lo > 0.5 ? `The linkages agree only moderately (Baker γ down to ${lo.toFixed(2)} between ${esc(pair[0])} and ${esc(pair[1])}): the clusters change with the rule — pick it on theoretical grounds and look at the tanglegram.` : `Strong disagreement between ${esc(pair[0])} and ${esc(pair[1])} (Baker γ ${lo.toFixed(2)}): the hierarchy is not stable across linkages, a sign of weak or non-nested structure.`}</p>`;
+  /* Baker's gamma looks at the whole hierarchy; the partitions at the chosen k may still be identical */
+  const minAri = Math.min(...rows.map(r => +r.ari));
+  el('cmp4Text').innerHTML = `<p><b>${esc(best.method)}</b> gives the highest cophenetic correlation (${best.coph}). ${lo <= 0.8 && minAri >= 0.95 ? `At k = ${k} every linkage gives the same partition (ARI ≥ ${minAri.toFixed(2)} against ${esc(NAME[ref.method])}); the lower Baker γ (${lo.toFixed(2)} between ${esc(pair[0])} and ${esc(pair[1])}) comes from the order of the merges inside or above the clusters, not from the clusters themselves.` : lo > 0.8 ? `All the trees agree closely (lowest Baker γ ${lo.toFixed(2)} between ${esc(pair[0])} and ${esc(pair[1])}): the structure is robust to the linkage rule.` : lo > 0.5 ? `The linkages agree only moderately (Baker γ down to ${lo.toFixed(2)} between ${esc(pair[0])} and ${esc(pair[1])}): the clusters change with the rule — pick it on theoretical grounds and look at the tanglegram.` : `Strong disagreement between ${esc(pair[0])} and ${esc(pair[1])} (Baker γ ${lo.toFixed(2)}): the hierarchy is not stable across linkages, a sign of weak or non-nested structure.`}</p>`;
   el('cmp4Results').style.display = '';
   fillTangleSelects();
 }
@@ -228,7 +230,7 @@ function refresh() {
   enableStep(5, false); el('nextBtn4').disabled = true;
   const d = state.dist, eu = d.diag && d.diag.euclid ? d.diag.euclid.negMass : 0;
   let rec, why;
-  if (eu < 0.05) { rec = 'ward.D2'; why = `${d.name} is Euclidean-embeddable, so Ward.D2 (compact, equal-variance clusters) is a sound default; UPGMA is the alternative when you care about the fidelity of the tree to the distances.`; }
+  if (eu < 0.05) { rec = 'ward.D2'; why = `${d.name} is ${eu < 0.01 ? 'Euclidean-embeddable' : `nearly Euclidean-embeddable (${fmtPct(eu, 1)} negative eigenvalue mass)`}, so Ward.D2 (compact, equal-variance clusters) is a sound default; UPGMA is the alternative when you care about the fidelity of the tree to the distances.`; }
   else { rec = 'average'; why = `${d.name} is not Euclidean-embeddable (${fmtPct(eu, 0)} negative eigenvalue mass): prefer UPGMA or complete linkage, which only need the matrix. If you want Ward, go back to Block 3 and tick the square-root option (√d).`; }
   if (state.profile && state.profile.type === 'ecological' && rec === 'ward.D2') why += ' For community data UPGMA on Bray–Curtis remains the classical choice.';
   el('hcMethod').value = rec;

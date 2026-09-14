@@ -286,7 +286,8 @@ P4.heights = (cfg, T) => {
   const x = Fig.scaleLinear(0.5, K + 0.5, f.x0, f.x1), y = Fig.scaleLinear(0, Math.max(...hs) * 1.1 || 1, f.y1, f.y0);
   Fig.axisX(f, x, Object.assign({}, cfg, { xlab: cfg.xlab || 'number of clusters k' }), { ticks: ks });
   Fig.axisY(f, y, Object.assign({}, cfg, { ylab: cfg.ylab || 'merge height that produces k clusters' }));
-  const g = Fig.g(), c = Fig.color(cfg.palette, 0), sug = HC.suggestK(hc, K).slice(0, 3).map(s => s.k);
+  /* same search range as the "Suggested k" tile of Block 4 (k ≤ 12), so the figure and the tile agree */
+  const g = Fig.g(), c = Fig.color(cfg.palette, 0), sug = HC.suggestK(hc, 12).slice(0, 3).map(s => s.k).filter(k => k <= K);
   ks.forEach((k, i) => { g.appendChild(Fig.el('rect', { x: x(k) - (x(2) - x(1)) * 0.35, y: y(hs[i]), width: (x(2) - x(1)) * 0.7, height: f.y1 - y(hs[i]), fill: sug.includes(k) ? Fig.color(cfg.palette, 1) : Fig.alpha(c, 0.7), rx: 2 })); if (sug.includes(k)) g.appendChild(Fig.text(x(k), y(hs[i]) - 6, `k = ${k}`, { size: 10, anchor: 'middle', weight: 'bold', fill: Fig.color(cfg.palette, 1), font: f.font, role: 'label' })); });
   g.appendChild(Fig.text(f.x1 - 6, f.y0 + 16, 'highlighted: the largest jumps between successive merges', { size: 10, anchor: 'end', fill: f.t.muted, font: f.font, role: 'label' }));
   f.g.appendChild(g);

@@ -32,7 +32,10 @@ manual/
     04-bloque3.html    capítulo 4 · Bloque 3 "Similitud y distancia": similitud/disimilitud/distancia, las seis
                        familias y los 39 coeficientes con fórmula, métrico y euclidiano (con la casilla √d),
                        diagnóstico de la matriz, comparación de coeficientes, figuras del bloque y seis prácticas
-    05-bloque4.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
+    05-bloque4.html    capítulo 5 · Bloque 4 "Agrupamiento jerárquico": aglomerativo y divisivo, las diez reglas con sus
+                       coeficientes de Lance y Williams, cofenética y coeficientes, corte, estudio de dendrogramas,
+                       mapa de calor con árboles, comparación de reglas y tanglegramas, seis prácticas
+    06-bloque5.html … 09-bloque8.html   un capítulo por bloque de la app (pendientes)
     10-apendices.html  apéndices A–F (pendiente)
   en/                  versión en inglés (pendiente)
 ```
@@ -125,6 +128,7 @@ Recetas de las capturas actuales (`h` es la altura del marco cuando no es la pre
 | `b3-binario-heat.png` | `ex:1;apply;step:3;run:distRunBtn;scroll:%23fig3Heat,10` (820) | 2200 × 1500 desde (300, 20) |
 | `b3-insectos-cmp.png` · `b3-insectos-sqrt.png` | `ex:2;apply;step:3;run:distRunBtn;run:cmpRunBtn;scroll:%23cmpResults,10` (900) · `ex:2;apply;step:3;check:%23distSqrt=true;run:distRunBtn;scroll:%23distResults,10` (700) | 2200 × 1370 desde (300, 190) · 2300 × 1310 desde (250, 20) |
 | `b3-suelos-mds.png` · `b3-matriz-res.png` · `b3-ruido-hist.png` | `ex:3;…;scroll:%23fig3MDS,10` (760) · `ex:4;step:3;run:distRunBtn;scroll:%23distResults,10` (700) · `ex:6;…;scroll:%23fig3Shepard,10` (640) | 2200 × 1500 desde (300, 20) · 2300 × 1040 desde (250, 20) · 2200 × 1260 desde (300, 20) |
+| `b4-*.png` (20 capturas) | prefijo común `M = ex:N;apply;step:3;run:distRunBtn;step:4` (sin `apply` con la matriz) y luego `run:hcRun` y, según la figura, `run:cmp4Run`, `run:tgRun`, `select:%23hcMethod=average` (o `diana`, `single`), `cfg:fig4Dendro.layout=radial` · `horizontal` · `radialtri`, `cfg:fig4Dendro.collapse=true`, `cfg:fig4Dendro.colourBy=gradient`, `cfg:fig4Dendro.legendPos=bottom`, `open:%23fig4Dendro%20details.fig-editor`; `scroll:` a `%23hcReco`, `%23hcResults`, `%23fig4Heights`, `%23hcResults%20h3`, `%23fig4Dendro`, `%23fig4Heatmap`, `%23cmp4Card`, `%23fig4Methods`, `%23fig4Tangle` (ventanas 1400 × 520–1250) | tarjetas 2300 de ancho desde (250, 20); figuras 2200 de ancho desde (300, 20); alturas entre 700 y 1780 |
 
 Los recortes se hacen con `System.Drawing` desde PowerShell sobre la captura a 2×. Las cifras del demo que cita el capítulo 2 (cofenética por enlace, iteraciones, SS entre/total, silueta y ARI) se obtuvieron de la propia app con la semilla fija del demo; si el demo cambia, hay que recalcularlas.
 
