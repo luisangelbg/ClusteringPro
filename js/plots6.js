@@ -24,7 +24,7 @@ P6.curve = (cfg, sw, key, opts) => {
   Fig.axisY(f, y, Object.assign({}, cfg, { ylab: cfg.ylab || (INDEX_META[key] || { label: key }).label }));
   const g = Fig.g(), c = Fig.color(cfg.palette, 0), hl = Fig.color(cfg.palette, 1);
   if (se) ok.forEach(i => { g.appendChild(Fig.el('line', { x1: x(ks[i]), x2: x(ks[i]), y1: y(ys[i] - se[i]), y2: y(ys[i] + se[i]), stroke: c, 'stroke-width': 1.2 })); [ys[i] - se[i], ys[i] + se[i]].forEach(v => g.appendChild(Fig.el('line', { x1: x(ks[i]) - 4, x2: x(ks[i]) + 4, y1: y(v), y2: y(v), stroke: c, 'stroke-width': 1.2 }))); });
-  g.appendChild(Fig.el('path', { d: 'M' + ok.map(i => `${x(ks[i]).toFixed(1)},${y(ys[i]).toFixed(1)}`).join(' L'), fill: 'none', stroke: c, 'stroke-width': 2.2 }));
+  if (ok.length) g.appendChild(Fig.el('path', { d: 'M' + ok.map(i => `${x(ks[i]).toFixed(1)},${y(ys[i]).toFixed(1)}`).join(' L'), fill: 'none', stroke: c, 'stroke-width': 2.2 }));
   const best = opts.best != null ? opts.best : (sw.votes[key] ? sw.votes[key].k : null);
   ok.forEach(i => g.appendChild(Fig.marker(x(ks[i]), y(ys[i]), ks[i] === best ? 6 : 4, 'circle', { fill: ks[i] === best ? hl : c, stroke: f.t.bg, 'stroke-width': 1 })));
   if (best != null) { g.appendChild(Fig.el('line', { x1: x(best), x2: x(best), y1: f.y0, y2: f.y1, stroke: hl, 'stroke-dasharray': '5 4', 'stroke-width': 1.3 })); g.appendChild(Fig.text(x(best) + 6, f.y0 + 16, `${opts.bestLabel || 'suggested'} k = ${best}`, { size: 12, weight: 'bold', fill: hl, font: f.font, role: 'label' })); }
@@ -123,7 +123,7 @@ P6.clValid = (cfg, cv, names) => {
   Fig.axisX(f, x, Object.assign({}, cfg, { xlab: cfg.xlab || 'number of clusters k' }), { ticks: ks });
   Fig.axisY(f, y, Object.assign({}, cfg, { ylab: cfg.ylab || `${INDEX_META[measure].label} (${INDEX_META[measure].dir === 'min' ? 'lower' : 'higher'} is better)` }));
   const g = Fig.g();
-  methods.forEach((m, mi) => { const pts = ks.map(k => { const r = cv.rows.find(q => q.method === m && q.k === k); return r && isFinite(r[measure]) ? [x(k), y(r[measure])] : null; }).filter(Boolean); const c = Fig.color(cfg.palette, mi); g.appendChild(Fig.el('path', { d: 'M' + pts.map(p => p.join(',')).join(' L'), fill: 'none', stroke: c, 'stroke-width': 2 })); pts.forEach(p => g.appendChild(Fig.marker(p[0], p[1], 3.5, Fig.shapes[mi % Fig.shapes.length], { fill: c }))); });
+  methods.forEach((m, mi) => { const pts = ks.map(k => { const r = cv.rows.find(q => q.method === m && q.k === k); return r && isFinite(r[measure]) ? [x(k), y(r[measure])] : null; }).filter(Boolean); const c = Fig.color(cfg.palette, mi); if (pts.length) g.appendChild(Fig.el('path', { d: 'M' + pts.map(p => p.join(',')).join(' L'), fill: 'none', stroke: c, 'stroke-width': 2 })); pts.forEach(p => g.appendChild(Fig.marker(p[0], p[1], 3.5, Fig.shapes[mi % Fig.shapes.length], { fill: c }))); });
   const b = cv.best[measure]; if (b) { g.appendChild(Fig.el('circle', { cx: x(b.k), cy: y(b[measure]), r: 9, fill: 'none', stroke: '#d64a6a', 'stroke-width': 2 })); g.appendChild(Fig.text(x(b.k) + 12, y(b[measure]) - 8, `best: ${names[b.method] || b.method}, k = ${b.k}`, { size: 11, weight: 'bold', fill: '#d64a6a', font: f.font, role: 'label', halo: f.t.bg, haloWidth: 3 })); }
   f.g.appendChild(g);
   Fig.legend(f, methods.map((m, mi) => ({ label: names[m] || m, color: Fig.color(cfg.palette, mi), shape: 'line' })), cfg, { pos: cfg.legendPos || 'bottom' });
