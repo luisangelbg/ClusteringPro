@@ -1,4 +1,4 @@
-/* PopGeneticsPro — manual de usuario: paginador.
+/* ClusteringPro — manual de usuario: paginador.
    Reparte el contenido de cada <section> de <body> en hojas tamaño carta, en orden:
    – un elemento que no cabe pasa a la hoja siguiente; las tablas y listas largas se
      parten por filas o incisos (la tabla repite su encabezado);
@@ -8,7 +8,7 @@
    (empieza hoja; el <h1> da el título corrido), data-nueva-hoja (empieza hoja).
    Sin dependencias: funciona abierto con doble clic y al imprimir a PDF. */
 (function () {
-  const MANUAL = 'PopGeneticsPro · Manual de usuario';
+  const MANUAL = 'ClusteringPro · Manual de usuario';
   const romano = n => { const t = [['m', 1000], ['cm', 900], ['d', 500], ['cd', 400], ['c', 100], ['xc', 90], ['l', 50], ['xl', 40], ['x', 10], ['ix', 9], ['v', 5], ['iv', 4], ['i', 1]]; let s = ''; for (const [r, v] of t) while (n >= v) { s += r; n -= v; } return s; };
   const TITULOS = /^H[1-4]$/;
 

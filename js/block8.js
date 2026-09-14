@@ -48,4 +48,6 @@ function init() {
   availability();
 }
 document.addEventListener('DOMContentLoaded', init);
+/* used by the manual's screenshot tool to print the report without a window */
+window.B8 = { opts, preview };
 })();
