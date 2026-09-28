@@ -77,7 +77,7 @@ function init() {
     el('citeCopy').addEventListener('click', () => copy(Report.citation(), 'Reference'));
     el('citeCopyBib').addEventListener('click', () => copy(bib, 'BibTeX'));
   }
-  el('brand').addEventListener('click', () => goStep(1));
+  el('brand').addEventListener('click', e => { e.preventDefault(); goStep(1); });
   els('.step-btn').forEach(b => b.addEventListener('click', () => { if (!b.disabled) goStep(+b.dataset.step); }));
   els('[data-go]').forEach(b => b.addEventListener('click', () => goStep(+b.dataset.go)));
 }

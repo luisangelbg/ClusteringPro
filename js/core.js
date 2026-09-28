@@ -45,6 +45,8 @@ function showMessage(container, type, text) {
   if (typeof container === 'string') container = el(container);
   if (!container) return null;
   const div = mk('div', { class: 'msg msg-' + type }, text);
+  /* errors and warnings are announced to screen readers */
+  if (window.LABG) LABG.messageRole(div, type);
   container.appendChild(div);
   return div;
 }
@@ -160,18 +162,92 @@ function slug(s) {
     .replace(/[^\w\-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60) || 'clusteringpro';
 }
 
-/* ---------------- step navigation ---------------- */
+/* ---------------- step navigation ----------------
+   Blocks 2 and 8 are open from the start; 3 to 8 are unlocked by the workflow
+   (enableStep). A block counts as done once a later block has been unlocked. */
+const STEP_ORDER = ['1', '2', '3', '4', '5', '6', '7', '8'];
+const stepUnlocked = {};
+const stepBtn = n => document.querySelector('.step-btn[data-step="' + n + '"]');
+const stepOn = n => { const b = stepBtn(n); return !!b && !b.disabled; };
+
 function goStep(n) {
   els('.step-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + n));
   els('.step-btn').forEach(b => b.classList.toggle('active', b.dataset.step === String(n)));
   document.body.classList.toggle('on-home', String(n) === '1');
+  if (window.LABG) {
+    LABG.setCurrentStep(n);
+    LABG.announce('Block: ' + stepLabel(n));
+  }
+  refreshStepFooters();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   document.dispatchEvent(new CustomEvent('stepchange', { detail: { step: n } }));
 }
 function enableStep(n, on) {
-  const b = document.querySelector('.step-btn[data-step="' + n + '"]');
+  const b = stepBtn(n);
   if (b) b.disabled = (on === false);
+  stepUnlocked[String(n)] = (on !== false);
+  refreshStepMarks();
+  refreshStepFooters();
 }
+
+function refreshStepMarks() {
+  if (!window.LABG) return;
+  STEP_ORDER.forEach((s, i) => {
+    if (s === '1') return;
+    const later = STEP_ORDER.slice(i + 1).some(t => stepUnlocked[t]);
+    LABG.markStep(s, stepOn(s) && later ? 'done' : null);
+  });
+}
+
+/* Footer of each block: Previous / Next, named after the block's button. */
+function stepLabel(n) {
+  const b = stepBtn(n); if (!b) return '';
+  const c = b.cloneNode(true);
+  c.querySelectorAll('.step-num, .step-state').forEach(x => x.remove());
+  return b.querySelector('.step-num').textContent.trim() + ' · ' + c.textContent.replace(/\s+/g, ' ').trim();
+}
+function refreshStepFooters() {
+  els('.step-panel').forEach(p => {
+    const n = p.id.replace('panel-', '');
+    const i = STEP_ORDER.indexOf(n);
+    if (i < 0) return;
+    let f = p.querySelector(':scope > .step-footer');
+    if (!f) {
+      f = mk('nav', { class: 'step-footer no-print', 'aria-label': 'Blocks' });
+      f.innerHTML = '<button type="button" class="btn btn-secondary prev"></button><button type="button" class="btn btn-primary next"></button>';
+      /* data-nav, not data-go: home.js already binds every [data-go] once */
+      f.addEventListener('click', e => { const b = e.target.closest('button[data-nav]'); if (b && !b.disabled) goStep(+b.dataset.nav); });
+      p.appendChild(f);
+    }
+    const prev = STEP_ORDER.slice(0, i).reverse().find(stepOn);
+    const next = STEP_ORDER.slice(i + 1).find(s => stepBtn(s));
+    const bp = f.querySelector('.prev'), bn = f.querySelector('.next');
+    bp.hidden = !prev;
+    if (prev) { bp.dataset.nav = prev; bp.innerHTML = `← <span><small>Previous</small>${esc(stepLabel(prev))}</span>`; }
+    bn.hidden = !next;
+    if (next) {
+      bn.dataset.nav = next; bn.disabled = !stepOn(next);
+      bn.innerHTML = `<span><small>Next</small>${esc(stepLabel(next))}</span> →`;
+    }
+  });
+}
+
+/* Common LABG Suite bar: theme, shortcuts, leave warning and keyboard.
+   Only inside the app (a page may load core.js without labg-core.js). */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.LABG) return;
+  LABG.theme.init('clusteringpro.theme');
+  const tb = el('themeBtn');
+  if (tb) tb.addEventListener('click', () => LABG.theme.toggle());
+  const hb = el('helpBtn');
+  if (hb) hb.addEventListener('click', () => LABG.showShortcuts());
+  LABG.shortcuts([]);
+  LABG.bindStepKeys(n => goStep(+n));
+  LABG.guardUnload(() => !!(state.rawRows && state.rawRows.length));
+  LABG.setCurrentStep((document.querySelector('.step-btn.active') || {}).dataset?.step || '1');
+  refreshStepMarks();
+  refreshStepFooters();
+});
 
 /* Persisted user preferences (figure style etc.) */
 const Prefs = {
