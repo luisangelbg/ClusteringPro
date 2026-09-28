@@ -73,7 +73,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 80px; }
 .feature .f-num { position: absolute; top: 10px; left: 10px; width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: var(--on-primary); font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .feature h3 { margin: 4px 0 0; font-size: 1rem; }
 .feature p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
-.feature .f-tag { font-size: 0.7rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; }
+.feature .f-tag { font-size: 0.7rem; font-weight: 600; color: var(--accent-text); text-transform: uppercase; letter-spacing: .06em; }
 .feature.soon .f-tag { color: var(--text-muted); }
 
 /* Workflow strip */
@@ -95,7 +95,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 80px; }
 .method-card .m-sub { font-size: 0.74rem; color: var(--text-muted); }
 .method-card .m-fam { display: inline-block; font-size: 0.66rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-bottom: 6px; }
 .m-fam.hier { background: var(--primary-soft); color: var(--primary-text); }
-.m-fam.part { background: var(--accent-soft); color: var(--accent); }
+.m-fam.part { background: var(--accent-soft); color: var(--accent-text); }
 .m-fam.adv  { background: rgba(31,163,154,0.14); color: var(--sky); }
 .m-fam.val  { background: rgba(214,74,106,0.13); color: var(--c4); }
 
@@ -150,7 +150,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 80px; }
 .acc:first-of-type { border-top: none; }
 .acc > summary { cursor: pointer; padding: 12px 4px; font-weight: 600; font-size: 0.95rem; list-style: none; display: flex; align-items: center; gap: 10px; }
 .acc > summary::-webkit-details-marker { display: none; }
-.acc > summary::before { content: "▸"; color: var(--accent); font-size: 0.85rem; transition: transform .15s; display: inline-block; width: 12px; }
+.acc > summary::before { content: "▸"; color: var(--accent-text); font-size: 0.85rem; transition: transform .15s; display: inline-block; width: 12px; }
 .acc[open] > summary::before { transform: rotate(90deg); }
 .acc > summary:hover { color: var(--primary-text); }
 .acc > summary .acc-tag { margin-left: auto; font-size: 0.68rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
@@ -188,7 +188,7 @@ code { font-family: var(--mono); background: var(--bg-soft); padding: 1px 5px; b
 .chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 10px; }
 .chip { font-size: 0.76rem; padding: 3px 10px; border-radius: 999px; background: var(--bg-soft); border: 1px solid var(--border); }
 .chip.p { background: var(--primary-soft); border-color: rgba(var(--primary-rgb), 0.25); color: var(--primary-text); }
-.chip.a { background: var(--accent-soft); border-color: rgba(var(--accent-rgb), 0.3); color: var(--accent); }
+.chip.a { background: var(--accent-soft); border-color: rgba(var(--accent-rgb), 0.3); color: var(--accent-text); }
 
 /* ---------- Forms ---------- */
 input[type=text], input[type=number], select, textarea { padding: 8px 11px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--card-bg); color: var(--text); font-size: 0.9rem; max-width: 100%; font-family: inherit; }
@@ -276,7 +276,7 @@ tr.dim td { color: var(--text-muted); }
 .pill { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--text-muted); }
 .pill.quant { background: rgba(var(--primary-rgb), 0.12); border-color: rgba(var(--primary-rgb), 0.3); color: var(--primary-text); }
 .pill.binary { background: rgba(31,163,154,0.14); border-color: rgba(31,163,154,0.35); color: var(--sky); }
-.pill.nominal { background: var(--accent-soft); border-color: rgba(var(--accent-rgb), 0.35); color: var(--accent); }
+.pill.nominal { background: var(--accent-soft); border-color: rgba(var(--accent-rgb), 0.35); color: var(--accent-text); }
 .pill.ordinal { background: rgba(123,176,65,0.16); border-color: rgba(123,176,65,0.4); color: #5a8a2a; }
 .pill.count { background: rgba(214,74,106,0.12); border-color: rgba(214,74,106,0.35); color: var(--c4); }
 .pill.id { background: var(--bg-soft); color: var(--text-muted); }
