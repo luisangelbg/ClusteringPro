@@ -57,7 +57,7 @@ function renderSweep(sw) {
   const keys = ['wss', 'silhouette', 'ch', 'db', 'dunn', 'gap', 'cindex', 'mcclain', 'pbm', 'rl', 'hartigan', 'kl', 'bhDiff'].filter(k => sw.rows.some(r => isFinite(r[k])));
   const voteK = key => sw.votes[key === 'wss' ? 'elbow' : key] ? sw.votes[key === 'wss' ? 'elbow' : key].k : null;
   const cols = [{ key: 'k', label: 'k', num: true }].concat(keys.map(k => ({ key: k, label: P6.INDEX_META[k].label + (voteK(k) ? ` → ${voteK(k)}` : ''), num: true, html: true })));
-  const rows = sw.rows.map(r => { const o = { k: r.k }; keys.forEach(k => { const v = r[k]; o[k] = isFinite(v) ? (voteK(k) === r.k ? `<b style="color:var(--accent)">${fmtNum(v, 3)}</b>` : fmtNum(v, 3)) : '—'; }); return o; });
+  const rows = sw.rows.map(r => { const o = { k: r.k }; keys.forEach(k => { const v = r[k]; o[k] = isFinite(v) ? (voteK(k) === r.k ? `<b style="color:var(--accent-text)">${fmtNum(v, 3)}</b>` : fmtNum(v, 3)) : '—'; }); return o; });
   buildTable('vkTable', cols, rows, { caption: 'Internal indices by k · bold = the k each index selects' });
   /* figures */
   mount('fig6Panel', { title: 'Every criterion at a glance', fileName: 'index_panel', width: 960, height: 620, defaults: { palette: 'cluster', title: 'Internal indices versus the number of clusters' }, controls: [{ key: 'title', label: 'Title', type: 'text' }, pal], render: cfg => P6.panel(cfg, sw) });

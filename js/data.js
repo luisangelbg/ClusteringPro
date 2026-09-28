@@ -386,14 +386,14 @@ function renderVarTable() {
   const tb = mk('tbody');
   state.columns.forEach(col => {
     const tr = mk('tr');
-    const kindSel = mk('select');
+    const kindSel = mk('select', { 'aria-label': 'Type of ' + col.name });
     Object.entries(KINDS).forEach(([k, v]) => {
       if (col.num.length === 0 && (k === 'quant' || k === 'count')) return;
       if (col.num.length > 0 && col.numericRatio >= 0.9 && k === 'nominal' && col.unique > 40) return;
       const op = mk('option', { value: k }, v.label); if (col.kind === k) op.selected = true; kindSel.appendChild(op);
     });
     kindSel.addEventListener('change', () => { setKind(col, kindSel.value); renderVarTable(); updateSummary(); });
-    const roleSel = mk('select');
+    const roleSel = mk('select', { 'aria-label': 'Role of ' + col.name });
     Object.entries(ROLES).forEach(([k, r]) => { const op = mk('option', { value: k }, r.label); if (col.role === k) op.selected = true; roleSel.appendChild(op); });
     roleSel.addEventListener('change', () => {
       col.role = roleSel.value;

@@ -27,8 +27,8 @@ function showParams() {
   const m = el('ptMethod').value;
   el('ptHelp').textContent = METHODS[m].help;
   const show = (id, on) => { el(id).style.display = on ? '' : 'none'; };
-  show('pK', !['dbscan', 'gmm'].includes(m) || (m === 'gmm' && el('gmmAuto').value === 'fixed'));
-  show('pSource', METHODS[m].space === 'coords');
+  show('p5K', !['dbscan', 'gmm'].includes(m) || (m === 'gmm' && el('gmmAuto').value === 'fixed'));
+  show('p5Source', METHODS[m].space === 'coords');
   show('pKmeans', m === 'kmeans');
   show('pClara', m === 'clara');
   show('pFcm', m === 'fcm');

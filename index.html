@@ -228,7 +228,7 @@
         <div class="theory-fig" data-fig="linkage"><div class="cap">Five ways to define the distance between two groups. The red line or lines show what each rule measures.</div></div>
         <p><b>Agglomerative</b> methods start with every object in its own cluster and repeatedly merge the two closest clusters until one remains. <b>Divisive</b> methods (DIANA) start from one cluster and split. Both produce a <b>hierarchy</b>: a tree with a merge height at every node, drawn as a dendrogram.</p>
         <p>"Closest clusters" must be defined, and that definition is the <b>linkage rule</b>:</p>
-        <table class="mini-table" style="font-family:inherit;font-size:0.82rem">
+        <div class="x-scroll"><table class="mini-table" style="font-family:inherit;font-size:0.82rem">
           <tr><th>Rule</th><th>Distance between clusters</th><th>Character</th></tr>
           <tr><td>Single</td><td>nearest pair of members</td><td>finds elongated shapes; prone to chaining</td></tr>
           <tr><td>Complete</td><td>farthest pair</td><td>compact, similar-sized clusters; sensitive to outliers</td></tr>
@@ -238,7 +238,7 @@
           <tr><td>Median (WPGMC)</td><td>centroid of the two centroids</td><td>same caveat</td></tr>
           <tr><td>Ward (Ward.D2)</td><td>increase in within-cluster sum of squares</td><td>compact spherical clusters; needs Euclidean distances</td></tr>
           <tr><td>Flexible beta</td><td>tunable compromise</td><td>β = −0.25 behaves like a space-conserving average</td></tr>
-        </table>
+        </table></div>
         <p>Two diagnostics tell you how well a tree represents the original distances:</p>
         <ul>
           <li><b>Cophenetic correlation</b>: correlation between the original distances and the heights at which pairs are joined. Above 0.75 the tree is a faithful summary; UPGMA usually scores highest here.</li>
@@ -384,7 +384,7 @@
   <h2 class="section-title">Which method should I use?</h2>
   <p class="section-sub">A starting point, not a rule. Block 2 makes this recommendation automatically after typing your columns.</p>
   <div class="table-scroll">
-    <table class="chooser">
+    <div class="x-scroll"><table class="chooser">
       <thead><tr><th>Your data</th><th>Dissimilarity</th><th>First choice</th><th>Also try</th><th>Validate with</th></tr></thead>
       <tbody>
         <tr><td>Quantitative traits, similar units</td><td>Euclidean (scaled if needed)</td><td>Ward.D2 tree, then k-means from the tree</td><td>UPGMA, model-based (GMM)</td><td>Silhouette, gap, bootstrap stability</td></tr>
@@ -396,7 +396,7 @@
         <tr><td>Irregular shapes, noise, outliers</td><td>Euclidean</td><td>DBSCAN / HDBSCAN*</td><td>Single linkage, spectral</td><td>Silhouette (with caution), stability</td></tr>
         <tr><td>Overlapping groups, gradients</td><td>Euclidean</td><td>Fuzzy c-means or GMM</td><td>PAM</td><td>Partition coefficient, BIC</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 
   <h2 class="section-title">Why ClusteringPro</h2>
@@ -455,8 +455,8 @@
           <li>Missing values may be blank or coded NA, ND, ?, –.</li>
           <li>A <b>distance matrix</b> is accepted as a square table whose first column repeats the column names (zeros on the diagonal). Scaling is skipped and the matrix is used directly.</li>
         </ul>
-        <table class="mini-table" style="font-family:inherit;font-size:0.82rem"><tr><th>Accession</th><th>Region</th><th>PlantHeight_cm</th><th>EarLength_cm</th><th>KernelRows</th><th>…</th></tr>
-          <tr><td>ACC-001</td><td>Highland</td><td>182.7</td><td>11.1</td><td>12</td><td>…</td></tr><tr><td>ACC-002</td><td>Highland</td><td>206.1</td><td>14.6</td><td>14</td><td>…</td></tr><tr><td>ACC-016</td><td>Valley</td><td>241.0</td><td>18.2</td><td>14</td><td>…</td></tr></table>
+        <div class="x-scroll"><table class="mini-table" style="font-family:inherit;font-size:0.82rem"><tr><th>Accession</th><th>Region</th><th>PlantHeight_cm</th><th>EarLength_cm</th><th>KernelRows</th><th>…</th></tr>
+          <tr><td>ACC-001</td><td>Highland</td><td>182.7</td><td>11.1</td><td>12</td><td>…</td></tr><tr><td>ACC-002</td><td>Highland</td><td>206.1</td><td>14.6</td><td>14</td><td>…</td></tr><tr><td>ACC-016</td><td>Valley</td><td>241.0</td><td>18.2</td><td>14</td><td>…</td></tr></table></div>
       </div>
     </details>
     <details class="acc">
@@ -515,7 +515,7 @@
     </div>
     <details class="acc"><summary>Paste from the clipboard instead</summary>
       <div class="acc-body">
-        <textarea id="pasteArea" rows="6" style="width:100%" placeholder="Site	Habitat	Quercus	Pinus&#10;S01	Forest	1	1&#10;S02	Wetland	0	0&#10;…"></textarea>
+        <textarea id="pasteArea" rows="6" aria-label="Paste your table here" style="width:100%" placeholder="Site	Habitat	Quercus	Pinus&#10;S01	Forest	1	1&#10;S02	Wetland	0	0&#10;…"></textarea>
         <div class="btn-row"><button class="btn btn-secondary btn-sm" id="pasteBtn">Use pasted data</button></div>
       </div>
     </details>
@@ -609,7 +609,7 @@
     <details class="acc" open>
       <summary>1 · Match the coefficient to the data type</summary>
       <div class="acc-body">
-        <table><thead><tr><th>Data</th><th>Use</th><th>Avoid</th></tr></thead><tbody>
+        <div class="x-scroll"><table><thead><tr><th>Data</th><th>Use</th><th>Avoid</th></tr></thead><tbody>
           <tr><td>Quantitative, comparable units (scaled)</td><td>Euclidean, Manhattan; Mahalanobis if variables are correlated; Euclidean on PCs to drop noise</td><td>Correlation distances with fewer than ~5 variables</td></tr>
           <tr><td>Profiles: expression, spectra, time series</td><td>1 − Pearson, 1 − Spearman, cosine</td><td>Euclidean when only the shape matters</td></tr>
           <tr><td>Presence/absence where 0 = absent</td><td>Jaccard, Dice, Ochiai, Kulczynski</td><td>Simple matching (rewards shared absences)</td></tr>
@@ -617,7 +617,7 @@
           <tr><td>Abundances, counts</td><td>Bray–Curtis, Ružička, Morisita–Horn; Hellinger or chord if you need Euclidean geometry</td><td>Raw Euclidean (dominated by abundant species and double zeros)</td></tr>
           <tr><td>Nominal / ordinal</td><td>Simple matching on categories, ranks for ordinal, Gower</td><td>Treating category codes as numbers</td></tr>
           <tr><td>Mixed types</td><td>Gower (weights optional)</td><td>Dummy coding + Euclidean unless categories are few</td></tr>
-        </tbody></table>
+        </tbody></table></div>
       </div>
     </details>
     <details class="acc">
@@ -795,7 +795,7 @@
     <details class="acc" open>
       <summary>1 · The methods at a glance</summary>
       <div class="acc-body">
-        <table><thead><tr><th>Method</th><th>Works on</th><th>Assumes</th><th>Needs k?</th><th>Strength</th></tr></thead><tbody>
+        <div class="x-scroll"><table><thead><tr><th>Method</th><th>Works on</th><th>Assumes</th><th>Needs k?</th><th>Strength</th></tr></thead><tbody>
           <tr><td>k-means</td><td>coordinates</td><td>round clusters, similar size, Euclidean</td><td>yes</td><td>fast, well understood; many starts avoid bad optima</td></tr>
           <tr><td>Hierarchical k-means</td><td>coordinates</td><td>as k-means</td><td>yes</td><td>starts from the tree centroids: reproducible</td></tr>
           <tr><td>PAM</td><td>any dissimilarity</td><td>medoid-shaped clusters</td><td>yes</td><td>robust to outliers; medoids are real objects; Gower, Bray–Curtis, Jaccard all fine</td></tr>
@@ -804,7 +804,7 @@
           <tr><td>Gaussian mixture</td><td>coordinates</td><td>ellipsoidal Gaussian components</td><td>BIC chooses</td><td>probabilities and uncertainty per object; k and shape selected by BIC</td></tr>
           <tr><td>DBSCAN</td><td>any dissimilarity</td><td>dense regions separated by sparse ones</td><td>no (ε, minPts)</td><td>arbitrary shapes, labels outliers as noise</td></tr>
           <tr><td>Spectral</td><td>any dissimilarity</td><td>connected neighbourhood graph</td><td>yes</td><td>curved, nested or elongated shapes (moons, rings)</td></tr>
-        </tbody></table>
+        </tbody></table></div>
       </div>
     </details>
     <details class="acc">
@@ -833,8 +833,8 @@
     <div class="reco" id="ptReco"></div>
     <div class="field-grid">
       <div class="field"><label>Method</label><select id="ptMethod"></select><span class="field-help" id="ptHelp"></span></div>
-      <div class="field" id="pK"><label>Number of clusters k</label><input type="number" id="ptK" value="3" min="1" max="50" step="1" style="width:90px"></div>
-      <div class="field" id="pSource"><label>Coordinates</label><select id="ptSource"><option value="working">Working matrix (Block 2)</option><option value="pcoa">PCoA axes of the Block 3 dissimilarity</option></select></div>
+      <div class="field" id="p5K"><label>Number of clusters k</label><input type="number" id="ptK" value="3" min="1" max="50" step="1" style="width:90px"></div>
+      <div class="field" id="p5Source"><label>Coordinates</label><select id="ptSource"><option value="working">Working matrix (Block 2)</option><option value="pcoa">PCoA axes of the Block 3 dissimilarity</option></select></div>
       <div class="field" id="pSeed"><label>Random seed</label><input type="number" id="ptSeed" value="1" min="1" max="999999" step="1" style="width:110px"><span class="field-help">Same seed → same result.</span></div>
     </div>
     <div class="field-grid" id="pKmeans">
@@ -1035,7 +1035,7 @@
     <h2>1 · Profile the clusters</h2>
     <div class="field-grid">
       <div class="field"><label>Partition</label><select id="prSource"><option value="partition">Block 5 partition</option><option value="tree">Tree cut (Block 4)</option></select></div>
-      <div class="field" id="prSpeciesWrap"><label>Indicator species</label><label class="checkbox-label"><input type="checkbox" id="prSpecies"> Treat count / binary variables as species (IndVal)</label><span class="field-help">Permutations: <input type="number" id="prPerm" value="499" min="99" max="4999" step="100" style="width:80px"></span></div>
+      <div class="field" id="prSpeciesWrap"><label>Indicator species</label><label class="checkbox-label"><input type="checkbox" id="prSpecies"> Treat count / binary variables as species (IndVal)</label><span class="field-help">Permutations: <input type="number" id="prPerm" aria-label="Permutations" value="499" min="99" max="4999" step="100" style="width:80px"></span></div>
     </div>
     <h4>Quantitative variables</h4><div id="prVars" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px"></div>
     <div id="prCatsWrap"><h4 style="margin-top:12px">Categorical variables</h4><div id="prCats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px"></div></div>
@@ -1079,8 +1079,8 @@
   <div class="card" id="predCard" style="display:none">
     <h2>4 · Assign new observations</h2>
     <p class="hint">Paste a table (or load a file) with a header row containing the same variable names; an extra column is taken as the object label. Missing variables are filled with the overall mean.</p>
-    <textarea id="newData" rows="6" style="width:100%" placeholder="Object	PlantHeight_cm	EarHeight_cm	…"></textarea>
-    <div class="btn-row"><input type="file" id="newFile" accept=".csv,.tsv,.txt"><button class="btn btn-ghost btn-sm" id="predExample">Fill with an example</button><span style="flex:1"></span><button class="btn btn-primary" id="predictBtn">Assign to clusters</button></div>
+    <textarea id="newData" rows="6" aria-label="New objects to assign" style="width:100%" placeholder="Object	PlantHeight_cm	EarHeight_cm	…"></textarea>
+    <div class="btn-row"><input type="file" id="newFile" aria-label="Open a file of new objects" accept=".csv,.tsv,.txt"><button class="btn btn-ghost btn-sm" id="predExample">Fill with an example</button><span style="flex:1"></span><button class="btn btn-primary" id="predictBtn">Assign to clusters</button></div>
     <div class="messages" id="predMessages"></div>
     <div id="predResults" style="display:none">
       <div id="predText"></div>

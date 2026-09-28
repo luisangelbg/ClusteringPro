@@ -17,7 +17,7 @@ function availability() {
     ['rpData', 'Data & exploratory analysis', !!state.eda], ['rpDist', 'Similarity & distance', !!state.dist], ['rpHier', 'Hierarchical clustering', !!state.hclust],
     ['rpPart', 'Partitioning methods', !!state.partition], ['rpValid', 'Optimal k & validation', !!(state.validation && (state.validation.sweep || state.validation.stability || state.validation.external))], ['rpProfiles', 'Profiles & prediction', !!state.profiles],
   ];
-  items.forEach(([id, label, ok]) => { const cb = el(id); cb.disabled = !ok; cb.checked = ok; cb.parentElement.style.opacity = ok ? 1 : 0.5; cb.parentElement.querySelector('.rp-state').textContent = ok ? 'ready' : 'not run yet'; });
+  items.forEach(([id, label, ok]) => { const cb = el(id); cb.disabled = !ok; cb.checked = ok; cb.parentElement.classList.toggle('is-off', !ok); cb.parentElement.querySelector('.rp-state').textContent = ok ? 'ready' : 'not run yet'; });
   const figs = Fig.mounted().length;
   el('rpSummary').innerHTML = `<div class="ds-item"><div class="ds-label">Blocks completed</div><div class="ds-value">${items.filter(i => i[2]).length} of 6</div></div><div class="ds-item"><div class="ds-label">Figures as edited</div><div class="ds-value">${figs}</div><div class="ds-sub">embedded as vector graphics</div></div><div class="ds-item"><div class="ds-label">Data set</div><div class="ds-value">${esc(state.fileName || '—')}</div><div class="ds-sub">${state.dist ? state.dist.n + ' objects' : ''}</div></div>`;
   /* the suggested title follows the data set until the user types their own */
