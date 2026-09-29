@@ -33,7 +33,7 @@ Developed as a teaching and research tool for biology, ecology, agronomy and rel
 | Block | Content | Status |
 |---|---|---|
 | 1 | Home page: overview, live k-means + dendrogram playground, data types, method gallery, 13 theory lessons with figures, method chooser, glossary | ✅ ready |
-| 2 | Data import (xlsx, xls, ods, csv, tsv, txt, json, clipboard, distance matrices), automatic typing (quantitative, count/abundance, binary, nominal, ordinal) and roles (active, supplementary, label, known grouping), missing values (drop / impute), transformations (log, sqrt, Hellinger, chord, relative abundance, presence/absence), scaling (z, range, robust, max-abs), readiness grade A–D with recommendations, Hopkins statistic with Monte-Carlo null and p-value, VAT image, PCA/MDS map, Mahalanobis outliers, correlation heat map, variable spreads; 7 example datasets | ✅ ready |
+| 2 | Data import (xlsx, xlsm, ods, csv, tsv, txt, json, clipboard, distance matrices), automatic typing (quantitative, count/abundance, binary, nominal, ordinal) and roles (active, supplementary, label, known grouping), missing values (drop / impute), transformations (log, sqrt, Hellinger, chord, relative abundance, presence/absence), scaling (z, range, robust, max-abs), readiness grade A–D with recommendations, Hopkins statistic with Monte-Carlo null and p-value, VAT image, PCA/MDS map, Mahalanobis outliers, correlation heat map, variable spreads; 7 example datasets | ✅ ready |
 | 3 | Similarity and distance: 39 coefficients in 6 families (quantitative incl. Minkowski, Mahalanobis, Euclidean on PCs and correlation distances; 10 binary; nominal/ordinal; 9 ecological; Gower with weights and dummy-Euclidean; supplied matrix with √d / d²), metric and Euclidean-embeddability diagnostics, nearest neighbours, known-group separation ratio, heat map with VAT/UPGMA/group ordering, PCoA map with rescaled stress, Shepard diagram, distribution of dissimilarities, k-NN network, comparison of candidate coefficients (correlation matrix + text) | ✅ ready |
 | 4 | Hierarchical clustering: 10 rules (single, complete, UPGMA, WPGMA, centroid, median, Ward.D, Ward.D2, flexible β, DIANA), cophenetic correlation, agglomerative/divisive coefficient, reversals, chaining check, cut by k or height with suggested k from merge-height jumps, cluster table and cross-table with ARI/purity against known groups; dendrogram studio (rectangular, triangular, horizontal, radial/fan; colour by cluster, known group, height gradient; cut line, cluster boxes, numbers, collapse into triangles, hanging leaves, leaf symbols and shapes, label colour/angle/italics, leaf order along PCoA/by group/by tightness, axis, guide circles, legend); heat map of variables with object and variable trees; comparison of linkage rules (cophenetic, coefficients, Fowlkes–Mallows, ARI, Baker's γ heat map) and untangled tanglegrams with entanglement and crossings | ✅ ready |
 | 5 | Partitioning and advanced methods: k-means (Hartigan–Wong, Lloyd, MacQueen; k-means++ or random starts; nstart; seed), hierarchical k-means seeded by the Block 4 tree, PAM (BUILD + SWAP), CLARA, fuzzy c-means (fuzzifier, partition coefficient and entropy), Gaussian mixtures by EM with five covariance models and BIC selection of k and model, DBSCAN with automatic ε from the knee of the k-NN plot, spectral clustering (k-NN or full Gaussian affinity); coordinates from the working matrix or the PCoA axes of the Block 3 dissimilarity; silhouette on the Block 3 matrix; cross-tables and ARI against the tree cut and the known groups; cluster map with 95 % ellipses or hulls, centroids/medoids, shapes by group, fading of uncertain objects; silhouette plot; cluster sizes; membership / posterior heat map; BIC profile; k-NN distance plot; comparison of methods at the same k with an ARI heat map | ✅ ready |
@@ -95,7 +95,8 @@ js/block8.js        Block 8 UI (options, preview iframe, HTML / PDF / ZIP, metho
 data/               example datasets (maize morphology, species presence/absence, insect abundances,
                     mixed soil profiles, genetic distance matrix)
 js/examples.js      the same datasets embedded, so that they load from file://
-vendor/xlsx.full.min.js   local copy of SheetJS
+js/sheets.js        spreadsheet reader (.xlsx, .xlsm, .ods): ZIP entries unpacked with the browser's own
+                    DecompressionStream and read with DOMParser
 ```
 
 Everything is plain JavaScript without modules, so the app also runs from `file://`.
@@ -108,11 +109,16 @@ interpretation, file formats, a glossary, troubleshooting and the full reference
 
 ## Third-party code
 
-`vendor/xlsx.full.min.js` is the SheetJS Community Edition (Apache License 2.0), used only to read spreadsheet files. Everything else is original code.
+None. ClusteringPro is original work: the whole program, including the spreadsheet reader, the figure engine,
+the colour palettes and scales, the illustrations and the example datasets, was written for it. No library, no
+font, no image and no data file from anyone else is bundled or fetched, and the app makes no network request.
+The colour-blind-safe palettes follow published designs (Okabe–Ito, Paul Tol, viridis and cividis), credited in
+appendix F of the manual.
 
 ## Licence
 
-ClusteringPro is free software released under the GNU General Public License, version 3 or later (see `LICENSE`).
+Copyright © 2026 Luis Ángel Barrera-Guzmán. ClusteringPro is free software released under the GNU General Public
+License, version 3 or later (see `LICENSE`).
 
 ## How to cite
 

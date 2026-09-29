@@ -4,7 +4,8 @@
 (function () {
 
 const MISSING_CODES = new Set(['', 'na', 'n/a', 'nan', 'null', 'none', '.', '-', '--', '?', 'nd', 's/d', 'sd',
-  'missing', 'faltante', '#n/a', '#div/0!', '#value!', '#valor!', '#ref!', '#name?', 'inf', '-inf']);
+  'missing', 'faltante', '#n/a', '#n/d', '#div/0!', '#¡div/0!', '#value!', '#valor!', '#¡valor!', '#ref!', '#¡ref!',
+  '#name?', '#¿nombre?', '#num!', '#¡num!', '#null!', '#¡nulo!', 'inf', '-inf']);
 
 const KINDS = {
   quant:   { label: 'Quantitative',      cls: 'quant',   help: 'Continuous or integer measurements: height, yield, pH, expression.' },
@@ -276,25 +277,26 @@ function readFile(file) {
       catch (err) { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not read the JSON file: ' + err.message); }
     };
     reader.readAsText(file, 'UTF-8');
+  } else if (Sheets.isOldFormat(ext)) {
+    clearMessages('dataMessages');
+    showMessage('dataMessages', 'error', 'ClusteringPro reads .xlsx, .xlsm and .ods. The older binary formats (.xls, .xlsb) are not supported: open the file in your spreadsheet program and save it again as .xlsx, or export the sheet as .csv.');
   } else {
     reader.onload = e => {
-      try {
-        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array', cellDates: true });
-        state.sheets = wb.SheetNames; state.workbook = wb;
+      Sheets.read(e.target.result, ext).then(wb => {
+        state.sheets = wb.names; state.workbook = wb;
         const pick = el('sheetSelect');
         pick.innerHTML = '';
-        wb.SheetNames.forEach(s => pick.appendChild(mk('option', { value: s }, esc(s))));
-        el('sheetPicker').style.display = wb.SheetNames.length > 1 ? '' : 'none';
-        loadSheet(wb.SheetNames[0], file.name);
-      } catch (err) { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not read the spreadsheet: ' + err.message); }
+        wb.names.forEach(s => pick.appendChild(mk('option', { value: s }, esc(s))));
+        el('sheetPicker').style.display = wb.names.length > 1 ? '' : 'none';
+        loadSheet(wb.names[0], file.name);
+      }).catch(err => { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not read the spreadsheet: ' + err.message); });
     };
     reader.readAsArrayBuffer(file);
   }
 }
 function loadSheet(sheetName, fileName) {
-  const ws = state.workbook.Sheets[sheetName];
-  const grid = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false, defval: '', raw: true });
-  afterLoad(grid, fileName || state.fileName, sheetName, ws['!merges'] || []);
+  const sheet = state.workbook.sheets[sheetName];
+  afterLoad(sheet.grid, fileName || state.fileName, sheetName, sheet.merges);
 }
 function jsonToGrid(j) {
   if (Array.isArray(j) && j.length && Array.isArray(j[0])) return j;

@@ -61,7 +61,7 @@
     <caption><b>Tabla A.1.</b> Archivos que se cargan en el Bloque 2 y cómo los lee la app. La extensión decide el lector.</caption>
     <thead><tr><th style="width:24%">Archivo</th><th style="width:36%">Cómo se lee</th><th>Qué conviene saber</th></tr></thead>
     <tbody>
-      <tr><td><b>Hoja de cálculo</b><br><code>.xlsx .xls .xlsm .xlsb .ods</code></td><td>Con la biblioteca de hojas de cálculo incluida (apéndice F). Se lee la primera hoja; si hay varias aparece <span class="ui">Sheet</span> para elegir otra.</td><td>Los números se guardan como números, así que el separador decimal no importa. Las fechas no se convierten en números. Las celdas combinadas se detectan (tabla A.3).</td></tr>
+      <tr><td><b>Hoja de cálculo</b><br><code>.xlsx .xlsm .ods</code></td><td>Con el lector propio de la app, que abre el libro (un archivo comprimido con el contenido en XML) con el descompresor del propio navegador. Se lee la primera hoja; si hay varias aparece <span class="ui">Sheet</span> para elegir otra.</td><td>Los números se guardan como números, así que el separador decimal no importa. Las fechas no se convierten en números. Las celdas combinadas se detectan (tabla A.3). Los formatos binarios antiguos <code>.xls</code> y <code>.xlsb</code> no se leen: vuelve a guardar el libro como <code>.xlsx</code> o exporta la hoja como <code>.csv</code>.</td></tr>
       <tr><td><b>Texto delimitado</b><br><code>.csv .txt .dat .prn</code></td><td>Con el separador de <span class="ui">Text delimiter</span> o, en automático, el que resulte de la regla de la tabla A.2.</td><td>Codificación UTF-8, con o sin marca inicial. Admite campos entre comillas dobles; dos comillas seguidas dentro de un campo son una comilla.</td></tr>
       <tr><td><b>Texto con tabuladores</b><br><code>.tsv</code></td><td>Siempre con tabulador.</td><td>Lo demás, como en el texto delimitado.</td></tr>
       <tr><td><b>JSON</b><br><code>.json</code></td><td>Una de cuatro disposiciones (tabla A.7).</td><td>Cualquier otra disposición produce el mensaje <span class="ui">Unrecognised JSON layout</span>.</td></tr>
@@ -79,7 +79,7 @@
       <tr><td><b>Con coma decimal</b></td><td>Los puntos se toman como separadores de miles y se quitan; la coma pasa a ser el punto decimal: <code>1.234,5</code> vale 1234.5.</td></tr>
       <tr><td><b>Con punto decimal</b></td><td>Las comas se toman como separadores de miles y se quitan: <code>1,234.5</code> vale 1234.5.</td></tr>
       <tr><td><b>Otros detalles de los números</b></td><td>Se ignoran los espacios internos y un signo <code>%</code> al final. Se aceptan el signo, los decimales sin cero inicial (<code>.5</code>) y la notación científica (<code>1.2e-3</code>). Un valor que no cumple estas formas no es un número.</td></tr>
-      <tr><td><b>Faltantes</b></td><td>Celda vacía o, sin distinguir mayúsculas: <code>NA</code>, <code>N/A</code>, <code>NaN</code>, <code>null</code>, <code>none</code>, <code>.</code>, <code>-</code>, <code>--</code>, <code>?</code>, <code>ND</code>, <code>S/D</code>, <code>SD</code>, <code>missing</code>, <code>faltante</code>, <code>#N/A</code>, <code>#DIV/0!</code>, <code>#VALUE!</code>, <code>#VALOR!</code>, <code>#REF!</code>, <code>#NAME?</code>, <code>inf</code> y <code>-inf</code>.</td></tr>
+      <tr><td><b>Faltantes</b></td><td>Celda vacía o, sin distinguir mayúsculas: <code>NA</code>, <code>N/A</code>, <code>NaN</code>, <code>null</code>, <code>none</code>, <code>.</code>, <code>-</code>, <code>--</code>, <code>?</code>, <code>ND</code>, <code>S/D</code>, <code>SD</code>, <code>missing</code>, <code>faltante</code>, <code>inf</code>, <code>-inf</code> y los errores de las hojas de cálculo en inglés y en español: <code>#N/A</code>, <code>#N/D</code>, <code>#DIV/0!</code>, <code>#¡DIV/0!</code>, <code>#VALUE!</code>, <code>#VALOR!</code>, <code>#¡VALOR!</code>, <code>#REF!</code>, <code>#¡REF!</code>, <code>#NAME?</code>, <code>#¿NOMBRE?</code>, <code>#NUM!</code>, <code>#¡NUM!</code>, <code>#NULL!</code> y <code>#¡NULO!</code>.</td></tr>
     </tbody>
   </table>
 
@@ -625,7 +625,7 @@ Lote-B,230.0,125.0,80.3,17.8,14.3,38.0,5.24,10.1</pre>
     <caption><b>Tabla D.1.</b> Problemas al abrir la app y al volver a ella.</caption>
     <thead><tr><th style="width:28%">Síntoma o mensaje</th><th style="width:27%">Causa</th><th>Qué hacer</th><th style="width:7%" class="c">Ver</th></tr></thead>
     <tbody>
-      <tr><td>La página se ve sin colores ni botones, o los botones no responden.</td><td>Faltan carpetas (<code>css/</code>, <code>js/</code>, <code>vendor/</code>) o el navegador es muy antiguo.</td><td>Copia la carpeta completa y usa un navegador actualizado.</td><td class="c">1.5</td></tr>
+      <tr><td>La página se ve sin colores ni botones, o los botones no responden.</td><td>Faltan carpetas (<code>css/</code>, <code>js/</code>) o el navegador es muy antiguo.</td><td>Copia la carpeta completa y usa un navegador actualizado.</td><td class="c">1.5</td></tr>
       <tr><td><span class="ui">Could not load the example. Open the app through Open ClusteringPro.bat or check that the js/ folder is complete.</span></td><td>Falta <code>js/examples.js</code>, donde van incrustados los ejemplos.</td><td>Vuelve a copiar la carpeta <code>js/</code>, o abre la app con <code>Open ClusteringPro.bat</code>, que los lee de <code>data/</code>.</td><td class="c">1.5</td></tr>
       <tr><td><code>Open ClusteringPro.bat</code> se cierra o no abre la dirección.</td><td>El puerto 8900 está ocupado, casi siempre por otra copia abierta.</td><td>Cierra la otra ventana, o inicia el servidor con otro puerto (<code>-Port 9001</code>) y abre esa dirección.</td><td class="c">1.5</td></tr>
       <tr><td>Los resultados desaparecen al recargar o cerrar la pestaña.</td><td>La app no guarda los análisis.</td><td>Descarga las tablas que necesites, o el informe y el paquete del Bloque 8, antes de cerrar.</td><td class="c">9.3</td></tr>
@@ -798,18 +798,15 @@ Lote-B,230.0,125.0,80.3,17.8,14.3,38.0,5.24,10.1</pre>
 
   <!-- ====================================================================== F -->
   <h2 id="ap-f" data-nueva-hoja><span class="num">F</span>Componentes de terceros</h2>
-  <p class="lead">ClusteringPro es obra original: su código, su motor de figuras, sus paletas y escalas de color, sus ilustraciones y sus datos de práctica se hicieron para este programa. Un solo componente de programa es de terceros. La app y el manual usan además algunos diseños publicados, que se declaran aquí con sus condiciones de uso.</p>
+  <p class="lead">ClusteringPro es obra original: su código, su motor de figuras, sus paletas y escalas de color, sus ilustraciones y sus datos de práctica se hicieron para este programa. <b>No incluye ningún componente de programa de terceros</b>: ni bibliotecas, ni tipografías, ni imágenes, ni archivos de datos ajenos, y la app no hace ninguna petición a internet. La app y el manual sí usan algunos diseños publicados de color, que se declaran aquí con sus condiciones de uso.</p>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Cómo lee la app un libro de cálculo</div>
+    <p>Un archivo <code>.xlsx</code>, <code>.xlsm</code> u <code>.ods</code> es en realidad un archivo comprimido que guarda el contenido en XML. El Bloque 2 lo abre con código propio (<code>js/sheets.js</code>): descomprime cada parte con el descompresor que ya trae el navegador y lee el XML con el analizador del propio navegador. Por eso la app no necesita ninguna biblioteca ajena. Los formatos binarios antiguos <code>.xls</code> y <code>.xlsb</code> quedan fuera: se vuelve a guardar el libro como <code>.xlsx</code>.</p>
+  </div>
 
   <table class="compacta">
-    <caption><b>Tabla F.1.</b> Componente de programa de terceros incluido en la app.</caption>
-    <thead><tr><th style="width:27%">Componente</th><th style="width:9%">Versión</th><th style="width:15%">Licencia</th><th>Uso y aviso</th></tr></thead>
-    <tbody>
-      <tr><td><b>Biblioteca de lectura de hojas de cálculo</b><br><code>vendor/xlsx.full.min.js</code></td><td>0.18.5</td><td>Apache 2.0</td><td>Lee los libros <code>.xlsx</code>, <code>.xls</code>, <code>.xlsm</code>, <code>.xlsb</code> y <code>.ods</code> en el Bloque 2. Es una copia sin modificar que no forma parte de la obra original; su licencia completa y su aviso de derechos van en <code>vendor/THIRD-PARTY-NOTICES.txt</code>.</td></tr>
-    </tbody>
-  </table>
-
-  <table class="compacta">
-    <caption><b>Tabla F.2.</b> Diseños publicados que usa la app.</caption>
+    <caption><b>Tabla F.1.</b> Diseños publicados que usa la app.</caption>
     <thead><tr><th style="width:24%">Recurso</th><th style="width:28%">Autoría</th><th style="width:24%">Condiciones</th><th>Dónde se usa</th></tr></thead>
     <tbody>
       <tr><td><b>Paleta segura para daltonismo</b></td><td>Okabe e Ito (2008): ocho colores; la app añade un gris y un café oscuro.</td><td>Guía de acceso libre; se cita a sus autores.</td><td>Paleta <span class="ui">Okabe–Ito (colour-blind safe)</span>.</td></tr>
@@ -822,7 +819,7 @@ Lote-B,230.0,125.0,80.3,17.8,14.3,38.0,5.24,10.1</pre>
   <p>Las otras ocho escalas de los mapas de calor (<span class="ui">Red–Yellow–Blue</span>, <span class="ui">Red–Blue</span>, <span class="ui">Spectral</span>, <span class="ui">Blue–White–Red</span>, <span class="ui">Greens</span>, <span class="ui">Yellow–Green</span>, <span class="ui">Browns</span> y <span class="ui">Heat</span>) y las paletas <span class="ui">ClusteringPro</span>, <span class="ui">Vivid</span>, <span class="ui">Harvest</span>, <span class="ui">Soil &amp; crop</span>, <span class="ui">Soft</span>, <span class="ui">Deep</span>, <span class="ui">Pastel</span> y <span class="ui">Greyscale</span> son originales de la app. Las escalas parten de colores anclados en un espacio de color perceptual: en las divergentes, la luminosidad sube hacia el centro y baja igual hacia los extremos, y sus extremos se siguen distinguiendo con daltonismo rojo–verde; en las secuenciales, baja de forma continua. Las familias de letra de las figuras son genéricas: cada equipo usa las suyas.</p>
 
   <table class="compacta">
-    <caption><b>Tabla F.3.</b> Recursos del manual.</caption>
+    <caption><b>Tabla F.2.</b> Recursos del manual.</caption>
     <thead><tr><th style="width:27%">Recurso</th><th style="width:33%">Autoría y licencia</th><th>Uso</th></tr></thead>
     <tbody>
       <tr><td><b>Tipografías</b> Cormorant, Crimson Pro y Jost</td><td>Christian Thalmann; Jacques Le Bailly; Owen Earl. Licencia de Tipografías Abiertas SIL (OFL), versión 1.1.</td><td>Títulos, texto y rótulos. Las páginas HTML las cargan de un servicio público de tipografías y el PDF las incrusta, como permite la licencia; sin conexión, el navegador usa tipografías del sistema.</td></tr>
@@ -834,7 +831,7 @@ Lote-B,230.0,125.0,80.3,17.8,14.3,38.0,5.24,10.1</pre>
 
   <div class="caja importante">
     <div class="caja-t"><span class="ico">!</span>Importante · al compartir o redistribuir la app</div>
-    <p style="margin:0">El código de ClusteringPro se distribuye con la Licencia Pública General de GNU, versión 3 o posterior (archivo <code>LICENSE</code>). Si compartes la carpeta, consérvala completa: <code>LICENSE</code>, <code>vendor/THIRD-PARTY-NOTICES.txt</code> y la biblioteca de <code>vendor/</code> deben viajar juntas. Si publicas una figura hecha con la paleta de Okabe e Ito, la de Tol o la escala Cividis, cita a sus autores.</p>
+    <p style="margin:0">El código de ClusteringPro se distribuye con la Licencia Pública General de GNU, versión 3 o posterior (archivo <code>LICENSE</code>). Si compartes la carpeta, consérvala completa y con su archivo <code>LICENSE</code>. Si publicas una figura hecha con la paleta de Okabe e Ito, la de Tol o la escala Cividis, cita a sus autores.</p>
   </div>
 
   <p style="margin-top:0.25in">Con este apéndice termina la versión en español del manual.</p>
