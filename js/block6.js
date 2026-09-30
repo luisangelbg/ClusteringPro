@@ -148,7 +148,7 @@ function runExternal() {
 /* ---------- 5. comparison of algorithms over k ---------- */
 function runAlgorithms() {
   clearMessages('cvMessages');
-  const methods = els('#cvList input:checked').map(i => i.value); if (!methods.length) { showMessage('cvMessages', 'warning', 'Tick at least one method.'); return; }
+  const methods = els('#cvList input:checked').map(i => i.value); if (!methods.length) { showMessage('cvMessages', 'warning', 'Tick at least one method.'); cpNoResult(); return; }
   const { X } = coordsX(), D = state.dist.D, ks = kRange();
   const cv = VAL.compareAlgorithms(X, D, ks, methods, hcMethod());
   const names = { hier: `Hierarchical (${HC_METHOD_NAMES[hcMethod()]})`, kmeans: 'k-means', pam: 'PAM' };
@@ -178,12 +178,12 @@ function refresh() {
 function init() {
   if (!el('vkRun')) return;
   const cl = el('cvList'); [['hier', 'Hierarchical (Block 4 linkage)'], ['kmeans', 'k-means'], ['pam', 'PAM']].forEach(([id, nm]) => { const lab = mk('label', { class: 'checkbox-label', style: 'margin:0' }); const cb = mk('input', { type: 'checkbox', value: id }); cb.checked = true; lab.appendChild(cb); lab.appendChild(document.createTextNode(' ' + nm)); cl.appendChild(lab); });
-  el('vkRun').addEventListener('click', runSweep);
+  el('vkRun').addEventListener('click', () => cpAfterPaint(runSweep, cpWork('Evaluando el número de grupos', 'Evaluating the number of clusters')));
   el('adoptK').addEventListener('click', adoptK);
-  el('stRun').addEventListener('click', runStability);
-  el('pvRun').addEventListener('click', runPv);
+  el('stRun').addEventListener('click', () => cpAfterPaint(runStability, cpWork('Remuestreo bootstrap de la estabilidad', 'Bootstrap resampling for stability')));
+  el('pvRun').addEventListener('click', () => cpAfterPaint(runPv, cpWork('Bootstrap multiescala del árbol', 'Multiscale bootstrap of the tree')));
   el('exRun').addEventListener('click', runExternal);
-  el('cvRun').addEventListener('click', runAlgorithms);
+  el('cvRun').addEventListener('click', () => cpAfterPaint(runAlgorithms, cpWork('Comparando algoritmos en cada k', 'Comparing algorithms over k')));
   el('nextBtn6').addEventListener('click', () => goStep(7));
   document.addEventListener('distchange', refresh);
   document.addEventListener('hclustchange', () => { if (state.dist && !state.validation) el('vkGen').value = defaultGen(); });

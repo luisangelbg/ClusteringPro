@@ -130,11 +130,11 @@ function renderCmpList() {
 }
 function runCompare() {
   const ids = els('#cmpList input:checked').map(i => i.value);
-  if (ids.length < 2) { showMessage('cmpMessages', 'warning', 'Tick at least two coefficients.'); return; }
+  if (ids.length < 2) { showMessage('cmpMessages', 'warning', 'Tick at least two coefficients.'); cpNoResult(); return; }
   clearMessages('cmpMessages');
   const mats = [], names = [], notes = [];
   ids.forEach(id => { try { const r = Dist.compute(id, currentOpts()); mats.push(r.D); names.push(Dist.byId(id).name); if (state.groups) { let w = [], b = []; for (let i = 0; i < r.n; i++) for (let j = i + 1; j < r.n; j++) (state.groups[i] === state.groups[j] ? w : b).push(r.D[i][j]); notes.push(S.mean(b) / (S.mean(w) || 1e-12)); } } catch (e) { showMessage('cmpMessages', 'warning', `${esc(Dist.byId(id).name)}: ${esc(e.message)}`); } });
-  if (mats.length < 2) return;
+  if (mats.length < 2) { cpNoResult(); return; }
   const C = Object.assign({ names, notes }, Dist.compare(mats));
   state.distCompare = C;
   P3.mountCmp(C);
@@ -167,8 +167,8 @@ function refresh() {
 function init() {
   if (!el('famTabs')) return;
   el('coefSel').addEventListener('change', describe);
-  el('distRunBtn').addEventListener('click', compute);
-  el('cmpRunBtn').addEventListener('click', runCompare);
+  el('distRunBtn').addEventListener('click', () => cpAfterPaint(compute, cpWork('Calculando la disimilitud', 'Computing the dissimilarity')));
+  el('cmpRunBtn').addEventListener('click', () => cpAfterPaint(runCompare, cpWork('Comparando coeficientes', 'Comparing coefficients')));
   el('distDownloadBtn').addEventListener('click', downloadD);
   el('nextBtn3').addEventListener('click', () => goStep(4));
   document.addEventListener('datachange', refresh);

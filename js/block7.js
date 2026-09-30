@@ -180,8 +180,8 @@ function refresh() {
 }
 function init() {
   if (!el('prRun')) return;
-  el('prRun').addEventListener('click', run);
-  el('ldaRerun').addEventListener('click', () => { if (PRF && PRF.X) runLDA(); });
+  el('prRun').addEventListener('click', () => cpAfterPaint(run, cpWork('Perfilando los grupos', 'Profiling the clusters')));
+  el('ldaRerun').addEventListener('click', () => { if (PRF && PRF.X) cpAfterPaint(runLDA, cpWork('Análisis discriminante', 'Discriminant analysis')); });
   el('predictBtn').addEventListener('click', predictNew);
   el('predExample').addEventListener('click', useExample);
   el('dlPredBtn').addEventListener('click', downloadPred);

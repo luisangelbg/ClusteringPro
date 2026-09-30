@@ -158,10 +158,10 @@ function mountFigures() {
 /* ---------- comparison of linkage methods ---------- */
 function compareMethods() {
   const D = state.dist.D, n = D.length;
-  if (n > 600) { showMessage('cmp4Messages', 'warning', 'Comparison of all methods is limited to 600 objects.'); return; }
+  if (n > 600) { showMessage('cmp4Messages', 'warning', 'Comparison of all methods is limited to 600 objects.'); cpNoResult(); return; }
   clearMessages('cmp4Messages');
   const ids = els('#cmp4List input:checked').map(i => i.value);
-  if (ids.length < 2) { showMessage('cmp4Messages', 'warning', 'Tick at least two methods.'); return; }
+  if (ids.length < 2) { showMessage('cmp4Messages', 'warning', 'Tick at least two methods.'); cpNoResult(); return; }
   const trees = {}, rows = [], k = state.hclust.k, ref = state.hclust;
   ids.forEach(id => { trees[id] = id === ref.method ? ref.hc : HC.agglomerate(D, id, { beta: +el('hcBeta').value }); });
   const names = ids.map(id => NAME[id]);
@@ -194,7 +194,7 @@ function fillTangleSelects() {
 }
 function tanglegram() {
   const D = state.dist.D, a = el('tgA').value, b = el('tgB').value;
-  if (a === b) { showMessage('cmp4Messages', 'warning', 'Choose two different linkages.'); return; }
+  if (a === b) { showMessage('cmp4Messages', 'warning', 'Choose two different linkages.'); cpNoResult(); return; }
   clearMessages('cmp4Messages');
   const trees = (state.hclustCompare && state.hclustCompare.trees) || {};
   const h1 = trees[a] || (a === state.hclust.method ? state.hclust.hc : HC.agglomerate(D, a, { beta: +el('hcBeta').value }));
@@ -208,7 +208,7 @@ function tanglegram() {
       controls: [{ key: 'title', label: 'Title', type: 'text' }, { key: 'k', label: 'Colour by clusters of the left tree (k)', type: 'range', min: 1, max: Math.min(20, n), step: 1 }, { key: 'untangle', label: 'Untangle (rotate branches)', type: 'checkbox' }, { key: 'labels', label: 'Labels', type: 'select', options: [['auto', 'shown'], ['none', 'hidden']] }, { key: 'labelSize', label: 'Label size', type: 'range', min: 5, max: 14, step: 0.5 }, { key: 'gap', label: 'Space between trees', type: 'range', min: 0.15, max: 0.6, step: 0.05 }, { key: 'branchWidth', label: 'Branch width', type: 'range', min: 0.5, max: 4, step: 0.1 }, { key: 'lineWidth', label: 'Connector width', type: 'range', min: 0.3, max: 4, step: 0.1 }, { key: 'lineColor', label: 'Connector colour (k = 1)', type: 'color' }, { key: 'palette', label: 'Palette', type: 'select', options: Object.entries(Fig.paletteNames) }],
       render: cfg => P4.tanglegram(cfg, T2),
     });
-  } catch (e) { console.error(e); el('fig4Tangle').innerHTML = `<div class="msg msg-error">${esc(e.message)}</div>`; }
+  } catch (e) { console.error(e); cpNoResult(); el('fig4Tangle').innerHTML = `<div class="msg msg-error">${esc(e.message)}</div>`; }
   el('fig4Tangle').style.display = '';
 }
 
@@ -242,11 +242,11 @@ function init() {
   const sel = el('hcMethod'); METHODS.forEach(m => sel.appendChild(mk('option', { value: m[0] }, m[1])));
   sel.addEventListener('change', () => { el('hcBetaWrap').style.display = sel.value === 'flexible' ? '' : 'none'; });
   const list = el('cmp4List'); METHODS.forEach(m => { const lab = mk('label', { class: 'checkbox-label', style: 'margin:0' }); const cb = mk('input', { type: 'checkbox', value: m[0] }); cb.checked = ['ward.D2', 'average', 'complete', 'single', 'weighted', 'diana'].includes(m[0]); lab.appendChild(cb); lab.appendChild(document.createTextNode(' ' + m[1])); list.appendChild(lab); });
-  el('hcRun').addEventListener('click', run);
+  el('hcRun').addEventListener('click', () => cpAfterPaint(run, cpWork('Construyendo el árbol', 'Building the tree')));
   el('cutMode').addEventListener('change', toggleCut);
   el('cutApply').addEventListener('click', () => applyCut(false));
-  el('cmp4Run').addEventListener('click', compareMethods);
-  el('tgRun').addEventListener('click', tanglegram);
+  el('cmp4Run').addEventListener('click', () => cpAfterPaint(compareMethods, cpWork('Comparando métodos de enlace', 'Comparing linkage methods')));
+  el('tgRun').addEventListener('click', () => cpAfterPaint(tanglegram, cpWork('Dibujando el tanglegrama', 'Drawing the tanglegram')));
   el('dlClustersBtn').addEventListener('click', downloadClusters);
   el('dlMergesBtn').addEventListener('click', downloadMerges);
   el('nextBtn4').addEventListener('click', () => goStep(5));

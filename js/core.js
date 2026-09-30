@@ -48,8 +48,30 @@ function showMessage(container, type, text) {
   /* errors and warnings are announced to screen readers */
   if (window.LABG) LABG.messageRole(div, type);
   container.appendChild(div);
+  /* an error ends the open wait without the tick */
+  if (type === 'error' && cpWork.current) cpWork.current._failed = true;
   return div;
 }
+
+/* Waiting window (LABG Suite): opens only if the work lasts more than 300 ms.
+   cpAfterPaint lets the browser paint the window first, then runs the work and closes it
+   (tick when it went well, silently when an error was shown or cpNoResult() was called). */
+function cpWork(es, en) {
+  if (!window.LABG || !LABG.work) return null;
+  const w = LABG.work({ title: LABG.t(es, en || es), delay: 300 });
+  cpWork.current = w; return w;
+}
+cpWork.current = null;
+function cpEnd(w) {
+  if (cpWork.current === w) cpWork.current = null;
+  if (w && !w.ended) { if (w._failed) w.close(); else w.done(); }
+}
+function cpAfterPaint(f, w) {
+  const done = () => cpEnd(w);
+  return (window.LABG && LABG.nextPaint ? LABG.nextPaint() : new Promise(r => setTimeout(r, 30))).then(f).then(done, e => { console.error(e); if (w) w._failed = true; done(); });
+}
+/* a run that stops for lack of data (with a warning) ends its wait without the tick */
+function cpNoResult() { if (cpWork.current) cpWork.current._failed = true; }
 function clearMessages(container) {
   if (typeof container === 'string') container = el(container);
   if (container) container.innerHTML = '';
@@ -236,6 +258,14 @@ function refreshStepFooters() {
    Only inside the app (a page may load core.js without labg-core.js). */
 document.addEventListener('DOMContentLoaded', () => {
   if (!window.LABG) return;
+  if (LABG.work) {
+    LABG.work.scene = 'cluster';
+    LABG.work.tips = [
+      ['La estabilidad por bootstrap del Bloque 6 da por estable un grupo con Jaccard medio ≥ 0.75.', 'Block 6 bootstrap stability calls a cluster stable when its mean Jaccard is ≥ 0.75.'],
+      ['El botón «Adopt k» lleva el k de consenso a los Bloques 4 y 5.', 'The «Adopt k» button carries the consensus k to Blocks 4 and 5.'],
+      ['El paquete ZIP del Bloque 8 guarda cada figura como SVG, además del informe y las tablas en CSV.', 'The Block 8 ZIP package keeps every figure as SVG, plus the report and CSV tables.'],
+    ];
+  }
   LABG.theme.init('clusteringpro.theme');
   const tb = el('themeBtn');
   if (tb) tb.addEventListener('click', () => LABG.theme.toggle());
@@ -262,5 +292,5 @@ function randn(r) { let u = 0, v = 0; while (u === 0) u = r(); while (v === 0) v
 Object.assign(window, {
   el, els, mk, esc, showMessage, clearMessages, statTiles, buildTable, tableToCSV,
   fmtNum, fmtFixed, fmtP, fmtPct, csvEscape, matrixToCSV, download, slug,
-  goStep, enableStep, Prefs, rng, randn,
+  goStep, enableStep, Prefs, rng, randn, cpWork, cpEnd, cpAfterPaint, cpNoResult,
 });

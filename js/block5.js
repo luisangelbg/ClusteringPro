@@ -184,7 +184,7 @@ function compare() {
   if (!state.dist) return;
   clearMessages('cmp5Messages');
   const ids = els('#cmp5List input:checked').map(i => i.value);
-  if (ids.length < 2) { showMessage('cmp5Messages', 'warning', 'Tick at least two methods.'); return; }
+  if (ids.length < 2) { showMessage('cmp5Messages', 'warning', 'Tick at least two methods.'); cpNoResult(); return; }
   const k = Math.max(2, Math.min(+el('ptK').value || defaultK(), state.dist.n - 1)), D = state.dist.D, seed = +el('ptSeed').value || 1;
   const space = coordSpace(el('ptSource').value);
   const results = [], names = [];
@@ -204,7 +204,7 @@ function compare() {
       results.push(r); names.push(id === 'hier' ? `Tree (${HC_METHOD_NAMES[state.hclust.method]})` : NAME[id]);
     } catch (e) { showMessage('cmp5Messages', 'warning', `${esc(NAME[id] || id)}: ${esc(e.message)}`); }
   });
-  if (results.length < 2) return;
+  if (results.length < 2) { cpNoResult(); return; }
   const ARI = results.map(a => results.map(b => HC.ari(a.cluster, b.cluster)));
   state.partitionCompare = { names, results, ARI };
   const rows = results.map((r, i) => ({ method: names[i], sil: r.sil.avg.toFixed(3), neg: r.sil.negatives, bss: fmtPct(r.ssq.bss / r.ssq.tss, 1), sizes: Object.values(PT.sizes(r.cluster)).join(' / '), ariMean: (ARI[i].reduce((s, v, j) => s + (j === i ? 0 : v), 0) / (results.length - 1)).toFixed(3), gari: state.groups ? HC.ari(r.cluster, state.groups).toFixed(3) : '—' }));
@@ -255,8 +255,8 @@ function init() {
   el('gmmAuto').addEventListener('change', showParams);
   const gm = el('gmmModels'); Object.entries(PT.gmmModels).forEach(([id, txt]) => { const lab = mk('label', { class: 'checkbox-label', style: 'margin:0' }); const cb = mk('input', { type: 'checkbox', value: id }); cb.checked = ['VII', 'VVI', 'VVV'].includes(id); lab.appendChild(cb); lab.appendChild(document.createTextNode(` ${id} — ${txt}`)); gm.appendChild(lab); });
   const cl = el('cmp5List'); [['hier', 'Hierarchical cut (Block 4)'], ...Object.entries(NAME).filter(([id]) => id !== 'dbscan')].forEach(([id, nm]) => { const lab = mk('label', { class: 'checkbox-label', style: 'margin:0' }); const cb = mk('input', { type: 'checkbox', value: id }); cb.checked = ['hier', 'kmeans', 'pam', 'fcm', 'gmm'].includes(id); lab.appendChild(cb); lab.appendChild(document.createTextNode(' ' + nm)); cl.appendChild(lab); });
-  el('ptRun').addEventListener('click', run);
-  el('cmp5Run').addEventListener('click', compare);
+  el('ptRun').addEventListener('click', () => cpAfterPaint(run, cpWork('Agrupando los objetos', 'Clustering the objects')));
+  el('cmp5Run').addEventListener('click', () => cpAfterPaint(compare, cpWork('Comparando métodos', 'Comparing methods')));
   el('dlMembershipBtn').addEventListener('click', downloadMembership);
   el('nextBtn5').addEventListener('click', () => goStep(6));
   document.addEventListener('distchange', refresh);

@@ -39,10 +39,23 @@ async function copyMethods() {
 }
 function init() {
   if (!el('rpPreview')) return;
-  el('rpPreview').addEventListener('click', preview);
-  el('rpHtml').addEventListener('click', () => { if (!lastHtml) preview(); download(lastHtml, slug(opts().title) + '.html', 'text/html;charset=utf-8'); });
+  el('rpPreview').addEventListener('click', () => cpAfterPaint(preview, cpWork('Armando el informe', 'Building the report')));
+  el('rpHtml').addEventListener('click', () => {
+    const save = () => download(lastHtml, slug(opts().title) + '.html', 'text/html;charset=utf-8');
+    if (lastHtml) save(); else cpAfterPaint(() => { preview(); save(); }, cpWork('Armando el informe', 'Building the report'));
+  });
   el('rpPrint').addEventListener('click', () => { if (!lastHtml) preview(); const w = window.open('', '_blank'); if (!w) { showMessage('rpMessages', 'warning', 'Allow pop-ups to print.'); return; } w.document.write(lastHtml); w.document.close(); setTimeout(() => { w.focus(); w.print(); }, 700); });
-  el('rpZip').addEventListener('click', async () => { if (!lastHtml) preview(); const b = el('rpZip'); b.disabled = true; b.textContent = 'Packing…'; try { download(await Report.zip(opts(), lastHtml), slug(opts().title) + '_package.zip'); } catch (e) { showMessage('rpMessages', 'error', 'Could not build the package: ' + esc(e.message)); } b.disabled = false; b.textContent = '⬇ Full package (ZIP)'; });
+  el('rpZip').addEventListener('click', () => {
+    const b = el('rpZip'); b.disabled = true;
+    const w = cpWork('Empaquetando el informe, los datos y las figuras', 'Packing the report, data and figures');
+    if (!w) b.textContent = 'Packing…';
+    const o = Object.assign(opts(), { onProgress: (i, n) => { if (w) w.update(i / (n || 1), LABG.t(`Figura ${i + 1} de ${n}`, `Figure ${i + 1} of ${n}`)); } });
+    cpAfterPaint(async () => {
+      try { if (!lastHtml) preview(); download(await Report.zip(o, lastHtml), slug(o.title) + '_package.zip'); }
+      catch (e) { showMessage('rpMessages', 'error', 'Could not build the package: ' + esc(e.message)); }
+      finally { b.disabled = false; b.textContent = '⬇ Full package (ZIP)'; }
+    }, w);
+  });
   el('rpMethodsBtn').addEventListener('click', copyMethods);
   ['datachange', 'distchange', 'hclustchange', 'partitionchange', 'validationchange', 'profilechange'].forEach(ev => document.addEventListener(ev, () => { lastHtml = null; availability(); }));
   document.addEventListener('stepchange', e => { if (e.detail.step === 8) availability(); });

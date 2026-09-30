@@ -220,7 +220,8 @@ Report.zip = async (o, html) => {
   if (state.profiles) { const P = state.profiles; files.push({ name: 'tables/cluster_profiles.csv', data: matrixToCSV(['Variable', 'Overall_mean', 'Overall_SD'].concat(Array.from({ length: P.k }, (_, c) => [`C${c + 1}_n`, `C${c + 1}_mean`, `C${c + 1}_vtest`]).flat()).concat(['F', 'p_ANOVA', 'eta2']), P.quant.map(v => [v.name, +v.mean.toFixed(6), +v.sd.toFixed(6)].concat(v.clusters.flatMap(c => [c.n, +(c.mean || 0).toFixed(6), isFinite(c.vtest) ? +c.vtest.toFixed(4) : ''])).concat([+v.F.toFixed(4), +v.p.toFixed(6), +v.eta2.toFixed(4)]))) }); if (P.indval) files.push({ name: 'tables/indicator_values.csv', data: matrixToCSV(['Species', 'Cluster', 'IndVal', 'A', 'B', 'p'], P.indval.map(r => [r.name, r.best + 1, +r.max.toFixed(4), +r.A.toFixed(4), +r.B.toFixed(4), +r.p.toFixed(4)])) }); }
   files.push({ name: 'methods.txt', data: Report.methodsText().replace(/<[^>]+>/g, '') });
   const figs = Fig.mounted(); const used = new Set();
-  for (const f of figs) {
+  for (const [fi, f] of figs.entries()) {
+    if (o.onProgress) o.onProgress(fi, figs.length);
     let nm = f.fileName; let q = 2; while (used.has(nm)) nm = f.fileName + '_' + q++; used.add(nm);
     files.push({ name: `figures/svg/${nm}.svg`, data: Fig.serialize(f.svg) });
     if (o.zipFmt !== 'svg') { try { const blob = await Fig.toRaster(f.svg, { format: o.zipFmt, scale, dpi, background: '#ffffff' }); files.push({ name: `figures/${o.zipFmt}/${nm}.${o.zipFmt === 'tiff' ? 'tif' : o.zipFmt}`, data: blob }); } catch (e) { console.error(e); } }

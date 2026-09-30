@@ -263,23 +263,29 @@ function readFile(file) {
   const name = file.name.toLowerCase();
   const reader = new FileReader();
   clearMessages('dataMessages');
-  showMessage('dataMessages', 'info', '<span class="loading"></span> Reading file…');
+  /* waiting window (inline spinner only without the LABG base); closed by end() on every path */
+  const w = cpWork('Leyendo el archivo', 'Reading the file'), end = () => cpEnd(w);
+  if (!w) showMessage('dataMessages', 'info', '<span class="loading"></span> Reading file…');
+  reader.onerror = () => { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not read the file.'); end(); };
   const ext = name.split('.').pop();
   if (['csv', 'tsv', 'txt', 'dat', 'prn'].includes(ext)) {
     reader.onload = e => {
       try { afterLoad(parseCSV(e.target.result, ext === 'tsv' ? '\t' : (el('delimSel').value || null)), file.name); }
       catch (err) { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not read the text file: ' + err.message); }
+      end();
     };
     reader.readAsText(file, 'UTF-8');
   } else if (ext === 'json') {
     reader.onload = e => {
       try { afterLoad(jsonToGrid(JSON.parse(e.target.result)), file.name); }
       catch (err) { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not read the JSON file: ' + err.message); }
+      end();
     };
     reader.readAsText(file, 'UTF-8');
   } else if (Sheets.isOldFormat(ext)) {
     clearMessages('dataMessages');
     showMessage('dataMessages', 'error', 'ClusteringPro reads .xlsx, .xlsm and .ods. The older binary formats (.xls, .xlsb) are not supported: open the file in your spreadsheet program and save it again as .xlsx, or export the sheet as .csv.');
+    end();
   } else {
     reader.onload = e => {
       Sheets.read(e.target.result, ext).then(wb => {
@@ -289,7 +295,7 @@ function readFile(file) {
         wb.names.forEach(s => pick.appendChild(mk('option', { value: s }, esc(s))));
         el('sheetPicker').style.display = wb.names.length > 1 ? '' : 'none';
         loadSheet(wb.names[0], file.name);
-      }).catch(err => { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not read the spreadsheet: ' + err.message); });
+      }).catch(err => { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not read the spreadsheet: ' + err.message); }).then(end);
     };
     reader.readAsArrayBuffer(file);
   }
@@ -319,12 +325,14 @@ function loadPasted() {
 }
 function loadExample(path, name) {
   clearMessages('dataMessages');
-  showMessage('dataMessages', 'info', '<span class="loading"></span> Loading example…');
+  const w = cpWork('Cargando el ejemplo', 'Loading the example');
+  if (!w) showMessage('dataMessages', 'info', '<span class="loading"></span> Loading example…');
   const embedded = window.EXAMPLE_DATA && window.EXAMPLE_DATA[path];
-  if (embedded) { setTimeout(() => afterLoad(parseCSV(embedded, ','), name), 0); return; }
+  if (embedded) { cpAfterPaint(() => afterLoad(parseCSV(embedded, ','), name), w); return; }
   fetch(path).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
     .then(txt => afterLoad(parseCSV(txt, ','), name))
-    .catch(() => { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not load the example. Open the app through <b>Open ClusteringPro.bat</b> or check that the js/ folder is complete.'); });
+    .catch(() => { clearMessages('dataMessages'); showMessage('dataMessages', 'error', 'Could not load the example. Open the app through <b>Open ClusteringPro.bat</b> or check that the js/ folder is complete.'); })
+    .then(() => cpEnd(w));
 }
 /* simulated datasets, generated in the browser */
 function simulate(kind) {
@@ -798,7 +806,7 @@ function init() {
   fi.addEventListener('change', () => { if (fi.files[0]) readFile(fi.files[0]); fi.value = ''; });
   el('sheetSelect').addEventListener('change', () => loadSheet(el('sheetSelect').value));
   el('pasteBtn').addEventListener('click', loadPasted);
-  el('applyBtn').addEventListener('click', applyPrep);
+  el('applyBtn').addEventListener('click', () => cpAfterPaint(applyPrep, cpWork('Preparando la matriz de trabajo', 'Preparing the working matrix')));
   el('downloadWorkingBtn').addEventListener('click', downloadWorking);
   el('nextBtn2').addEventListener('click', () => goStep(3));
   ['scalingSel', 'transformSel'].forEach(id => el(id).addEventListener('change', () => { state.prep.userScaling = true; updatePrepHelp(); }));
