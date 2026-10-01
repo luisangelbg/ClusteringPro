@@ -53,10 +53,13 @@ P3.heat = (cfg, R) => {
   });
   /* rotated bottom labels: redo with proper rotation anchor */
   const bx = ox + side + 24;
-  for (let k = 0; k < 50; k++) g.appendChild(Fig.el('rect', { x: bx, y: oy + k * side / 50, width: 12, height: side / 50 + 0.5, fill: col(k / 49) }));
-  g.appendChild(Fig.text(bx + 17, oy + 5, '0', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
-  g.appendChild(Fig.text(bx + 17, oy + side + 3, Fig.fmtTick(+mx.toPrecision(3)), { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
-  g.appendChild(Fig.text(bx + 6, oy - 8, 'd', { size: 11, anchor: 'middle', fill: f.t.muted, font: f.font, italic: true, role: 'label' }));
+  /* for the figure studio: the cells are the plot area and the colour bar is one group it can move */
+  svg.setAttribute('data-plot', [ox, oy, side, side].map(v => +(+v).toFixed(2)).join(' '));
+  const cb = g.appendChild(Fig.g({ 'data-legend': 'colorbar' }));
+  for (let k = 0; k < 50; k++) cb.appendChild(Fig.el('rect', { x: bx, y: oy + k * side / 50, width: 12, height: side / 50 + 0.5, fill: col(k / 49) }));
+  cb.appendChild(Fig.text(bx + 17, oy + 5, '0', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
+  cb.appendChild(Fig.text(bx + 17, oy + side + 3, Fig.fmtTick(+mx.toPrecision(3)), { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
+  cb.appendChild(Fig.text(bx + 6, oy - 8, 'd', { size: 11, anchor: 'middle', fill: f.t.muted, font: f.font, italic: true, role: 'label' }));
   g.appendChild(Fig.text(f.W - 10, f.H - 8, { vat: 'objects in VAT order', hclust: 'objects in UPGMA order', group: 'objects grouped by the known grouping', original: 'objects in table order' }[cfg.order || 'vat'], { size: 10, anchor: 'end', fill: f.t.muted, font: f.font, role: 'label' }));
   f.g.appendChild(g);
   if (gi && cfg.groupStrip !== false) Fig.legend(f, gi.items, cfg, { pos: cfg.legendPos || 'bottom' });
@@ -167,10 +170,13 @@ P3.cmp = (cfg, C) => {
   }
   names.forEach((nm, i) => { g.appendChild(Fig.text(ox - 6, oy + i * cell + cell / 2 + 4, nm, { size: 11, anchor: 'end', fill: f.t.fg, font: f.font, role: 'tick' })); g.appendChild(Fig.text(ox + i * cell + cell / 2, oy + k * cell + 8, nm, { size: 11, anchor: 'end', fill: f.t.fg, font: f.font, role: 'tick', rotate: -45 })); });
   const bx = ox + k * cell + 24, bh = k * cell;
-  for (let q = 0; q < 40; q++) g.appendChild(Fig.el('rect', { x: bx, y: oy + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(1 - q / 39) }));
-  g.appendChild(Fig.text(bx + 17, oy + 4, '1', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
-  g.appendChild(Fig.text(bx + 17, oy + bh + 4, '0', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
-  g.appendChild(Fig.text(bx + 6, oy - 8, cfg.rank ? 'ρ' : 'r', { size: 11, anchor: 'middle', fill: f.t.muted, font: f.font, italic: true, role: 'label' }));
+  /* for the figure studio: the cells are the plot area and the colour bar is one group it can move */
+  svg.setAttribute('data-plot', [ox, oy, k * cell, k * cell].map(v => +(+v).toFixed(2)).join(' '));
+  const cb = g.appendChild(Fig.g({ 'data-legend': 'colorbar' }));
+  for (let q = 0; q < 40; q++) cb.appendChild(Fig.el('rect', { x: bx, y: oy + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(1 - q / 39) }));
+  cb.appendChild(Fig.text(bx + 17, oy + 4, '1', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
+  cb.appendChild(Fig.text(bx + 17, oy + bh + 4, '0', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
+  cb.appendChild(Fig.text(bx + 6, oy - 8, cfg.rank ? 'ρ' : 'r', { size: 11, anchor: 'middle', fill: f.t.muted, font: f.font, italic: true, role: 'label' }));
   f.g.appendChild(g);
   return svg;
 };

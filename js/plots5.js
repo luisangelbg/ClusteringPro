@@ -109,10 +109,12 @@ P5.membership = (cfg, R) => {
   idx.forEach((i, r) => { for (let j = 0; j < k; j++) { g.appendChild(Fig.el('rect', { x: f.x0 + j * cw, y: f.y0 + r * ch, width: cw - 1, height: Math.max(0.5, ch - (ch > 3 ? 0.6 : 0)), fill: cm(U[i][j]) })); if (ch > 11 && cw > 30) g.appendChild(Fig.text(f.x0 + j * cw + cw / 2, f.y0 + r * ch + ch / 2 + 3, U[i][j].toFixed(2), { size: Math.min(9, ch * 0.6), anchor: 'middle', fill: Fig.onColor(cm(U[i][j])), font: f.font, role: 'label' })); } if (showLab) g.appendChild(Fig.text(f.x0 - 6, f.y0 + r * ch + ch / 2 + 3, R.labels[i], { size: Math.min(9, Math.max(6, ch * 0.7)), anchor: 'end', fill: Fig.color(cfg.palette, cl[i] - 1), font: f.font, role: 'tick' })); });
   for (let j = 0; j < k; j++) g.appendChild(Fig.text(f.x0 + j * cw + cw / 2, f.y1 + 16, `C${j + 1}`, { size: 11, anchor: 'middle', fill: Fig.color(cfg.palette, j), font: f.font, weight: 'bold', role: 'tick' }));
   const bx = f.x1 + 24, bh = Math.min(200, f.y1 - f.y0);
-  for (let q = 0; q < 40; q++) g.appendChild(Fig.el('rect', { x: bx, y: f.y0 + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(1 - q / 39) }));
-  g.appendChild(Fig.text(bx + 16, f.y0 + 4, '1', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
-  g.appendChild(Fig.text(bx + 16, f.y0 + bh + 4, '0', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
-  g.appendChild(Fig.text(bx + 6, f.y0 - 8, R.method === 'gmm' ? 'P' : 'u', { size: 11, anchor: 'middle', fill: f.t.muted, font: f.font, italic: true, role: 'label' }));
+  /* colour bar, in one group the figure studio can move */
+  const cb = g.appendChild(Fig.g({ 'data-legend': 'colorbar' }));
+  for (let q = 0; q < 40; q++) cb.appendChild(Fig.el('rect', { x: bx, y: f.y0 + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(1 - q / 39) }));
+  cb.appendChild(Fig.text(bx + 16, f.y0 + 4, '1', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
+  cb.appendChild(Fig.text(bx + 16, f.y0 + bh + 4, '0', { size: 10, fill: f.t.fg, font: f.font, role: 'tick' }));
+  cb.appendChild(Fig.text(bx + 6, f.y0 - 8, R.method === 'gmm' ? 'P' : 'u', { size: 11, anchor: 'middle', fill: f.t.muted, font: f.font, italic: true, role: 'label' }));
   f.g.appendChild(g);
   return svg;
 };

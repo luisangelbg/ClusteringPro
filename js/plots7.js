@@ -19,9 +19,12 @@ P7.meansHeat = (cfg, PRF) => {
   vars.forEach((v, j) => { const mn = kind === 'mean' ? Math.min(...v.clusters.map(c => c.mean)) : 0, mx = kind === 'mean' ? Math.max(...v.clusters.map(c => c.mean)) : 0; for (let c = 0; c < k; c++) { const x = val(v, c); const t = kind === 'mean' ? (mx > mn ? (x - mn) / (mx - mn) : 0.5) : 0.5 + 0.5 * Math.max(-1, Math.min(1, x / lim)); const col = cm(kind === 'mean' ? t : 1 - t); g.appendChild(Fig.el('rect', { x: f.x0 + j * cw, y: f.y0 + c * ch, width: cw - 1.5, height: ch - 1.5, fill: col, rx: 2 })); if (cfg.values !== false && cw > 34) g.appendChild(Fig.text(f.x0 + j * cw + cw / 2, f.y0 + c * ch + ch / 2 + 4, kind === 'mean' ? fmtNum(x, 2) : (Math.abs(x) < 0.05 ? '0.0' : x.toFixed(1)), { size: Math.min(10, cw * 0.28), anchor: 'middle', fill: Fig.onColor(col), font: f.font, role: 'label', weight: kind === 'vtest' && Math.abs(x) > 1.96 ? 'bold' : 'normal' })); } g.appendChild(Fig.text(f.x0 + j * cw + cw / 2 + 4, f.y0 + k * ch + 8, v.name, { size: 10, anchor: 'end', rotate: -60, fill: f.t.fg, font: f.font, role: 'tick' })); });
   for (let c = 0; c < k; c++) g.appendChild(Fig.text(f.x0 - 8, f.y0 + c * ch + ch / 2 + 4, `Cluster ${c + 1} (n = ${PRF.sizes[c + 1] || 0})`, { size: 11, anchor: 'end', fill: Fig.color(cfg.palette, c), font: f.font, weight: 'bold', role: 'tick' }));
   const bx = f.x1 + 20, bh = k * ch;
-  for (let q = 0; q < 40; q++) g.appendChild(Fig.el('rect', { x: bx, y: f.y0 + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(kind === 'mean' ? 1 - q / 39 : q / 39) }));
-  g.appendChild(Fig.text(bx + 16, f.y0 + 4, kind === 'mean' ? 'max' : `+${lim.toFixed(1)}`, { size: 9, fill: f.t.fg, font: f.font, role: 'tick' })); g.appendChild(Fig.text(bx + 16, f.y0 + bh + 3, kind === 'mean' ? 'min' : `−${lim.toFixed(1)}`, { size: 9, fill: f.t.fg, font: f.font, role: 'tick' }));
-  g.appendChild(Fig.text(bx + 6, f.y0 - 8, kind === 'vtest' ? 'v' : kind === 'mean' ? 'mean' : 'z', { size: 10, anchor: 'middle', fill: f.t.muted, font: f.font, italic: true, role: 'label' }));
+  /* for the figure studio: the cells (at most 60 px a row) are the plot area and the colour bar is one group it can move */
+  svg.setAttribute('data-plot', [f.x0, f.y0, f.x1 - f.x0, k * ch].map(v => +(+v).toFixed(2)).join(' '));
+  const cb = g.appendChild(Fig.g({ 'data-legend': 'colorbar' }));
+  for (let q = 0; q < 40; q++) cb.appendChild(Fig.el('rect', { x: bx, y: f.y0 + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(kind === 'mean' ? 1 - q / 39 : q / 39) }));
+  cb.appendChild(Fig.text(bx + 16, f.y0 + 4, kind === 'mean' ? 'max' : `+${lim.toFixed(1)}`, { size: 9, fill: f.t.fg, font: f.font, role: 'tick' })); cb.appendChild(Fig.text(bx + 16, f.y0 + bh + 3, kind === 'mean' ? 'min' : `−${lim.toFixed(1)}`, { size: 9, fill: f.t.fg, font: f.font, role: 'tick' }));
+  cb.appendChild(Fig.text(bx + 6, f.y0 - 8, kind === 'vtest' ? 'v' : kind === 'mean' ? 'mean' : 'z', { size: 10, anchor: 'middle', fill: f.t.muted, font: f.font, italic: true, role: 'label' }));
   f.g.appendChild(g);
   return svg;
 };

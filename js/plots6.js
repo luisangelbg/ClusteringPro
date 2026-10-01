@@ -148,8 +148,11 @@ P6.external = (cfg, ext, titles) => {
   g.appendChild(Fig.text(ox + cols * cw / 2, oy - 10, titles[1], { size: 11, anchor: 'middle', fill: f.t.muted, font: f.font, role: 'label' }));
   g.appendChild(Fig.text(ox + cols * cw + 60, oy + rows * ch + 84, `ARI ${ext.ari.toFixed(3)} · NMI ${ext.nmi.toFixed(3)} · purity ${(ext.purity * 100).toFixed(0)} % · χ² p ${ext.pval < 0.001 ? '< 0.001' : '= ' + ext.pval.toFixed(3)}`, { size: 11, anchor: 'end', fill: f.t.fg, font: f.font, role: 'label' }));
   const bx = ox + cols * cw + 20, bh = rows * ch;
-  for (let q = 0; q < 40; q++) g.appendChild(Fig.el('rect', { x: bx, y: oy + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(1 - q / 39) }));
-  g.appendChild(Fig.text(bx + 16, oy + 4, '100 %', { size: 9, fill: f.t.fg, font: f.font, role: 'tick' })); g.appendChild(Fig.text(bx + 16, oy + bh + 3, '0 %', { size: 9, fill: f.t.fg, font: f.font, role: 'tick' })); g.appendChild(Fig.text(bx + 6, oy - 8, 'row %', { size: 9, anchor: 'middle', fill: f.t.muted, font: f.font, role: 'label' }));
+  /* for the figure studio: the cells are the plot area and the colour bar is one group it can move */
+  svg.setAttribute('data-plot', [ox, oy, cols * cw, rows * ch].map(v => +(+v).toFixed(2)).join(' '));
+  const cb = g.appendChild(Fig.g({ 'data-legend': 'colorbar' }));
+  for (let q = 0; q < 40; q++) cb.appendChild(Fig.el('rect', { x: bx, y: oy + q * bh / 40, width: 12, height: bh / 40 + 0.5, fill: cm(1 - q / 39) }));
+  cb.appendChild(Fig.text(bx + 16, oy + 4, '100 %', { size: 9, fill: f.t.fg, font: f.font, role: 'tick' })); cb.appendChild(Fig.text(bx + 16, oy + bh + 3, '0 %', { size: 9, fill: f.t.fg, font: f.font, role: 'tick' })); cb.appendChild(Fig.text(bx + 6, oy - 8, 'row %', { size: 9, anchor: 'middle', fill: f.t.muted, font: f.font, role: 'label' }));
   f.g.appendChild(g);
   return svg;
 };
