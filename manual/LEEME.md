@@ -53,7 +53,9 @@ manual/
                        78 referencias verificadas con DOI y componentes de terceros
     manual-completo.html  portada y partes unidas por unir-manual.pl, para imprimir el PDF (no se edita)
   ClusteringPro User's Manual.pdf   el manual completo en español
-  en/                  versión en inglés (pendiente)
+  en/                  versión en inglés: las mismas partes con el mismo marcado y las mismas capturas, su
+                       manual-completo.html y «ClusteringPro User's Manual (English).pdf» (241 hojas).
+                       Se obtiene igual: perl herramientas/reunir-reglas.pl en y perl herramientas/unir-manual.pl en
 ```
 
 ## Ver una parte

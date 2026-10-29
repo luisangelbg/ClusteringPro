@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User manual · Block 7: profiles, interpretation and prediction</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b7" data-pestana="B7" data-orden="8" style="--acento: var(--b7)">
+  <div class="cap-apertura">
+    <div class="cap-num">B7</div>
+    <div class="cap-etiqueta">Chapter eight · Block 7 · Profiles</div>
+    <h1 data-corto="Block 7 · Profiles, interpretation and prediction">Profiles, interpretation and prediction</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">A cluster is only worth something once it can be given a name. This block turns the labels “cluster 1, cluster 2” into descriptions: which variables lie above or below the mean in each cluster, which categories and which species characterise it, which simple rules recognise it, and how to assign objects that took no part in the analysis to the clusters.</p>
+    <div class="cap-franja"><span class="k7"></span><span class="k7" style="opacity:.75"></span><span class="k7" style="opacity:.5"></span><span class="k7" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>8.1</b>Describing the clusters: test values</li>
+      <li><b>8.2</b>Categorical variables</li>
+      <li><b>8.3</b>Indicator species</li>
+      <li><b>8.4</b>Discriminant analysis</li>
+      <li><b>8.5</b>Classification tree rules</li>
+      <li><b>8.6</b>Assigning new observations</li>
+      <li><b>8.7</b>Settings, tables and figures of the block</li>
+      <li><b>8.8</b>Step by step</li>
+    </ul>
+  </div>
+
+  <p class="lead">Block 7 has one theory card and four working cards. In <span class="ui">1 · Profile the clusters</span> you choose the partition and the variables. <span class="ui">2 · What characterises each cluster</span> describes each cluster with tiles, written summary cards, tables and figures. <span class="ui">3 · Discriminant analysis and classification rules</span> fits a linear discriminant analysis and a classification tree that reproduce the clusters. <span class="ui">4 · Assign new observations</span> uses those rules to classify new objects. Cards 2 to 4 appear when you press <span class="ui">Profile →</span>; the same button enables Block 8.</p>
+
+  <table class="compacta">
+    <caption><b>Table 8.1.</b> The tools of the block and the question each one answers.</caption>
+    <thead><tr><th style="width:30%">Tool</th><th style="width:30%">Question</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Test value <i>v</i>, ANOVA and Kruskal–Wallis</td><td>Which variables distinguish each cluster?</td><td>Means by cluster with their <i>v</i>; <i>F</i>, η² and P values by variable.</td></tr>
+      <tr><td>Proportions and χ²</td><td>Which categories are abundant in each cluster?</td><td>Over- and under-represented categories; Cramér’s V.</td></tr>
+      <tr><td>Indicator value (IndVal)</td><td>Which species indicate each cluster?</td><td>Specificity, fidelity and permutation test.</td></tr>
+      <tr><td>Linear discriminant analysis</td><td>Which combination of variables separates the clusters?</td><td>Discriminant axes, weights, accuracy and map.</td></tr>
+      <tr><td>Classification tree</td><td>Which simple rules recognise each cluster?</td><td>Rules of the form “Cluster 3 if DaysToFlower ≤ 73”.</td></tr>
+      <tr><td>Assignment of new objects</td><td>Which cluster does a new object belong to?</td><td>Three assignments and their agreement.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 8.1 -->
+  <h2 id="s8-1"><span class="num">8.1</span>Describing the clusters: test values</h2>
+  <p class="lead">Describing a cluster means saying how it departs from the whole data set. The app compares the mean of each cluster with the overall mean by means of a test value.</p>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · which variables card 1 offers</div>
+    <table class="compacta">
+      <thead><tr><th style="width:40%">Column in Block 1</th><th>Appears as</th></tr></thead>
+      <tbody>
+        <tr><td>Active quantitative, count, binary or ordinal</td><td>Quantitative variable, with its original values (not those transformed in Block 2).</td></tr>
+        <tr><td>Active nominal</td><td>Categorical variable.</td></tr>
+        <tr><td>Supplementary</td><td>Quantitative or categorical according to its type, marked <span class="ui">supplementary</span>; missing values are replaced by the mean or form the category <span class="ui">(missing)</span>.</td></tr>
+        <tr><td>Label, known groups or excluded</td><td>Does not appear.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">The indicator species checkbox appears when there are at least two count or binary variables, and it is ticked if Block 2 recognised an ecological or binary table. With DBSCAN, noise is described as one more cluster, the last one.</p>
+  </div>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b7-tarjeta1.png" alt="Card 1 · Profile the clusters with the insects">
+      <span class="marca" style="left:10.5%;top:19%">1</span>
+      <span class="marca" style="left:64%;top:19%">2</span>
+      <span class="marca" style="left:20.5%;top:45%">3</span>
+      <span class="marca" style="left:1%;top:86%">4</span>
+    </div>
+    <figcaption><b>Figure 8.1.</b> Card <span class="ui">1 · Profile the clusters</span> with the insect abundances: 14 families of counts, all ticked, and the indicator species checkbox switched on.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Partition</span>: the one from Block 5 (if there is one) or the tree cut from Block 4.</li>
+    <li><span class="n">2</span><span class="ui">Indicator species</span>: treats counts and binary variables as species and computes their IndVal with the given number of <span class="ui">Permutations</span> (section 8.3).</li>
+    <li><span class="n">3</span><span class="ui">Quantitative variables</span> and, if there are any, <span class="ui">Categorical variables</span>: all of them come ticked; the coloured tag gives the type of each one.</li>
+    <li><span class="n">4</span><span class="ui">Profile →</span>.</li>
+  </ul>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the test value</div>
+    <p>If a cluster of <i>n<sub>k</sub></i> objects were drawn at random from the <i>N</i>, its mean would vary around the overall mean with variance <i>s</i>²/<i>n<sub>k</sub></i> · (<i>N</i> − <i>n<sub>k</sub></i>)/(<i>N</i> − 1), where <i>s</i>² is the variance of the variable with denominator <i>N</i>. The <b>test value</b> is the difference between the cluster mean and the overall mean divided by that standard deviation: <i>v</i> = (<i>x̄<sub>k</sub></i> − <i>x̄</i>)/√[<i>s</i>²/<i>n<sub>k</sub></i> · (<i>N</i> − <i>n<sub>k</sub></i>)/(<i>N</i> − 1)]. It is read like a <i>z</i> value: |<i>v</i>| ≥ 1.96 flags a variable that characterises the cluster, from above if <i>v</i> &gt; 0 and from below if <i>v</i> &lt; 0. In addition, for each variable a one-way <b>ANOVA</b> tells whether it separates the clusters as a whole, with η² (the proportion of variation explained) as the effect size, and the <b>Kruskal–Wallis</b> test gives the same answer using ranks.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-resultados.png" alt="Tiles and summary cards of the clusters with the maize"></div>
+    <figcaption><b>Figure 8.2.</b> The tiles and the cluster summary cards with the maize (hierarchical k-means, three clusters). Each card lists up to four variables above and four below with |<i>v</i>| ≥ 1.96, sorted by |<i>v</i>|, with the cluster mean against the overall mean.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 8.2.</b> The tiles of card 2.</caption>
+    <thead><tr><th style="width:30%">Tile</th><th>What it shows</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Partition</span></td><td>The partition described and the number of objects.</td></tr>
+      <tr><td><span class="ui">Clusters</span></td><td>The number of clusters and their sizes.</td></tr>
+      <tr><td><span class="ui">Discriminating variables</span></td><td>How many quantitative variables have an ANOVA with p &lt; 0.05; in amber if none.</td></tr>
+      <tr><td><span class="ui">Strongest separator</span></td><td>The variable with the largest <i>F</i>, with its η².</td></tr>
+      <tr><td><span class="ui">Associated categorical variables</span></td><td>How many categorical variables have a χ² with p &lt; 0.05 (section 8.2).</td></tr>
+      <tr><td><span class="ui">Indicator species</span></td><td>How many species are indicators with p &lt; 0.05 (section 8.3).</td></tr>
+    </tbody>
+  </table>
+
+  <p>The summary cards turn the table into sentences. With the maize, cluster 1 (14 highland accessions) flowers late, at 95.5 days against 80.6 (<i>v</i> = 5.4), and has narrower leaves, lower ear placement, shorter plants and shorter ears. Cluster 2 (15 from the valleys) yields more, 5.24 t/ha against 4.08 (<i>v</i> = 5.4), with heavier grains, taller plants and higher ear placement. Cluster 3 (15 from the coast) has more rows and wider leaves, and flowers earlier: 66.9 days (<i>v</i> = −5.2). A card with no significant variable says that the cluster is an “average” or a small one.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-tabla.png" alt="Table of quantitative variables by cluster"></div>
+    <figcaption><b>Figure 8.3.</b> <span class="ui">Quantitative variables by cluster</span> with the maize, sorted from largest to smallest <i>F</i>. For each cluster, the mean and its <i>v</i> in brackets; means with |<i>v</i>| ≥ 1.96 are in bold, and <i>v</i> is green if positive or red if negative. Days to flowering separate the clusters better than any other variable (<i>F</i> = 156.3, η² = 0.88); the number of rows, least well (<i>F</i> = 18.3, η² = 0.47).</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · the P values of the active variables are descriptive</div>
+    <p>The clusters were built precisely so that they differ in the active variables, so those variables will always come out “significant”. With the uniform noise of exercise 7, which has no clusters, four of the five variables have an ANOVA with p &lt; 0.05. Use <i>v</i>, <i>F</i> and η² to <b>rank</b> and <b>describe</b>, not as proof that the clusters exist: that is the job of Block 6. Only <b>supplementary</b> variables, which played no part in the clustering, support inferential statements such as “the clusters differ in altitude” when altitude was not used to form them.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-heat.png" alt="Heat map of the profiles"></div>
+    <figcaption><b>Figure 8.4.</b> <span class="ui">Cluster profiles as a heat map</span>: the mean of each cluster in standard deviation units (<i>z</i>), in blue above the overall mean and in red below it, with the variables sorted by <i>F</i>. It can be read at a glance: the highlands in red except for flowering, the valleys in blue except for flowering and rows, and the coast with flowering and grain weight in red.</figcaption>
+  </figure>
+
+  <!-- 8.2 -->
+  <h2 id="s8-2"><span class="num">8.2</span>Categorical variables</h2>
+  <p class="lead">Nominal variables are described with proportions. For each category and each cluster, the app compares the proportion of the category within the cluster with its proportion in the whole data set, using a test value built in the same way as the one for means.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · over- and under-represented categories</div>
+    <p>If a category accounts for a proportion <i>p</i> of the <i>N</i> objects and the cluster has <i>n<sub>k</sub></i>, the proportion within the cluster would, by chance, have variance <i>p</i>(1 − <i>p</i>)/<i>n<sub>k</sub></i> · (<i>N</i> − <i>n<sub>k</sub></i>)/(<i>N</i> − 1). The test value is the difference in proportions divided by its standard deviation, a normal approximation to the hypergeometric test: <i>v</i> ≥ 1.96 marks an <b>over-represented</b> category (▲) and <i>v</i> ≤ −1.96 an <b>under-represented</b> one (▼). For the variable as a whole, the χ² test on the clusters × categories table tells whether there is an association, and Cramér’s V (from 0 to 1) how strong it is.</p>
+  </div>
+
+  <p>Each categorical variable has its own table: one row per category and one column per cluster with the count and the percentage within the cluster, the ▲ and ▼ marks, and the χ² with Cramér’s V in the title. The cluster summary cards add the over-represented categories that occur at least twice, with the percentage in the cluster against the overall one. With the soil profiles in three clusters (exercise 4), texture has χ² = 72 with 10 degrees of freedom and V = 1.00: each texture falls in a single cluster.</p>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b7-suelos-catsfig.png" alt="Composition of texture by cluster"></div>
+    <figcaption><b>Figure 8.5.</b> <span class="ui">Composition of the categorical variables by cluster</span> with the soils in three clusters: one stacked bar per cluster with the proportion of each texture. Cluster 1 consists of loams (83%) and silt loams, cluster 2 of clays and clay loams, and cluster 3 of sandy loams (75%) and sands.</figcaption>
+  </figure>
+
+  <!-- 8.3 -->
+  <h2 id="s8-3"><span class="num">8.3</span>Indicator species</h2>
+  <p class="lead">In community ecology, the natural question is not which mean is high but which species <b>indicates</b> each cluster: a species that lives almost only in that cluster and occurs in almost all of its sites. The indicator value of Dufrêne and Legendre, IndVal, measures exactly that.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · specificity times fidelity</div>
+    <p>For a species and a cluster, <b>specificity A</b> is the share of the species’ mean abundance that belongs to that cluster: the mean in the cluster divided by the sum of its means over all clusters. <b>Fidelity B</b> is the proportion of the cluster’s sites where the species occurs. IndVal = A × B, from 0 to 100%. Each species is assigned to the cluster where its IndVal is highest. Significance is obtained by permuting the cluster labels: the P value is the proportion of permutations (plus the observed one) in which the maximum IndVal equals or exceeds the observed value. With 499 permutations the smallest possible P value is 0.002.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Table 8.3.</b> How to read IndVal.</caption>
+    <thead><tr><th style="width:26%">Pattern</th><th>Reading</th></tr></thead>
+    <tbody>
+      <tr><td>High A, high B</td><td>Ideal indicator: exclusive and constant (<i>Sagittaria</i>, 100 × 90).</td></tr>
+      <tr><td>High A, low B</td><td>Exclusive but rare: its presence betrays the cluster, its absence says nothing (<i>Nymphaea</i>, 100 × 70).</td></tr>
+      <tr><td>Low A, high B</td><td>Constant but shared: frequent in the cluster and outside it too (<i>Salix</i>, 71 × 100).</td></tr>
+      <tr><td>IndVal &gt; 50% and p &lt; 0.05</td><td>A good indicator for describing the cluster or recognising it in the field.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-indval.png" alt="Table of indicator values with the species presence data"></div>
+    <figcaption><b>Figure 8.6.</b> The <span class="ui">Indicator value (Dufrêne–Legendre)</span> table with the species presence data (PAM, three clusters), sorted by IndVal; the first seven of 22 are visible. <i>Sagittaria</i> is the strongest indicator of cluster 2, the wetlands: it occurs in 9 of its 10 sites (B = 90%) and in no other (A = 100%), IndVal = 90%.</figcaption>
+  </figure>
+
+  <figure class="media" style="width:72%">
+    <div class="marco"><img src="../img/b7-indval-fig.png" alt="Chart of indicator values"></div>
+    <figcaption><b>Figure 8.7.</b> <span class="ui">Indicator species</span>: one bar per species, coloured by the cluster it indicates, with A and B on the right and an asterisk if p &lt; 0.05. The faded bars at the end (<i>Opuntia</i>, <i>Agave</i>, <i>Lupinus</i>) are not indicators. Seventeen of the 22 species are.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · with abundances, fidelity carries little weight</div>
+    <p>Fidelity counts presences. In an abundance table where almost every species occurs in every site, like the insect table, B equals 100% for all of them and IndVal reduces to specificity: a family is an indicator because it is concentrated in one cluster, not because it is absent from the others. With presence–absence data both parts count.</p>
+  </div>
+
+  <!-- 8.4 -->
+  <h2 id="s8-4"><span class="num">8.4</span>Discriminant analysis</h2>
+  <p class="lead">Test values look at one variable at a time. Linear discriminant analysis (LDA) seeks the <b>combination</b> of variables that best separates the clusters, and with it a rule for classifying any object. Card 3 appears when at least one quantitative variable is ticked.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · axes that separate clusters</div>
+    <p>LDA computes the <b>within</b>-cluster covariance matrix, <i>W</i>, and the <b>between</b>-cluster matrix, <i>B</i>, and seeks the axes that maximise the between-cluster variance relative to the within-cluster variance: the eigenvectors of <i>W</i>⁻¹<i>B</i>. There are at most <i>k</i> − 1 axes (LD1, LD2…), and the percentage of each tells what share of the separation it explains. <b>Wilks’ lambda</b>, Λ = ∏ 1/(1 + λ<sub>i</sub>), ranges from 0 (complete separation) to 1 (none) and is tested with Bartlett’s χ². For classification, each object receives the posterior probability of belonging to each cluster, assuming normal clusters with a common covariance; the prior probabilities are proportional to the cluster sizes or equal. If <i>W</i> is nearly singular, the app adds a small ridge to it (10⁻⁴ of its mean trace).</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-lda.png" alt="Tiles and tables of the discriminant analysis with the maize"></div>
+    <figcaption><b>Figure 8.8.</b> The discriminant analysis with the maize. Λ = 2.2 × 10⁻⁵ (χ² = 402.8 with 16 degrees of freedom), 100% correct by resubstitution and also by leave-one-out. LD1 explains 67% of the separation and LD2 33%. The confusion matrix gives the resubstitution result and, in brackets, the leave-one-out validation.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 8.4.</b> Tiles and tables of card 3.</caption>
+    <thead><tr><th style="width:30%">Element</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Wilks Λ</span></td><td>The lambda with its χ², degrees of freedom and P value; in green if p &lt; 0.05. Very small values are written in scientific notation.</td></tr>
+      <tr><td><span class="ui">Resubstitution accuracy</span></td><td>Proportion of objects that the rule returns to their own cluster when all the data are used. Always optimistic.</td></tr>
+      <tr><td><span class="ui">Leave-one-out accuracy</span></td><td>Each object is classified with a rule fitted without it: the honest estimate for new objects. Green &gt; 90%, amber &gt; 70%. It is computed for up to 600 objects.</td></tr>
+      <tr><td><span class="ui">Discriminant axes</span></td><td>Number of axes and the percentage of each one.</td></tr>
+      <tr><td><span class="ui">Tree rules</span></td><td>Tree rules, depth and accuracy (section 8.5).</td></tr>
+      <tr><td>Standardised coefficients</td><td>The weight of each variable on each axis, in units of within-cluster standard deviation. They tell which variables the rule uses, but the weight is shared among correlated variables.</td></tr>
+      <tr><td>Structure correlations</td><td>The correlation of each variable with each axis. They tell what the axis <b>means</b> and are more stable than the coefficients.</td></tr>
+    </tbody>
+  </table>
+
+  <p>With the maize, LD1 correlates mainly with yield (<i>r</i> = 0.86), ear height (0.84) and plant height (0.82): it is a vigour axis that separates the valleys from the highlands. LD2 correlates with days to flowering (0.77) and grain weight (0.73), and inversely with the number of rows (−0.56): it separates the coast, early and with many rows, from the other two.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-lda-map.png" alt="Discriminant map of the maize"></div>
+    <figcaption><b>Figure 8.9.</b> <span class="ui">Discriminant map</span>: the objects on LD1 and LD2 with the 95% ellipse and the centroid (diamond) of each cluster. A cross would mark a misclassified object; with the maize there are none. With only two clusters there is a single axis, and the map becomes a density curve per cluster along LD1.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · many variables and few objects</div>
+    <p>The discriminant rule has as many parameters per cluster as there are variables, and with many variables it learns the training objects by heart. Two warnings watch for this: <span class="ui">Few objects for … variables</span>, when there are fewer objects than variables plus clusters, and <span class="ui">Resubstitution accuracy … is much higher than leave-one-out</span>, when the difference exceeds 15 points. With the species presence data (22 variables, 30 sites) resubstitution is perfect, but leave-one-out gets only 53% right (exercise 2). Before classifying new objects, untick in card 1 the variables that do not discriminate and press <span class="ui">Profile →</span> again.</p>
+  </div>
+
+  <!-- 8.5 -->
+  <h2 id="s8-5"><span class="num">8.5</span>Classification tree rules</h2>
+  <p class="lead">A classification tree summarises the clusters as yes-or-no questions about one variable at a time. It loses some accuracy compared with LDA, but it can be explained in a sentence and applied in the field without a calculator.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · successive splits with the Gini index</div>
+    <p>The tree starts with all the objects and tries every variable and every cut point (the midpoint between two consecutive observed values). It chooses the split that most reduces the <b>Gini impurity</b>, 1 − Σ <i>p<sub>c</sub></i>², where <i>p<sub>c</sub></i> is the proportion of each cluster in the node. It repeats the process in each branch until the node is pure, reaches the maximum depth, has fewer than twice the minimum number of objects per leaf, or no split improves the impurity. Each leaf predicts its majority cluster, and each path from the root to a leaf is a rule.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-arbol.png" alt="Rules and classification tree of the maize"></div>
+    <figcaption><b>Figure 8.10.</b> The rules and the tree with the maize. Two variables are enough: accessions that flower in 73 days or fewer are from the coast (cluster 3); among the late ones, those 211 cm tall or shorter are from the highlands (cluster 1) and the taller ones from the valleys (cluster 2). All three leaves are pure. Each node shows the variable or the cluster, the number of objects, the percentage of the majority cluster and a bar with the composition.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 8.5.</b> Controls of card 3.</caption>
+    <thead><tr><th style="width:30%">Control</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Prior probabilities</span></td><td><span class="ui">Proportional to cluster sizes</span> (default) or <span class="ui">Equal</span>. With clusters of very different sizes, equal priors prevent the rule from favouring the large cluster.</td></tr>
+      <tr><td><span class="ui">Tree depth</span></td><td>From 1 to 6 levels; 3 by default. More depth means more rules and more risk of fitting the noise.</td></tr>
+      <tr><td><span class="ui">Minimum objects per leaf</span></td><td>From 1 to 50; 3 by default. Prevents rules that describe one or two objects.</td></tr>
+      <tr><td><span class="ui">Recompute</span></td><td>Refits the LDA and the tree with the new controls, without repeating the profiles.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 8.6 -->
+  <h2 id="s8-6"><span class="num">8.6</span>Assigning new observations</h2>
+  <p class="lead">A typology proves truly useful when it can classify whatever comes next: a new accession, a site sampled the following year, a soil from another plot. Card 4 assigns new objects with three rules at once, and their agreement tells you how far to trust the assignment.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-predecir.png" alt="Card 4 with three new accessions"></div>
+    <figcaption><b>Figure 8.11.</b> Card <span class="ui">4 · Assign new observations</span> after pressing <span class="ui">Fill with an example</span> and <span class="ui">Assign to clusters</span>. The example creates three objects close to the means of clusters 1, 2 and 3; the three rules assign them to those clusters with posterior probability 1.000.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 8.6.</b> The three assignment rules and how to prepare the table.</caption>
+    <thead><tr><th style="width:26%">Element</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">LDA cluster</span> · <span class="ui">Posterior</span></td><td>The cluster with the highest posterior probability in the discriminant analysis, and that probability.</td></tr>
+      <tr><td><span class="ui">Nearest centroid</span></td><td>The cluster whose centroid is closest, after standardising with the mean and standard deviation of the original data.</td></tr>
+      <tr><td><span class="ui">Tree rule</span></td><td>The cluster of the leaf that the object reaches in the tree.</td></tr>
+      <tr><td><span class="ui">Agreement</span></td><td><span class="ui">all three agree</span> or <span class="ui">methods differ</span>. A disagreement flags an object between clusters; the posterior probability tells how doubtful it is.</td></tr>
+      <tr><td>The table</td><td>Paste it or load it with <span class="ui">Choose File</span> (CSV, TSV or text). The first row must contain the variable names, regardless of case; a column with any other name is taken as a label. Missing variables are filled with the overall mean, with a warning.</td></tr>
+      <tr><td><span class="ui">⬇ Assignments (CSV)</span></td><td>Saves, for each object, the three assignments, the probability and the values used.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · new objects do not change the clusters</div>
+    <p>Assigning is not reclustering: the centroids, the discriminant rule and the tree stay fixed. An object very different from all the others will still be assigned to the least distant cluster, with a high posterior if it lies far out in that cluster’s direction. If you expect objects of a type that was not in the data, compare their values with the profiles in card 2 and, if necessary, repeat the analysis with them included.</p>
+  </div>
+
+  <!-- 8.7 -->
+  <h2 id="s8-7"><span class="num">8.7</span>Settings, tables and figures of the block</h2>
+  <p>The block produces up to eight figures, all editable and exportable with the figure editor (section 9.1). The first four appear with quantitative variables; the categories figure, with categorical ones; the species figure, with IndVal; and the last two, with card 3.</p>
+
+  <table class="compacta">
+    <caption><b>Table 8.7.</b> The figures of the block and their own controls.</caption>
+    <thead><tr><th style="width:28%">Figure</th><th style="width:30%">What it shows</th><th>Own controls</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cluster profiles as a heat map</span></td><td>Means by cluster and variable (figure 8.4).</td><td><span class="ui">Cell value</span> (<i>z</i>, test value <i>v</i> or mean scaled by variable), <span class="ui">Colour map</span>, show values, all variables or the 30 most discriminating.</td></tr>
+      <tr><td><span class="ui">Radar of cluster means</span></td><td>One polygon per cluster with the means scaled from 0 to 1 (figure 8.12).</td><td>Number of variables (the most discriminating), scaling by the range of the means or of the data, fill opacity, line width, label size, legend.</td></tr>
+      <tr><td><span class="ui">Parallel coordinates</span></td><td>The means in <i>z</i> joined by lines, with the objects in faint lines (figure 8.13).</td><td>Number of variables, draw the objects (up to 200 by default), line width.</td></tr>
+      <tr><td><span class="ui">Distribution of each variable by cluster</span></td><td>Box plots by cluster, the most discriminating variables first (figure 8.14).</td><td>Number of variables (up to 24).</td></tr>
+      <tr><td><span class="ui">Composition of the categorical variables</span></td><td>Stacked bars by cluster (figure 8.5).</td><td>Number of variables, category palette.</td></tr>
+      <tr><td><span class="ui">Indicator species</span></td><td>IndVal by species (figure 8.7).</td><td>Number of species, names in italics.</td></tr>
+      <tr><td><span class="ui">Discriminant map</span></td><td>Objects on LD1 and LD2 (figure 8.9).</td><td>95% ellipses, labels (automatic up to 60), label and point size, legend.</td></tr>
+      <tr><td><span class="ui">Classification tree</span></td><td>The tree with the composition of each node (figure 8.10).</td><td>Title, palette and legend.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · what is downloaded and what passes to Block 8</div>
+    <p><span class="ui">⬇ Profile table (CSV)</span> saves, for each quantitative variable, the overall mean and standard deviation; for each cluster, the size, mean, standard deviation and test value; and <i>F</i>, its P value, η², the Kruskal–Wallis <i>H</i> and its P value. The Block 8 report includes the cluster summary cards, the tables and the figures exactly as you edited them. If Block 3 recomputes the matrix, the Block 7 results are cleared and you have to press <span class="ui">Profile →</span> again.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b7-radar.png" alt="Radar of the maize profiles"></div>
+    <figcaption><b>Figure 8.12.</b> <span class="ui">Radar of cluster means</span> with the maize. Each axis runs from the cluster with the smallest mean (centre) to the one with the largest (edge): the valleys form the large polygon, the highlands only reach out towards flowering, and the coast towards rows and leaf width. The radar exaggerates small differences; use it to communicate, not to measure.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-paralelo.png" alt="Parallel coordinates of the maize"></div>
+    <figcaption><b>Figure 8.13.</b> <span class="ui">Parallel coordinates of the cluster means</span>: the thick line of each cluster over the 44 accessions in faint lines. It shows both the mean profile and how widely the objects are scattered around it.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-cajas.png" alt="Box plots by cluster"></div>
+    <figcaption><b>Figure 8.14.</b> <span class="ui">Distribution of each variable by cluster</span>: one panel per variable with its ANOVA P value. The boxes show what the means hide: the three clusters barely overlap in flowering, while in rows the valley cluster covers almost the whole range of the other two.</figcaption>
+  </figure>
+
+  <!-- 8.8 -->
+  <h2 id="s8-8"><span class="num">8.8</span>Step by step</h2>
+  <p class="lead">With each example prepared as in the previous chapters (UPGMA in Block 4 for the species presence data and the insects, the method proposed in Block 5, and Block 6 evaluated), table 8.8 summarises what Block 7 says with all the variables ticked. The exercises look at each case in detail.</p>
+
+  <table class="compacta">
+    <caption><b>Table 8.8.</b> The seven examples in Block 7.</caption>
+    <thead><tr><th style="width:17%">Example</th><th class="c" style="width:9%"><i>k</i></th><th style="width:22%">Best separator</th><th class="c" style="width:13%">Discriminating</th><th class="c" style="width:14%">LDA leave-one-out</th><th>Tree</th></tr></thead>
+    <tbody>
+      <tr><td>Maize races</td><td class="c">3</td><td>DaysToFlower (η² 0.88)</td><td class="c">8 of 8</td><td class="c">100%</td><td>3 rules, 100%</td></tr>
+      <tr><td>Species presence</td><td class="c">3</td><td><i>Sagittaria</i> (η² 0.86)</td><td class="c">17 of 22</td><td class="c">53.3%</td><td>5 rules, 93%</td></tr>
+      <tr><td>Insect abundance</td><td class="c">3</td><td>Carabidae (η² 0.77)</td><td class="c">14 of 14</td><td class="c">100%</td><td>3 rules, 100%</td></tr>
+      <tr><td>Soil profiles</td><td class="c">3</td><td>CEC_cmol_kg (η² 0.96)</td><td class="c">8 of 8</td><td class="c">100%</td><td>3 rules, 100%</td></tr>
+      <tr><td>Distance matrix</td><td class="c">3</td><td colspan="4">No variables: there are no profiles; Block 8 is enabled.</td></tr>
+      <tr><td>Four simulated clusters</td><td class="c">4</td><td>V5 (η² 0.94)</td><td class="c">5 of 5</td><td class="c">100%</td><td>4 rules, 100%</td></tr>
+      <tr><td>Uniform noise</td><td class="c">3</td><td>V5 (η² 0.63)</td><td class="c">4 of 5</td><td class="c">91.7%</td><td>6 rules, 95%</td></tr>
+    </tbody>
+  </table>
+  <p class="small">The soils, with the three clusters adopted in Block 6 (exercise 4 of chapter 7). “Discriminating” counts the variables with ANOVA p &lt; 0.05.</p>
+
+  <h3>Exercise 1 · Maize races: three named types</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the maize and hierarchical k-means with three clusters, go to Block 7. The proposed partition is the one from Block 5 and the eight variables come ticked. Press <span class="ui">Profile →</span> (figures 8.2 to 8.4).</li>
+      <li>Read the summary cards and give the clusters names: cluster 1 is late and short, cluster 2 vigorous and high-yielding, cluster 3 early. Check in Block 6 that they match the highlands, the valleys and the coast.</li>
+      <li>Scroll down to card 3 (figures 8.8 to 8.10): Λ = 2.2 × 10⁻⁵, 100% by leave-one-out and a three-rule tree based on flowering and plant height.</li>
+      <li>In card 4 press <span class="ui">Fill with an example</span> and <span class="ui">Assign to clusters</span> (figure 8.11). Change the flowering of the first object to 70 by hand and assign again: the tree and the discriminant send it to the coast (posterior 0.989), the centroid keeps it in the highlands, and the agreement column reads <span class="ui">methods differ</span>.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>Profiles turn numbers into recognisable types: highland maize, late and short; valley maize, tall and high-yielding; coastal maize, early. The tree shows that two field measurements are enough to recognise them, and the disagreement after altering an object shows why it pays to use all three rules: the tree decides with a single threshold, the discriminant gives a lot of weight to flowering, and the centroid weighs all eight variables equally. An object that is early but otherwise has the traits of the highlands is rightly flagged as doubtful.</p>
+  </div>
+
+  <h3>Exercise 2 · Species presence: indicators and an overfitted rule</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Jaccard, UPGMA and PAM, go to Block 7: the indicator species checkbox is already ticked. Press <span class="ui">Profile →</span> (figures 8.6 and 8.7): 17 of the 22 species are indicators.</li>
+      <li>Read the summary cards: cluster 1 is grassland (<i>Bouteloua</i>, <i>Muhlenbergia</i>, <i>Bromus</i>, <i>Festuca</i>), cluster 2 wetland (<i>Sagittaria</i>, <i>Typha</i>, <i>Polygonum</i>, <i>Salix</i>, <i>Nymphaea</i>) and cluster 3 forest (<i>Pinus</i>, <i>Arbutus</i>, <i>Quercus</i>, <i>Alnus</i>).</li>
+      <li>Scroll down to card 3 (figure 8.15): 100% by resubstitution, 53.3% by leave-one-out, and the warning that the rule memorises the sites.</li>
+      <li>In card 1, untick the species that are not indicators or have an IndVal below 60%; 13 remain. Profile again: leave-one-out accuracy rises from 53.3% to 90% and the warning disappears.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-binario-lda.png" alt="Overfitting warning in the discriminant analysis with the species presence data"></div>
+    <figcaption><b>Figure 8.15.</b> The discriminant analysis with 22 species and 30 sites: Wilks highly significant and perfect resubstitution, but under leave-one-out the confusion matrix spreads the sites across the wrong clusters (in brackets). The amber warning explains why.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>With communities, indicator species are the best description: they tell you what to look for in the field to recognise each habitat. The discriminant rule with all the species, by contrast, is a mirage: with more parameters than information it fits the 30 sites and fails on any new one. Leave-one-out accuracy is the only one that matters for prediction; resubstitution accuracy is useful only for comparison.</p>
+  </div>
+
+  <h3>Exercise 3 · Insect abundance: a cluster with no traits of its own</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Bray–Curtis, UPGMA and PAM with three clusters (4 / 8 / 12), press <span class="ui">Profile →</span> with the 14 families and indicator species ticked (figures 8.1 and 8.16).</li>
+      <li>Read the summary cards: cluster 2 (the 8 conventional fields) has more leafhoppers, lepidopteran larvae, aphids and leaf beetles, and fewer mites, ground beetles, springtails and spiders. Cluster 3 (hedgerows and four organic fields) has more ground beetles, bees, mites and spiders.</li>
+      <li>Cluster 1, the other four organic fields, only has fewer weevils (<i>v</i> = −2.0) and no indicator species.</li>
+      <li>In card 3, the tree sums it up with two variables: Apidae &gt; 6.5 gives cluster 3; with fewer bees, Staphylinidae &gt; 4.5 gives cluster 1 and the rest cluster 2.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-insectos-narr.png" alt="Summary cards of the clusters with the insects"></div>
+    <figcaption><b>Figure 8.16.</b> The summary cards with the insects. Clusters 2 and 3 have opposite profiles and many indicators; cluster 1 barely departs from the mean.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>A cluster with no traits of its own is an <b>intermediate</b> cluster: its objects lie between the extremes and have nothing that characterises them by themselves. It is the same signal given by Block 5 (organic fields split up) and Block 6 (their cluster, doubtful under the bootstrap). Consistent with one another, the three pieces of evidence support describing a management gradient rather than three sharp types.</p>
+  </div>
+
+  <h3>Exercise 4 · Soil profiles: a cluster defined by its texture</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Gower and PAM, adopt in Block 6 the three clusters proposed by the vote and run PAM again in Block 5. Block 7 shows eight quantitative variables (including the ordinal drainage and the binary calcareous variable) and texture as a categorical one.</li>
+      <li>Press <span class="ui">Profile →</span> (figures 8.5 and 8.17). Cluster 2 is clayey and acidic: 43% clay, pH 5.4, 6.3% organic matter, poor drainage and gentle slope. Cluster 3 is sandy and alkaline: 73% sand, pH 7.9, steeper slope and almost always calcareous.</li>
+      <li>The summary card of cluster 1 has no quantitative variable at all: it only says that the cluster is loam (83%) or silt loam. In the table, all its means lie between those of the other two, with |<i>v</i>| ≤ 1.2.</li>
+      <li>In card 3, the tree separates the three with pH ≤ 6.3 and sand ≤ 61%, without errors.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-suelos-narr.png" alt="Summary cards of the clusters with the soils"></div>
+    <figcaption><b>Figure 8.17.</b> The soils in three clusters. Cation exchange capacity is the best separator (<i>F</i> = 354.2, η² = 0.96). Cluster 1 is described only by its texture.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>A cluster that is intermediate in every numerical variable can be a perfectly real type: here it is the loam soils, stable in Block 6 with Jaccard 1.000. What defines it is a categorical variable. That is why it pays to profile with all the available variables, supplementary ones included, and not only with those that have extreme means.</p>
+  </div>
+
+  <h3>Exercise 5 · Distance matrix: nothing to profile</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Load the genetic matrix and go to Block 7 after Blocks 4 to 6 (figure 8.18). There are no variables to tick, and a warning explains why.</li>
+      <li>The <span class="ui">Continue to the report →</span> button is already enabled: the Block 8 report includes the partition and its validation.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-matriz.png" alt="Block 7 with a distance matrix"></div>
+    <figcaption><b>Figure 8.18.</b> Block 7 with the distance matrix: no variables, the warning, and the step to the report enabled.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>A distance matrix allows you to cluster and validate, but not to describe: to say how the clusters differ you need the variables. If you have data on the objects (origin, year, morphological traits), load them as a table with the matrix separately, or use them outside the app to interpret the clusters obtained.</p>
+  </div>
+
+  <h3>Exercise 6 · Four simulated clusters: each cluster, a combination</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the 80 objects and hierarchical k-means with four clusters, run the profiles: all five variables separate the clusters, with η² from 0.92 to 0.94.</li>
+      <li>Read the summary cards: no cluster is defined by a single variable. Cluster 1 has low V1 and high V2; cluster 2, low V2 and V4 and high V1 and V3; cluster 3, very low V5 and high V3 and V4; cluster 4, high V1, V2 and V5.</li>
+      <li>In card 3: three discriminant axes (69%, 25% and 6%), 100% by leave-one-out, and a four-rule tree based on V1 and V2.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>Real clusters are usually distinguished by combinations, not by one variable. That is why the summary card lists several, LDA needs three axes and the tree uses the same variable at two levels. If Block 6 said that the structure is strong, Block 7 should be able to describe it clearly; if it cannot, review the variables you chose.</p>
+  </div>
+
+  <h3>Exercise 7 · Uniform noise: profiles that mean nothing</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the 60 uniform objects and hierarchical k-means with three clusters, run the profiles (figure 8.19): four of the five variables have an ANOVA with p &lt; 0.05, and V5 separates with <i>F</i> = 48.6.</li>
+      <li>The summary cards describe three clusters with “characteristic” variables, as if they were types.</li>
+      <li>In card 3: Λ = 2.4 × 10⁻⁴, 91.7% correct by leave-one-out and six rules with 95% accuracy.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b7-ruido.png" alt="Table of variables with the uniform noise"></div>
+    <figcaption><b>Figure 8.19.</b> The table of variables with the uniform noise. The clustering cut the space along V5 and V1, so those variables “separate” the clusters with tiny P values. None of this proves that the clusters exist.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>This is the warning of section 8.1 come true. Any partition, even of data with no structure, produces convincing profiles, significant variables and rules that recognise themselves with high accuracy. Only Block 6 (low silhouette, gap at <i>k</i> = 1, unstable clusters) reveals that there are no clusters. Never interpret Block 7 without first looking at Block 6.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · what to report from this block</div>
+    <p>In the methods section: that the clusters were described with test values, ANOVA and Kruskal–Wallis; that the P values of the active variables are descriptive; the number of IndVal permutations, if you used it; and, for the discriminant analysis, the prior probabilities and the leave-one-out validation. In the results: a description of each cluster with its main variables and categories, the indicator species with their IndVal and P value, and the leave-one-out accuracy. For example: “Cluster 1 (<i>n</i> = 14) was characterised by later flowering (95.5 vs. 80.6 days; <i>v</i> = 5.4) and shorter plants; a discriminant analysis correctly classified 100% of the accessions under leave-one-out validation”. The Block 8 paragraph drafts this with your values.</p>
+  </div>
+
+  <p style="margin-top:0.12in">With the clusters described, all that remains is to bring everything together. The next chapter presents the Block 8 report: which sections it includes, how to choose them, the methods and results paragraphs it drafts with your values, and how to export the report and the figures.</p>
+</section>
+
+</body>
+</html>

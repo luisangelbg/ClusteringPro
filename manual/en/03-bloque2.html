@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User manual · Block 2: data and exploratory analysis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b2" data-pestana="B2" data-orden="3" style="--acento: var(--b2)">
+  <div class="cap-apertura">
+    <div class="cap-num">B2</div>
+    <div class="cap-etiqueta">Chapter three · Block 2 · Data &amp; EDA</div>
+    <h1 data-corto="Block 2 · Data and exploratory analysis">Data and exploratory analysis</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Everything starts here: you load the table, confirm what each column is and what role it plays, decide what to do with missing values, transform and scale, and, before clustering, answer the question that almost nobody asks: do these data contain clusters worth looking for? The block ends with a grade from A to D and a recommended route for the blocks that follow.</p>
+    <div class="cap-franja"><span class="k2"></span><span class="k2" style="opacity:.75"></span><span class="k2" style="opacity:.5"></span><span class="k2" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>3.1</b>Input formats and how to lay out the table</li>
+      <li><b>3.2</b>Variable types and the role of each column</li>
+      <li><b>3.3</b>Missing values, transformation and scaling</li>
+      <li><b>3.4</b>Can my data be clustered? Hopkins and VAT</li>
+      <li><b>3.5</b>The grade and the recommendation</li>
+      <li><b>3.6</b>Settings, tables and figures of the block</li>
+      <li><b>3.7</b>Step by step with the seven examples</li>
+    </ul>
+  </div>
+
+  <p class="lead">Block 2 is organised into four numbered cards that open as you progress: <span class="ui">1 · Load your data</span>, <span class="ui">2 · Variable types and roles</span>, <span class="ui">3 · Missing values, transformation and scaling</span> and <span class="ui">4 · Exploratory analysis and clustering tendency</span>. Above them all is a theory card with four short lessons, and at the bottom a preview of the table as it was read. This chapter follows the same order.</p>
+
+  <!-- 3.1 -->
+  <h2 id="s3-1"><span class="num">3.1</span>Input formats and how to lay out the table</h2>
+  <p>The first card reads the file. You can drag it onto the dashed area, click the area to browse for it, paste the contents of the clipboard or load one of the seven examples that come with the app (figure 3.1).</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b2-carga.png" alt="The 1 · Load your data card">
+      <span class="marca" style="left:50%;top:21%">1</span>
+      <span class="marca" style="left:6%;top:49%">2</span>
+      <span class="marca" style="left:51%;top:49%">3</span>
+      <span class="marca" style="left:4%;top:61%">4</span>
+      <span class="marca" style="left:4%;top:74%">5</span>
+    </div>
+    <figcaption><b>Figure 3.1.</b> The <span class="ui">1 · Load your data</span> card.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Upload area: drag the file onto it or click to choose it. The tags show the accepted formats.</li>
+    <li><span class="n">2</span><span class="ui">Text delimiter</span>: the separator of text files; in automatic mode the app infers it by counting commas, semicolons, tabs or vertical bars.</li>
+    <li><span class="n">3</span><span class="ui">Decimal separator</span>: point or comma; in automatic mode it is decided by majority among the numeric cells.</li>
+    <li><span class="n">4</span><span class="ui">Paste from the clipboard instead</span>: an area for pasting a table copied from a spreadsheet.</li>
+    <li><span class="n">5</span>The seven examples (table 1.4 and section 3.7). The last two are generated on the fly in the browser.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Table 3.1.</b> Formats read by Block 2.</caption>
+    <thead><tr><th style="width:26%">Format</th><th>How it is read</th><th style="width:30%">Remarks</th></tr></thead>
+    <tbody>
+      <tr><td>Spreadsheets <code>.xlsx</code>, <code>.xlsm</code>, <code>.ods</code></td><td>With the app’s own reader; the first sheet is used, and the <span class="ui">Sheet</span> selector appears if there are several. The old binary formats <code>.xls</code> and <code>.xlsb</code> cannot be read: save the workbook as <code>.xlsx</code>.</td><td>Merged cells are detected and reported; dates are not used as numbers.</td></tr>
+      <tr><td>Delimited text <code>.csv</code>, <code>.tsv</code>, <code>.txt</code>, <code>.dat</code>, <code>.prn</code></td><td>With the chosen or detected delimiter; double quotes are respected.</td><td>UTF-8 is accepted with or without a byte order mark.</td></tr>
+      <tr><td><code>.json</code></td><td>An array of objects (one object per row), an array of arrays, an object with <code>columns</code> and <code>data</code>, or an object whose keys are columns.</td><td>Any other layout produces an error message.</td></tr>
+      <tr><td>Clipboard</td><td>Whatever you paste into <span class="ui">Paste from the clipboard instead</span> is read as delimited text (the tabs left by a spreadsheet are detected automatically).</td><td>The file is called <i>pasted-data.txt</i> in the reports.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>How to lay out the table</h3>
+  <p>The rule is the usual one in multivariate statistics: <b>one row per object</b> you want to cluster (accession, site, sample, plot, profile, gene) and <b>one column per variable</b>, with the column names in the first row. In addition, two optional columns make everything that follows easier:</p>
+  <ul>
+    <li>An <b>identifier column</b> (a unique name or code per row). It becomes the label of the dendrogram leaves and of the points on the maps.</li>
+    <li>A <b>known grouping column</b> (region, species, habitat, treatment). It is never used to build the clusters: it colours the figures and, in Block 6, serves for external validation.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Table 3.2.</b> How to write each type of data in the table.</caption>
+    <thead><tr><th style="width:24%">Data</th><th>How to write them</th></tr></thead>
+    <tbody>
+      <tr><td>Numbers</td><td>With a decimal point or a decimal comma, but not mixed within the same column. Thousands separators are tolerated; a trailing percent sign is ignored.</td></tr>
+      <tr><td>Missing values</td><td>An empty cell or any of these codes: <code>NA</code>, <code>N/A</code>, <code>NaN</code>, <code>null</code>, <code>none</code>, <code>.</code>, <code>-</code>, <code>--</code>, <code>?</code>, <code>ND</code>, <code>S/D</code>, <code>missing</code>, <code>faltante</code>, spreadsheet errors (<code>#N/A</code>, <code>#DIV/0!</code>…) and <code>inf</code>.</td></tr>
+      <tr><td>Binary</td><td>Two states: <code>0/1</code>, <code>yes/no</code>, <code>y/n</code>, <code>true/false</code>, <code>present/absent</code>, <code>p/a</code>, <code>+/−</code>, <code>si/no</code>, <code>presence/absence</code>, <code>t/f</code>. The second state of each pair is coded as 1.</td></tr>
+      <tr><td>Nominal</td><td>Text with up to 40 categories. Watch capitalisation and accents: <i>Clay</i> and <i>clay</i> would be two different levels (the app warns you).</td></tr>
+      <tr><td>Ordinal</td><td>Recognised text levels (for example <i>low &lt; medium &lt; high</i>, <i>poor &lt; moderate &lt; good &lt; excellent</i>, <i>bajo &lt; medio &lt; alto</i>, <i>early &lt; intermediate &lt; late</i>), or integer scores in a column whose name contains <i>score</i>, <i>scale</i>, <i>grade</i>, <i>rating</i>, <i>severity</i>, <i>level</i>, <i>stage</i>, <i>damage</i> or <i>likert</i>.</td></tr>
+      <tr><td>Distance matrix</td><td>A square table whose first column repeats the column names, with zeros on the diagonal and no negative values. Small asymmetries are averaged.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the word “none” counts as missing</div>
+    <p>The missing-value codes include <code>none</code>. If a grouping column uses that word as a category (for example, “none” for untreated sites), the app will read it as an empty cell. Replace it with another label, such as <i>control</i> or <i>untreated</i>. You will see this in the uniform noise example in section 3.7, where the <i>Group</i> column is “none” in every row and therefore appears as <span class="ui">Empty</span> and excluded.</p>
+  </div>
+
+  <h3>What the app checks when reading</h3>
+  <p>On loading, the app looks for the most common formatting problems and lists them below the reading message (figure 3.2). It fixes many of them by itself; those that break the one-row-per-object rule are flagged in red.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-mensajes.png" alt="Reading message and list of file checks"></div>
+    <figcaption><b>Figure 3.2.</b> After reading the maize landraces example: the reading message (objects, columns and detected decimal separator) and the <span class="ui">Tidy table</span> check.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 3.3.</b> File checks and what the app does with each one.</caption>
+    <thead><tr><th style="width:34%">Warning</th><th style="width:10%" class="c">Level</th><th>What it means and what the app does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Tidy table</span></td><td class="c">✅</td><td>One header row, one row per object, no merged cells and no total rows.</td></tr>
+      <tr><td><span class="ui">N title rows above the header</span></td><td class="c">⚠️</td><td>There were title rows before the column names; they are skipped automatically. Check the preview.</td></tr>
+      <tr><td><span class="ui">Merged cell ranges detected</span></td><td class="c">⛔</td><td>Merged cells in the spreadsheet: only the first cell keeps the value. Unmerge them and fill in every row.</td></tr>
+      <tr><td><span class="ui">Columns without a name</span></td><td class="c">⚠️</td><td>They are named V1, V2… (the first unnamed one is called <i>Object</i>, because it is usually the label column).</td></tr>
+      <tr><td><span class="ui">Duplicated column names</span></td><td class="c">⚠️</td><td>They are renamed with a suffix (_2, _3…).</td></tr>
+      <tr><td><span class="ui">Rows with more cells than the header</span></td><td class="c">⚠️</td><td>The extra cells on the right are discarded.</td></tr>
+      <tr><td><span class="ui">Summary rows (Total / Mean) inside the data</span></td><td class="c">⛔</td><td>Rows whose first cell reads Total, Mean, Average, Promedio, Suma, Sum or Media are removed, because they would be clustered as if they were objects.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-preview.png" alt="The Data preview card"></div>
+    <figcaption><b>Figure 3.3.</b> The <span class="ui">Data preview</span> card, at the bottom of the block, shows the table as it was read (up to 200 rows). The em dash in row ACC-005 is the example’s missing cell.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · a distance matrix skips two cards</div>
+    <p>If the table is recognised as a distance matrix, the variable type and preprocessing cards do not appear: there are no variables to type and nothing to scale. The app goes straight to the exploratory analysis, where the map and the clustering tendency are computed on the principal coordinates of the matrix. Block 3 will use the matrix as it is.</p>
+  </div>
+
+  <!-- 3.2 -->
+  <h2 id="s3-2"><span class="num">3.2</span>Variable types and the role of each column</h2>
+  <p class="lead">The second card is the most important one in the block. For each column the app proposes a <b>type</b> (what kind of variable it is) and a <b>role</b> (what it is used for). The type determines which coefficients Block 3 will offer; the role determines which columns enter the distances. Review the proposal before moving on: it takes a minute and prevents entire analyses from being set up wrongly.</p>
+
+  <table class="compacta">
+    <caption><b>Table 3.4.</b> The five variable types.</caption>
+    <thead><tr><th style="width:26%">Type</th><th>What it is</th><th style="width:30%">Examples</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Quantitative</span></td><td>Continuous or integer measurements.</td><td>Height, yield, pH, expression.</td></tr>
+      <tr><td><span class="ui">Count / abundance</span></td><td>Non-negative integers with many zeros.</td><td>Species abundances, catches, reads.</td></tr>
+      <tr><td><span class="ui">Binary (0/1)</span></td><td>Two states.</td><td>Present/absent, yes/no, allele A/B.</td></tr>
+      <tr><td><span class="ui">Nominal</span></td><td>Unordered categories.</td><td>Cultivar, soil type, colour.</td></tr>
+      <tr><td><span class="ui">Ordinal</span></td><td>Ordered categories.</td><td>Low &lt; medium &lt; high, damage scales.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 3.5.</b> The five roles of a column.</caption>
+    <thead><tr><th style="width:26%">Role</th><th>What it is for</th><th style="width:22%">How many columns</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Active (used to cluster)</span></td><td>Defines the similarity between objects: it enters the working matrix and the distances.</td><td>At least two.</td></tr>
+      <tr><td><span class="ui">Supplementary</span></td><td>Does not cluster, but is kept to describe the clusters in Block 7.</td><td>As many as you like.</td></tr>
+      <tr><td><span class="ui">Object label / ID</span></td><td>Name of each object in dendrograms and maps.</td><td>One; choosing another turns the previous one into excluded.</td></tr>
+      <tr><td><span class="ui">Known grouping</span></td><td>A prior classification for colouring figures and for external validation. It never clusters.</td><td>One; choosing another turns the previous one into active.</td></tr>
+      <tr><td><span class="ui">Exclude</span></td><td>Ignore the column.</td><td>As many as you like.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>How the app guesses the type and the role</h3>
+  <p>The proposal comes from simple rules applied to the content and the name of each column (table 3.6). With well-named data it is almost always right; when in doubt, it says so in the <span class="ui">Checks</span> column.</p>
+
+  <table class="compacta">
+    <caption><b>Table 3.6.</b> Detection rules, in the order in which they are applied to each column.</caption>
+    <thead><tr><th style="width:36%">If the column…</th><th>…it is proposed as</th></tr></thead>
+    <tbody>
+      <tr><td>Is empty</td><td><span class="ui">Empty</span>, excluded.</td></tr>
+      <tr><td>Is numeric (at least 90% of the cells) and has only the two values of a known binary pair</td><td>Binary (0/1), active.</td></tr>
+      <tr><td>Is numeric, all its values are distinct and it is named <i>ID</i>, <i>Code</i>, <i>Accession</i>, <i>Sample</i>, <i>Site</i>, <i>Plot</i>, <i>Profile</i>, <i>Name</i>, <i>Genotype</i>…</td><td>Object label.</td></tr>
+      <tr><td>Is numeric and constant</td><td>Constant, excluded.</td></tr>
+      <tr><td>Contains non-negative integers, with more than two values, and at least 15% zeros or a name that suggests counts (<i>_sp</i>, <i>abund</i>, <i>count</i>, <i>captur</i>, <i>reads</i>, <i>OTU</i>…)</td><td>Count / abundance, active.</td></tr>
+      <tr><td>Contains few integers (up to 7 distinct values) and is named <i>Group</i>, <i>Class</i>, <i>Type</i>, <i>Region</i>, <i>Habitat</i>, <i>Treatment</i>, <i>Species</i>, <i>Population</i>…</td><td>Integer group codes: nominal, known grouping.</td></tr>
+      <tr><td>Contains few integers (up to 9) and the name suggests a scale (<i>score</i>, <i>scale</i>, <i>grade</i>, <i>severity</i>, <i>damage</i>…)</td><td>Ordinal with numeric levels, active.</td></tr>
+      <tr><td>Is numeric and none of the above applies</td><td>Quantitative, active. If it has few distinct integers, the warning “few integer values → nominal or ordinal?” is added.</td></tr>
+      <tr><td>Is text and all values are distinct (more than 3 rows)</td><td>Object label (or excluded if there is already one).</td></tr>
+      <tr><td>Is text with the two levels of a known binary pair</td><td>Binary, active.</td></tr>
+      <tr><td>Is text with the levels of a known ordinal scale</td><td>Ordinal, active, with the order of the scale.</td></tr>
+      <tr><td>Is text with more than 40 categories</td><td>Nominal, excluded.</td></tr>
+      <tr><td>Is text and is named like a grouping (<i>Region</i>, <i>Habitat</i>, <i>Landscape</i>…)</td><td>Nominal, known grouping.</td></tr>
+      <tr><td>Is text with up to 40 categories</td><td>Nominal, active.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja dato">
+    <div class="dato-cifra">60%</div>
+    <div class="dato-txt">
+      <div class="caja-t">Fact · the community table rule</div>
+      After typing the columns one by one, the app looks at the whole set: if there are at least four numeric columns of non-negative integers, they make up at least 60% of the active numeric columns and 30% of them contain zeros, all of them become <span class="ui">Count / abundance</span>. In this way a species-by-site table is recognised as such even if some species occur at every site.
+    </div>
+  </div>
+
+  <h3>The variable table</h3>
+  <p>Each column of the file takes up one row of the table (figure 3.4). On screen the table is wider than the window and scrolls horizontally; here it is shown in two halves.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-vartabla.png" alt="Left half of the variable table"></div>
+    <div class="marco" style="margin-top:0.08in"><img src="../img/b2-vartabla2.png" alt="Right half of the variable table"></div>
+    <figcaption><b>Figure 3.4.</b> The variable table for the maize landraces example: on the left, from the name to the role; on the right, from the counts to the checks. The app recognised the label (<i>Accession</i>), the known grouping (<i>Region</i>, three groups) and eight active quantitative variables; it flagged <i>KernelRows</i> for having only four integer values and <i>LeafWidth_cm</i> for its missing cell.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 3.7.</b> Columns of the variable table.</caption>
+    <thead><tr><th style="width:22%">Column</th><th>What it shows</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Variable</span></td><td>The name as it appears in the file (or the one assigned if it was missing).</td></tr>
+      <tr><td><span class="ui">Detected</span></td><td>What the app inferred from the content, with one colour per type: for example <i>Numeric (continuous)</i>, <i>Counts (17 % zeros)</i>, <i>Binary (no / yes)</i>, <i>Ordinal (4 levels)</i>, <i>Categorical (3 groups)</i>, <i>Text, all distinct (label)</i>.</td></tr>
+      <tr><td><span class="ui">Type</span></td><td>Menu for correcting the type. It offers only the types compatible with the content (a text column cannot be quantitative). If you choose <i>Ordinal</i>, a field appears below it in which to write the order of the levels separated by <code>&lt;</code>.</td></tr>
+      <tr><td><span class="ui">Role</span></td><td>Menu for changing the role (table 3.5).</td></tr>
+      <tr><td><span class="ui">n</span> · <span class="ui">Missing</span> · <span class="ui">Unique</span></td><td>Cells with data, missing cells and distinct values.</td></tr>
+      <tr><td><span class="ui">Summary</span></td><td>Mean, standard deviation and range for numeric variables; the order of the levels for ordinal ones; which value is 0 and which is 1, with the percentage of ones, for binary ones; the first levels for nominal ones.</td></tr>
+      <tr><td><span class="ui">Distribution</span></td><td>A miniature histogram (numeric) or bars per level (categorical), in the colour of the type.</td></tr>
+      <tr><td><span class="ui">Checks</span></td><td>Warnings from table 3.8, or <i>ok</i>.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 3.8.</b> Warnings in the <span class="ui">Checks</span> column.</caption>
+    <thead><tr><th style="width:34%">Warning</th><th>When it appears and what to do</th></tr></thead>
+    <tbody>
+      <tr><td><b>zero variance</b></td><td>All the values are equal: the variable contributes nothing and is discarded when you apply.</td></tr>
+      <tr><td><b>N missing</b> / <b>X % missing</b></td><td>Missing cells; shown in red when they exceed 20%. Decide in card 3 whether to drop or impute.</td></tr>
+      <tr><td><b>numbers mixed with text</b></td><td>More than 50% but less than 90% of the cells are numeric, or a number is written in words. Check the column in the file.</td></tr>
+      <tr><td><b>strongly skewed → log/sqrt?</b> / <b>skewed</b></td><td>Skewness greater than 2 (or than 1). Consider a logarithmic or square-root transformation.</td></tr>
+      <tr><td><b>N outliers |z| &gt; 3</b></td><td>Values more than three standard deviations from the mean. Check them in the original data.</td></tr>
+      <tr><td><b>few integer values → nominal or ordinal?</b></td><td>Integers with up to seven distinct values: they may be codes. If they are, change the type.</td></tr>
+      <tr><td><b>many categories</b></td><td>An active nominal variable with more than 15 levels: each level becomes an indicator column and carries little weight.</td></tr>
+      <tr><td><b>levels differ only by case</b></td><td>Two levels that differ only in upper or lower case: unify them in the file.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>The detected structure and the recommended route</h3>
+  <p>Below the table, <span class="ui">Detected structure</span> summarises the decision in six tiles, adds the checks that affect the data set as a whole and proposes a <b>route</b> for the following blocks (figure 3.5). The route is derived from the <b>profile</b> of the data: the combination of types among the active columns (table 3.10).</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-resumen.png" alt="Detected structure and recommended route"></div>
+    <figcaption><b>Figure 3.5.</b> <span class="ui">Detected structure</span> for the maize landraces: 45 objects, 8 active quantitative variables, a label and a known grouping; three warnings (one missing cell, spreads differing by more than 20 times, integers with few values in <i>KernelRows</i>) and the recommended route: z-scores, Euclidean distance, Ward.D2 followed by k-means.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 3.9.</b> Checks in <span class="ui">Detected structure</span>.</caption>
+    <thead><tr><th style="width:36%">Warning</th><th style="width:8%" class="c">Level</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">No active variables</span></td><td class="c">⛔</td><td>Mark at least two columns as active; the apply button stays disabled until then.</td></tr>
+      <tr><td><span class="ui">Only one active variable</span></td><td class="c">⚠️</td><td>Clustering on a single variable amounts to cutting its values into intervals.</td></tr>
+      <tr><td><span class="ui">Very few objects</span></td><td class="c">⛔</td><td>Fewer than 8 rows cannot support more than one or two clusters.</td></tr>
+      <tr><td><span class="ui">Fewer than 3 objects per variable</span></td><td class="c">⚠️</td><td>With many variables all distances look alike; Block 3 offers clustering on principal components.</td></tr>
+      <tr><td><span class="ui">N missing values among the active variables</span></td><td class="c">⚠️</td><td>Choose in card 3 between dropping rows and imputing.</td></tr>
+      <tr><td><span class="ui">Mixed variable types</span></td><td class="c">ℹ️</td><td>The natural route is Gower + PAM; Gower performs the standardisation internally.</td></tr>
+      <tr><td><span class="ui">Looks like a community (species × site) table</span></td><td class="c">ℹ️</td><td>Use asymmetric coefficients or the Hellinger transformation, not the raw Euclidean distance.</td></tr>
+      <tr><td><span class="ui">Spreads differ by more than 20×</span></td><td class="c">⚠️</td><td>Without standardisation, the variable with large units decides the clusters.</td></tr>
+      <tr><td><span class="ui">No label column</span></td><td class="c">ℹ️</td><td>Row numbers will be used as names.</td></tr>
+      <tr><td><span class="ui">Integer codes treated as quantitative</span></td><td class="c">ℹ️</td><td>If those integers are categories, change the type to nominal or ordinal.</td></tr>
+      <tr><td><span class="ui">Constant variables</span></td><td class="c">⚠️</td><td>They are discarded when you apply.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 3.10.</b> The recommended route according to the data profile. The proposed preprocessing is copied to card 3; the rest is repeated in <span class="ui">What to do next</span> at the end of the block.</caption>
+    <thead><tr><th style="width:17%">Profile</th><th style="width:17%">Preprocessing</th><th style="width:24%">Dissimilarity</th><th style="width:22%">Method</th><th>Also try</th></tr></thead>
+    <tbody>
+      <tr><td><b>Quantitative</b><br><span class="small">quantitative, with or without ordinal</span></td><td>z (log first if some variables are strongly skewed)</td><td>Euclidean</td><td>Ward.D2 and k-means seeded from the tree</td><td>UPGMA · PAM · Gaussian mixtures</td></tr>
+      <tr><td><b>Ecological counts</b><br><span class="small">≥ 60% counts</span></td><td>Hellinger, no scaling</td><td>Bray–Curtis on counts, or Euclidean on Hellinger</td><td>UPGMA (Bray–Curtis) or Ward.D2 (Hellinger)</td><td>PAM · k-means on Hellinger</td></tr>
+      <tr><td><b>Binary</b></td><td>No scaling</td><td>Jaccard (asymmetric) or simple matching (symmetric states)</td><td>UPGMA</td><td>PAM · Ward on √(1 − <i>s</i>)</td></tr>
+      <tr><td><b>Nominal</b></td><td>Range 0–1</td><td>Simple matching / Gower</td><td>PAM</td><td>UPGMA on Gower</td></tr>
+      <tr><td><b>Ordinal</b></td><td>Range 0–1</td><td>Manhattan on ranks / Gower</td><td>PAM or UPGMA</td><td>Ward.D2 on ranks</td></tr>
+      <tr><td><b>Mixed types</b></td><td>Range 0–1</td><td>Gower</td><td>PAM</td><td>UPGMA on Gower</td></tr>
+      <tr><td><b>Distance matrix</b></td><td>None</td><td>Your matrix, as it is</td><td>UPGMA or PAM</td><td>Complete linkage · Ward on √<i>d</i> if it is Euclidean</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · which scaling the app proposes for quantitative data</div>
+    <table class="compacta">
+      <thead><tr><th style="width:44%">If the standard deviations of the active variables…</th><th>then</th></tr></thead>
+      <tbody>
+        <tr><td>differ by more than 20 times (maximum / minimum &gt; 20)</td><td>z-scores, with a warning: without standardisation a single variable dominates.</td></tr>
+        <tr><td>differ by between 3 and 20 times</td><td>z-scores; keep the raw units only if all variables share the same unit and you want the larger ones to weigh more.</td></tr>
+        <tr><td>are similar (less than 3 times)</td><td>z-scores anyway: it changes little and keeps the analysis comparable.</td></tr>
+        <tr><td>and, in addition, some variable has a skewness greater than 1.5</td><td>log(<i>x</i> + 1) is proposed before scaling.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3.3 -->
+  <h2 id="s3-3"><span class="num">3.3</span>Missing values, transformation and scaling</h2>
+  <p class="lead">The third card builds the <b>working matrix</b>: the numeric table that all the following blocks will see. Four menus and one button (figure 3.6). The initial values are those of the recommended route; you can change them and press <span class="ui">Apply and explore →</span> again as many times as you like: everything that follows is recalculated.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-prep.png" alt="The 3 · Missing values, transformation and scaling card"></div>
+    <figcaption><b>Figure 3.6.</b> The <span class="ui">3 · Missing values, transformation and scaling</span> card with the values proposed for the maize landraces. Below each menu, a line explains the chosen option.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 3.11.</b> Options for <span class="ui">Missing values</span> and <span class="ui">Ordinal variables</span>.</caption>
+    <thead><tr><th style="width:38%">Option</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Drop objects with any missing active value</span></td><td>Removes the rows with any missing value in the active columns. This is the safe choice when there are few of them; the app reports the percentage removed and complains if it exceeds 20%.</td></tr>
+      <tr><td><span class="ui">Impute (mean / median / mode)</span></td><td>Fills each missing value with the mean (quantitative), the median (counts and ordinal levels) or the mode (binary and nominal) of its column. All rows are kept; the message states how many cells were imputed.</td></tr>
+      <tr><td><span class="ui">Ranks of the levels (0, 1, 2…)</span></td><td>Each ordinal variable is coded with the rank of its level, from lowest to highest, and then scaled like a quantitative one.</td></tr>
+      <tr><td><span class="ui">Numeric scores if the levels are numbers</span></td><td>If the levels are numbers (a 1–5 scale, for example), they are used as they are instead of the ranks.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 3.12.</b> Options for <span class="ui">Transformation (before scaling)</span>. Row-wise transformations are applied to the count columns; if there are none, to all the quantitative ones. Negative values block them (log and square root use the absolute value with its sign; row-wise ones are skipped with a warning).</caption>
+    <thead><tr><th style="width:30%">Option</th><th style="width:22%">Formula</th><th>What it is for</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">None</span></td><td>—</td><td>The values are used as they are.</td></tr>
+      <tr><td><span class="ui">log(x + 1)</span></td><td>log(<i>x</i> + 1) per cell</td><td>Compresses large values and keeps zeros; for skewed positive data.</td></tr>
+      <tr><td><span class="ui">Square root</span></td><td>√<i>x</i> per cell</td><td>Milder than the logarithm; the classic variance-stabilising transformation for counts.</td></tr>
+      <tr><td><span class="ui">Hellinger (row-wise)</span></td><td>√(<i>x</i> / row total)</td><td>Turns an abundance table into something that Euclidean distance, Ward and k-means handle well.</td></tr>
+      <tr><td><span class="ui">Chord (row-wise)</span></td><td><i>x</i> / √Σ<i>x</i>²</td><td>Each object becomes a unit vector; distances reflect the shape of the profile, not its size.</td></tr>
+      <tr><td><span class="ui">Relative abundance (row-wise)</span></td><td><i>x</i> / row total</td><td>Proportions per object.</td></tr>
+      <tr><td><span class="ui">Presence / absence</span></td><td>1 if <i>x</i> &gt; 0</td><td>Reduces abundances to presence.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 3.13.</b> Options for <span class="ui">Scaling</span>. Binary variables are never scaled; the indicator columns of nominal variables are multiplied by 0.7071 so that a nominal variable weighs as much as a quantitative one.</caption>
+    <thead><tr><th style="width:30%">Option</th><th style="width:26%">Formula</th><th>When to use it</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">z-scores (mean 0, SD 1)</span></td><td>(<i>x</i> − mean) / SD</td><td>The usual option with Euclidean distance.</td></tr>
+      <tr><td><span class="ui">Range 0–1</span></td><td>(<i>x</i> − min) / (max − min)</td><td>Preserves the shape of the distribution; this is what Gower does internally. Sensitive to outliers.</td></tr>
+      <tr><td><span class="ui">Robust (median / IQR)</span></td><td>(<i>x</i> − median) / IQR</td><td>Like z, but resistant to extreme values.</td></tr>
+      <tr><td><span class="ui">Divide by max |x|</span></td><td><i>x</i> / max |<i>x</i>|</td><td>Keeps zeros at zero; useful with sparse data.</td></tr>
+      <tr><td><span class="ui">None (raw units)</span></td><td>—</td><td>Only if all variables share the same unit and you want those with greater spread to weigh more.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · what the working matrix contains</div>
+    <p>After applying, each object is a row of numbers: quantitative variables and counts transformed and scaled, ordinal variables as scaled ranks, binary variables as unscaled 0/1, and each nominal variable converted into as many indicator columns as it has levels (up to 40), scaled by 0.7071. The Euclidean distance of the exploratory analysis, the principal component map, the VAT image and the Hopkins statistic are all computed on this matrix. Block 3 reads the original types again in order to offer coefficients that respect each kind of variable; the working matrix is only the common starting point. You can download it with <span class="ui">⬇ Download the preprocessed matrix (CSV)</span> at the end of the block.</p>
+  </div>
+
+  <!-- 3.4 -->
+  <h2 id="s3-4"><span class="num">3.4</span>Can my data be clustered? Hopkins and VAT</h2>
+  <p class="lead">Every algorithm returns clusters, whether they exist or not (you saw this with the uniform noise in the demo, exercise 5 of chapter 2). That is why the fourth card, before showing a single dendrogram, measures the <b>clustering tendency</b> with two complementary tools: a number with its P-value, the Hopkins statistic, and an image, the VAT. They are accompanied by the principal component map, the correlation heat map and the multivariate outlier plot.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the Hopkins statistic</div>
+    <p>We take <i>m</i> random points inside the box that encloses the data and measure the distance from each one to its nearest real object (sum <i>u</i>). We also take <i>m</i> real objects at random and measure the distance from each one to its nearest real neighbour (sum <i>w</i>). The statistic is <b>H = <i>u</i> / (<i>u</i> + <i>w</i>)</b>. If the objects are spread at random, an artificial point and a real object have neighbours equally close and H is around 0.5. If the objects form clusters, each real object has neighbours very close by (small <i>w</i>), whereas many artificial points fall in the gaps between clusters (large <i>u</i>), and H approaches 1.</p>
+    <p>ClusteringPro uses <i>m</i> equal to half the number of objects (between 10 and 200), repeats the draw <b>20 times</b> and averages. And instead of the theoretical approximation, which is valid only for small <i>m</i>, it calibrates the result by <b>Monte Carlo</b>: it simulates 80 uniform tables with the same number of objects and variables and the same range, computes H for each one and reports the 95% band of those values and a P-value, the fraction of simulations that give an H as large as the observed one. With more than 12 variables, or with a distance matrix, H is computed on the principal components that account for 90% of the variance (from 2 to 10), because in many dimensions all distances look alike.</p>
+  </div>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b2-hopkins.png" alt="Hopkins and multivariate outlier figures">
+      <span class="marca" style="left:17%;top:30%">1</span>
+      <span class="marca" style="left:38%;top:18%">2</span>
+      <span class="marca" style="left:16%;top:56%">3</span>
+      <span class="marca" style="left:76%;top:19%">4</span>
+      <span class="marca" style="left:60%;top:60%">5</span>
+    </div>
+    <figcaption><b>Figure 3.7.</b> The two figures for clustering tendency and outliers, with the maize landraces.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Density curve of H over the 80 simulated uniform tables; the grey strip is the 95% band (here 0.46–0.51).</li>
+    <li><span class="n">2</span>The observed H (dotted line): 0.634 ± 0.013 with m = 22, P = 0.012, “detectable but modest tendency”.</li>
+    <li><span class="n">3</span>Rug marks: above, the 20 draws of the observed H; below, the simulations.</li>
+    <li><span class="n">4</span>Mahalanobis distance D² of each object from the multivariate centre, with the chi-squared reference lines at 97.5% (suspect) and 99.9% (extreme); the objects above them are labelled.</li>
+    <li><span class="n">5</span>Points coloured by the known grouping, if there is one.</li>
+  </ul>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · how the app reads the Hopkins statistic</div>
+    <table class="compacta">
+      <thead><tr><th style="width:38%">If…</th><th style="width:14%">Level</th><th>Reading</th></tr></thead>
+      <tbody>
+        <tr><td>P ≤ 0.05 and H ≥ 0.70</td><td>✅ clear</td><td><span class="ui">Clear clustering tendency</span>: the data are far from spatial randomness; it is worth looking for clusters.</td></tr>
+        <tr><td>P ≤ 0.05 but H &lt; 0.70</td><td>⚠️ modest</td><td><span class="ui">Detectable but modest</span>: more than chance produces, but not by much. Expect a few well-populated clusters or gradients. With few objects per cluster H remains modest even when the map shows clear clouds: let the map and the VAT have their say.</td></tr>
+        <tr><td>P &gt; 0.05 but H ≥ 0.62</td><td>⚠️ moderate</td><td><span class="ui">Moderate</span>: some structure, perhaps gradients rather than discrete clusters.</td></tr>
+        <tr><td>P &gt; 0.05 and H &lt; 0.62</td><td>⛔ weak or none</td><td><span class="ui">Weak or no clustering tendency</span>: the neighbour structure is that of random points. Any algorithm will still return clusters, but they may be arbitrary.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the VAT image</div>
+    <p>VAT stands for visual assessment of (cluster) tendency. The distance matrix is reordered so that each object sits next to its nearest neighbour among those already placed (starting with the object farthest from all the others and continuing as when building a minimum spanning tree), and it is drawn as an image: in the classic grey palette, <b>dark means close</b>. If there are clusters, <b>dark blocks appear along the diagonal</b>, and their number is a first estimate of <i>k</i>. If there are none, the image is a gradient without blocks. When you have provided a known grouping, a colour strip on the left shows whether the blocks match it.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-corrvat.png" alt="Correlation heat map and VAT image"></div>
+    <figcaption><b>Figure 3.8.</b> On the left, the matrix of Pearson correlations between the numeric variables of the working matrix (blue positive, red negative; the values are printed with up to 18 variables). On the right, the VAT image of the maize landraces: three dark blocks that match the region strip quite well, although the first two touch.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-pca.png" alt="Principal component map"></div>
+    <figcaption><b>Figure 3.9.</b> The principal component map of the objects (76% of the variance on the first two axes), coloured by the known grouping and with hulls per group. With a distance matrix the map shows principal coordinates (MDS). Labels are shown automatically with up to 60 objects.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the map is less misleading with the percentage in view</div>
+    <p>The map shows two axes; the percentage in brackets tells you how much variance they capture. At 76%, what you see is almost everything there is. At 49%, as in the binary example or the uniform noise, half of the variation lies outside the plane, and two objects that look like neighbours may not be. In those cases the VAT and the Hopkins statistic, which use all the dimensions, carry more weight than the map.</p>
+  </div>
+
+  <!-- 3.5 -->
+  <h2 id="s3-5"><span class="num">3.5</span>The grade and the recommendation</h2>
+  <p class="lead">At the top of the fourth card, a one-letter verdict summarises everything above (figure 3.10): the <b>readiness</b> grade (labelled <span class="ui">readiness</span> in the app) from A to D, a sentence that explains it, the tiles with the figures that support it, the list of checks and the <span class="ui">What to do next</span> card with what you should do in Blocks 3 to 6.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b2-eda.png" alt="Card 4 with the verdict, the tiles and the checks">
+      <span class="marca" style="left:8%;top:15.5%">1</span>
+      <span class="marca" style="left:4%;top:24%">2</span>
+      <span class="marca" style="left:4%;top:53%">3</span>
+      <span class="marca" style="left:4%;top:92.7%">4</span>
+    </div>
+    <figcaption><b>Figure 3.10.</b> The top of the <span class="ui">4 · Exploratory analysis and clustering tendency</span> card with the maize landraces.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>The grade (here B) and the preprocessing line with which it was computed.</li>
+    <li><span class="n">2</span>Eight figure tiles (table 3.14); the coloured border repeats the traffic light of each one.</li>
+    <li><span class="n">3</span>Interpreted checks (table 3.15).</li>
+    <li><span class="n">4</span><span class="ui">What to do next</span>: dissimilarity, method, alternatives and where to start with the number of clusters.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Table 3.14.</b> The figure tiles and their traffic lights.</caption>
+    <thead><tr><th style="width:30%">Tile</th><th>What it is</th><th style="width:30%">Traffic light</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Objects</span></td><td>Objects in the working matrix and how many were dropped because of missing values.</td><td>—</td></tr>
+      <tr><td><span class="ui">Variables in the working matrix</span></td><td>Columns of the matrix; with nominal variables it shows how many are numeric and how many are indicators.</td><td>—</td></tr>
+      <tr><td><span class="ui">Objects per variable</span></td><td>The ratio <i>n</i> / <i>p</i>, counting each nominal variable as one variable.</td><td>green ≥ 5 · amber 3–5 · red &lt; 3</td></tr>
+      <tr><td><span class="ui">Hopkins statistic</span></td><td>H, the uniform band and the P-value.</td><td>The rule in section 3.4.</td></tr>
+      <tr><td><span class="ui">PCA (or MDS): first two axes</span></td><td>Variance captured by the first two axes of the map.</td><td>green ≥ 50% · amber 30–50%</td></tr>
+      <tr><td><span class="ui">Multivariate outliers</span></td><td>Objects with D² above the 97.5% quantile, and how many of them are extreme (99.9%).</td><td>amber if they exceed 10% of the objects</td></tr>
+      <tr><td><span class="ui">Strongest correlation</span></td><td>The largest |<i>r</i>| between numeric variables and which pair produces it.</td><td>amber if |<i>r</i>| &gt; 0.95</td></tr>
+      <tr><td><span class="ui">SD ratio (max / min)</span></td><td>Ratio between the largest and the smallest standard deviation in the working matrix.</td><td>amber if &gt; 10</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 3.15.</b> Checks in card 4 and what they suggest.</caption>
+    <thead><tr><th style="width:40%">Check</th><th style="width:8%" class="c">Level</th><th>What it suggests</th></tr></thead>
+    <tbody>
+      <tr><td>Clear / detectable but modest / moderate / weak or no clustering tendency (Hopkins)</td><td class="c">✅ ⚠️ ⛔</td><td>According to the rule in section 3.4.</td></tr>
+      <tr><td><span class="ui">N extreme objects (Mahalanobis D² beyond the 99.9 % quantile)</span></td><td class="c">⚠️</td><td>Names up to eight objects. Hierarchical methods will isolate them on their own branch and k-means will drag the centres towards them: consider PAM, robust scaling or removing them after checking their values.</td></tr>
+      <tr><td><span class="ui">N objects beyond the 97.5 % Mahalanobis quantile</span></td><td class="c">⚠️</td><td>More than 10% of the objects are far from the centre: heavy tails or an elongated structure. PAM and single linkage suffer less than k-means and Ward.</td></tr>
+      <tr><td><span class="ui">No extreme multivariate outliers</span></td><td class="c">✅</td><td>What a well-behaved sample shows.</td></tr>
+      <tr><td><span class="ui">X and Y are nearly redundant (|r| = …)</span></td><td class="c">⚠️</td><td>Two almost identical variables count twice in the Euclidean distance: remove one or cluster on components (Block 3).</td></tr>
+      <tr><td><span class="ui">No redundant variables</span></td><td class="c">✅</td><td>Each variable contributes information of its own.</td></tr>
+      <tr><td><span class="ui">Variables with very different spreads and no scaling</span></td><td class="c">⛔</td><td>You chose not to scale and the largest SD is more than 10 times the smallest: the distance is that variable. Scale and apply again.</td></tr>
+      <tr><td><span class="ui">Spreads still differ after transformation</span></td><td class="c">⚠️</td><td>Even after scaling, one variable is far more spread out (heavy tails or many identical values); with row-wise transformations this is expected, but make sure a single abundant species does not take over.</td></tr>
+      <tr><td><span class="ui">Many rows dropped for missing values</span></td><td class="c">⚠️</td><td>More than 20% of the objects were dropped: imputation keeps them, and Gower can skip missing pairs.</td></tr>
+      <tr><td><span class="ui">Known grouping with N groups will be used for external validation</span></td><td class="c">ℹ️</td><td>It colours the figures and feeds the Rand, ARI and NMI indices in Block 6.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · how the grade is computed</div>
+    <table class="compacta">
+      <thead><tr><th style="width:12%" class="c">Letter</th><th style="width:38%">Condition</th><th>The app’s sentence</th></tr></thead>
+      <tbody>
+        <tr><td class="c"><b>A</b></td><td>No red or amber warnings</td><td>The data are ready for clustering: clear tendency, balanced variables, no red flags.</td></tr>
+        <tr><td class="c"><b>B</b></td><td>One or two amber warnings, no red ones</td><td>Good to go, with the caveats listed below. Keep them in mind when you interpret the clusters.</td></tr>
+        <tr><td class="c"><b>C</b></td><td>One red warning, or more than two amber ones</td><td>Clustering is possible but fragile. Address the flagged points, or treat the results as exploratory.</td></tr>
+        <tr><td class="c"><b>D</b></td><td>Two or more red warnings</td><td>These data do not support a clustering analysis as they stand.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">Counted as red: weak or no tendency, very different spreads without scaling, and fewer than 8 objects. Counted as amber: modest or moderate tendency, extreme outliers or more than 10% suspect objects, redundant variables, different spreads after transformation, more than 20% of rows dropped, and fewer than 3 objects per variable.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · the grade is not a verdict set in stone</div>
+    <p>A B with “modest tendency” is the most common result with real data sets of a few dozen objects: the Hopkins statistic is conservative with small samples. Read the grade together with the map and the VAT. A C caused by unscaled spreads is fixed with one click; a C caused by weak tendency deserves a pause: ask yourself whether the variables are the right ones before going on. And an honest D is worth more than a pretty dendrogram.</p>
+  </div>
+
+  <!-- 3.6 -->
+  <h2 id="s3-6"><span class="num">3.6</span>Settings, tables and figures of the block</h2>
+  <p>The block produces six editable figures, each in its own card with the <span class="ui">Edit figure</span> panel and the download controls described in section 1.6. Table 3.16 summarises the controls specific to each one; the style and typography controls are common to all of them.</p>
+
+  <table class="compacta">
+    <caption><b>Table 3.16.</b> The six figures of the block and their specific controls.</caption>
+    <thead><tr><th style="width:28%">Figure</th><th>What it shows</th><th style="width:36%">Specific controls</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Spread of every variable after preprocessing</span></td><td>Boxes for each variable of the working matrix (figure 3.11).</td><td><span class="ui">Values</span> (after transformation and scaling, or raw), <span class="ui">Order</span> (as in the table, or by spread), <span class="ui">Row height</span>, <span class="ui">Hide dummy columns</span>, <span class="ui">Show mean (◇)</span>, palette and legend position.</td></tr>
+      <tr><td><span class="ui">Correlation between the numeric variables</span></td><td>Matrix of Pearson correlations (figure 3.8, left). It does not appear with purely binary data or with distance matrices.</td><td><span class="ui">Colour map</span>, <span class="ui">Show values</span>.</td></tr>
+      <tr><td><span class="ui">PCA (or MDS) preview of the objects</span></td><td>Map of the objects on the first two axes (figure 3.9).</td><td>Axis titles, <span class="ui">Object labels</span> (automatic, all, none), label and point size, point shape, <span class="ui">Convex hulls per group</span>, point colour when there are no groups, palette and legend.</td></tr>
+      <tr><td><span class="ui">VAT image</span></td><td>Reordered distance matrix (figure 3.8, right).</td><td><span class="ui">Colour map</span> (classic greys or another ramp), <span class="ui">Known-group strip</span>, palette and legend.</td></tr>
+      <tr><td><span class="ui">Hopkins statistic</span></td><td>Observed H against the distribution without structure (figure 3.7, left). It does not appear with fewer than 6 objects.</td><td>Colour of the observed value and of the null curve.</td></tr>
+      <tr><td><span class="ui">Multivariate outliers</span></td><td>Mahalanobis D² per object (figure 3.7, right). It does not appear with distance matrices or with fewer than 5 objects.</td><td><span class="ui">Sort objects by D²</span>, point size, outlier colour, palette and legend.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b2-varbox.png" alt="Box plot of the variables in the working matrix"></div>
+    <figcaption><b>Figure 3.11.</b> <span class="ui">Spread of every variable after preprocessing</span>: one box plot per variable of the working matrix, with a diamond at the mean, coloured by type. With z-scores all the boxes are centred on zero and have comparable spread; the circles are values beyond the whiskers.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · what goes into the report</div>
+    <p>Block 8 includes in the report the variable table, the tiles and checks of cards 2 and 4, and the six figures <b>as you have edited them</b>. If you change a title or a palette here, that is how they will appear in the report. The <span class="ui">⬇ Download the preprocessed matrix (CSV)</span> button saves the working matrix with the labels and the known grouping, in case you want to reproduce the analysis in another program.</p>
+  </div>
+
+  <!-- 3.7 -->
+  <h2 id="s3-7"><span class="num">3.7</span>Step by step with the seven examples</h2>
+  <p class="lead">Each example illustrates a different situation. The steps are always the same: load, review types and roles, apply and read the verdict. The figures in this section are those given by the app with the proposed values; the two simulated examples use a fixed seed, so they are reproducible too.</p>
+
+  <table class="compacta">
+    <caption><b>Table 3.17.</b> The seven examples at a glance, with the values proposed by the app.</caption>
+    <thead><tr><th style="width:21%">Example</th><th class="c" style="width:7%"><i>n</i></th><th class="c" style="width:7%"><i>p</i></th><th style="width:15%">Profile</th><th style="width:20%">Preprocessing</th><th class="c" style="width:9%">H (P)</th><th class="c" style="width:7%">Grade</th></tr></thead>
+    <tbody>
+      <tr><td>Maize landraces</td><td class="c">44</td><td class="c">8</td><td>Quantitative</td><td>z</td><td class="c">0.634 (0.012)</td><td class="c">B</td></tr>
+      <tr><td>Species presence</td><td class="c">30</td><td class="c">22</td><td>Binary</td><td>none</td><td class="c">0.559 (0.012)</td><td class="c">B</td></tr>
+      <tr><td>Insect abundance</td><td class="c">24</td><td class="c">14</td><td>Ecological counts</td><td>Hellinger, no scaling</td><td class="c">0.533 (0.049)</td><td class="c">B</td></tr>
+      <tr><td>Soil profiles</td><td class="c">36</td><td class="c">14 (8 + 6)</td><td>Mixed</td><td>range 0–1</td><td class="c">0.815 (0.012)</td><td class="c">A</td></tr>
+      <tr><td>Distance matrix</td><td class="c">12</td><td class="c">7 axes</td><td>Matrix</td><td>none</td><td class="c">0.581 (0.025)</td><td class="c">B</td></tr>
+      <tr><td>Four simulated clusters</td><td class="c">80</td><td class="c">5</td><td>Quantitative</td><td>z</td><td class="c">0.784 (0.012)</td><td class="c">A</td></tr>
+      <tr><td>Uniform noise</td><td class="c">60</td><td class="c">5</td><td>Quantitative</td><td>z</td><td class="c">0.474 (0.840)</td><td class="c">C</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Example 1 · Maize landraces: the quantitative case with one missing cell</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>On the home page press <span class="ui">Start with my data →</span> and, among the examples, <span class="ui">Quantitative · maize landraces</span>. The app reads 45 objects × 10 columns with a decimal point and reports <span class="ui">Tidy table</span>.</li>
+      <li>Review the variable table (figure 3.4): <i>Accession</i> is the label, <i>Region</i> the known grouping (Highland, Valley, Coast) and the eight measurements are active quantitative variables. Note the two warnings: <i>KernelRows</i> has only four integer values (12, 14, 16, 18: kernel rows, a count that is best treated as quantitative here) and <i>LeafWidth_cm</i> has one missing cell.</li>
+      <li>Read <span class="ui">Detected structure</span> (figure 3.5): the spreads differ by more than 20 times (plant height is measured in hundreds of centimetres; yield, in single tonnes), so the route proposes z-scores.</li>
+      <li>Leave card 3 as it is (drop rows with missing values, no transformation, z) and press <span class="ui">Apply and explore →</span>. The message says that 1 row (2%) was dropped and 44 objects remain.</li>
+      <li>Read the verdict (figure 3.10): B, with a modest tendency (H = 0.634, P = 0.012), no outliers and no redundancies (maximum correlation 0.79, between days to flowering and leaf width). Look at the map (figure 3.9): three clear clouds by region. The VAT (figure 3.8) shows three blocks.</li>
+      <li><span class="ui">What to do next</span>: Euclidean distance, Ward.D2 followed by k-means, and start with <i>k</i> = 3 because of the three known regions.</li>
+    </ol>
+  </div>
+  <p><b>Try it yourself:</b> change <span class="ui">Missing values</span> to <span class="ui">Impute</span> and apply again: all 45 objects are kept and the message reports 1 cell imputed with the mean. Then try <span class="ui">Scaling</span> = <span class="ui">None (raw units)</span>: the <span class="ui">SD ratio</span> tile shoots up, the red warning about unscaled spreads appears and the grade drops to C. It is the quickest demonstration of why we standardise.</p>
+
+  <h3>Example 2 · Species presence: binary data</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Load <span class="ui">Binary · plant species presence</span>: 30 sites × 24 columns.</li>
+      <li>In the variable table, the 22 species appear as active <span class="ui">Binary 0/1</span>, <i>Site</i> as the label and <i>Habitat</i> (Forest, Grassland, Wetland) as the known grouping. The detected structure warns: fewer than 3 objects per variable.</li>
+      <li>The recommended route does not scale anything and proposes Jaccard (or simple matching if both states are informative) with UPGMA. Apply.</li>
+      <li>Verdict B: modest tendency (H = 0.559, P = 0.012, computed on 10 components that account for 89% of the variance), no correlations (binary variables are not included in the heat map) and 49% of the variance on the first two axes.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco" style="width:56%"><img src="../img/b2-binario-vat.png" alt="VAT image of the binary example"></div>
+    <figcaption><b>Figure 3.12.</b> The VAT of the 30 sites. With Euclidean distance on zeros and ones the blocks are already hinted at and follow the habitat strip; Block 3 will make them sharper with the Jaccard coefficient, which ignores shared absences.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>With binary data Block 2 does not scale, and its exploratory analysis is based on the Euclidean distance between the 0/1 values, which equals the square root of the number of mismatches. It is a provisional view: you choose the definitive dissimilarity (Jaccard, Dice, simple matching…) in Block 3, according to what a zero means. That is why the map captures only half of the variance and H is modest: it is not that the sites lack structure, but that it is not yet being measured with the right coefficient.</p>
+  </div>
+
+  <h3>Example 3 · Insect abundance: counts and Hellinger</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Load <span class="ui">Counts · insect abundance</span>: 24 sites × 16 columns.</li>
+      <li>The 14 arthropod families appear as <span class="ui">Counts</span> with their percentage of zeros (from 0 to 17%); although several have no zeros, the community table rule types them all as counts. <i>Landscape</i> (Organic_field, Conventional, Hedgerow) is the known grouping.</li>
+      <li>The detected structure says <span class="ui">Looks like a community (species × site) table</span> and the route proposes <b>Hellinger without scaling</b>, with Bray–Curtis or Ward.D2 on Hellinger. Apply.</li>
+      <li>Verdict B: H = 0.533 with P = 0.049, right at the limit; no outliers; maximum correlation 0.82, between aphids and bees. The map (figure 3.13) captures 75% of the variance and separates the three landscapes.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b2-insectos-pca.png" alt="Principal component map of the insect sites with Hellinger"></div>
+    <figcaption><b>Figure 3.13.</b> Principal component map of the 24 sites after the Hellinger transformation. The three landscapes form separate clouds; the first axis (65%) runs from hedgerows to conventional fields.</figcaption>
+  </figure>
+  <p><b>Try it yourself:</b> change <span class="ui">Transformation</span> to <span class="ui">None</span> and <span class="ui">Scaling</span> to <span class="ui">z-scores</span>, and apply. You will see that the map changes and the grade suffers: standardising by column gives a rare family the same weight as a dominant one, which is exactly the opposite of what ecologists want, and raw Euclidean distances make two sites look similar because of the families that both lack. Hellinger avoids both problems.</p>
+
+  <h3>Example 4 · Soil profiles: mixed types</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Load <span class="ui">Mixed · soil profiles</span>: 36 profiles × 10 columns, with no known grouping.</li>
+      <li>Look at the variable table: six quantitative variables (pH, organic matter, clay, sand, CEC, slope), <i>Texture</i> as nominal with 6 levels, <i>Drainage</i> as ordinal with 4 recognised levels (poor &lt; moderate &lt; good &lt; excessive) and <i>Calcareous</i> as binary (no = 0, yes = 1). All are active.</li>
+      <li>The detected structure warns <span class="ui">Mixed variable types</span> and the route proposes range 0–1, Gower and PAM. Apply.</li>
+      <li>Verdict A: clear tendency (H = 0.815, P = 0.012, on 5 components with 93% of the variance), no outliers, maximum correlation 0.94, between clay and CEC (high, but below the redundancy threshold).</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b2-suelos-varbox.png" alt="Boxes of the working matrix variables with mixed types"></div>
+    <figcaption><b>Figure 3.14.</b> The working matrix of the soil profiles: 8 numeric columns (the quantitative variables and drainage as ranks, on a 0–1 scale; the binary variable unscaled) plus 6 indicator columns for texture, in orange, which take the values 0 or 0.7071.</figcaption>
+  </figure>
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the indicators are only for exploration</div>
+    <p>The six <i>Texture=…</i> columns exist so that the map, the VAT and the Hopkins statistic can be computed on a numeric matrix. The Gower distance in Block 3 does not use them: it compares the texture of two profiles by asking whether it matches or not, which is the appropriate treatment for a nominal variable.</p>
+  </div>
+
+  <h3>Example 5 · Genetic distance matrix</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Load <span class="ui">Distance matrix · 12 cultivars</span>. The message says that it was recognised as a distance matrix of 12 objects and that no scaling is applied.</li>
+      <li>Cards 2 and 3 do not appear. The app applies automatically and shows card 4 with a principal coordinate (MDS) map instead of the principal component map.</li>
+      <li>Verdict B: H = 0.581 (P = 0.025) on 4 axes with 92% of the variance; the first two axes of the map capture 81%. There are no outlier or correlation tiles because there are no variables.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b2-matriz-mds.png" alt="MDS map of the twelve cultivars"></div>
+    <figcaption><b>Figure 3.15.</b> Principal coordinates of the 12 cultivars from the genetic matrix: three tight clusters of four cultivars each (Azul, Blanco, Cacahuacintle, Chalqueño; Cónico, Elotero, Olotillo, Pepitilla; Tabloncillo, Tuxpeño, Vandeño, Zapalote). Even with so few objects the labels overlap; the figure editor lets you enlarge the map or remove them.</figcaption>
+  </figure>
+
+  <h3>Examples 6 and 7 · Four simulated clusters and uniform noise</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Load <span class="ui">Simulated · four clear clusters</span>: 80 objects × 5 variables generated on the fly around four centres, with the <i>Group</i> column as the known grouping. Apply with the proposed values (z).</li>
+      <li>Verdict A: H = 0.784 (P = 0.012), 91% of the variance on two axes, one suspect object but no extreme ones. Make a mental note of the Hopkins figure.</li>
+      <li>Now load <span class="ui">Simulated · uniform noise</span>: 60 objects × 5 random variables. The <i>Group</i> column is “none” in every row and therefore appears as <span class="ui">Empty</span> and excluded (note in section 3.1).</li>
+      <li>Apply and compare: verdict C with the red warning <span class="ui">Weak or no clustering tendency</span> (H = 0.474, P = 0.840), 49% of the variance on two axes and a maximum correlation of 0.19 (figure 3.17).</li>
+    </ol>
+  </div>
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b2-sim-hopkins.png" alt="Hopkins with four simulated clusters"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b2-ruido-hopkins.png" alt="Hopkins with uniform noise"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figure 3.16.</b> The Hopkins statistic with structure (left: H = 0.784, far to the right of the 0.47–0.52 band of the uniform data) and without it (right: H = 0.474, inside the 0.45–0.53 band). In the second case the observed line falls in the middle of the null curve, and the P-value of 0.84 says that 84 out of every 100 random tables give an equal or larger H.</figcaption>
+  </figure>
+  <figure>
+    <div class="marco"><img src="../img/b2-ruido-eda.png" alt="Verdict C for the uniform noise"></div>
+    <figcaption><b>Figure 3.17.</b> The verdict for the uniform noise: C because of a single red warning. All the other tiles are green; nothing in the data except the Hopkins statistic reveals that there are no clusters.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The two simulated examples are the yardstick of the block. The four-cluster example shows what an A looks like: H far from the uniform band, a map with much of the variance on two axes, a VAT with sharp blocks. The noise example shows that a table without any clusters can have plenty of objects per variable, no outliers and no redundancies, and still not deserve a dendrogram. When your real data give an H close to 0.5 with a high P, you know what it means: there is nothing to find with those variables, and saying so is a result.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · come back here when you change your mind</div>
+    <p>Block 2 is not a one-off step. If in Block 3 you discover that one variable dominates, or in Block 7 that a cluster is defined by a single column, come back, change the type, the role or the scaling, apply again, and everything that follows is recalculated from the working matrix. Later blocks are disabled until you recompute them, so that you never mix results from two different preprocessing runs.</p>
+  </div>
+
+  <p style="margin-top:0.25in">With the working matrix built and the tendency checked, the next step is to measure how similar the objects are to one another. The Block 3 chapter presents the 39 similarity and distance coefficients and explains when to use each one according to the type of data, how to diagnose a distance matrix and how to compare coefficients before choosing.</p>
+</section>
+
+</body>
+</html>

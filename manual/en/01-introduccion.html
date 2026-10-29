@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User’s Manual · Front matter and introduction</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados, números de página e índice -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<!-- ====================================================================== CRÉDITOS -->
+<section class="preliminares creditos" id="creditos">
+  <div class="cred-titulo">ClusteringPro</div>
+  <div class="cred-sub">User’s Manual · Cluster Analysis</div>
+
+  <dl>
+    <dt>Author</dt><dd><b>Luis Ángel Barrera-Guzmán</b><br><span class="small">ORCID 0000-0001-8057-2583 · lbarrerag@chapingo.mx</span></dd>
+    <dt>Software</dt><dd>ClusteringPro, version 1.0.1 (September 2026)</dd>
+    <dt>Manual</dt><dd>First English edition, 2026, translated from the first Spanish edition. Describes version 1.0.1 of the software.</dd>
+    <dt>Software licence</dt><dd>GNU General Public License, version 3 or later (GPL-3.0-or-later).</dd>
+    <dt>Copyright of the manual</dt><dd>© 2026 Luis Ángel Barrera-Guzmán. All rights reserved.</dd>
+    <dt>Interface language</dt><dd>English. Throughout this manual, the names of buttons and menus are written exactly as they appear on screen, for example <span class="ui">Build the tree →</span>.</dd>
+  </dl>
+
+  <h4>How to cite the software</h4>
+  <div class="cita">Barrera-Guzmán, L. Á. (2026). <i>ClusteringPro: finding, validating and interpreting natural groups in biological, ecological and agronomic data without programming</i> (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22682795</div>
+  <h4>How to cite this manual</h4>
+  <div class="cita">Barrera-Guzmán, L. Á. (2026). <i>ClusteringPro: User’s Manual</i> (1st ed.). Distributed with ClusteringPro, version 1.0.1. Zenodo. https://doi.org/10.5281/zenodo.22682795</div>
+  <p class="small">The digital object identifier (DOI) 10.5281/zenodo.22682795 always resolves to the most recent version of the software; each version also has its own DOI in the archive record (version 1.0.1, for instance, is 10.5281/zenodo.22682889). Source code: https://github.com/luisangelbg/ClusteringPro · online version: https://luisangelbg.github.io/ClusteringPro/</p>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Privacy</div>
+    <p>ClusteringPro runs entirely inside your web browser. The files you open are read on your own computer and are <b>never sent to any server</b>, not even when you use the online version. You can analyse unpublished data, or data covered by confidentiality agreements, with no risk of it leaving your machine.</p>
+  </div>
+
+  <p class="small" style="margin-top:0.4in;color:#5d6472">The illustrations, diagrams and screenshots in this manual are original; they were produced with the software itself or with code written for the manual. The example datasets are described in section 1.7: they are realistic simulations created for teaching, with invented names of accessions, sites and taxa.</p>
+</section>
+
+<!-- ====================================================================== ÍNDICE -->
+<section class="preliminares indice" id="indice" data-nueva-hoja>
+  <h1>Contents</h1>
+  <div class="indice-sub">General contents of the manual</div>
+
+  <ol class="toc">
+    <li>
+      <div class="toc-cap"><span class="chip k0">P</span><a href="#como-leer">How to read this manual</a><a class="pag" href="#como-leer"></a></div>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k0">1</span><a href="#cap-intro">Introduction to ClusteringPro</a><a class="pag" href="#cap-intro"></a></div>
+      <ul>
+        <li><span class="n">1.1</span><a href="#s1-1"><span class="t">What is ClusteringPro?</span></a></li>
+        <li><span class="n">1.2</span><a href="#s1-2"><span class="t">Questions it answers</span></a></li>
+        <li><span class="n">1.3</span><a href="#s1-3"><span class="t">Five key ideas</span></a></li>
+        <li><span class="n">1.4</span><a href="#s1-4"><span class="t">Types of data it accepts</span></a></li>
+        <li><span class="n">1.5</span><a href="#s1-5"><span class="t">What you need and how to open it</span></a></li>
+        <li><span class="n">1.6</span><a href="#s1-6"><span class="t">A tour of the interface</span></a></li>
+        <li><span class="n">1.7</span><a href="#s1-7"><span class="t">The seven built-in examples</span></a></li>
+        <li><span class="n">1.8</span><a href="#s1-8"><span class="t">Recommended workflow</span></a></li>
+        <li><span class="n">1.9</span><a href="#s1-9"><span class="t">How to read silhouettes, correlations and P values</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k1">B1</span><a href="#cap-b1">Home and theory</a><a class="pag" href="#cap-b1"></a></div>
+      <ul>
+        <li><span class="n">2.1</span><a href="#s2-1"><span class="t">The home page</span></a></li>
+        <li><span class="n">2.2</span><a href="#s2-2"><span class="t">The interactive demo: k-means and a dendrogram</span></a></li>
+        <li><span class="n">2.3</span><a href="#s2-3"><span class="t">Data types and methods at a glance</span></a></li>
+        <li><span class="n">2.4</span><a href="#s2-4"><span class="t">The thirteen theory lessons</span></a></li>
+        <li><span class="n">2.5</span><a href="#s2-5"><span class="t">Which method should I use? The choice table</span></a></li>
+        <li><span class="n">2.6</span><a href="#s2-6"><span class="t">How to cite</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k2">B2</span><a href="#cap-b2">Data and exploratory analysis</a><a class="pag" href="#cap-b2"></a></div>
+      <ul>
+        <li><span class="n">3.1</span><a href="#s3-1"><span class="t">Input formats and how to lay out the table</span></a></li>
+        <li><span class="n">3.2</span><a href="#s3-2"><span class="t">Variable types and the role of each column</span></a></li>
+        <li><span class="n">3.3</span><a href="#s3-3"><span class="t">Missing values, transformation and scaling</span></a></li>
+        <li><span class="n">3.4</span><a href="#s3-4"><span class="t">Can my data be clustered? Hopkins and VAT</span></a></li>
+        <li><span class="n">3.5</span><a href="#s3-5"><span class="t">The grade and the recommendation</span></a></li>
+        <li><span class="n">3.6</span><a href="#s3-6"><span class="t">Settings, tables and figures of the block</span></a></li>
+        <li><span class="n">3.7</span><a href="#s3-7"><span class="t">Step by step with the seven examples</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k3">B3</span><a href="#cap-b3">Similarity and distance</a><a class="pag" href="#cap-b3"></a></div>
+      <ul>
+        <li><span class="n">4.1</span><a href="#s4-1"><span class="t">Similarity, dissimilarity and distance</span></a></li>
+        <li><span class="n">4.2</span><a href="#s4-2"><span class="t">The 39 coefficients, by data type</span></a></li>
+        <li><span class="n">4.3</span><a href="#s4-3"><span class="t">Metric and Euclidean: why it matters</span></a></li>
+        <li><span class="n">4.4</span><a href="#s4-4"><span class="t">Diagnosing the matrix</span></a></li>
+        <li><span class="n">4.5</span><a href="#s4-5"><span class="t">Comparing coefficients</span></a></li>
+        <li><span class="n">4.6</span><a href="#s4-6"><span class="t">Settings, tables and figures of the block</span></a></li>
+        <li><span class="n">4.7</span><a href="#s4-7"><span class="t">Step by step</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k4">B4</span><a href="#cap-b4">Hierarchical clustering</a><a class="pag" href="#cap-b4"></a></div>
+      <ul>
+        <li><span class="n">5.1</span><a href="#s5-1"><span class="t">Agglomerative and divisive</span></a></li>
+        <li><span class="n">5.2</span><a href="#s5-2"><span class="t">Linkage rules</span></a></li>
+        <li><span class="n">5.3</span><a href="#s5-3"><span class="t">Cophenetic correlation and tree coefficients</span></a></li>
+        <li><span class="n">5.4</span><a href="#s5-4"><span class="t">Cutting the tree</span></a></li>
+        <li><span class="n">5.5</span><a href="#s5-5"><span class="t">The dendrogram studio</span></a></li>
+        <li><span class="n">5.6</span><a href="#s5-6"><span class="t">Heat map with trees</span></a></li>
+        <li><span class="n">5.7</span><a href="#s5-7"><span class="t">Comparing linkages and tanglegrams</span></a></li>
+        <li><span class="n">5.8</span><a href="#s5-8"><span class="t">Step by step</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k5">B5</span><a href="#cap-b5">Partitioning and advanced methods</a><a class="pag" href="#cap-b5"></a></div>
+      <ul>
+        <li><span class="n">6.1</span><a href="#s6-1"><span class="t">k-means and its variants</span></a></li>
+        <li><span class="n">6.2</span><a href="#s6-2"><span class="t">PAM and CLARA</span></a></li>
+        <li><span class="n">6.3</span><a href="#s6-3"><span class="t">Fuzzy c-means</span></a></li>
+        <li><span class="n">6.4</span><a href="#s6-4"><span class="t">Gaussian mixtures</span></a></li>
+        <li><span class="n">6.5</span><a href="#s6-5"><span class="t">DBSCAN and spectral clustering</span></a></li>
+        <li><span class="n">6.6</span><a href="#s6-6"><span class="t">Coordinates versus matrix</span></a></li>
+        <li><span class="n">6.7</span><a href="#s6-7"><span class="t">Settings, tables and figures of the block</span></a></li>
+        <li><span class="n">6.8</span><a href="#s6-8"><span class="t">Comparing methods at the same k</span></a></li>
+        <li><span class="n">6.9</span><a href="#s6-9"><span class="t">Step by step</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k6">B6</span><a href="#cap-b6">Number of clusters and validation</a><a class="pag" href="#cap-b6"></a></div>
+      <ul>
+        <li><span class="n">7.1</span><a href="#s7-1"><span class="t">How many clusters? Thirteen criteria and a vote</span></a></li>
+        <li><span class="n">7.2</span><a href="#s7-2"><span class="t">The gap statistic</span></a></li>
+        <li><span class="n">7.3</span><a href="#s7-3"><span class="t">Bootstrap stability</span></a></li>
+        <li><span class="n">7.4</span><a href="#s7-4"><span class="t">Support for the tree clusters (AU and BP)</span></a></li>
+        <li><span class="n">7.5</span><a href="#s7-5"><span class="t">External validation</span></a></li>
+        <li><span class="n">7.6</span><a href="#s7-6"><span class="t">Comparing algorithms across k</span></a></li>
+        <li><span class="n">7.7</span><a href="#s7-7"><span class="t">Settings, tables and figures of the block</span></a></li>
+        <li><span class="n">7.8</span><a href="#s7-8"><span class="t">Step by step</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k7">B7</span><a href="#cap-b7">Profiles, interpretation and prediction</a><a class="pag" href="#cap-b7"></a></div>
+      <ul>
+        <li><span class="n">8.1</span><a href="#s8-1"><span class="t">Describing the clusters: test values</span></a></li>
+        <li><span class="n">8.2</span><a href="#s8-2"><span class="t">Categorical variables</span></a></li>
+        <li><span class="n">8.3</span><a href="#s8-3"><span class="t">Indicator species</span></a></li>
+        <li><span class="n">8.4</span><a href="#s8-4"><span class="t">Discriminant analysis</span></a></li>
+        <li><span class="n">8.5</span><a href="#s8-5"><span class="t">Classification tree rules</span></a></li>
+        <li><span class="n">8.6</span><a href="#s8-6"><span class="t">Assigning new observations</span></a></li>
+        <li><span class="n">8.7</span><a href="#s8-7"><span class="t">Settings, tables and figures of the block</span></a></li>
+        <li><span class="n">8.8</span><a href="#s8-8"><span class="t">Step by step</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip k8">B8</span><a href="#cap-b8">Report and export</a><a class="pag" href="#cap-b8"></a></div>
+      <ul>
+        <li><span class="n">9.1</span><a href="#s9-1"><span class="t">The figure editor</span></a></li>
+        <li><span class="n">9.2</span><a href="#s9-2"><span class="t">Exporting for publication</span></a></li>
+        <li><span class="n">9.3</span><a href="#s9-3"><span class="t">The automatic report</span></a></li>
+        <li><span class="n">9.4</span><a href="#s9-4"><span class="t">The methods paragraph and the ZIP package</span></a></li>
+        <li><span class="n">9.5</span><a href="#s9-5"><span class="t">Step by step</span></a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="toc-cap"><span class="chip kx">A</span><a href="#apendices">Appendices</a><a class="pag" href="#apendices"></a></div>
+      <ul>
+        <li><span class="n">A</span><a href="#ap-a"><span class="t">File formats</span></a></li>
+        <li><span class="n">B</span><a href="#ap-b"><span class="t">Summary of decision rules</span></a></li>
+        <li><span class="n">C</span><a href="#ap-c"><span class="t">Glossary</span></a></li>
+        <li><span class="n">D</span><a href="#ap-d"><span class="t">Troubleshooting</span></a></li>
+        <li><span class="n">E</span><a href="#ap-e"><span class="t">References</span></a></li>
+        <li><span class="n">F</span><a href="#ap-f"><span class="t">Third-party components</span></a></li>
+      </ul>
+    </li>
+  </ol>
+</section>
+
+<!-- ====================================================================== CÓMO LEER ESTE MANUAL -->
+<section class="preliminares" id="como-leer" data-nueva-hoja style="--acento: var(--b0)">
+  <h2 style="margin-top:0.2in">How to read this manual</h2>
+  <p class="lead">The manual follows the same order as the app: eight numbered blocks that you work through from left to right along the top bar. Each chapter explains one block. It opens with a little easy-to-digest theory, describes what the block computes and how to read it, and closes with a step-by-step example that uses the datasets already built into the software.</p>
+
+  <h3>One colour for each block</h3>
+  <p>The colour of a block appears on the opening page of its chapter, in the section numbers, in the theory boxes, on the tab at the edge of the page and in the table of contents. That way you can tell at a glance which part of the app you are in.</p>
+  <table class="compacta">
+    <thead><tr><th style="width:0.6in">Block</th><th>Name in the app</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="chip k1">1</span></td><td><span class="ui">Home</span></td><td>Home page, live demo, thirteen theory lessons and how to cite</td></tr>
+      <tr><td><span class="chip k2">2</span></td><td><span class="ui">Data &amp; EDA</span></td><td>File loading, variable types and roles, preprocessing and clustering tendency</td></tr>
+      <tr><td><span class="chip k3">3</span></td><td><span class="ui">Distances</span></td><td>Similarity and distance coefficients, diagnosis of the matrix and comparison of coefficients</td></tr>
+      <tr><td><span class="chip k4">4</span></td><td><span class="ui">Hierarchical</span></td><td>Ten linkage rules, tree cut, dendrogram studio, heat maps and tanglegrams</td></tr>
+      <tr><td><span class="chip k5">5</span></td><td><span class="ui">Partitioning</span></td><td>k-means, PAM, CLARA, fuzzy c-means, Gaussian mixtures, DBSCAN and spectral clustering</td></tr>
+      <tr><td><span class="chip k6">6</span></td><td><span class="ui">Optimal k &amp; validation</span></td><td>Number of clusters, stability, node support, external validation and comparison of algorithms</td></tr>
+      <tr><td><span class="chip k7">7</span></td><td><span class="ui">Profiles</span></td><td>What characterises each cluster, indicator species, discriminant analysis and assignment of new objects</td></tr>
+      <tr><td><span class="chip k8">8</span></td><td><span class="ui">Report</span></td><td>Publication-ready figures, automatic report, methods paragraph and ZIP package</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Types of box</h3>
+  <div class="dos">
+    <div class="caja nota" style="margin:0"><div class="caja-t"><span class="ico">i</span>Note</div><p>Clarifications and practical tips that save time.</p></div>
+    <div class="caja importante" style="margin:0"><div class="caja-t"><span class="ico">!</span>Important</div><p>Things that can change your conclusions if overlooked.</p></div>
+    <div class="caja teoria" style="margin:0"><div class="caja-t"><span class="ico">θ</span>Theory in brief</div><p>The idea behind an analysis, without unnecessary formulas.</p></div>
+    <div class="caja ejemplo" style="margin:0"><div class="caja-t"><span class="ico">▸</span>Example</div><p>A worked case using the datasets included with the software.</p></div>
+  </div>
+  <div class="caja regla" style="margin-top:0.18in">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule</div>
+    <table class="compacta"><tbody>
+      <tr><td style="width:40%"><b>If</b> the value falls in this range…</td><td><b>then</b> this is the recommended reading.</td></tr>
+    </tbody></table>
+    <p class="regla-pie">These are guides to interpretation, not laws: your knowledge of the objects always has the final say.</p>
+  </div>
+  <div class="caja dato">
+    <div class="dato-cifra">900 dpi</div>
+    <div class="dato-txt"><div class="caja-t">Key fact</div>A figure or fact worth remembering; for example, the maximum resolution at which figures are exported.</div>
+  </div>
+
+  <h3>Typographic conventions</h3>
+  <table class="compacta">
+    <thead><tr><th style="width:38%">Written like this</th><th>Means</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Build the tree →</span></td><td>A button, checkbox or menu of the app, with its text exactly as it appears on screen.</td></tr>
+      <tr><td><span class="ruta">Edit figure<span class="sep">›</span>Style &amp; typography</span></td><td>A path: open the first item and then the second.</td></tr>
+      <tr><td><code>maize_landraces_morphology.csv</code></td><td>A file name, column name or value, to be typed exactly as shown.</td></tr>
+      <tr><td><i>k</i>, <i>s</i>(<i>i</i>), <i>H</i>, ARI</td><td>Parameters and indices; their meaning is explained the first time they appear.</td></tr>
+      <tr><td><span class="si">●</span> <span class="parcial">◐</span> <span class="no">—</span></td><td>Available · partly available or available with conditions · not applicable.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====================================================================== CAPÍTULO 1 -->
+<section class="capitulo" id="cap-intro" data-pestana="1" data-orden="1" style="--acento: var(--b0)">
+  <div class="cap-apertura">
+    <div class="cap-num">1</div>
+    <div class="cap-etiqueta">Chapter one</div>
+    <h1>Introduction to ClusteringPro</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">What the software is, which questions it answers, what data it accepts and how to work through it from start to finish. This chapter also covers the basic ideas of cluster analysis that you need to get the most out of the rest of the manual.</p>
+    <div class="cap-franja"><span class="k1"></span><span class="k2"></span><span class="k3"></span><span class="k4"></span><span class="k5"></span><span class="k6"></span><span class="k7"></span><span class="k8"></span></div>
+    <ul class="cap-contenido">
+      <li><b>1.1</b>What is ClusteringPro?</li>
+      <li><b>1.2</b>Questions it answers</li>
+      <li><b>1.3</b>Five key ideas</li>
+      <li><b>1.4</b>Types of data it accepts</li>
+      <li><b>1.5</b>What you need and how to open it</li>
+      <li><b>1.6</b>A tour of the interface</li>
+      <li><b>1.7</b>The seven built-in examples</li>
+      <li><b>1.8</b>Recommended workflow</li>
+      <li><b>1.9</b>Silhouettes, correlations and P values</li>
+    </ul>
+  </div>
+
+  <!-- 1.1 -->
+  <h2 id="s1-1"><span class="num">1.1</span>What is ClusteringPro?</h2>
+  <p class="lead">ClusteringPro is a platform for finding, validating and interpreting the <b>natural groups</b> hidden in a data table. It takes the table just as it comes from the field, the laboratory or the spreadsheet, checks whether it is worth clustering, computes the dissimilarity appropriate to each type of variable, builds trees and partitions, decides how many clusters to keep, validates them, describes what sets each one apart and delivers publication-ready figures and reports.</p>
+  <p>Everything happens inside your web browser. There is nothing to install, no programming is required and the data never leave your computer. The same steps work for morphological characters of accessions, presence or abundance tables of species by site, soil profiles with mixed variables, binary markers or a distance matrix computed elsewhere, so you can use a single workflow for all the data in a study.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/app-inicio.png" alt="Home page of the ClusteringPro app">
+      <span class="marca" style="left:29%;top:8.6%">1</span>
+      <span class="marca" style="left:45%;top:8.6%">2</span>
+      <span class="marca" style="left:20.4%;top:66%">3</span>
+      <span class="marca" style="left:35.5%;top:66%">4</span>
+      <span class="marca" style="left:19%;top:73.2%">5</span>
+      <span class="marca" style="left:31.4%;top:73.2%">6</span>
+      <span class="marca" style="left:19.5%;top:80%">7</span>
+      <span class="marca" style="left:69.5%;top:52%">8</span>
+    </div>
+    <figcaption><b>Figure 1.1.</b> The app’s home page (Block 1).</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Bar with the eight blocks. The active block is highlighted.</li>
+    <li><span class="n">2</span>Greyed-out blocks become available as you progress: Block 3 once the data are preprocessed, Block 4 once the dissimilarity is computed, and so on.</li>
+    <li><span class="n">3</span><span class="ui">Start with my data →</span> takes you to Block 2 to load your data.</li>
+    <li><span class="n">4</span><span class="ui">Try the live demo</span> scrolls down to the live demo: k-means and a dendrogram on the same points.</li>
+    <li><span class="n">5</span><span class="ui">Read the theory</span> opens the thirteen theory lessons.</li>
+    <li><span class="n">6</span><span class="ui">How to cite</span> shows the reference, the DOI and the BibTeX entry.</li>
+    <li><span class="n">7</span>Guarantees: it runs in your browser, your data never leave your machine, figures up to 900 dpi and free use.</li>
+    <li><span class="n">8</span>A sample of what it produces: k-means map, dendrogram with a cut, radial tree and silhouette plot.</li>
+  </ul>
+
+  <div class="dos">
+    <div class="caja dato" style="margin:0">
+      <div class="dato-cifra">0</div>
+      <div class="dato-txt"><div class="caja-t">Installations</div>Open it by double-clicking <code style="background:#24365f;color:#fff">index.html</code> or from its web address. It needs neither administrator rights nor an internet connection.</div>
+    </div>
+    <div class="caja dato" style="margin:0">
+      <div class="dato-cifra">8</div>
+      <div class="dato-txt"><div class="caja-t">Blocks</div>From the data table to the final report, in the order in which a well-founded cluster analysis is carried out.</div>
+    </div>
+  </div>
+
+  <h3>What it does, in one table</h3>
+  <table>
+    <thead><tr><th style="width:24%">Stage</th><th>What you get</th><th class="c" style="width:12%">Block</th></tr></thead>
+    <tbody>
+      <tr><td><b>Data input</b></td><td>Reading of spreadsheets (.xlsx, .xlsm, .ods), delimited text (.csv, .tsv, .txt), JSON, text pasted from the clipboard and precomputed distance matrices; automatic detection of each variable’s type.</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td><b>Exploration</b></td><td>Missing values, transformation and scaling; Hopkins statistic with its P value, VAT image, principal component map, multivariate outliers, correlations and a grade from A to D with recommendations.</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td><b>Dissimilarity</b></td><td>39 coefficients in six families; metric and Euclidean diagnosis of the matrix; heat map, PCoA, Shepard diagram, nearest-neighbour network and comparison of coefficients.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td><b>Trees</b></td><td>Ten linkage rules, cophenetic correlation, cut by number of clusters or by height, dendrogram studio (rectangular, triangular, horizontal, radial), heat map with trees, tanglegrams.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td><b>Partitions</b></td><td>k-means (three algorithms), hierarchical k-means, PAM, CLARA, fuzzy c-means, Gaussian mixtures with BIC, DBSCAN and spectral clustering; cluster map with ellipses, silhouette plot, memberships.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td><b>Number of clusters</b></td><td>Thirteen criteria that vote for a <i>k</i> (elbow, silhouette, gap, Calinski–Harabasz, Davies–Bouldin, Dunn and more), bootstrap stability, AU/BP support of the nodes, adjusted Rand index, NMI and comparison of algorithms.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td><b>Interpretation</b></td><td>Test values by variable, ANOVA and Kruskal–Wallis, over-represented categories, indicator species, discriminant analysis with cross-validation, classification tree rules and assignment of new objects.</td><td class="c"><span class="chip k7">7</span></td></tr>
+      <tr><td><b>Publication</b></td><td>Editable figures up to 900 dpi (PNG, TIFF, SVG, JPG, WEBP), complete HTML report with executive summary and methods paragraph, printing to PDF and a ZIP package with data, tables and figures.</td><td class="c"><span class="chip k8">8</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Who is it for?</h3>
+  <p>For anyone who needs to classify objects on the basis of many variables and wants defensible results without wrestling with packages or command lines: undergraduate and graduate students starting out in multivariate analysis; researchers in plant genetic resources, community ecology, soil science and agronomy; breeders characterising germplasm; and teachers who need to show in class why two linkage rules give different trees or how k-means makes its decisions. Every result comes with a paragraph that interprets it in plain language, which also makes the app a teaching tool.</p>
+
+  <!-- 1.2 -->
+  <h2 id="s1-2"><span class="num">1.2</span>Questions it answers</h2>
+  <p>A good analysis starts with a question. The following table maps the most common questions in a clustering study to the analysis that answers them and the block where it is found.</p>
+  <table>
+    <caption><b>Table 1.1.</b> From question to analysis.</caption>
+    <thead><tr><th style="width:36%">Question</th><th>Analysis that answers it</th><th class="c" style="width:11%">Block</th></tr></thead>
+    <tbody>
+      <tr><td>Is my table well formed and are my variables correctly typed?</td><td>Sheet check, automatic typing with manual correction and column roles</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td>Does it make sense to look for clusters in these data?</td><td>Hopkins statistic with P value, VAT image and principal component map</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td>Which distance coefficient should I use with my variables?</td><td>Recommendation by data type and comparison of candidate coefficients</td><td class="c"><span class="chip k2">2</span> <span class="chip k3">3</span></td></tr>
+      <tr><td>Can I use Ward or k-means with this distance?</td><td>Diagnosis of the matrix: triangle inequality and Euclidean embeddability</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td>Which objects are most alike?</td><td>Ordered heat map, nearest-neighbour network and hierarchical tree</td><td class="c"><span class="chip k3">3</span> <span class="chip k4">4</span></td></tr>
+      <tr><td>Does the dendrogram represent the distances well?</td><td>Cophenetic correlation and agglomerative coefficient</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td>Does the tree change if I change the linkage rule?</td><td>Table of linkage rules, Baker’s gamma and tanglegrams</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td>Which partitioning method suits my data?</td><td>Recommendation by data type and comparison of methods at the same <i>k</i></td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td>Are there irregularly shaped clusters or outliers that do not fit?</td><td>DBSCAN (with noise), spectral clustering and PAM</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td>How many clusters are there?</td><td>Thirteen criteria with a consensus vote, gap statistic and BIC of the mixtures</td><td class="c"><span class="chip k6">6</span> <span class="chip k5">5</span></td></tr>
+      <tr><td>Are the clusters real or an accident of the sample?</td><td>Bootstrap stability and AU/BP support of the tree nodes</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td>Do the clusters match a prior classification?</td><td>Adjusted Rand index, NMI, purity and χ² test</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td>Which variables distinguish each cluster?</td><td>Test values, ANOVA and Kruskal–Wallis by variable, heat map of means</td><td class="c"><span class="chip k7">7</span></td></tr>
+      <tr><td>Which species indicate each group of sites?</td><td>Indicator value (IndVal) with a permutation test</td><td class="c"><span class="chip k7">7</span></td></tr>
+      <tr><td>Which cluster does a new object belong to?</td><td>Discriminant analysis, nearest centroid and classification tree rules</td><td class="c"><span class="chip k7">7</span></td></tr>
+      <tr><td>How do I report all this in a paper?</td><td>Report with executive summary, methods paragraph, vector figures and ZIP package</td><td class="c"><span class="chip k8">8</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 1.3 -->
+  <h2 id="s1-3"><span class="num">1.3</span>Five key ideas of cluster analysis</h2>
+  <p>You do not need a prior course to use the app, but these five ideas come up in every chapter. Read them once and come back to them whenever you need to.</p>
+
+  <figure>
+    <svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Three clusters of points with their within- and between-cluster distances, and the same result as a dendrogram">
+      <defs><marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#14213d"/></marker></defs>
+      <!-- mapa -->
+      <rect x="6" y="14" width="372" height="204" rx="12" fill="#f1f4fa" stroke="#14213d" stroke-width="1.2"/>
+      <text x="18" y="34" font-size="10" letter-spacing="1.5" fill="#14213d">OBJECTS IN THE SPACE OF THE VARIABLES</text>
+      <g opacity="0.16"><ellipse cx="92" cy="96" rx="52" ry="34" fill="#4f46a5"/><ellipse cx="248" cy="78" rx="46" ry="30" fill="#e0803c"/><ellipse cx="200" cy="170" rx="56" ry="30" fill="#1fa39a"/></g>
+      <g fill="#4f46a5"><circle cx="70" cy="92" r="5"/><circle cx="88" cy="106" r="5"/><circle cx="104" cy="84" r="5"/><circle cx="118" cy="100" r="5"/><circle cx="82" cy="80" r="5"/><circle cx="98" cy="116" r="5"/></g>
+      <g fill="#e0803c"><circle cx="232" cy="72" r="5"/><circle cx="250" cy="88" r="5"/><circle cx="266" cy="68" r="5"/><circle cx="244" cy="60" r="5"/><circle cx="262" cy="92" r="5"/></g>
+      <g fill="#1fa39a"><circle cx="176" cy="168" r="5"/><circle cx="196" cy="180" r="5"/><circle cx="214" cy="160" r="5"/><circle cx="230" cy="178" r="5"/><circle cx="190" cy="156" r="5"/><circle cx="212" cy="184" r="5"/></g>
+      <path d="M88 106 L104 84" stroke="#4f46a5" stroke-width="1.6"/>
+      <text x="60" y="130" font-size="8.5" fill="#4f46a5" font-weight="600">within: small</text>
+      <path d="M124 96 L226 78" stroke="#14213d" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#fl)"/>
+      <text x="140" y="70" font-size="8.5" fill="#14213d" font-weight="600">between: large</text>
+      <text x="18" y="208" font-size="8.5" fill="#5d6472">a cluster = objects more alike to each other than to the rest</text>
+      <!-- dendrograma -->
+      <rect x="392" y="14" width="302" height="204" rx="12" fill="#fff" stroke="#111" stroke-width="1.2"/>
+      <text x="404" y="34" font-size="10" letter-spacing="1.5" fill="#111">THE SAME RESULT AS A TREE</text>
+      <g stroke-width="2.2" fill="none" stroke-linecap="round">
+        <path d="M416 186 V150 H432 V186 M424 150 V126 H448 V186 M436 126 V100" stroke="#4f46a5"/>
+        <path d="M472 186 V146 H488 V186 M480 146 V100" stroke="#e0803c"/>
+        <path d="M520 186 V156 H536 V186 M528 156 V132 H556 V186 M542 132 V100" stroke="#1fa39a"/>
+        <path d="M436 100 V72 H480 V100 M458 72 V56 H542 V100 M500 56 V40" stroke="#9a9ab0"/>
+      </g>
+      <path d="M404 118 H686" stroke="#d64a6a" stroke-width="1.2" stroke-dasharray="5 4"/>
+      <text x="684" y="114" font-size="8.5" fill="#d64a6a" text-anchor="end" font-weight="600">cut → k = 3</text>
+      <g font-size="8" fill="#5d6472" text-anchor="middle"><text x="424" y="200">A</text><text x="480" y="200">B</text><text x="538" y="200">C</text></g>
+      <path d="M404 40 V186" stroke="#b6bcc8" stroke-width="1"/>
+      <text x="400" y="46" font-size="7.5" fill="#5d6472" text-anchor="end">high</text><text x="400" y="188" font-size="7.5" fill="#5d6472" text-anchor="end">0</text>
+      <text x="582" y="160" font-size="8.5" fill="#111">Two branches join at</text><text x="582" y="172" font-size="8.5" fill="#111">the height of their</text><text x="582" y="184" font-size="8.5" fill="#111">merging distance.</text>
+    </svg>
+    <figcaption><b>Figure 1.2.</b> The two faces of a clustering. On the left, three clusters of objects in the space of their variables: distances within each cluster are small and distances between clusters are large. On the right, the same result as a dendrogram: branches join at the height of the distance at which they merge, and a cut line turns the tree into three clusters.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">1</span>A cluster is compact inside and separated outside</div>
+    <p>Clustering means looking for sets of objects that are <b>more alike to each other than to the rest</b>. Nobody tells the algorithm which clusters exist or how many there are; that is why it is called <b>unsupervised</b> learning, as opposed to classification, where the groups are known in advance and what is learnt is how to predict them. Almost everything ClusteringPro computes measures one of two things: the <b>compactness</b> of the clusters or the <b>separation</b> between them.</p>
+  </div>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">2</span>Everything starts with a dissimilarity</div>
+    <p>Algorithms never see your variables: they see a <b>dissimilarity matrix</b> between pairs of objects. Changing the coefficient changes the clusters, so this choice matters more than the choice of algorithm. For quantitative variables the Euclidean distance is the starting point; for presence/absence data, Jaccard or Dice, which do not count shared absences; for abundances, Bray–Curtis or Hellinger; for tables with variables of several types, Gower. And when the units differ you must <b>standardise</b> first, or the variable with the largest numbers will decide the clusters on its own.</p>
+  </div>
+
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Numerical example</div>
+    <div class="dos" style="gap:0.18in;align-items:center">
+      <div>
+        <p>Two maize accessions measured for plant height and days to flowering: A = (210 cm, 82 days) and B = (190 cm, 95 days). The Euclidean distance in the original units is</p>
+        <p style="text-align:center;font-size:12pt">√[(210 − 190)² + (82 − 95)²] = √(400 + 169) = <b>23.9</b></p>
+        <p>If height were measured in millimetres, the first term would be 40,000 and the days would count for almost nothing. After standardising each variable (mean 0, standard deviation 1), the two differences weigh what they are worth on their own scale, and the distance becomes a unitless number that can be compared across pairs.</p>
+      </div>
+      <svg viewBox="0 0 250 160" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Two points and their Euclidean distance">
+        <line x1="34" y1="130" x2="236" y2="130" stroke="#111" stroke-width="1"/><line x1="34" y1="130" x2="34" y2="14" stroke="#111" stroke-width="1"/>
+        <text x="135" y="150" font-size="8.5" fill="#5d6472" text-anchor="middle">plant height (cm)</text>
+        <text x="16" y="72" font-size="8.5" fill="#5d6472" text-anchor="middle" transform="rotate(-90 16 72)">days to flowering</text>
+        <path d="M184 96 H98 V40" stroke="#e0803c" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+        <line x1="184" y1="96" x2="98" y2="40" stroke="#4f46a5" stroke-width="2"/>
+        <circle cx="184" cy="96" r="5" fill="#4f46a5"/><circle cx="98" cy="40" r="5" fill="#4f46a5"/>
+        <text x="192" y="100" font-size="9" fill="#111" font-weight="600">A</text><text x="86" y="36" font-size="9" fill="#111" font-weight="600">B</text>
+        <text x="150" y="60" font-size="8.5" fill="#4f46a5" font-weight="600">d = 23.9</text>
+        <text x="141" y="108" font-size="8" fill="#e0803c">20 cm</text><text x="72" y="72" font-size="8" fill="#e0803c">13 days</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">3</span>Two big families: trees and partitions</div>
+    <p><b>Hierarchical</b> methods build a tree of merges (or splits) and do not require you to choose the number of clusters in advance: you cut the dendrogram at whatever height suits you. <b>Partitioning</b> methods, such as k-means or PAM, divide the objects into a number <i>k</i> of clusters set by the user and refine them until nothing changes. To these are added <b>density-based</b> methods (DBSCAN), which find clusters of any shape and flag noise, and <b>model-based</b> methods (Gaussian mixtures), which give each object a probability of membership. ClusteringPro offers all four families and the tools to compare them.</p>
+  </div>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">4</span>How many clusters? There is no single answer, only criteria</div>
+    <p>Any algorithm returns clusters, <b>even when there are none</b>: k-means will split a single cloud into three if you ask it to. That is why Block 2 first asks whether the data have any structure (Hopkins statistic) and Block 6 evaluates each number of clusters with thirteen different criteria and counts their votes. The silhouette, the gap statistic and bootstrap stability carry the most weight, but interpretation has the last word: a cluster that cannot be described in terms of the variables is of little use.</p>
+  </div>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">5</span>Validate and describe before you publish</div>
+    <p>A clustering result is defended with three pieces of evidence: a measure of <b>internal quality</b> (the average silhouette width and, for trees, the cophenetic correlation), a measure of <b>stability</b> (how often each cluster reappears when the objects are resampled) and, if a prior classification exists, a measure of <b>external agreement</b> (the adjusted Rand index). Block 7 completes the work by describing which variables, categories or species characterise each cluster, and Block 8 brings everything together in a report.</p>
+  </div>
+
+  <!-- 1.4 -->
+  <h2 id="s1-4"><span class="num">1.4</span>Types of data it accepts</h2>
+  <p>The first decision in any clustering is to establish what kind of variables you have, because that determines the dissimilarity coefficient and, with it, the methods that make sense. ClusteringPro recognises five variable types, accepts tables that mix them and also accepts a precomputed distance matrix.</p>
+
+  <figure>
+    <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Four kinds of table: quantitative, binary, categorical and abundance">
+      <g font-size="9.5" letter-spacing="1.4" fill="#14213d">
+        <text x="12" y="16">QUANTITATIVE</text><text x="187" y="16">BINARY</text><text x="362" y="16">CATEGORICAL</text><text x="537" y="16">ABUNDANCES</text>
+      </g>
+      <g stroke="#d5dae4"><line x1="176" y1="8" x2="176" y2="242"/><line x1="351" y1="8" x2="351" y2="242"/><line x1="526" y1="8" x2="526" y2="242"/></g>
+      <!-- cuantitativa: mini tabla con histograma -->
+      <g transform="translate(12 28)" font-size="8.5">
+        <g fill="#5d6472"><text x="0" y="12">accession</text><text x="58" y="12">height</text><text x="104" y="12">days</text></g>
+        <g fill="#111" font-family="ui-monospace, monospace">
+          <text x="0" y="30">ACC-001</text><text x="58" y="30">207.4</text><text x="104" y="30">81</text>
+          <text x="0" y="46">ACC-002</text><text x="58" y="46">189.2</text><text x="104" y="46">96</text>
+          <text x="0" y="62">ACC-003</text><text x="58" y="62">231.0</text><text x="104" y="62">74</text>
+        </g>
+        <line x1="0" y1="70" x2="150" y2="70" stroke="#d5dae4"/>
+        <g fill="#4f46a5" opacity="0.85"><rect x="6" y="118" width="14" height="14"/><rect x="24" y="104" width="14" height="28"/><rect x="42" y="88" width="14" height="44"/><rect x="60" y="96" width="14" height="36"/><rect x="78" y="110" width="14" height="22"/><rect x="96" y="122" width="14" height="10"/></g>
+        <line x1="0" y1="132" x2="120" y2="132" stroke="#111"/>
+        <text y="160" fill="#111">Continuous measurements.</text>
+        <text y="172" fill="#111"><tspan font-weight="600">Scale</tspan> them if the units differ.</text>
+        <text y="212" font-size="8" fill="#5d6472">Euclidean · Manhattan · correlation</text>
+      </g>
+      <!-- binaria -->
+      <g transform="translate(187 28)" font-size="8.5">
+        <g fill="#5d6472"><text x="0" y="12">site</text><text x="46" y="12">sp1</text><text x="72" y="12">sp2</text><text x="98" y="12">sp3</text><text x="124" y="12">sp4</text></g>
+        <g font-family="ui-monospace, monospace" font-size="9">
+          <g fill="#111"><text x="0" y="34">S01</text><text x="0" y="56">S02</text><text x="0" y="78">S03</text></g>
+          <g>
+            <rect x="42" y="24" width="18" height="14" rx="3" fill="#4f46a5"/><rect x="68" y="24" width="18" height="14" rx="3" fill="#dfe3ea"/><rect x="94" y="24" width="18" height="14" rx="3" fill="#4f46a5"/><rect x="120" y="24" width="18" height="14" rx="3" fill="#4f46a5"/>
+            <rect x="42" y="46" width="18" height="14" rx="3" fill="#dfe3ea"/><rect x="68" y="46" width="18" height="14" rx="3" fill="#dfe3ea"/><rect x="94" y="46" width="18" height="14" rx="3" fill="#4f46a5"/><rect x="120" y="46" width="18" height="14" rx="3" fill="#dfe3ea"/>
+            <rect x="42" y="68" width="18" height="14" rx="3" fill="#4f46a5"/><rect x="68" y="68" width="18" height="14" rx="3" fill="#4f46a5"/><rect x="94" y="68" width="18" height="14" rx="3" fill="#dfe3ea"/><rect x="120" y="68" width="18" height="14" rx="3" fill="#4f46a5"/>
+          </g>
+          <g fill="#fff" text-anchor="middle"><text x="51" y="35">1</text><text x="103" y="35">1</text><text x="129" y="35">1</text><text x="103" y="57">1</text><text x="51" y="79">1</text><text x="77" y="79">1</text><text x="129" y="79">1</text></g>
+          <g fill="#7b8493" text-anchor="middle"><text x="77" y="35">0</text><text x="51" y="57">0</text><text x="77" y="57">0</text><text x="129" y="57">0</text><text x="103" y="79">0</text></g>
+        </g>
+        <text y="110" fill="#111">Presence (1) or absence (0).</text>
+        <text y="122" fill="#111">Two shared absences should</text><text y="134" fill="#111"><tspan font-weight="600">not</tspan> count as resemblance.</text>
+        <text y="160" fill="#111">Also markers, alleles,</text><text y="172" fill="#111">traits and symptoms.</text>
+        <text y="212" font-size="8" fill="#5d6472">Jaccard · Dice · simple matching</text>
+      </g>
+      <!-- categórica -->
+      <g transform="translate(362 28)" font-size="8.5">
+        <g fill="#5d6472"><text x="0" y="12">profile</text><text x="42" y="12">texture</text><text x="96" y="12">drainage</text></g>
+        <g font-family="ui-monospace, monospace" font-size="9">
+          <g fill="#111"><text x="0" y="34">P01</text><text x="0" y="56">P02</text><text x="0" y="78">P03</text></g>
+          <rect x="40" y="24" width="46" height="14" rx="7" fill="#e0803c"/><text x="63" y="35" fill="#fff" text-anchor="middle">clay</text>
+          <rect x="40" y="46" width="46" height="14" rx="7" fill="#1fa39a"/><text x="63" y="57" fill="#fff" text-anchor="middle">loam</text>
+          <rect x="40" y="68" width="46" height="14" rx="7" fill="#8a5cd6"/><text x="63" y="79" fill="#fff" text-anchor="middle">sand</text>
+          <g fill="#111" text-anchor="middle"><text x="120" y="35">poor</text><text x="120" y="57">good</text><text x="120" y="79">fair</text></g>
+        </g>
+        <path d="M100 92 H144" stroke="#7b8493" stroke-width="1" marker-end="url(#fl)"/>
+        <text x="100" y="104" font-size="7.5" fill="#5d6472">ordinal: poor &lt; fair &lt; good</text>
+        <text y="130" fill="#111"><tspan font-weight="600">Nominal</tspan>: unordered categories.</text>
+        <text y="142" fill="#111"><tspan font-weight="600">Ordinal</tspan>: ordered levels,</text><text y="154" fill="#111">which the app converts to ranks.</text>
+        <text y="172" fill="#111">Mixed with quantitative → Gower.</text>
+        <text y="212" font-size="8" fill="#5d6472">simple matching · ranks · Gower</text>
+      </g>
+      <!-- abundancias -->
+      <g transform="translate(537 28)" font-size="8.5">
+        <g fill="#5d6472"><text x="0" y="12">site</text><text x="44" y="12">one taxon per column →</text></g>
+        <g fill="#111" font-family="ui-monospace, monospace" font-size="9"><text x="0" y="34">S01</text><text x="0" y="56">S02</text><text x="0" y="78">S03</text></g>
+        <g fill="#7bb041" opacity="0.85">
+          <circle cx="52" cy="31" r="7"/><circle cx="76" cy="31" r="3"/><circle cx="124" cy="31" r="5"/>
+          <circle cx="52" cy="53" r="2"/><circle cx="100" cy="53" r="8"/><circle cx="124" cy="53" r="6"/><circle cx="148" cy="53" r="3"/>
+          <circle cx="76" cy="75" r="6"/><circle cx="100" cy="75" r="3"/><circle cx="148" cy="75" r="7"/>
+        </g>
+        <text x="44" y="96" font-size="7.5" fill="#5d6472">area ∝ number of individuals</text>
+        <text y="122" fill="#111">Species counts per site,</text><text y="134" fill="#111">OTUs, insect catches.</text>
+        <text y="152" fill="#111">Many zeros and a few</text><text y="164" fill="#111">dominant species.</text>
+        <text y="212" font-size="8" fill="#5d6472">Bray–Curtis · Hellinger · chi-square</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 1.3.</b> Four kinds of table and the coefficient that suits each. A <b>quantitative</b> table measures; a <b>binary</b> table records presence or absence; a <b>categorical</b> table classifies, with or without order; an <b>abundance</b> table counts individuals per site. The app types each column automatically and shows you what it assumed.</figcaption>
+  </figure>
+
+  <table>
+    <caption><b>Table 1.2.</b> Variable types and what each implies.</caption>
+    <thead><tr><th style="width:15%">Type</th><th style="width:26%">Examples</th><th>Coefficients proposed by the app</th><th style="width:26%">Watch out for…</th></tr></thead>
+    <tbody>
+      <tr><td><b>Quantitative</b></td><td>Height, yield, pH, gene expression, morphometric measurements</td><td>Euclidean, Manhattan, Minkowski, Canberra, Mahalanobis, correlation distances, Euclidean on principal components</td><td>Different units without standardisation; outliers that drag the centroids.</td></tr>
+      <tr><td><b>Binary (0/1)</b></td><td>Presence of species, alleles, traits, symptoms</td><td>Jaccard, Dice–Sørensen, Ochiai, Kulczynski (asymmetric); simple matching, Rogers–Tanimoto (symmetric); Hamming, Yule</td><td>Using a symmetric coefficient when 0 means “not there”: shared absences inflate the similarity.</td></tr>
+      <tr><td><b>Nominal</b></td><td>Cultivar, soil type, colour, region</td><td>Simple matching of categories, Gower</td><td>Numeric category codes treated as quantities.</td></tr>
+      <tr><td><b>Ordinal</b></td><td>Damage scales, scores, size classes</td><td>Manhattan on normalised ranks, Gower</td><td>The order of the levels: check it in Block 2 (the app proposes one and you can correct it).</td></tr>
+      <tr><td><b>Counts and abundances</b></td><td>Species × site tables, OTUs, catches</td><td>Bray–Curtis, Ružička, Kulczynski, Morisita–Horn, Hellinger, chord, chi-square, Canberra, Jaccard on presence</td><td>The raw Euclidean distance: it is dominated by abundant species and double zeros.</td></tr>
+      <tr><td><b>Mixed</b></td><td>Any combination of the above in one table</td><td>Gower with weights; Euclidean on the matrix with indicator variables</td><td>Assuming that a single kind of coefficient will do for the whole table.</td></tr>
+      <tr><td><b>Distance matrix</b></td><td>Genetic, geographic or expert distances computed elsewhere</td><td>Used as is, as its square root or as its square</td><td>A non-Euclidean matrix with Ward or k-means: the app detects this and suggests √d.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important</div>
+    <p>Declaring the wrong type for a variable changes the results. A column of region codes (1, 2, 3) read as quantitative would place region 3 “further” from region 1 than from region 2 for no reason at all. Block 2 detects the type automatically, but <b>it always shows you what it assumed</b> and lets you correct it before anything is computed.</p>
+  </div>
+
+  <!-- 1.5 -->
+  <h2 id="s1-5"><span class="num">1.5</span>What you need and how to open the software</h2>
+  <div class="dos">
+    <div>
+      <h4>Requirements</h4>
+      <ul>
+        <li>A desktop or laptop computer with a <b>modern, up-to-date web browser</b>.</li>
+        <li>A screen at least 1280 pixels wide; the app adapts to smaller screens, but tables and figures are easier to work with on a large one.</li>
+        <li>4 GB of memory is enough for most studies; resampling in Block 6 with hundreds of objects benefits from 8 GB.</li>
+        <li><b>No</b> internet connection, installation or administrator rights are needed.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contents of the folder</h4>
+      <table class="compacta" style="margin-top:0.04in">
+        <tbody>
+          <tr><td><code>index.html</code></td><td>The app. Open it with a double click.</td></tr>
+          <tr><td><code>Open ClusteringPro.bat</code></td><td>Optional launcher with a local server.</td></tr>
+          <tr><td><code>js/</code>, <code>css/</code></td><td>The program code.</td></tr>
+          <tr><td><code>data/</code></td><td>The example files.</td></tr>
+          <tr><td><code>manual/</code></td><td>This manual.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3>Opening ClusteringPro in three steps</h3>
+  <ol class="pasos">
+    <li><b>Copy the whole</b> <code>ClusteringPro</code> folder to your computer, for example to Documents. Do not separate <code>index.html</code> from the other folders.</li>
+    <li><b>Double-click</b> <code>index.html</code>. It opens in your default browser on the Block 1 home page.</li>
+    <li><b>Click</b> <span class="ui">Start with my data →</span> to load a file, or go straight to Block 2 and choose one of the examples.</li>
+  </ol>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the online version</div>
+    <p>The same app is published at <b>https://luisangelbg.github.io/ClusteringPro/</b>. Use it to work from any computer without copying anything; it always corresponds to the latest version. There too, all computation takes place in your browser: the page is static and your files are never uploaded anywhere.</p>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · opening with a local server</div>
+    <p>Everything works with a double click, including the seven examples: they are embedded in the app and do not need to be read from the <code>data/</code> folder, which keeps them as CSV files so that you can see how they are laid out. <code>Open ClusteringPro.bat</code> is an alternative: it starts a small server on your own computer (address <code>http://localhost:8900</code>) and opens the app from there. Use it if your browser restricts pages opened as local files, or to open the app from a tablet on the same network. Nothing is sent to the internet in this case either.</p>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · what the app remembers</div>
+    <p>The app stores your figure style preferences in your browser. If you switch browsers or clear your browsing data, those preferences are lost, but your original files are never modified. The results of an analysis are not saved automatically: download them from Block 8 before closing the tab.</p>
+  </div>
+
+  <!-- 1.6 -->
+  <h2 id="s1-6"><span class="num">1.6</span>A tour of the interface</h2>
+  <p>All analysis blocks share the same layout, so you only need to learn it once. From top to bottom, each block has four parts:</p>
+  <table>
+    <thead><tr><th style="width:24%">Part</th><th>What it contains</th><th style="width:30%">How it appears on screen</th></tr></thead>
+    <tbody>
+      <tr><td><b>Theory</b></td><td>A collapsible box with the part of the theory that matters at that step, with figures.</td><td>A card with numbered accordions at the top of the block</td></tr>
+      <tr><td><b>1 · Settings</b></td><td>A recommendation computed from your data, the analysis options with sensible defaults and a button to run the computation.</td><td><span class="ui">Recommendation</span> · <span class="ui">Compute …</span>, <span class="ui">Build …</span>, <span class="ui">Run →</span></td></tr>
+      <tr><td><b>2 · Results and diagnostics</b></td><td>Boxes with the main values, a traffic-light list of checks (green, amber, red) that interprets the results in plain language, and downloadable tables.</td><td>Value boxes · checks marked ✅ ⚠️ ⛔ ℹ️</td></tr>
+      <tr><td><b>3 · Figures and comparisons</b></td><td>Editable figures with style and export controls; in most blocks, a final card that compares alternatives (coefficients, linkage rules, methods).</td><td><span class="ui">Edit figure</span> · <span class="ui">Download figure</span> · <span class="ui">Compare</span></td></tr>
+    </tbody>
+  </table>
+
+  <p><b>Interface terms.</b> The app is in English, the language of scientific journals. Table 1.3 lists the terms you will meet in every block.</p>
+  <table class="compacta">
+    <caption><b>Table 1.3.</b> Basic interface vocabulary.</caption>
+    <thead><tr><th>In the app</th><th>Meaning</th><th>In the app</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Object</span> · <span class="ui">Variable</span></td><td>Object (row) · variable (column)</td><td><span class="ui">Edit figure</span></td><td>Opens the figure editor</td></tr>
+      <tr><td><span class="ui">Dissimilarity</span> · <span class="ui">Distance</span></td><td>Dissimilarity · distance between objects</td><td><span class="ui">Content &amp; colours</span></td><td>What is drawn and in which colours</td></tr>
+      <tr><td><span class="ui">Linkage</span></td><td>Linkage rule of the tree</td><td><span class="ui">Style &amp; typography</span></td><td>Theme, fonts and sizes</td></tr>
+      <tr><td><span class="ui">Cut</span> · <span class="ui">Cluster</span></td><td>Tree cut · cluster</td><td><span class="ui">Palette</span></td><td>Colour palette</td></tr>
+      <tr><td><span class="ui">Known grouping</span></td><td>Known grouping (for validation, never for clustering)</td><td><span class="ui">Legend position</span></td><td>Position of the legend</td></tr>
+      <tr><td><span class="ui">Silhouette</span></td><td>Silhouette (quality of the partition)</td><td><span class="ui">Resolution</span></td><td>Export resolution</td></tr>
+      <tr><td><span class="ui">Random seed</span></td><td>Seed of the random number generator</td><td><span class="ui">Download</span></td><td>Save to your computer</td></tr>
+      <tr><td><span class="ui">Continue to …</span></td><td>Go on to the next block</td><td><span class="ui">How to cite</span></td><td>Reference, DOI and BibTeX entry</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/app-datos.png" alt="Block 2 readiness verdict with its value boxes and checks"></div>
+    <figcaption><b>Figure 1.4.</b> Once the data are preprocessed, Block 2 shows the <span class="ui">Readiness</span> verdict: a grade from A to D, boxes with the figures that support it (objects, variables, Hopkins statistic, variance on the first two axes, outliers, strongest correlation), the list of interpreted checks and the <span class="ui">What to do next</span> card with the dissimilarity, method and number of clusters worth trying. Here, with the maize landraces example: grade B, Hopkins 0.634 (<i>P</i> = 0.012), no outliers and no redundant variables.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/app-figura.png" alt="Editable figure from Block 3 with its editing panel open">
+      <span class="marca" style="left:2.6%;top:3.7%">1</span>
+      <span class="marca" style="left:5.5%;top:73%">2</span>
+      <span class="marca" style="left:7.6%;top:76.4%">3</span>
+      <span class="marca" style="left:30.5%;top:83.3%">4</span>
+      <span class="marca" style="left:42.4%;top:90.3%">5</span>
+      <span class="marca" style="left:12.6%;top:95.5%">6</span>
+    </div>
+    <figcaption><b>Figure 1.5.</b> A figure from Block 3 (heat map of the Euclidean dissimilarity between the maize landraces, with the objects in VAT order and the strips of the known grouping) with its editing panel open.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Each figure lives in its own card with a title; it is redrawn instantly with every change.</li>
+    <li><span class="n">2</span><span class="ui">Edit figure</span> opens and closes the editing panel.</li>
+    <li><span class="n">3</span>Two tabs: <span class="ui">Content &amp; colours</span> (what is drawn) and <span class="ui">Style &amp; typography</span> (theme, fonts, sizes, frame).</li>
+    <li><span class="n">4</span>Controls specific to each figure: here, the order of the objects, the colour map and whether the values are shown.</li>
+    <li><span class="n">5</span>Colour palette for the clusters and position of the legend.</li>
+    <li><span class="n">6</span>Format, resolution, background and download, with the resulting size in pixels and centimetres.</li>
+  </ul>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the random seed</div>
+    <p>Several analyses depend on chance: the k-means starts, the CLARA samples, the reference sets of the gap statistic, the stability resamples and the indicator species permutations. The <span class="ui">Random seed</span> fixes that randomness: with the same seed and the same data you will obtain exactly the same results. Record the seed in the methods section of your paper so that others can reproduce them; the Block 8 report includes it for you.</p>
+  </div>
+
+  <!-- 1.7 -->
+  <h2 id="s1-7"><span class="num">1.7</span>The seven example datasets</h2>
+  <p>The software includes seven ready-to-use datasets, one for each kind of table it accepts. Five come as files in the <code>data/</code> folder and two are generated on the fly inside the app. The chapter for each block uses them in its step-by-step examples.</p>
+
+  <table>
+    <caption><b>Table 1.4.</b> Built-in examples. They are loaded in Block 2, under <span class="ui">Or try an example dataset</span>.</caption>
+    <thead><tr><th style="width:25%">Button in the app</th><th style="width:14%">Type</th><th>Contents</th><th style="width:20%">Ideal for practising</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Quantitative · maize landraces</span></td><td>Quantitative</td><td>45 maize accessions × 8 morphological characters (plant and ear height, days to flowering, ear length, kernel rows, grain weight, yield, leaf width), with region of origin as the known grouping and one planted missing value.</td><td>The whole workflow: Euclidean, Ward, k-means, optimal <i>k</i>, profiles, discriminant analysis</td></tr>
+      <tr><td><span class="ui">Binary · plant species presence</span></td><td>Binary</td><td>30 sites × 22 species as presence/absence, with the habitat of each site.</td><td>Jaccard versus simple matching, UPGMA, PAM</td></tr>
+      <tr><td><span class="ui">Counts · insect abundance</span></td><td>Counts</td><td>24 sites × 14 captured insect taxa, with the landscape type.</td><td>Bray–Curtis and Hellinger, PAM, indicator species</td></tr>
+      <tr><td><span class="ui">Mixed · soil profiles</span></td><td>Mixed</td><td>36 soil profiles with quantitative variables (pH, organic matter, clay, sand, CEC, slope), one nominal (texture), one ordinal (drainage) and one binary (calcareous).</td><td>Gower, PAM, profiles with categorical variables</td></tr>
+      <tr><td><span class="ui">Distance matrix · 12 cultivars</span></td><td>Matrix</td><td>A precomputed matrix of genetic distances between 12 cultivars, like the one produced by a marker analysis program.</td><td>Direct input of a matrix, √d, trees and PAM</td></tr>
+      <tr><td><span class="ui">Simulated · four clear clusters</span></td><td>Quantitative</td><td>80 objects × 5 variables generated on the fly with four well-separated clusters.</td><td>Seeing how the criteria for <i>k</i> behave when the answer is obvious</td></tr>
+      <tr><td><span class="ui">Simulated · uniform noise</span></td><td>Quantitative</td><td>60 objects with no structure at all, generated on the fly.</td><td>Seeing what a Hopkins value of 0.5 looks like and why you should not cluster just anything</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/app-bloques.png" alt="Cards for the eight blocks on the app’s home page"></div>
+    <figcaption><b>Figure 1.6.</b> The <span class="ui">What's inside</span> section of the home page summarises the eight blocks. Clicking any card takes you to its block; if no data have been loaded yet, the app takes you to Block 2.</figcaption>
+  </figure>
+
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Your first analysis in three minutes</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Open the app and click <span class="ui">Start with my data →</span>.</li>
+      <li>Under <span class="ui">Or try an example dataset</span>, click <span class="ui">Quantitative · maize landraces</span>. The app reads the file and shows how it typed each column: one label, one known grouping (the region) and eight quantitative variables.</li>
+      <li>Click <span class="ui">Apply and explore →</span>. The verdict in figure 1.4 appears: grade B, Hopkins 0.634, and the recommendation to use the Euclidean distance with Ward.D2.</li>
+      <li>Click <span class="ui">Continue to similarity and distance →</span> and then <span class="ui">Compute the dissimilarity matrix →</span>. You will see the heat map in figure 1.5 and the diagnosis: the matrix is metric and Euclidean.</li>
+      <li>Click <span class="ui">Continue to hierarchical clustering →</span> and <span class="ui">Build the tree →</span>. The Ward.D2 tree has a cophenetic correlation of 0.843, is cut automatically at <i>k</i> = 3, and its three clusters match the three regions exactly (adjusted Rand index 1.000).</li>
+    </ol>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the examples are simulations</div>
+    <p>The seven datasets were created for teaching: they are realistic simulations with invented names of accessions, sites and taxa, designed so that each kind of table shows what the app can do with it. They do not describe real materials and must not be cited as experimental data.</p>
+  </div>
+
+  <!-- 1.8 -->
+  <h2 id="s1-8"><span class="num">1.8</span>Recommended workflow</h2>
+  <p>The blocks are ordered the way an analysis is carried out: first you check whether clustering is worthwhile, then you choose how to measure resemblance, then you cluster in two different ways, decide how many clusters to keep and validate them, and finally you interpret and publish them. Each data type follows that route with small differences, like metro lines that stop at almost every station.</p>
+
+  <figure>
+    <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Map of analysis routes by data type">
+      <g font-size="9" text-anchor="middle" fill="#fff" font-weight="500">
+        <rect x="140" y="8" width="50" height="18" rx="3" fill="#0f766e"/><text x="165" y="21">2</text>
+        <rect x="212" y="8" width="50" height="18" rx="3" fill="#2b7bb9"/><text x="237" y="21">3</text>
+        <rect x="284" y="8" width="50" height="18" rx="3" fill="#7e3fb0"/><text x="309" y="21">4</text>
+        <rect x="356" y="8" width="50" height="18" rx="3" fill="#d9701f"/><text x="381" y="21">5</text>
+        <rect x="428" y="8" width="50" height="18" rx="3" fill="#b4234a"/><text x="453" y="21">6</text>
+        <rect x="500" y="8" width="50" height="18" rx="3" fill="#3f7d20"/><text x="525" y="21">7</text>
+        <rect x="572" y="8" width="50" height="18" rx="3" fill="#334155"/><text x="597" y="21">8</text>
+      </g>
+      <g font-size="7.5" text-anchor="middle" fill="#5d6472">
+        <text x="165" y="38">data</text><text x="237" y="38">distances</text><text x="309" y="38">trees</text><text x="381" y="38">partitions</text><text x="453" y="38">validation</text><text x="525" y="38">profiles</text><text x="597" y="38">report</text>
+      </g>
+      <g stroke="#e3e7ee" stroke-dasharray="2 3"><line x1="165" y1="44" x2="165" y2="288"/><line x1="237" y1="44" x2="237" y2="288"/><line x1="309" y1="44" x2="309" y2="288"/><line x1="381" y1="44" x2="381" y2="288"/><line x1="453" y1="44" x2="453" y2="288"/><line x1="525" y1="44" x2="525" y2="288"/><line x1="597" y1="44" x2="597" y2="288"/></g>
+      <g font-size="10" fill="#111" font-weight="500">
+        <text x="6" y="66">Quantitative</text><text x="6" y="106">Binary</text><text x="6" y="146">Categorical</text><text x="6" y="186">Abundances</text><text x="6" y="226">Mixed</text><text x="6" y="266">Matrix</text>
+      </g>
+      <g font-size="7.5" fill="#5d6472">
+        <text x="6" y="78">morphology, chemistry</text><text x="6" y="118">presence, markers</text><text x="6" y="158">nominal, ordinal</text><text x="6" y="198">species × site</text><text x="6" y="238">several types</text><text x="6" y="278">given distances</text>
+      </g>
+      <g fill="none" stroke-linecap="round">
+        <path d="M165 66 H597" stroke="#14213d" stroke-width="5"/>
+        <path d="M165 106 H597" stroke="#111" stroke-width="5"/>
+        <path d="M165 146 H597" stroke="#24365f" stroke-width="5"/>
+        <path d="M165 186 H597" stroke="#14213d" stroke-width="5"/>
+        <path d="M165 226 H597" stroke="#111" stroke-width="5"/>
+        <path d="M165 266 H597" stroke="#24365f" stroke-width="5"/>
+      </g>
+      <g stroke-width="2.4">
+        <!-- cuantitativo: todo -->
+        <circle cx="165" cy="66" r="8" fill="#0f766e" stroke="#fff"/><circle cx="237" cy="66" r="8" fill="#2b7bb9" stroke="#fff"/><circle cx="309" cy="66" r="8" fill="#7e3fb0" stroke="#fff"/><circle cx="381" cy="66" r="8" fill="#d9701f" stroke="#fff"/><circle cx="453" cy="66" r="8" fill="#b4234a" stroke="#fff"/><circle cx="525" cy="66" r="8" fill="#3f7d20" stroke="#fff"/><circle cx="597" cy="66" r="8" fill="#334155" stroke="#fff"/>
+        <!-- binario: particiones por PCoA, perfiles en parte -->
+        <circle cx="165" cy="106" r="8" fill="#0f766e" stroke="#fff"/><circle cx="237" cy="106" r="8" fill="#2b7bb9" stroke="#fff"/><circle cx="309" cy="106" r="8" fill="#7e3fb0" stroke="#fff"/><circle cx="381" cy="106" r="8" fill="#fff" stroke="#d9701f"/><circle cx="453" cy="106" r="8" fill="#b4234a" stroke="#fff"/><circle cx="525" cy="106" r="8" fill="#fff" stroke="#3f7d20"/><circle cx="597" cy="106" r="8" fill="#334155" stroke="#fff"/>
+        <!-- categórico -->
+        <circle cx="165" cy="146" r="8" fill="#0f766e" stroke="#fff"/><circle cx="237" cy="146" r="8" fill="#2b7bb9" stroke="#fff"/><circle cx="309" cy="146" r="8" fill="#7e3fb0" stroke="#fff"/><circle cx="381" cy="146" r="8" fill="#fff" stroke="#d9701f"/><circle cx="453" cy="146" r="8" fill="#fff" stroke="#b4234a"/><circle cx="525" cy="146" r="8" fill="#fff" stroke="#3f7d20"/><circle cx="597" cy="146" r="8" fill="#334155" stroke="#fff"/>
+        <!-- abundancias -->
+        <circle cx="165" cy="186" r="8" fill="#0f766e" stroke="#fff"/><circle cx="237" cy="186" r="8" fill="#2b7bb9" stroke="#fff"/><circle cx="309" cy="186" r="8" fill="#7e3fb0" stroke="#fff"/><circle cx="381" cy="186" r="8" fill="#fff" stroke="#d9701f"/><circle cx="453" cy="186" r="8" fill="#b4234a" stroke="#fff"/><circle cx="525" cy="186" r="8" fill="#3f7d20" stroke="#fff"/><circle cx="597" cy="186" r="8" fill="#334155" stroke="#fff"/>
+        <!-- mixto -->
+        <circle cx="165" cy="226" r="8" fill="#0f766e" stroke="#fff"/><circle cx="237" cy="226" r="8" fill="#2b7bb9" stroke="#fff"/><circle cx="309" cy="226" r="8" fill="#7e3fb0" stroke="#fff"/><circle cx="381" cy="226" r="8" fill="#fff" stroke="#d9701f"/><circle cx="453" cy="226" r="8" fill="#fff" stroke="#b4234a"/><circle cx="525" cy="226" r="8" fill="#3f7d20" stroke="#fff"/><circle cx="597" cy="226" r="8" fill="#334155" stroke="#fff"/>
+        <!-- matriz -->
+        <circle cx="165" cy="266" r="8" fill="#0f766e" stroke="#fff"/><circle cx="237" cy="266" r="8" fill="#2b7bb9" stroke="#fff"/><circle cx="309" cy="266" r="8" fill="#7e3fb0" stroke="#fff"/><circle cx="381" cy="266" r="8" fill="#fff" stroke="#d9701f"/><circle cx="453" cy="266" r="8" fill="#fff" stroke="#b4234a"/><circle cx="525" cy="266" r="4" fill="#fff" stroke="#b9c3d6"/><circle cx="597" cy="266" r="8" fill="#334155" stroke="#fff"/>
+      </g>
+      <g font-size="8.5" fill="#111" transform="translate(640 60)">
+        <circle cx="6" cy="0" r="6.5" fill="#14213d"/><text x="16" y="3">yes</text>
+        <circle cx="6" cy="24" r="6.5" fill="#fff" stroke="#14213d" stroke-width="2.2"/><text x="16" y="27">in</text><text x="16" y="37">part</text>
+        <circle cx="6" cy="58" r="3.5" fill="#fff" stroke="#b9c3d6" stroke-width="2.2"/><text x="16" y="61">no</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 1.7.</b> Analysis routes by data type. A filled station means the block is available without restrictions; a ring, that it is available in part or with conditions (table 1.5); a small dot, that the data type skips that block. Every route starts in Block 2 and ends with the report.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 1.5.</b> What each block offers for each data type, and under which conditions.</caption>
+    <thead><tr><th style="width:15%">Type</th><th class="c">3</th><th class="c">4</th><th class="c">5</th><th class="c">6</th><th class="c">7</th><th style="width:44%">Conditions</th></tr></thead>
+    <tbody>
+      <tr><td><b>Quantitative</b></td><td class="c si">●</td><td class="c si">●</td><td class="c si">●</td><td class="c si">●</td><td class="c si">●</td><td>Everything available. Ward and k-means are the natural route if the distance is Euclidean.</td></tr>
+      <tr><td><b>Binary</b></td><td class="c si">●</td><td class="c si">●</td><td class="c parcial">◐</td><td class="c si">●</td><td class="c parcial">◐</td><td>k-means, fuzzy c-means and mixtures work on the PCoA axes of the dissimilarity (the app proposes this itself); PAM uses the matrix directly. Profiles treat each 0/1 column as a variable; with species, the indicator value is a better choice.</td></tr>
+      <tr><td><b>Categorical</b></td><td class="c si">●</td><td class="c si">●</td><td class="c parcial">◐</td><td class="c parcial">◐</td><td class="c parcial">◐</td><td>As for binary data in Block 5. Without quantitative variables there is no AU/BP node support and no discriminant analysis; test values for categories and tree rules are available.</td></tr>
+      <tr><td><b>Abundances</b></td><td class="c si">●</td><td class="c si">●</td><td class="c parcial">◐</td><td class="c si">●</td><td class="c si">●</td><td>Bray–Curtis is not Euclidean: Ward and k-means only on PCoA axes or after the Hellinger transformation; PAM without restrictions. Indicator species available.</td></tr>
+      <tr><td><b>Mixed</b></td><td class="c si">●</td><td class="c si">●</td><td class="c parcial">◐</td><td class="c parcial">◐</td><td class="c si">●</td><td>Gower with PAM is the natural route; coordinate-based methods use the PCoA axes. AU/BP support resamples only the numeric variables.</td></tr>
+      <tr><td><b>Distance matrix</b></td><td class="c si">●</td><td class="c si">●</td><td class="c parcial">◐</td><td class="c parcial">◐</td><td class="c no">—</td><td>Variable-based exploration is skipped. Without variables there are no profiles and no AU/BP support; k-means works on the coordinates of the matrix. Everything else is available.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · how many objects and how many variables?</div>
+    <table class="compacta">
+      <thead><tr><th style="width:30%">Situation</th><th style="width:20%">Reading</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td><b>At least 5 to 10 objects per expected cluster</b></td><td>Adequate</td><td>The criteria for <i>k</i>, the silhouette and resampling are informative. With 30 objects and 3 expected clusters you can already work well.</td></tr>
+        <tr><td><b>Fewer than 5 objects per cluster</b></td><td>Limited</td><td>Small clusters dissolve under resampling and any outlier forms its own cluster. Interpret the tree, not the partition.</td></tr>
+        <tr><td><b>More variables than objects</b></td><td>Caution</td><td>All the distances become similar to one another. Remove redundant variables or cluster on the first principal components (Block 3).</td></tr>
+        <tr><td><b>Variables irrelevant to the question</b></td><td>Risk</td><td>Every “noise” variable dilutes the structure carried by the useful ones. Keep them as supplementary: they are not used for clustering, but they are used to describe the clusters.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">The app flags the object-to-variable ratio in Block 2 and clusters with fewer than three objects in Block 5.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · order does matter</div>
+    <p>Although you can jump between blocks, there are two stops you should not skip. The first is the <b>Block 2</b> verdict: if the Hopkins statistic says the data are uniform, everything that follows will describe clusters that do not exist. The second is <b>Block 6</b>: the tree in Block 4 and the partition in Block 5 are cut with a provisional number of clusters, and Block 6 is where that number is put to the thirteen criteria and to the stability test. The <span class="ui">Adopt k</span> button sends the chosen number back to Blocks 4 and 5 to redo the cut.</p>
+  </div>
+
+  <!-- 1.9 -->
+  <h2 id="s1-9"><span class="num">1.9</span>How to read silhouettes, correlations and P values</h2>
+  <p>Three kinds of number appear again and again in the app: quality indices bounded between −1 and 1 or between 0 and 1 (the silhouette, the cophenetic correlation, the adjusted Rand index), P values from permutation or Monte Carlo tests (Hopkins, indicator species, χ²) and coefficients of explained variation. Understanding them prevents the two most common mistakes: taking a moderate index for a good result, and believing that a significant P value guarantees that the clusters are useful.</p>
+
+  <div class="dos">
+    <div class="caja teoria" style="margin:0">
+      <div class="caja-t"><span class="ico">s</span>The silhouette</div>
+      <p>For each object, <i>s</i>(<i>i</i>) compares its mean distance to the other members of its cluster (<i>a</i>) with its mean distance to the nearest neighbouring cluster (<i>b</i>): <i>s</i> = (<i>b</i> − <i>a</i>) / max(<i>a</i>, <i>b</i>). It is close to 1 when the object is well placed, close to 0 when it lies between two clusters, and negative when it probably belongs to another one. The <b>average silhouette width</b> of the partition sums everything up in a single number.</p>
+    </div>
+    <div class="caja teoria" style="margin:0">
+      <div class="caja-t"><span class="ico">r</span>The cophenetic correlation</div>
+      <p>A dendrogram summarises the distance matrix: the height at which two objects are first joined is their <b>cophenetic</b> distance. The correlation between those heights and the original distances measures how faithful the tree is. Above 0.75 the dendrogram can be read with confidence; below 0.6 it is advisable to change the linkage rule or the coefficient.</p>
+    </div>
+  </div>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · reading the average silhouette width</div>
+    <table class="compacta">
+      <thead><tr><th style="width:24%">Average silhouette</th><th style="width:28%">Structure</th><th>How to word it</th></tr></thead>
+      <tbody>
+        <tr><td><b>0.71 to 1.00</b></td><td>Strong</td><td>“A strong, well-separated cluster structure was found.”</td></tr>
+        <tr><td><b>0.51 to 0.70</b></td><td>Reasonable</td><td>“The partition is clear, with some objects close to the boundaries.”</td></tr>
+        <tr><td><b>0.26 to 0.50</b></td><td>Weak</td><td>“The clusters overlap; the partition is exploratory.” Check it against the stability results in Block 6.</td></tr>
+        <tr><td><b>≤ 0.25</b></td><td>No substantial structure</td><td>Do not claim that there are clusters. Try another coefficient, another method or another number of clusters, or accept that the data form a gradient.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">The thresholds are those of Kaufman and Rousseeuw (1990). In real biological data with many variables, a silhouette of 0.4 often already goes with interpretable clusters.</p>
+  </div>
+
+  <div class="dos">
+    <div class="caja teoria" style="margin:0">
+      <div class="caja-t"><span class="ico">P</span>The P value</div>
+      <p>It is the probability of observing a result as extreme as yours <b>if there were in fact no effect</b>. A <i>P</i> = 0.012 for the Hopkins statistic says that, if the data were uniform, a value of H this high would occur by chance 12 times in 1,000. In the app, almost all P values come from permutations or simulations, so they depend on the seed and on the number of replicates.</p>
+    </div>
+    <div class="caja teoria" style="margin:0">
+      <div class="caja-t"><span class="ico">ARI</span>The adjusted Rand index</div>
+      <p>It compares two ways of clustering the same objects, for example your clusters and a prior classification. It equals 1 when they match exactly and 0 when they agree only as much as two random labellings would; it can be negative. Above 0.7 the two partitions tell the same story; between 0.4 and 0.7 they share a common core; below that, they have little in common.</p>
+    </div>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · significant is not the same as useful</div>
+    <p>The variables used to build the clusters always differ “significantly” between them: that is precisely what the clusters were built to do. This is why the P values in Block 7 are <b>descriptive</b> when they refer to the active variables, and only carry the weight of a test for <b>supplementary</b> variables, which played no part in the clustering. Always report the effect size (the silhouette, the difference between means, the indicator value) alongside the P value.</p>
+  </div>
+
+  <div class="caja dato">
+    <div class="dato-cifra">13</div>
+    <div class="dato-txt"><div class="caja-t">Criteria for choosing k</div>No index is infallible; that is why Block 6 has thirteen of them vote (elbow, silhouette, gap, Calinski–Harabasz, Davies–Bouldin, Dunn, C-index, McClain–Rao, PBM, Ratkowsky–Lance, Hartigan, Krzanowski–Lai and Ball–Hall) and shows the tally, the full table and a panel with the curve of each one.</div>
+  </div>
+</section>
+
+</body>
+</html>

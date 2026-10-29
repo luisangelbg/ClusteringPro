@@ -13,6 +13,8 @@ an automatic report.
 
 Developed as a teaching and research tool for biology, ecology, agronomy and related sciences.
 
+**User manual (English):** [PDF](manual/en/ClusteringPro%20User%27s%20Manual%20%28English%29.pdf) ·
+[HTML](https://luisangelbg.github.io/ClusteringPro/manual/en/manual-completo.html)  
 **User manual (Spanish):** [PDF](manual/ClusteringPro%20User%27s%20Manual.pdf) ·
 [HTML](https://luisangelbg.github.io/ClusteringPro/manual/es/manual-completo.html)
 
@@ -103,9 +105,9 @@ Everything is plain JavaScript without modules, so the app also runs from `file:
 
 ## User manual
 
-A user manual in Spanish walks through every block with worked examples, the decision rules behind each
-interpretation, file formats, a glossary, troubleshooting and the full reference list: `manual/ClusteringPro User's Manual.pdf`
-(239 pages) or, chapter by chapter, `manual/es/`.
+A user manual, in English and in Spanish, walks through every block with worked examples, the decision rules behind each
+interpretation, file formats, a glossary, troubleshooting and the full reference list: `manual/en/ClusteringPro User's Manual (English).pdf` (241 pages) or, chapter by
+chapter, `manual/en/`; in Spanish, `manual/ClusteringPro User's Manual.pdf` (239 pages) and `manual/es/`.
 
 ## Third-party code
 

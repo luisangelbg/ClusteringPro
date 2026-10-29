@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User manual · Block 4: hierarchical clustering</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b4" data-pestana="B4" data-orden="5" style="--acento: var(--b4)">
+  <div class="cap-apertura">
+    <div class="cap-num">B4</div>
+    <div class="cap-etiqueta">Chapter five · Block 4 · Hierarchical</div>
+    <h1 data-corto="Block 4 · Hierarchical clustering">Hierarchical clustering</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">From the matrix of Block 3 a tree is built: each object starts on its own and clusters are merged until only one remains. This chapter explains the ten rules that decide how clusters are merged, the three numbers that tell you whether the tree deserves your trust, how to cut it, the dendrogram studio with its six layouts and more than forty settings, the heat map with trees, and the comparison of rules by means of tanglegrams.</p>
+    <div class="cap-franja"><span class="k4"></span><span class="k4" style="opacity:.75"></span><span class="k4" style="opacity:.5"></span><span class="k4" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>5.1</b>Agglomerative and divisive</li>
+      <li><b>5.2</b>Linkage rules</li>
+      <li><b>5.3</b>Cophenetic correlation and tree coefficients</li>
+      <li><b>5.4</b>Cutting the tree</li>
+      <li><b>5.5</b>The dendrogram studio</li>
+      <li><b>5.6</b>Heat map with trees</li>
+      <li><b>5.7</b>Comparing linkages and tanglegrams</li>
+      <li><b>5.8</b>Step by step</li>
+    </ul>
+  </div>
+
+  <p class="lead">Block 4 has three cards. In <span class="ui">1 · Build the tree</span> you choose the linkage rule and build the tree. In <span class="ui">2 · The tree and its cut</span> you evaluate it, cut it into clusters and draw it. In <span class="ui">3 · Compare linkage rules and draw tanglegrams</span> you compare it with the trees produced by other rules. At the top, the theory card sums up in three lessons what to look at before trusting a tree. The block becomes available as soon as Block 3 computes a dissimilarity matrix.</p>
+
+  <!-- 5.1 -->
+  <h2 id="s5-1"><span class="num">5.1</span>Agglomerative and divisive</h2>
+  <p>Hierarchical clustering does not produce a single partition but a whole family of nested partitions: from <i>n</i> clusters of one object each to a single cluster containing them all. It is represented by a <b>dendrogram</b>, in which the height of each merge is the dissimilarity at which the two branches were joined. There are two ways to build it (figure 5.1).</p>
+
+  <figure>
+    <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Agglomerative versus divisive clustering">
+      <defs><marker id="fl4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7e3fb0"/></marker></defs>
+      <text x="175" y="20" text-anchor="middle" font-size="12" font-weight="600" fill="#111">Agglomerative · bottom-up</text>
+      <text x="525" y="20" text-anchor="middle" font-size="12" font-weight="600" fill="#111">Divisive (DIANA) · top-down</text>
+      <line x1="350" y1="30" x2="350" y2="240" stroke="#d8dbe3"/>
+      <!-- agglomerative tree -->
+      <g stroke="#7e3fb0" stroke-width="2.2" fill="none">
+        <path d="M70 200 V170 H110 V200"/><path d="M150 200 V150 H190 V200"/><path d="M230 200 V175 H270 V200"/>
+        <path d="M90 170 V110 H170 V150"/><path d="M130 110 V60 H250 V175"/>
+      </g>
+      <g fill="#4f46a5"><circle cx="70" cy="206" r="5"/><circle cx="110" cy="206" r="5"/><circle cx="150" cy="206" r="5"/><circle cx="190" cy="206" r="5"/><circle cx="230" cy="206" r="5"/><circle cx="270" cy="206" r="5"/></g>
+      <g font-size="9.5" fill="#5d6472"><text x="60" y="228">each object starts on its own</text></g>
+      <path d="M306 205 V70" stroke="#7e3fb0" stroke-width="1.6" marker-end="url(#fl4)"/>
+      <text x="314" y="140" font-size="9.5" fill="#7e3fb0" transform="rotate(-90 314 140)" text-anchor="middle">merges the two closest</text>
+      <!-- divisive -->
+      <g stroke="#b4234a" stroke-width="2.2" fill="none">
+        <path d="M420 200 V170 H460 V200"/><path d="M500 200 V150 H540 V200"/><path d="M580 200 V175 H620 V200"/>
+        <path d="M440 170 V110 H520 V150"/><path d="M480 110 V60 H600 V175"/>
+      </g>
+      <g fill="#4f46a5"><circle cx="420" cy="206" r="5"/><circle cx="460" cy="206" r="5"/><circle cx="500" cy="206" r="5"/><circle cx="540" cy="206" r="5"/><circle cx="580" cy="206" r="5"/><circle cx="620" cy="206" r="5"/></g>
+      <path d="M660 60 V195" stroke="#b4234a" stroke-width="1.6" marker-end="url(#fl4)"/>
+      <text x="672" y="128" font-size="9.5" fill="#b4234a" transform="rotate(-90 672 128)" text-anchor="middle">splits the widest cluster</text>
+      <g font-size="9.5" fill="#5d6472"><text x="415" y="228">all objects start together</text></g>
+      <text x="540" y="52" font-size="9.5" fill="#22252c">until one object per cluster</text>
+      <text x="190" y="52" font-size="9.5" fill="#22252c" text-anchor="middle">until a single cluster remains</text>
+    </svg>
+    <figcaption><b>Figure 5.1.</b> The two ways of building a hierarchy. Both give the same kind of tree, with a height at each merge, and everything the block offers (cut, studio, comparison) applies equally to both.</figcaption>
+  </figure>
+
+  <ul>
+    <li>The <b>agglomerative</b> method starts with each object in its own cluster and, at each step, merges the two closest clusters and recomputes the distance from the new cluster to all the others. After <i>n</i> − 1 merges a single cluster remains. What “closest” means is decided by the <b>linkage rule</b> (section 5.2). ClusteringPro implements nine agglomerative rules.</li>
+    <li>The <b>divisive</b> method DIANA goes the opposite way. It starts with all objects together, takes the cluster with the largest <b>diameter</b> (the largest dissimilarity between two of its members), starts a splinter group with the object that is farthest, on average, from the others, and moves into it the objects that are closer to it than to the rest. It repeats this until every object stands alone. It tends to recover a few large clusters better, because its first decisions, those at the top of the tree, are made by looking at all the objects.</li>
+  </ul>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-construir.png" alt="The 1 · Build the tree card"></div>
+    <figcaption><b>Figure 5.2.</b> The <span class="ui">1 · Build the tree</span> card with the maize landraces. The recommendation comes from the Block 3 diagnosis: with a Euclidean matrix it proposes Ward.D2 and explains why. When you choose <span class="ui">Flexible beta (Lance–Williams)</span>, the <span class="ui">β for flexible linkage</span> field also appears.</figcaption>
+  </figure>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · which rule the app proposes</div>
+    <table class="compacta">
+      <thead><tr><th style="width:40%">If the Block 3 matrix…</th><th>then</th></tr></thead>
+      <tbody>
+        <tr><td>is Euclidean or nearly so (negative mass &lt; 5%)</td><td>Ward.D2: compact clusters of similar variance. The alternative is UPGMA if what matters is how faithfully the tree reproduces the distances. With community tables it adds that UPGMA on Bray–Curtis remains the classic choice.</td></tr>
+        <tr><td>is not Euclidean (negative mass ≥ 5%)</td><td>UPGMA (average), which needs only the matrix. If you want Ward, go back to Block 3 and tick the square root (√<i>d</i>).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · size and time</div>
+    <p>Agglomeration works on the full matrix, and its cost grows with the cube of the number of objects. With a few hundred objects the tree takes less than a second; the app accepts up to 1500. The rule comparison in card 3 is limited to 600 objects. For larger tables, use the partitioning methods of Block 5.</p>
+  </div>
+
+  <!-- 5.2 -->
+  <h2 id="s5-2"><span class="num">5.2</span>Linkage rules</h2>
+  <p class="lead">When two clusters are merged, one must decide how far the new cluster lies from each of the others. That decision is the linkage rule, and it changes the shape of the clusters the tree produces (figure 5.3). All the agglomerative rules in the app are computed with the Lance–Williams update formula (table 5.1), the same one used by the reference statistical software.</p>
+
+  <figure>
+    <svg viewBox="0 0 700 215" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="What each linkage rule measures">
+      <g font-size="11" font-weight="600" fill="#111" text-anchor="middle">
+        <text x="85" y="18">Single</text><text x="255" y="18">Complete</text><text x="425" y="18">Average (UPGMA)</text><text x="600" y="18">Centroid and Ward</text>
+      </g>
+      <g id="dosgrupos">
+        <ellipse cx="45" cy="110" rx="32" ry="48" fill="#4f46a5" fill-opacity="0.08" stroke="#4f46a5" stroke-opacity="0.5"/>
+        <ellipse cx="130" cy="110" rx="32" ry="48" fill="#e0803c" fill-opacity="0.08" stroke="#e0803c" stroke-opacity="0.5"/>
+      </g>
+      <!-- simple -->
+      <g fill="#4f46a5"><circle cx="35" cy="80" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="40" cy="135" r="4"/><circle cx="62" cy="128" r="4"/></g>
+      <g fill="#e0803c"><circle cx="112" cy="100" r="4"/><circle cx="140" cy="80" r="4"/><circle cx="135" cy="140" r="4"/><circle cx="148" cy="115" r="4"/></g>
+      <line x1="62" y1="128" x2="112" y2="100" stroke="#b4234a" stroke-width="2"/>
+      <text x="85" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">the closest pair</text>
+      <text x="85" y="199" text-anchor="middle" font-size="9" fill="#5d6472">chains; finds elongated shapes</text>
+      <!-- complete -->
+      <g transform="translate(170 0)">
+        <ellipse cx="45" cy="110" rx="32" ry="48" fill="#4f46a5" fill-opacity="0.08" stroke="#4f46a5" stroke-opacity="0.5"/>
+        <ellipse cx="130" cy="110" rx="32" ry="48" fill="#e0803c" fill-opacity="0.08" stroke="#e0803c" stroke-opacity="0.5"/>
+        <g fill="#4f46a5"><circle cx="35" cy="80" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="40" cy="135" r="4"/><circle cx="62" cy="128" r="4"/></g>
+        <g fill="#e0803c"><circle cx="112" cy="100" r="4"/><circle cx="140" cy="80" r="4"/><circle cx="135" cy="140" r="4"/><circle cx="148" cy="115" r="4"/></g>
+        <line x1="40" y1="135" x2="140" y2="80" stroke="#b4234a" stroke-width="2"/>
+        <text x="85" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">the farthest pair</text>
+        <text x="85" y="199" text-anchor="middle" font-size="9" fill="#5d6472">compact clusters; sensitive to outliers</text>
+      </g>
+      <!-- average -->
+      <g transform="translate(340 0)">
+        <ellipse cx="45" cy="110" rx="32" ry="48" fill="#4f46a5" fill-opacity="0.08" stroke="#4f46a5" stroke-opacity="0.5"/>
+        <ellipse cx="130" cy="110" rx="32" ry="48" fill="#e0803c" fill-opacity="0.08" stroke="#e0803c" stroke-opacity="0.5"/>
+        <g stroke="#b4234a" stroke-width="0.8" stroke-opacity="0.7">
+          <line x1="35" y1="80" x2="112" y2="100"/><line x1="35" y1="80" x2="140" y2="80"/><line x1="35" y1="80" x2="135" y2="140"/><line x1="35" y1="80" x2="148" y2="115"/>
+          <line x1="55" y1="105" x2="112" y2="100"/><line x1="55" y1="105" x2="140" y2="80"/><line x1="55" y1="105" x2="135" y2="140"/><line x1="55" y1="105" x2="148" y2="115"/>
+          <line x1="40" y1="135" x2="112" y2="100"/><line x1="40" y1="135" x2="140" y2="80"/><line x1="40" y1="135" x2="135" y2="140"/><line x1="40" y1="135" x2="148" y2="115"/>
+          <line x1="62" y1="128" x2="112" y2="100"/><line x1="62" y1="128" x2="140" y2="80"/><line x1="62" y1="128" x2="135" y2="140"/><line x1="62" y1="128" x2="148" y2="115"/>
+        </g>
+        <g fill="#4f46a5"><circle cx="35" cy="80" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="40" cy="135" r="4"/><circle cx="62" cy="128" r="4"/></g>
+        <g fill="#e0803c"><circle cx="112" cy="100" r="4"/><circle cx="140" cy="80" r="4"/><circle cx="135" cy="140" r="4"/><circle cx="148" cy="115" r="4"/></g>
+        <text x="85" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">the mean of all pairs</text>
+        <text x="85" y="199" text-anchor="middle" font-size="9" fill="#5d6472">balanced; the most faithful to distances</text>
+      </g>
+      <!-- centroid / ward -->
+      <g transform="translate(515 0)">
+        <ellipse cx="45" cy="110" rx="32" ry="48" fill="#4f46a5" fill-opacity="0.08" stroke="#4f46a5" stroke-opacity="0.5"/>
+        <ellipse cx="130" cy="110" rx="32" ry="48" fill="#e0803c" fill-opacity="0.08" stroke="#e0803c" stroke-opacity="0.5"/>
+        <g fill="#4f46a5" fill-opacity="0.45"><circle cx="35" cy="80" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="40" cy="135" r="4"/><circle cx="62" cy="128" r="4"/></g>
+        <g fill="#e0803c" fill-opacity="0.45"><circle cx="112" cy="100" r="4"/><circle cx="140" cy="80" r="4"/><circle cx="135" cy="140" r="4"/><circle cx="148" cy="115" r="4"/></g>
+        <path d="M48 103 l6 -6 l-6 -6 l-6 6 z" fill="#4f46a5" transform="translate(0 8)"/>
+        <path d="M134 104 l6 -6 l-6 -6 l-6 6 z" fill="#e0803c" transform="translate(0 7)"/>
+        <line x1="48" y1="103" x2="134" y2="103" stroke="#b4234a" stroke-width="2"/>
+        <text x="85" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">between centroids · variance increase</text>
+        <text x="85" y="199" text-anchor="middle" font-size="9" fill="#5d6472">require Euclidean geometry</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 5.3.</b> What each rule measures between two clusters. The red line is the distance the rule uses to decide whether those two clusters are the next to be merged. Ward does not measure a distance but how much the within-cluster sum of squares would grow if they were merged, which depends on the distance between centroids and on the size of the clusters.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the Lance–Williams formula</div>
+    <p>If clusters <i>i</i> and <i>j</i>, with <i>n</i><sub>i</sub> and <i>n</i><sub>j</sub> objects, are merged, the distance from the new cluster to any other cluster <i>k</i> is computed from the distances already known:</p>
+    <p style="text-align:center"><i>d</i>(<i>ij</i>, <i>k</i>) = α<sub>i</sub> <i>d</i>(<i>i</i>, <i>k</i>) + α<sub>j</sub> <i>d</i>(<i>j</i>, <i>k</i>) + β <i>d</i>(<i>i</i>, <i>j</i>) + γ |<i>d</i>(<i>i</i>, <i>k</i>) − <i>d</i>(<i>j</i>, <i>k</i>)|</p>
+    <p>Each rule is a choice of the four coefficients (table 5.1). At no step is it necessary to go back to the original data, which is why any rule can be applied to a dissimilarity matrix, although the centroid, median and Ward rules only make geometric sense if that matrix is Euclidean. For those three, the app squares the distances before agglomerating and takes the square root of the heights, so that the dendrogram axis stays in the units of the matrix.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Table 5.1.</b> The ten rules in the <span class="ui">Linkage rule</span> menu, with their Lance–Williams coefficients (for centroid, median and Ward they apply to squared distances; <i>n</i><sub>ijk</sub> = <i>n</i><sub>i</sub> + <i>n</i><sub>j</sub> + <i>n</i><sub>k</sub>).</caption>
+    <thead><tr><th style="width:23%">In the app</th><th style="width:31%">α<sub>i</sub> · β · γ</th><th>Character</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Ward.D2 (minimum variance)</span></td><td>(<i>n</i><sub>i</sub> + <i>n</i><sub>k</sub>)/<i>n</i><sub>ijk</sub> · −<i>n</i><sub>k</sub>/<i>n</i><sub>ijk</sub> · 0</td><td>Merges the clusters that least increase the within-cluster variance. Compact clusters of similar size. Requires Euclidean distances.</td></tr>
+      <tr><td><span class="ui">Average · UPGMA</span></td><td><i>n</i><sub>i</sub>/(<i>n</i><sub>i</sub> + <i>n</i><sub>j</sub>) · 0 · 0</td><td>Mean of all dissimilarities between members. Balanced; it usually gives the highest cophenetic correlation. A classic in taxonomy and ecology.</td></tr>
+      <tr><td><span class="ui">Complete (farthest neighbour)</span></td><td>½ · 0 · +½</td><td>Distance of the farthest pair. Compact clusters of similar diameter; an outlier delays the merging of its cluster.</td></tr>
+      <tr><td><span class="ui">Single (nearest neighbour)</span></td><td>½ · 0 · −½</td><td>Distance of the closest pair. Recovers elongated or curved shapes, but tends to chain objects one by one.</td></tr>
+      <tr><td><span class="ui">Weighted · WPGMA (McQuitty)</span></td><td>½ · 0 · 0</td><td>Like UPGMA, but each subcluster carries the same weight regardless of its size.</td></tr>
+      <tr><td><span class="ui">Centroid · UPGMC</span></td><td><i>n</i><sub>i</sub>/(<i>n</i><sub>i</sub> + <i>n</i><sub>j</sub>) · −<i>n</i><sub>i</sub><i>n</i><sub>j</sub>/(<i>n</i><sub>i</sub> + <i>n</i><sub>j</sub>)² · 0</td><td>Distance between centroids. Can produce reversals (section 5.3).</td></tr>
+      <tr><td><span class="ui">Median · WPGMC</span></td><td>½ · −¼ · 0</td><td>Centroid without weighting by size. Same risk of reversals.</td></tr>
+      <tr><td><span class="ui">Ward.D (on unsquared d)</span></td><td>as Ward.D2, on unsquared <i>d</i></td><td>Ward's formula applied to unsquared distances. Only for reproducing older analyses.</td></tr>
+      <tr><td><span class="ui">Flexible beta (Lance–Williams)</span></td><td>(1 − β)/2 · β · 0</td><td>A single adjustable parameter. With β = −0.25 it behaves like a space-conserving average; more negative values give more compact clusters (similar to Ward).</td></tr>
+      <tr><td><span class="ui">DIANA (divisive)</span></td><td>— (does not agglomerate)</td><td>Successive splits by diameter. Good for a few large clusters.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja dato">
+    <div class="dato-cifra">D2</div>
+    <div class="dato-txt">
+      <div class="caja-t">Fact · Ward.D versus Ward.D2</div>
+      Ward's criterion is defined on squared Euclidean distances. <b>Ward.D2</b> squares them for you and returns heights in the units of the matrix: it is the correct version. <b>Ward.D</b> applies the same formula to unsquared distances; it gives similar trees but with a different height scale and, sometimes, a different merge order. It exists because for years it was what some programs did. Use it only if you need to reproduce a result published with it.
+    </div>
+  </div>
+
+  <!-- 5.3 -->
+  <h2 id="s5-3"><span class="num">5.3</span>Cophenetic correlation and tree coefficients</h2>
+  <p class="lead">When you click <span class="ui">Build the tree →</span>, the second card appears. Before you look at the dendrogram, five tiles and a list of checks tell you whether the tree is a good summary of the matrix (figure 5.4).</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b4-resultados.png" alt="Tiles and checks of the tree">
+      <span class="marca" style="left:2.5%;top:16.5%">1</span>
+      <span class="marca" style="left:22%;top:16.5%">2</span>
+      <span class="marca" style="left:41%;top:16.5%">3</span>
+      <span class="marca" style="left:60%;top:16.5%">4</span>
+      <span class="marca" style="left:79%;top:16.5%">5</span>
+      <span class="marca" style="left:2%;top:58%">6</span>
+    </div>
+    <figcaption><b>Figure 5.4.</b> The tiles and checks of the Ward.D2 tree for the maize landraces.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Method</span>: the rule, the number of objects and the dissimilarity coefficient.</li>
+    <li><span class="n">2</span><span class="ui">Cophenetic correlation</span>, with a traffic light.</li>
+    <li><span class="n">3</span><span class="ui">Agglomerative coefficient</span> (or <span class="ui">Divisive coefficient</span> with DIANA).</li>
+    <li><span class="n">4</span><span class="ui">Suggested k (height jumps)</span>: the three values of <i>k</i> with the largest height jumps.</li>
+    <li><span class="n">5</span><span class="ui">Reversals</span>: merges that occur lower than an earlier one.</li>
+    <li><span class="n">6</span>Interpreted checks (table 5.3).</li>
+  </ul>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the three numbers of a tree</div>
+    <p>The <b>cophenetic distance</b> between two objects is the height at which they are joined in the tree. The <b>cophenetic correlation</b> is the Pearson correlation between those heights and the original dissimilarities of the matrix: it measures how much of the matrix survives being summarised as a tree. UPGMA usually gives the highest value, because its rule averages distances; Ward and complete linkage sacrifice fidelity in exchange for compact clusters.</p>
+    <p>The <b>agglomerative coefficient</b> is the average, over all objects, of 1 − (height of the object's first merge / height of the last merge of the tree). Near 1, objects are merged very early relative to the final merge: a clear structure. It grows with the number of objects and depends heavily on the rule (Ward inflates it), so it is only useful for comparing trees of the same data built with the same rule. With DIANA it is computed in the same way and is called the <b>divisive coefficient</b>.</p>
+    <p>A <b>reversal</b> occurs when a cluster is merged at a lower height than an earlier merge that formed it: the branch goes “down” instead of up. Only the centroid and median rules can produce them. They make a cut by height ambiguous.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Table 5.2.</b> Traffic light of the tiles.</caption>
+    <thead><tr><th style="width:32%">Tile</th><th>Green</th><th>Amber</th><th>Red</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cophenetic correlation</span></td><td>≥ 0.75</td><td>0.60–0.75</td><td>&lt; 0.60</td></tr>
+      <tr><td><span class="ui">Agglomerative coefficient</span></td><td>≥ 0.70</td><td>0.50–0.70</td><td>—</td></tr>
+      <tr><td><span class="ui">Reversals</span></td><td>0</td><td>1 or more</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 5.3.</b> Tree checks and what they suggest.</caption>
+    <thead><tr><th style="width:38%">Check</th><th style="width:8%" class="c">Level</th><th>What it suggests</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">The tree is a faithful summary of the dissimilarities</span></td><td class="c">✅</td><td>The distances read from the dendrogram are reliable.</td></tr>
+      <tr><td><span class="ui">Moderate cophenetic correlation</span></td><td class="c">⚠️</td><td>The tree distorts some distances. Compare rules in card 3: UPGMA usually maximises the correlation.</td></tr>
+      <tr><td><span class="ui">Low cophenetic correlation</span></td><td class="c">⛔</td><td>The dendrogram represents the matrix poorly. Try another rule, another coefficient (Block 3) or a partitioning method (Block 5).</td></tr>
+      <tr><td><span class="ui">N reversals in the tree</span></td><td class="c">⚠️</td><td>Cut by number of clusters rather than by height, or use average or Ward.</td></tr>
+      <tr><td><span class="ui">Chaining</span></td><td class="c">⚠️</td><td>More than 70% of the merges in the upper half of the tree add a single object to a growing cluster: chains instead of compact clusters. Typical of single linkage on gradients.</td></tr>
+      <tr><td><span class="ui">This linkage assumes Euclidean distances</span></td><td class="c">⚠️</td><td>Ward, centroid or median on a non-Euclidean matrix (negative mass ≥ 10%): take √<i>d</i> in Block 3 or use average or complete.</td></tr>
+      <tr><td><span class="ui">Divisive analysis</span></td><td class="c">ℹ️</td><td>Reminds you how DIANA works and that its divisive coefficient replaces the agglomerative one.</td></tr>
+      <tr><td><span class="ui">Weak hierarchical structure</span></td><td class="c">ℹ️</td><td>Coefficient &lt; 0.5: objects are merged late relative to the final merge; the data look more like a gradient than like nested clusters.</td></tr>
+      <tr><td><span class="ui">Cut suggestions</span></td><td class="c">ℹ️</td><td>The three largest height jumps, with their size relative to the height of the tree (section 5.4).</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-diana.png" alt="Tiles and checks for DIANA"></div>
+    <figcaption><b>Figure 5.5.</b> The same maize data with DIANA: cophenetic correlation 0.844 (almost the same as Ward.D2) and divisive coefficient 0.772. The <span class="ui">Divisive analysis</span> check recalls what the method does; the height jumps again suggest <i>k</i> = 3, 2 and 4.</figcaption>
+  </figure>
+
+  <!-- 5.4 -->
+  <h2 id="s5-4"><span class="num">5.4</span>Cutting the tree</h2>
+  <p class="lead">Cutting the dendrogram at a given height produces a partition: each branch that crosses the cut line is a cluster. The block offers a figure to help you decide where to cut, a control to make the cut and two tables to view the result.</p>
+
+  <p>When it builds the tree, the app already cuts it: into as many clusters as the known grouping has, if there is one, or at the first suggested <i>k</i>. Clusters are numbered from left to right in leaf order, so cluster 1 is always the leftmost one in the dendrogram. If you cut by height, the app counts how many branches the line crosses and updates <i>k</i>; if you cut by <i>k</i>, the line is placed halfway between the two merges that separate <i>k</i> − 1 from <i>k</i> clusters.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · reading the jumps</div>
+    <p>A long vertical stretch without merges in the dendrogram means that the clusters below are well separated. In the height figure, that stretch appears as a large <b>jump</b> between the bar for <i>k</i> − 1 and the bar for <i>k</i>. The app sorts the jumps from largest to smallest between <i>k</i> = 2 and <i>k</i> = 12 and highlights the first three; the <span class="ui">Suggested k</span> tile and the <span class="ui">Cut suggestions</span> check give the same three, with the size of each jump as a percentage of the total height. It is a first idea: Block 6 tests it against the silhouette, the gap statistic, stability and ten other criteria.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-alturas.png" alt="Merge heights by number of clusters"></div>
+    <figcaption><b>Figure 5.6.</b> <span class="ui">Merge heights: where to cut</span> with the Ward.D2 tree of the maize data. Each bar is the height of the merge that leaves <i>k</i> clusters; in orange, the three largest jumps between consecutive bars. From <i>k</i> = 2 to <i>k</i> = 3 the height drops from about 12 to about 6, and from there on the bars barely drop: below three clusters the merges are long, above it they are all short.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b4-corte.png" alt="Cut controls and partition tables">
+      <span class="marca" style="left:1%;top:14%">1</span>
+      <span class="marca" style="left:32.3%;top:14%">2</span>
+      <span class="marca" style="left:64.3%;top:14%">3</span>
+      <span class="marca" style="left:1%;top:22%">4</span>
+      <span class="marca" style="left:1%;top:59%">5</span>
+    </div>
+    <figcaption><b>Figure 5.7.</b> <span class="ui">Cut the tree</span> with the maize data cut into three clusters.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Cut by</span>: <span class="ui">Number of clusters</span> or <span class="ui">Height</span>.</li>
+    <li><span class="n">2</span>The value of <i>k</i> (or the height, depending on the mode).</li>
+    <li><span class="n">3</span><span class="ui">Apply the cut</span>: recomputes the tables, moves the cut in the studio and in the heat map, and notifies the following blocks.</li>
+    <li><span class="n">4</span>The partition: members of each cluster and cut height.</li>
+    <li><span class="n">5</span>If there is a known grouping, the cross-tabulation with the adjusted Rand index (ARI) and purity, and a sentence that interprets them.</li>
+  </ul>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · how the app reads the cross-tabulation</div>
+    <table class="compacta">
+      <thead><tr><th style="width:22%">ARI</th><th>App sentence</th></tr></thead>
+      <tbody>
+        <tr><td>&gt; 0.80</td><td><span class="ui">The tree recovers your known grouping almost exactly.</span></td></tr>
+        <tr><td>0.50–0.80</td><td><span class="ui">Substantial agreement with the known grouping, with some objects placed differently.</span></td></tr>
+        <tr><td>0.20–0.50</td><td><span class="ui">Partial agreement: the clusters and the known grouping capture different structure.</span></td></tr>
+        <tr><td>&lt; 0.20</td><td><span class="ui">The clusters are unrelated to the known grouping</span> (an ARI near 0 is what random labels give).</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">Purity is the proportion of objects that fall into the majority known group of their cluster. A low ARI does not mean that the tree is wrong: it may be finding a different structure, just as real, that the prior classification does not capture.</p>
+  </div>
+
+  <!-- 5.5 -->
+  <h2 id="s5-5"><span class="num">5.5</span>The dendrogram studio</h2>
+  <p class="lead">The studio is the central figure of the block. By default it draws a rectangular dendrogram with branches coloured by cluster, shaded boxes, the cut line, the cluster numbers, the leaves with their names and, if there is a known grouping, a coloured dot under each leaf (figure 5.8). Everything can be changed from <span class="ui">Edit figure</span>, and every setting is saved for the report.</p>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · left–right order does not mean closeness</div>
+    <p>Any node of the tree can be rotated without changing anything: a dendrogram with <i>n</i> leaves has 2<sup><i>n</i>−1</sup> equivalent drawings, and <span class="ui">Leaf order</span> chooses one of them. Two neighbouring leaves in the row may be joined very high up; two leaves far apart may belong to the same low branch. The only thing you can read from a dendrogram is <b>the height at which two objects are joined</b>. Use the leaf order to make the figure readable (for example, aligned with the first PCoA axis), never as a result.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-dendro.png" alt="Ward.D2 dendrogram of the maize data"></div>
+    <figcaption><b>Figure 5.8.</b> The studio with its initial settings. The Ward.D2 tree of the maize data cut at <i>k</i> = 3: three boxes (C1, C2, C3), the cut line with its label, labels coloured by cluster, leaf dots coloured by region, and the legend with the sizes of the clusters and the regions. The dots confirm what the ARI says: each box contains a single region.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 5.4.</b> The studio's own controls, grouped by function.</caption>
+    <thead><tr><th style="width:18%">Group</th><th style="width:34%">Controls</th><th>What they do</th></tr></thead>
+    <tbody>
+      <tr><td><b>Layout</b></td><td><span class="ui">Layout</span></td><td>Six layouts: rectangular with the leaves at the bottom, triangular, horizontal with the leaves on the right, horizontal triangular, radial (circular) and radial triangular (fan).</td></tr>
+      <tr><td><b>Cut</b></td><td><span class="ui">Clusters k (cut)</span>, <span class="ui">Cut by</span>, <span class="ui">Cut height</span></td><td>They cut the figure only, without touching the block's partition; useful for seeing what another <i>k</i> would look like before applying it.</td></tr>
+      <tr><td><b>Branch colour</b></td><td><span class="ui">Colour branches by</span>, <span class="ui">Cluster palette</span>, <span class="ui">Known-group palette</span>, <span class="ui">Gradient colour map</span>, <span class="ui">Colour above the cut</span>, <span class="ui">Single colour</span></td><td>By cluster of the cut, by known grouping (a branch is coloured if all its leaves belong to the same group), by height gradient or in a single colour; branches above the cut use the neutral colour.</td></tr>
+      <tr><td><b>Branches</b></td><td><span class="ui">Branch width</span></td><td>Width from 0.5 to 5 px.</td></tr>
+      <tr><td><b>Labels</b></td><td><span class="ui">Leaf labels</span>, <span class="ui">Label size</span>, <span class="ui">Label colour</span>, <span class="ui">Label angle offset</span>, <span class="ui">Italic labels (taxa)</span></td><td>Show them (automatic up to 120 leaves), size, colour by cluster, by known grouping or plain, extra rotation, and italics for scientific names.</td></tr>
+      <tr><td><b>Leaf symbols</b></td><td><span class="ui">Leaf symbols</span>, <span class="ui">Symbol size</span>, <span class="ui">Different shapes per group</span></td><td>A dot under each leaf coloured by known grouping or by cluster, and different shapes per known group for greyscale printing.</td></tr>
+      <tr><td><b>Cut and boxes</b></td><td><span class="ui">Show cut line</span>, <span class="ui">Cut line colour</span>, <span class="ui">Cluster boxes</span>, <span class="ui">Box fill opacity</span>, <span class="ui">Dashed boxes</span>, <span class="ui">Cluster numbers</span></td><td>The dashed cut line (a circle in the radial layouts), the shaded boxes for each cluster (sectors in radial layouts) and the labels C1, C2…</td></tr>
+      <tr><td><b>Simplify</b></td><td><span class="ui">Collapse clusters into triangles</span>, <span class="ui">Hang leaves</span></td><td>Replaces each cluster with a triangle showing its size; hangs the leaves at a fraction of the height instead of aligning them at zero.</td></tr>
+      <tr><td><b>Leaf order</b></td><td><span class="ui">Leaf order</span>, <span class="ui">Reverse order</span></td><td>Rotates the branches without changing the tree: default order, along the first PCoA axis, by known grouping, compact clusters first, or alphabetical where possible.</td></tr>
+      <tr><td><b>Axis</b></td><td><span class="ui">Height axis</span>, <span class="ui">Axis title</span>, <span class="ui">Guide circles (radial)</span></td><td>The height axis (guide circles in radial layouts) and its title.</td></tr>
+      <tr><td><b>Radial</b></td><td><span class="ui">Inner radius %</span>, <span class="ui">Start angle</span>, <span class="ui">Sweep angle</span></td><td>Central hole, start angle and opening of the circle (from 90 to 360°; with less than 360 the result is a fan).</td></tr>
+      <tr><td><b>Legend</b></td><td><span class="ui">Legend content</span>, <span class="ui">Legend position</span></td><td>Clusters, known groups, both or none; automatic, top right or top left, below the figure, or hidden.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-dendro-editor.png" alt="The Edit figure panel of the dendrogram studio"></div>
+    <figcaption><b>Figure 5.9.</b> The <span class="ui">Content &amp; colours</span> tab of the studio's <span class="ui">Edit figure</span> panel. The <span class="ui">Style &amp; typography</span> tab holds the settings common to all figures (theme, typefaces, sizes, margins) described in section 1.6.</figcaption>
+  </figure>
+
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b4-dendro-radial.png" alt="Radial dendrogram"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b4-dendro-horizontal.png" alt="Horizontal dendrogram with collapsed clusters"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figure 5.10.</b> The same tree in two more layouts. On the left, <span class="ui">Radial / circular</span> with guide circles: the cut is the dashed circle and the boxes are sectors. On the right, <span class="ui">Horizontal</span> with <span class="ui">Collapse clusters into triangles</span>: each cluster is reduced to a triangle showing its size, which reveals the upper part of the tree when there are many leaves.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · when the legend hides branches</div>
+    <p>The automatic position places the legend at the top right, inside the plot area. If the tree is tall on that side, the legend may hide branches or the cut label. Change it to <span class="ui">Below the plot</span> in <span class="ui">Legend position</span>, or reduce its content with <span class="ui">Legend content</span>. Practice 1 in section 5.8 uses this option.</p>
+  </div>
+
+  <!-- 5.6 -->
+  <h2 id="s5-6"><span class="num">5.6</span>Heat map with trees</h2>
+  <p class="lead">Below the studio, <span class="ui">Heat map of the variables with the object tree</span> crosses the objects, ordered by the tree, with the numerical variables of the working matrix (figure 5.11). It is the most direct way to see <i>which variables</i> distinguish the clusters. It does not appear when the input is a distance matrix or when there are fewer than two numerical variables.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-heatmap.png" alt="Heat map with object and variable dendrograms"></div>
+    <figcaption><b>Figure 5.11.</b> The heat map of the maize data: 44 objects × 8 variables as z-scores (red high, blue low). On the left, the object tree coloured by cluster; at the top, a UPGMA tree of the variables; on the right, the region and cluster strips. It is read in blocks: the top cluster (highlands) has late flowering and short plants; the bottom one (valleys) has tall plants, long ears, heavy kernels and high yield.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 5.5.</b> The heat map's own controls.</caption>
+    <thead><tr><th style="width:34%">Control</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Clusters k</span></td><td>Cut of the object tree used to colour it (independent of the block's cut).</td></tr>
+      <tr><td><span class="ui">Cell colour map</span></td><td>The colour ramp of the cells.</td></tr>
+      <tr><td><span class="ui">z-score the variables</span></td><td>Standardises each column so that all of them use the full scale; untick it to see the values of the working matrix.</td></tr>
+      <tr><td><span class="ui">Cluster the variables too</span></td><td>Orders the columns with a UPGMA tree of Euclidean distances between standardised variables and draws it at the top.</td></tr>
+      <tr><td><span class="ui">Object labels</span>, <span class="ui">Label size</span>, <span class="ui">Label colour</span></td><td>Row labels (automatic up to 80 objects), size, and colour by cluster or plain.</td></tr>
+      <tr><td><span class="ui">Tree size (px)</span>, <span class="ui">Leaf order</span></td><td>Width of the object tree and leaf order, as in the studio.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · block downloads</div>
+    <p>Below the heat map, <span class="ui">⬇ Cluster membership (CSV)</span> saves the cluster of each object (with the known grouping, if there is one) and <span class="ui">⬇ Merge table (CSV)</span> saves the <i>n</i> − 1 merges of the tree with their step, the two branches joined, the height and the size of the resulting cluster. This table lets you rebuild the dendrogram in another program. The <span class="ui">Continue to partitioning methods →</span> button takes you to Block 5.</p>
+  </div>
+
+  <!-- 5.7 -->
+  <h2 id="s5-7"><span class="num">5.7</span>Comparing linkages and tanglegrams</h2>
+  <p class="lead">Different rules give different trees from the same data. Instead of trusting just one, the third card computes them all on the same matrix and measures how much they agree. A structure that survives every rule is real; one that appears with a single rule deserves suspicion.</p>
+
+  <table class="compacta">
+    <caption><b>Table 5.6.</b> Columns of the comparison table and measures of agreement between trees.</caption>
+    <thead><tr><th style="width:30%">Measure</th><th>What it compares</th><th style="width:22%">Reading</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cophenetic r</span></td><td>Each tree against the original matrix (section 5.3).</td><td>Higher = more faithful tree.</td></tr>
+      <tr><td><span class="ui">Aggl./div. coefficient</span></td><td>Strength of the hierarchical structure of each tree.</td><td>Only between trees built with the same rule.</td></tr>
+      <tr><td><span class="ui">Reversals</span></td><td>Reversals in each tree.</td><td>Ideally 0.</td></tr>
+      <tr><td><span class="ui">Cluster sizes at k</span></td><td>Cluster sizes when each tree is cut at the current <i>k</i>.</td><td>Very unequal sizes (58 / 1 / 1) betray chaining.</td></tr>
+      <tr><td><span class="ui">ARI vs</span> (current rule)</td><td>The partition of each tree at <i>k</i> against that of the tree from card 1.</td><td>1 = same partition.</td></tr>
+      <tr><td><span class="ui">Fowlkes–Mallows B<sub>k</sub></span></td><td>Proportion of pairs of objects that are together in both trees cut at <i>k</i>.</td><td>1 = same partition; 0 = nothing in common.</td></tr>
+      <tr><td><span class="ui">ARI vs known groups</span></td><td>Each partition against the known grouping.</td><td>Which rule recovers it best.</td></tr>
+      <tr><td><b>Baker's γ</b> (figure 5.13)</td><td>Rank correlation of the <i>step</i> at which each pair of objects first falls into the same cluster, in one tree and in the other.</td><td>Measures the whole hierarchy, not just the cut.</td></tr>
+      <tr><td><b>Cophenetic correlation between trees</b> (figure 5.13)</td><td>Pearson correlation between the merge heights of each pair in both trees.</td><td>Alternative to Baker's γ in the figure editor.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-comparar.png" alt="Comparison table of linkage rules"></div>
+    <figcaption><b>Figure 5.12.</b> The <span class="ui">3 · Compare linkage rules and draw tanglegrams</span> card with the maize data. Six rules are ticked by default (Ward.D2, average, complete, single, weighted and DIANA); the paragraph interprets the result and the table gives, for each rule, its fidelity and its agreement with the tree built in card 1.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · low Baker agreement does not always mean different clusters</div>
+    <p>In the maize data, WPGMA has a Baker's γ of 0.63 with the other rules and yet, when cut into three clusters, all rules give exactly the same partition (ARI and Fowlkes–Mallows = 1.000). The difference lies in the <b>order of the merges</b>: WPGMA, which does not weight by cluster size, orders differently the merges that occur within each region and above them. Baker's γ is sensitive to these changes of order because it works with steps, not heights. When the partitions coincide, the app says so explicitly in the card's paragraph; read it together with the ARI columns before concluding that “the clusters change with the rule”.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b4-metodos.png" alt="Agreement matrix between linkage rules"></div>
+    <figcaption><b>Figure 5.13.</b> <span class="ui">Agreement between linkage methods</span>: Baker's γ between each pair of trees for the maize data. Five rules agree above 0.98; WPGMA stands apart (0.63–0.64). The editor lets you switch to the correlation between cophenetic matrices.</figcaption>
+  </figure>
+
+  <h3>The tanglegram</h3>
+  <p>The tanglegram places two trees face to face, with the same leaves connected by lines (figure 5.14). Choose the trees in <span class="ui">Left tree</span> and <span class="ui">Right tree</span> (by default, the tree from card 1 and the average tree, or Ward.D2 if the tree from card 1 is already average) and click <span class="ui">Draw the tanglegram</span>. The app rotates the branches of both trees, without changing them, so that the lines cross as little as possible, and summarises the result below the figure.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · entanglement and untangling</div>
+    <p><b>Entanglement</b> measures how far each leaf moves between its position in the left tree and in the right tree, with the differences raised to the power 1.5 and divided by the worst possible case (the reversed order): 0 is the same order, 1 is the reversed order. Since the leaf order is arbitrary (section 5.5), entanglement only makes sense after <b>untangling</b>: the app rotates the branches of one tree to follow the order of the other, then those of the other, and repeats, keeping the best combination. The number of <b>crossings</b> counts the pairs of lines that intersect.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b4-tangle.png" alt="Ward.D2 versus average tanglegram"></div>
+    <figcaption><b>Figure 5.14.</b> Tanglegram of Ward.D2 versus average with the maize data. Lines and branches are coloured by the clusters of the left tree at <i>k</i> = 3. Almost all lines are horizontal: there are only 9 crossings, all within the same cluster. Below the figure: entanglement 0.005, Baker's γ 0.995, cophenetic correlation between trees 0.992 and Fowlkes–Mallows 1.000.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 5.7.</b> The tanglegram's own controls.</caption>
+    <thead><tr><th style="width:36%">Control</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Colour by clusters of the left tree (k)</span></td><td>Colours branches and lines by the clusters of the left tree; with <i>k</i> = 1 everything takes the <span class="ui">Connector colour</span>.</td></tr>
+      <tr><td><span class="ui">Untangle (rotate branches)</span></td><td>Turns untangling on; untick it to see both trees in their default order.</td></tr>
+      <tr><td><span class="ui">Labels</span>, <span class="ui">Label size</span></td><td>Leaf names next to each tree (shown by default up to 80 leaves).</td></tr>
+      <tr><td><span class="ui">Space between trees</span>, <span class="ui">Branch width</span>, <span class="ui">Connector width</span></td><td>Proportion of the width given to the lines, and line widths.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 5.8 -->
+  <h2 id="s5-8"><span class="num">5.8</span>Step by step</h2>
+  <p class="lead">With each example prepared in Blocks 2 and 3 using the proposed settings, table 5.8 summarises what Block 4 gives. The practices focus on what each case teaches; in several of them the proposed rule is changed on purpose.</p>
+
+  <table class="compacta">
+    <caption><b>Table 5.8.</b> The seven examples in Block 4. Rule used, fidelity, automatic cut and comparison.</caption>
+    <thead><tr><th style="width:15%">Example</th><th style="width:14%">Rule</th><th class="c" style="width:9%">Cophenetic</th><th class="c" style="width:10%">Coef.</th><th class="c" style="width:11%">Jumps</th><th class="c" style="width:14%"><i>k</i> · ARI</th><th>Comparison</th></tr></thead>
+    <tbody>
+      <tr><td>Maize landraces</td><td>Ward.D2</td><td class="c">0.843</td><td class="c">0.911</td><td class="c">3 · 2 · 4</td><td class="c">3 · 1.000</td><td>UPGMA the most faithful (0.848); same partition with all six rules</td></tr>
+      <tr><td>Species presence</td><td>UPGMA*</td><td class="c">0.890</td><td class="c">0.588</td><td class="c">2 · 3 · 4</td><td class="c">3 · 0.898</td><td>Ward.D2 recovers the habitats (ARI 1.000); single linkage chains</td></tr>
+      <tr><td>Insect abundance</td><td>UPGMA*</td><td class="c">0.901</td><td class="c">0.671</td><td class="c">2 · 4 · 6</td><td class="c">3 · 0.419</td><td>Ward.D2 recovers the landscapes (ARI 1.000)</td></tr>
+      <tr><td>Soil profiles</td><td>UPGMA</td><td class="c">0.898</td><td class="c">0.856</td><td class="c">2 · 3 · 4</td><td class="c">2 · —</td><td>All agree (Baker's γ ≥ 0.92)</td></tr>
+      <tr><td>Distance matrix</td><td>UPGMA</td><td class="c">0.990</td><td class="c">0.701</td><td class="c">3 · 6 · 11</td><td class="c">3 · —</td><td>All give the same partition</td></tr>
+      <tr><td>Four simulated clusters</td><td>Ward.D2</td><td class="c">0.902</td><td class="c">0.974</td><td class="c">4 · 2 · 3</td><td class="c">4 · 1.000</td><td>Same partition with all six rules</td></tr>
+      <tr><td>Uniform noise</td><td>Ward.D2</td><td class="c">0.488</td><td class="c">0.856</td><td class="c">3 · 6 · 4</td><td class="c">3 · —</td><td>Baker's γ down to −0.02; single gives 58 / 1 / 1</td></tr>
+    </tbody>
+  </table>
+  <p class="small">* The app proposes Ward.D2 for these two nearly Euclidean matrices; in the practices UPGMA, the classic choice for Jaccard and Bray–Curtis, is built first and then compared with Ward.D2.</p>
+
+  <h3>Practice 1 · Species presence: UPGMA, Ward and the site that does not fit</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the binary example and Jaccard computed, go to Block 4. The recommendation is Ward.D2 because Jaccard is nearly Euclidean (4.7% negative mass). Change <span class="ui">Linkage rule</span> to <span class="ui">Average · UPGMA</span> and click <span class="ui">Build the tree →</span>.</li>
+      <li>Tiles: cophenetic 0.890 (very faithful), agglomerative coefficient 0.588, jumps at <i>k</i> = 2, 3 and 4, no reversals. The app cuts into three clusters because there are three habitats.</li>
+      <li>The cross-tabulation gives ARI 0.898 and purity 97%: the wetland and forest clusters are pure, but the third contains 10 grassland sites and <b>one forest site, S05</b>.</li>
+      <li>In the studio, change <span class="ui">Legend position</span> to <span class="ui">Below the plot</span> so that the legend does not hide the upper part of the tree (figure 5.15). S05 is the rightmost leaf, with its red dot among blue dots, and it joins the grassland cluster very high up.</li>
+      <li>Click <span class="ui">Compare the ticked rules</span>. Ward.D2, complete and WPGMA separate the three habitats exactly (ARI 1.000, sizes 10 / 10 / 10); single linkage chains (20 / 7 / 3, cophenetic 0.541) and Baker's γ between single and DIANA drops to 0.34.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b4-binario-dendro.png" alt="UPGMA dendrogram on Jaccard for the 30 sites"></div>
+    <figcaption><b>Figure 5.15.</b> UPGMA on Jaccard with the 30 sites, cut into three clusters and with the legend below. Leaves S21 and S24, and S02 and S09, are joined at height zero: they are the pairs of identical sites that Block 3 detected. S05, a forest site (red dot), ends up at the end of the grassland cluster.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>UPGMA reproduces the distances better (0.890 versus 0.833 for Ward.D2), but Ward.D2 recovers the habitats better. There is no contradiction: UPGMA faithfully depicts S05 as lying halfway between forest and grassland, and Ward's rule, which favours clusters of similar size, assigns it to the forest. Which tree to report depends on the question. If you want to describe the floristic similarity between sites, use UPGMA; if you want a partition into vegetation types, use Ward and, in Block 6, check the stability of that doubtful site.</p>
+  </div>
+
+  <h3>Practice 2 · Insect abundance: the same tree, two different cuts</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the insects and Bray–Curtis, build the tree with <span class="ui">Average · UPGMA</span>: cophenetic 0.901, jumps at <i>k</i> = 2 (42% of the height), 4 and 6.</li>
+      <li>The app cuts into three clusters (there are three landscapes) and the cross-tabulation gives ARI 0.419: one cluster of 16 sites mixing 8 organic and 8 hedgerow sites, and the 8 conventional sites split into 3 and 5.</li>
+      <li>Compare rules: all agree on the hierarchy (Baker's γ ≥ 0.88), but Ward.D2 and WPGMA, cut into three, give 8 / 8 / 8 and recover the landscapes (ARI 1.000).</li>
+      <li>Draw the tanglegram of average versus Ward.D2 (figure 5.16): <b>zero crossings</b> and entanglement 0.000, but Fowlkes–Mallows at <i>k</i> = 3 of only 0.653.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b4-insectos-tangle.png" alt="Average versus Ward.D2 tanglegram for the insects"></div>
+    <figcaption><b>Figure 5.16.</b> Average (left) versus Ward.D2 (right) with the 24 sites. The leaf order is identical and no lines cross, but the colours, which mark the three clusters of the left tree, show where the cut falls: UPGMA first separates the two subclusters of conventional fields (orange and green); Ward first separates organic fields from hedgerows, within the purple cluster.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>Two trees can have the same shape and yet produce different partitions when cut at the same <i>k</i>, because what changes is the <b>relative height</b> of the merges. In UPGMA, the difference between the two subclusters of conventional fields is larger than the difference between organic fields and hedgerows; in Ward, which penalises large, heterogeneous clusters, the reverse is true. UPGMA's largest height jump is at <i>k</i> = 2 (conventional fields versus organic fields and hedgerows), not at <i>k</i> = 3: the tree suggests that the main structure of these communities has two levels, not three.</p>
+  </div>
+
+  <h3>Practice 3 · Soil profiles: colouring by height</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the soils and Gower, the recommendation is UPGMA (Gower has 5.1% negative mass). Build the tree: cophenetic 0.898, coefficient 0.856, jumps at <i>k</i> = 2 (35%), 3 (21%) and 4. With no known grouping, the app cuts at the first jump: two clusters of 12 and 24 profiles.</li>
+      <li>In the studio, change <span class="ui">Colour branches by</span> to <span class="ui">height gradient</span> and <span class="ui">Leaf symbols</span> to <span class="ui">coloured by cluster</span> (figure 5.17).</li>
+      <li>Compare rules: Baker's γ ≥ 0.92 for all pairs; only DIANA moves one profile when cutting into two (23 / 13).</li>
+      <li>Try <span class="ui">Clusters k (cut)</span> = 3 in the editor: the cluster of 24 splits into two of 12 profiles, exactly at the second jump.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b4-suelos-dendro.png" alt="Gower dendrogram coloured by height"></div>
+    <figcaption><b>Figure 5.17.</b> UPGMA on Gower with branches coloured by a height gradient (viridis: purple low, yellow high) and leaf dots by cluster. The gradient makes the three levels of the tree visible: low merges within each soil type, an intermediate merge at about 0.43 and the final merge at about 0.66.</figcaption>
+  </figure>
+
+  <h3>Practice 4 · Genetic matrix: a fan with italic names</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the matrix of 12 cultivars used as is, build UPGMA (proposed): cophenetic 0.990, jumps at <i>k</i> = 3 (64% of the height), 6 and 11. Cut into three clusters of four cultivars.</li>
+      <li>In the studio, choose <span class="ui">Layout</span> = <span class="ui">Radial triangular (fan)</span> and tick <span class="ui">Italic labels (taxa)</span> (figure 5.18).</li>
+      <li>Compare rules: all six give the same partition and the same cophenetic correlation (0.990). Baker's γ drops to 0.55 between single and DIANA; the app's paragraph explains that the difference lies in the order of the merges, not in the clusters.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b4-matriz-dendro.png" alt="Radial triangular dendrogram of the genetic matrix"></div>
+    <figcaption><b>Figure 5.18.</b> The 12 cultivars in a radial fan with italic labels. Without a height axis, the radial layout is mainly a presentation figure: to read heights, turn on <span class="ui">Guide circles (radial)</span>.</figcaption>
+  </figure>
+
+  <h3>Practice 5 · Four simulated clusters: collapsing to see the top</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the four simulated clusters and the Euclidean distance, build Ward.D2: cophenetic 0.902, coefficient 0.974, jumps at <i>k</i> = 4 (58% of the height), 2 and 3. Cut into four clusters of 20 with ARI 1.000.</li>
+      <li>In the studio, tick <span class="ui">Collapse clusters into triangles</span> (figure 5.19): the 80 names disappear and the upper part of the tree becomes visible.</li>
+      <li>Compare rules: all six give exactly the four simulated clusters. The tanglegram of Ward.D2 versus average has 81 crossings, but entanglement 0.015 and Baker's γ 0.991: all the crossings occur within the clusters.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b4-sim-dendro.png" alt="Dendrogram with clusters collapsed into triangles"></div>
+    <figcaption><b>Figure 5.19.</b> Ward.D2 with the four clusters collapsed. Each triangle carries its number and its size; the height of its apex is that of the cluster's last internal merge (about 2), and the cut falls far above it (7.4). This is what a 58% jump looks like.</figcaption>
+  </figure>
+
+  <h3>Practice 6 · Uniform noise: a tree that summarises nothing</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the uniform noise and the Euclidean distance, build Ward.D2. A red warning appears: cophenetic 0.488. However, the agglomerative coefficient is 0.856, almost the same as for the maize data.</li>
+      <li>Look at the height figure (figure 5.20): the bars drop gradually, with no clear step; the “best” jump, at <i>k</i> = 3, is only 22% of the height.</li>
+      <li>Compare rules: Baker's γ reaches −0.02 between single and WPGMA, and each rule cut into three clusters gives different sizes (24 / 18 / 18 with Ward, 58 / 1 / 1 with single).</li>
+      <li>Now build with <span class="ui">Single (nearest neighbour)</span> (figure 5.21): cophenetic 0.427 in red and the <span class="ui">Weak hierarchical structure</span> warning with a coefficient of 0.374.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b4-ruido-alturas.png" alt="Merge heights of the Ward tree on noise"></div>
+    <figcaption><b>Figure 5.20.</b> The Ward.D2 heights with uniform noise: a gentle staircase, without the cliff seen in the maize data (figure 5.6) or in the simulated clusters. The three highlighted jumps are barely larger than the rest.</figcaption>
+  </figure>
+  <figure>
+    <div class="marco"><img src="../img/b4-ruido-single.png" alt="Single linkage diagnosis on noise"></div>
+    <figcaption><b>Figure 5.21.</b> Single linkage on the same noise: cophenetic 0.427, coefficient 0.374 with the weak-structure warning, and a height figure that is almost flat from <i>k</i> = 3 onwards.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>A high agglomerative coefficient does not prove that clusters exist: Ward always inflates it, because its criterion makes the last merge much higher than the first ones even when the data are noise. It is the cophenetic correlation, the shape of the height figure and the disagreement between rules that reveal the lack of structure. This is the third warning sign, after the Hopkins statistic in Block 2 and the disagreement between coefficients in Block 3.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · what to report from this block</div>
+    <p>In the methods section: the linkage rule (with β if you used flexible beta), the dissimilarity coefficient on which the tree was built, the cophenetic correlation, the cut criterion and height, and the number of clusters. If you compared rules, the most faithful rule and whether the partitions coincide. One sentence is enough: “The tree was built with UPGMA on Bray–Curtis distances (cophenetic correlation 0.901) and cut into two clusters at the largest height jump; Ward, complete, single, weighted and DIANA produced concordant hierarchies (Baker's γ ≥ 0.88).” The automatic paragraph in Block 8 drafts it with your values.</p>
+  </div>
+
+  <p style="margin-top:0.25in">With the tree built, cut and compared, the next chapter presents the other major family: methods that look directly for <i>k</i> clusters without building a hierarchy. These are k-means and its variants, PAM and CLARA, fuzzy clustering, Gaussian mixtures, DBSCAN and spectral clustering, together with a comparison of all of them at the same <i>k</i>.</p>
+</section>
+
+</body>
+</html>

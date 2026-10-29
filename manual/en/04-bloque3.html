@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User manual · Block 3: similarity and distance</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b3" data-pestana="B3" data-orden="4" style="--acento: var(--b3)">
+  <div class="cap-apertura">
+    <div class="cap-num">B3</div>
+    <div class="cap-etiqueta">Chapter four · Block 3 · Distances</div>
+    <h1 data-corto="Block 3 · Similarity and distance">Similarity and distance</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Clustering algorithms never see your variables: they see a matrix of dissimilarities between pairs of objects. How that matrix is computed is the most consequential decision of the whole analysis, more so than the choice of algorithm. This block offers 39 coefficients in six families, diagnoses the matrix they produce, draws it in four ways and lets you compare candidates before you commit.</p>
+    <div class="cap-franja"><span class="k3"></span><span class="k3" style="opacity:.75"></span><span class="k3" style="opacity:.5"></span><span class="k3" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>4.1</b>Similarity, dissimilarity and distance</li>
+      <li><b>4.2</b>The 39 coefficients, by data type</li>
+      <li><b>4.3</b>Metric and Euclidean: why it matters</li>
+      <li><b>4.4</b>Diagnosing the matrix</li>
+      <li><b>4.5</b>Comparing coefficients</li>
+      <li><b>4.6</b>Settings, tables and figures of the block</li>
+      <li><b>4.7</b>Step by step</li>
+    </ul>
+  </div>
+
+  <p class="lead">Block 3 has three cards: <span class="ui">1 · Choose the coefficient</span>, where you choose the family and the coefficient and compute it; <span class="ui">2 · The dissimilarity matrix</span>, with the diagnosis, the neighbours table and five figures; and <span class="ui">3 · Compare candidate coefficients</span>, which measures how much the matrix changes when you change the coefficient. At the top, the theory card summarises in three lessons what this chapter explains at length. The block becomes available once Block 2 has built the working matrix, and everything that follows (trees, partitions, validation) is computed from the matrix you produce here.</p>
+
+  <!-- 4.1 -->
+  <h2 id="s4-1"><span class="num">4.1</span>Similarity, dissimilarity and distance</h2>
+  <p>These three words are often confused, and it is worth pinning them down now, because the app uses them precisely.</p>
+  <ul>
+    <li>A <b>similarity</b> <i>s</i> measures likeness: it equals 1 when two objects are identical and falls towards 0 the more they differ. The coefficients for binary data (Jaccard, Dice, simple matching…) are similarities.</li>
+    <li>A <b>dissimilarity</b> <i>d</i> measures difference: it equals 0 for identical objects and grows with the difference. Any similarity becomes a dissimilarity through <i>d</i> = 1 − <i>s</i>, and that is what the app does: every coefficient, whatever its definition, delivers a dissimilarity matrix with zeros on the diagonal.</li>
+    <li>A <b>distance</b> is a dissimilarity that also satisfies the triangle inequality (section 4.3). Euclidean, Manhattan and Hellinger distances do; Bray–Curtis and many 1 − <i>s</i> conversions do not always. In everyday language “distance” is used for all of them, and so does this manual when there is no risk of confusion.</li>
+  </ul>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · why the coefficient matters more than the algorithm</div>
+    <p>Two sites with twenty species each may be “similar” because they share many species, because their abundances are proportional, or because both lack the same fifty species of the region. Each coefficient decides which of these things counts, and by how much. The clustering algorithm merely rearranges the numbers it receives: if the matrix says two sites are close, any method will put them together. Switching from UPGMA to Ward moves a few objects; switching from Euclidean to Bray–Curtis can change the very meaning of “cluster”. That is why this block comes before the clustering blocks, and why it includes a tool for comparing coefficients.</p>
+  </div>
+
+  <h3>The choice card</h3>
+  <p>The first card shows the recommendation that Block 2 derived from the data profile, the coefficient families available for your table, the chosen coefficient with its formula and parameters, and the compute button (figure 4.1).</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b3-elegir.png" alt="Card 1 · Choose the coefficient">
+      <span class="marca" style="left:2.5%;top:17%">1</span>
+      <span class="marca" style="left:2.5%;top:35%">2</span>
+      <span class="marca" style="left:2.5%;top:54.8%">3</span>
+      <span class="marca" style="left:48%;top:54.8%">4</span>
+      <span class="marca" style="left:2.5%;top:64.8%">5</span>
+      <span class="marca" style="left:2.5%;top:81%">7</span>
+      <span class="marca" style="left:2.5%;top:92%">6</span>
+    </div>
+    <figcaption><b>Figure 4.1.</b> The <span class="ui">1 · Choose the coefficient</span> card with the maize landraces.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Recommendation from Block 2</span>: the proposed dissimilarity and the reason for it.</li>
+    <li><span class="n">2</span>Family tabs. Only those your data allow are shown: with quantitative variables, <span class="ui">Binary (0/1)</span> and <span class="ui">Counts &amp; abundances</span> derived from them are offered as well (table 4.2).</li>
+    <li><span class="n">3</span><span class="ui">Coefficient</span>: the coefficients of the active family. The proposed one is already selected.</li>
+    <li><span class="n">4</span><span class="ui">Data source</span> (quantitative family only): the working matrix from Block 2 or the raw numeric variables.</li>
+    <li><span class="n">5</span>The formula, a note and the range of the coefficient. With Minkowski the order <i>p</i> appears; with principal components, how many to keep; with Gower, the panel in figure 4.3.</li>
+    <li><span class="n">7</span><span class="ui">Take the square root of the dissimilarity (√d)</span>: makes Bray–Curtis, Jaccard, Sørensen and simple matching Euclidean without changing the order of the pairs (section 4.3).</li>
+    <li><span class="n">6</span><span class="ui">Compute the dissimilarity matrix →</span>. You can change the coefficient and recompute as often as you like; the following blocks are disabled until you run them again.</li>
+  </ul>
+
+  <!-- 4.2 -->
+  <h2 id="s4-2"><span class="num">4.2</span>The 39 coefficients, by data type</h2>
+  <p class="lead">The catalogue is organised into six families that correspond to the data types of Block 2. Table 4.1 tells you which family to use and which to avoid; table 4.2, where each family takes its data from; table 4.3 lists the coefficients with their formula and use. All the formulas are also shown in the app when you select a coefficient.</p>
+
+  <table class="compacta">
+    <caption><b>Table 4.1.</b> Which family to use for each kind of data (the first lesson of the theory card).</caption>
+    <thead><tr><th style="width:30%">Data</th><th>Use</th><th style="width:30%">Avoid</th></tr></thead>
+    <tbody>
+      <tr><td>Quantitative with comparable units (scaled)</td><td>Euclidean, Manhattan; Mahalanobis if the variables are correlated; Euclidean on principal components to remove noise</td><td>Correlation distances with fewer than about 5 variables</td></tr>
+      <tr><td>Profiles: expression, spectra, series</td><td>1 − Pearson, 1 − Spearman, cosine</td><td>Euclidean when only the shape matters</td></tr>
+      <tr><td>Presence/absence where 0 = absent</td><td>Jaccard, Dice, Ochiai, Kulczynski</td><td>Simple matching (rewards shared absences)</td></tr>
+      <tr><td>Binary with two informative states</td><td>Simple matching, Rogers and Tanimoto</td><td>Jaccard (ignores one of the states)</td></tr>
+      <tr><td>Abundances, counts</td><td>Bray–Curtis, Ružička, Morisita–Horn; Hellinger or chord if you need Euclidean geometry</td><td>Raw Euclidean (dominated by abundant species and double zeros)</td></tr>
+      <tr><td>Nominal / ordinal</td><td>Simple matching of categories, ranks for ordinal variables, Gower</td><td>Treating category codes as numbers</td></tr>
+      <tr><td>Mixed types</td><td>Gower (optional weights)</td><td>Indicators + Euclidean, except with few categories</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 4.2.</b> The six families and where they take their data from. A family appears as a tab only if the table has what it needs.</caption>
+    <thead><tr><th style="width:24%">Family (tab)</th><th>Data used</th><th style="width:24%">Appears when…</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Quantitative</span></td><td>The numeric columns of the working matrix (quantitative, counts and ordinal as ranks; not binary variables or indicators), or the same variables in raw form if you choose <span class="ui">Raw numeric variables</span>.</td><td>there is at least one active numeric variable.</td></tr>
+      <tr><td><span class="ui">Binary (0/1)</span></td><td>The active binary variables. If there are none, the non-negative numeric variables coded as presence (<i>x</i> &gt; 0 → 1); the app says so in the note on the result.</td><td>there are binary or non-negative numeric variables.</td></tr>
+      <tr><td><span class="ui">Nominal / ordinal</span></td><td>Nominal variables (by category match), declared binary variables and ordinal variables (by ranks). Quantitative variables are ignored.</td><td>there is at least one nominal, ordinal or binary variable.</td></tr>
+      <tr><td><span class="ui">Counts &amp; abundances</span></td><td>The <b>raw</b> non-negative numeric variables (without the transformation or scaling of Block 2): each ecological coefficient applies its own standardisation.</td><td>there are at least two numeric variables with no negative values.</td></tr>
+      <tr><td><span class="ui">Mixed (Gower)</span></td><td>All the active variables, each with the dissimilarity appropriate to its type; or the full working matrix for the Euclidean variant.</td><td>always.</td></tr>
+      <tr><td><span class="ui">Supplied matrix</span></td><td>The distance matrix you loaded, as is, square-rooted or squared.</td><td>the input was a matrix (in which case it is the only tab).</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the 2 × 2 table of binary coefficients</div>
+    <p>For two objects with <i>p</i> binary variables, four quantities are counted: <b>a</b>, the variables in which both have 1; <b>b</b>, those in which only the first has 1; <b>c</b>, those in which only the second does; and <b>d</b>, those in which both have 0. Every binary coefficient is a combination of a, b, c and d (figure 4.2). The key decision is what to do with <b>d</b>, the <b>shared absences</b>: Jaccard, Dice, Ochiai and Kulczynski ignore them (<i>asymmetric</i> coefficients), because the fact that two sites both lack a species does not make them alike; simple matching and Rogers and Tanimoto count them as matches (<i>symmetric</i>), which is correct when 0 and 1 are two equally informative states, such as male/female or allele A/B.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="2 by 2 table of matches and binary coefficients">
+      <!-- 2x2 table -->
+      <text x="150" y="22" text-anchor="middle" font-size="11" fill="#111" font-weight="600">Object y</text>
+      <text x="75" y="60" text-anchor="end" font-size="10.5" fill="#22252c">Object x</text>
+      <text x="115" y="44" text-anchor="middle" font-size="10.5" fill="#5d6472">1</text>
+      <text x="185" y="44" text-anchor="middle" font-size="10.5" fill="#5d6472">0</text>
+      <text x="80" y="82" text-anchor="middle" font-size="10.5" fill="#5d6472">1</text>
+      <text x="80" y="140" text-anchor="middle" font-size="10.5" fill="#5d6472">0</text>
+      <rect x="90" y="52" width="50" height="50" fill="#dbe8f7" stroke="#2b7bb9"/><text x="115" y="84" text-anchor="middle" font-size="20" fill="#2b7bb9" font-weight="600">a</text>
+      <rect x="150" y="52" width="50" height="50" fill="#fff" stroke="#2b7bb9"/><text x="175" y="84" text-anchor="middle" font-size="20" fill="#111">b</text>
+      <rect x="90" y="112" width="50" height="50" fill="#fff" stroke="#2b7bb9"/><text x="115" y="144" text-anchor="middle" font-size="20" fill="#111">c</text>
+      <rect x="150" y="112" width="50" height="50" fill="#eeeeee" stroke="#2b7bb9" stroke-dasharray="3 2"/><text x="175" y="144" text-anchor="middle" font-size="20" fill="#5d6472">d</text>
+      <text x="145" y="185" text-anchor="middle" font-size="9.5" fill="#22252c">a + b + c + d = p variables</text>
+      <text x="145" y="200" text-anchor="middle" font-size="9.5" fill="#5d6472">d: shared absences</text>
+      <!-- formulas -->
+      <g font-size="11" fill="#22252c">
+        <text x="270" y="40" font-weight="600" fill="#111">Asymmetric · ignore d</text>
+        <text x="270" y="60">Jaccard</text><text x="410" y="60">s = a / (a + b + c)</text>
+        <text x="270" y="78">Dice / Sørensen</text><text x="410" y="78">s = 2a / (2a + b + c)</text>
+        <text x="270" y="96">Ochiai</text><text x="410" y="96">s = a / √((a + b)(a + c))</text>
+        <text x="270" y="114">Kulczynski</text><text x="410" y="114">s = ½ [a/(a + b) + a/(a + c)]</text>
+        <text x="270" y="146" font-weight="600" fill="#111">Symmetric · count d</text>
+        <text x="270" y="166">Simple matching</text><text x="410" y="166">s = (a + d) / p</text>
+        <text x="270" y="184">Rogers and Tanimoto</text><text x="410" y="184">s = (a + d) / (a + d + 2(b + c))</text>
+        <text x="270" y="212" fill="#5d6472" font-size="10">In the app every similarity is turned into a dissimilarity: d = 1 − s.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 4.2.</b> The 2 × 2 table that summarises two binary objects, and the most widely used coefficients. Cell <i>d</i> is what divides the two schools.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 4.3.</b> The coefficients in the catalogue, by family, with the formula shown by the app. Similarities <i>s</i> are converted with <i>d</i> = 1 − <i>s</i>.</caption>
+    <thead><tr><th style="width:26%">Coefficient</th><th style="width:33%">Formula</th><th style="width:9%" class="c">Range</th><th>When to use it</th></tr></thead>
+    <tbody>
+      <tr><td colspan="4"><b>Quantitative</b> · quantitative data</td></tr>
+      <tr><td>Euclidean</td><td><i>d</i> = √Σ(<i>x</i>ᵢ − <i>y</i>ᵢ)²</td><td class="c">0–∞</td><td>The straight line. The default for k-means and Ward; sensitive to scale and outliers.</td></tr>
+      <tr><td>Squared Euclidean</td><td><i>d</i> = Σ(<i>x</i>ᵢ − <i>y</i>ᵢ)²</td><td class="c">0–∞</td><td>What Ward and k-means minimise internally; exaggerates large differences.</td></tr>
+      <tr><td>Manhattan (city block)</td><td><i>d</i> = Σ|<i>x</i>ᵢ − <i>y</i>ᵢ|</td><td class="c">0–∞</td><td>Sum of absolute differences; a single extreme variable has less influence.</td></tr>
+      <tr><td>Minkowski (order p)</td><td><i>d</i> = (Σ|<i>x</i>ᵢ − <i>y</i>ᵢ|ᵖ)^(1/<i>p</i>)</td><td class="c">0–∞</td><td><i>p</i> = 1 Manhattan, <i>p</i> = 2 Euclidean, large <i>p</i> → Chebyshev.</td></tr>
+      <tr><td>Chebyshev (maximum)</td><td><i>d</i> = max|<i>x</i>ᵢ − <i>y</i>ᵢ|</td><td class="c">0–∞</td><td>Only the largest difference counts.</td></tr>
+      <tr><td>Canberra</td><td><i>d</i> = Σ|<i>x</i>ᵢ − <i>y</i>ᵢ| / (|<i>x</i>ᵢ| + |<i>y</i>ᵢ|)</td><td class="c">0–<i>p</i></td><td>Differences relative to magnitude; for positive, skewed data. Terms with <i>x</i>ᵢ = <i>y</i>ᵢ = 0 are omitted.</td></tr>
+      <tr><td>Mahalanobis</td><td><i>d</i> = √(<i>x</i> − <i>y</i>)ᵀ S⁻¹(<i>x</i> − <i>y</i>)</td><td class="c">0–∞</td><td>Euclidean after removing the correlations between variables (computed via principal components).</td></tr>
+      <tr><td>Euclidean on principal components</td><td><i>d</i> = √Σₖ(PCₖ(<i>x</i>) − PCₖ(<i>y</i>))²</td><td class="c">0–∞</td><td>Keeps the first <i>k</i> components: removes noise and redundancy before clustering.</td></tr>
+      <tr><td>Pearson correlation distance</td><td><i>d</i> = 1 − <i>r</i>(<i>x</i>, <i>y</i>)</td><td class="c">0–2</td><td>Two objects are alike when their profiles rise and fall together, whatever their level. Standard for gene expression.</td></tr>
+      <tr><td>Absolute Pearson distance</td><td><i>d</i> = 1 − |<i>r</i>(<i>x</i>, <i>y</i>)|</td><td class="c">0–1</td><td>Opposite profiles also count as alike.</td></tr>
+      <tr><td>Spearman correlation distance</td><td><i>d</i> = 1 − ρ(<i>x</i>, <i>y</i>)</td><td class="c">0–2</td><td>Profile likeness based on ranks; robust to outliers and to monotonic transformations.</td></tr>
+      <tr><td>Kendall correlation distance</td><td><i>d</i> = 1 − τ(<i>x</i>, <i>y</i>)</td><td class="c">0–2</td><td>Based on concordant and discordant pairs of variables.</td></tr>
+      <tr><td>Cosine distance</td><td><i>d</i> = 1 − <i>x</i>·<i>y</i> / (‖<i>x</i>‖ ‖<i>y</i>‖)</td><td class="c">0–2</td><td>The angle between the profiles; ignores their length.</td></tr>
+      <tr><td colspan="4"><b>Binary (0/1)</b> · binary data (a, b, c, d as in figure 4.2)</td></tr>
+      <tr><td>Jaccard</td><td><i>s</i> = a / (a + b + c)</td><td class="c">0–1</td><td>Asymmetric: shared absences do not count. The default for species and markers.</td></tr>
+      <tr><td>Dice / Sørensen</td><td><i>s</i> = 2a / (2a + b + c)</td><td class="c">0–1</td><td>Asymmetric; gives double weight to shared presences.</td></tr>
+      <tr><td>Simple matching</td><td><i>s</i> = (a + d) / (a + b + c + d)</td><td class="c">0–1</td><td>Symmetric: 0 and 1 equally informative (male/female, allele A/B).</td></tr>
+      <tr><td>Rogers &amp; Tanimoto</td><td><i>s</i> = (a + d) / (a + d + 2(b + c))</td><td class="c">0–1</td><td>Symmetric; mismatches weigh double.</td></tr>
+      <tr><td>Sokal &amp; Sneath (asymmetric)</td><td><i>s</i> = a / (a + 2(b + c))</td><td class="c">0–1</td><td>Asymmetric; mismatches weigh double.</td></tr>
+      <tr><td>Russell &amp; Rao</td><td><i>s</i> = a / (a + b + c + d)</td><td class="c">0–1</td><td>Shared presences over all variables; absences reduce similarity.</td></tr>
+      <tr><td>Ochiai</td><td><i>s</i> = a / √((a + b)(a + c))</td><td class="c">0–1</td><td>The cosine similarity for binary data.</td></tr>
+      <tr><td>Kulczynski</td><td><i>s</i> = ½ [a/(a + b) + a/(a + c)]</td><td class="c">0–1</td><td>Mean of the two conditional proportions of shared presences.</td></tr>
+      <tr><td>Hamming (mismatches)</td><td><i>d</i> = b + c</td><td class="c">0–<i>p</i></td><td>Number of variables in which the two objects differ.</td></tr>
+      <tr><td>Yule</td><td><i>d</i> = (1 − Q)/2, Q = (ad − bc)/(ad + bc)</td><td class="c">0–1</td><td>Association-based; 0.5 means independence.</td></tr>
+      <tr><td colspan="4"><b>Nominal / ordinal</b> · categorical data</td></tr>
+      <tr><td>Simple matching (categories)</td><td><i>d</i> = variables with different categories / <i>p</i></td><td class="c">0–1</td><td>Proportion of non-matching categories, over the nominal (and binary) variables.</td></tr>
+      <tr><td>Manhattan on normalised ranks</td><td><i>d</i> = Σ|rank(<i>x</i>ᵢ) − rank(<i>y</i>ᵢ)| / (<i>k</i>ᵢ − 1) / <i>p</i></td><td class="c">0–1</td><td>Ordinal variables compared by rank, each rescaled to 0–1.</td></tr>
+      <tr><td>Gower (categorical + ordinal)</td><td><i>d</i> = mean of the 0–1 dissimilarity of each type</td><td class="c">0–1</td><td>Simple matching for nominal variables, rank difference for ordinal ones, Jaccard-style for binary ones.</td></tr>
+      <tr><td colspan="4"><b>Counts &amp; abundances</b> · ecological data (X, Y = totals of each object)</td></tr>
+      <tr><td>Bray–Curtis</td><td><i>d</i> = Σ|<i>x</i>ᵢ − <i>y</i>ᵢ| / Σ(<i>x</i>ᵢ + <i>y</i>ᵢ)</td><td class="c">0–1</td><td>The workhorse for community tables; ignores double zeros; 1 = no species in common. Not Euclidean (use √<i>d</i> for Ward).</td></tr>
+      <tr><td>Ružička (quantitative Jaccard)</td><td><i>d</i> = 1 − Σmin(<i>x</i>ᵢ, <i>y</i>ᵢ) / Σmax(<i>x</i>ᵢ, <i>y</i>ᵢ)</td><td class="c">0–1</td><td>Jaccard generalised to abundances.</td></tr>
+      <tr><td>Kulczynski (quantitative)</td><td><i>d</i> = 1 − ½ [Σmin/X + Σmin/Y]</td><td class="c">0–1</td><td>Less sensitive than Bray–Curtis to differences in total abundance.</td></tr>
+      <tr><td>Morisita–Horn</td><td><i>d</i> = 1 − 2Σ<i>x</i>ᵢ<i>y</i>ᵢ / [(Σ<i>x</i>ᵢ²/X² + Σ<i>y</i>ᵢ²/Y²) X Y]</td><td class="c">0–1</td><td>Almost independent of sample size; emphasises the dominant species.</td></tr>
+      <tr><td>Hellinger distance</td><td><i>d</i> = √Σ(√(<i>x</i>ᵢ/X) − √(<i>y</i>ᵢ/Y))²</td><td class="c">0–√2</td><td>Euclidean distance between square roots of relative abundances; suitable for Ward, k-means and PCA.</td></tr>
+      <tr><td>Chord distance</td><td><i>d</i> = √Σ(<i>x</i>ᵢ/‖<i>x</i>‖ − <i>y</i>ᵢ/‖<i>y</i>‖)²</td><td class="c">0–√2</td><td>Euclidean distance between profiles rescaled to unit length.</td></tr>
+      <tr><td>Chi-square distance</td><td><i>d</i> = √(Σ₊₊) · √Σⱼ(1/<i>c</i>ⱼ)(<i>x</i>ⱼ/X − <i>y</i>ⱼ/Y)²</td><td class="c">0–∞</td><td>The distance of correspondence analysis; rare species weigh more.</td></tr>
+      <tr><td>Canberra (abundances)</td><td><i>d</i> = Σ|<i>x</i>ᵢ − <i>y</i>ᵢ| / (<i>x</i>ᵢ + <i>y</i>ᵢ), over species present in at least one object</td><td class="c">0–<i>p</i></td><td>Every species weighs the same, whatever its abundance.</td></tr>
+      <tr><td>Jaccard on presence/absence</td><td><i>s</i> = a / (a + b + c) after coding <i>x</i> &gt; 0 as 1</td><td class="c">0–1</td><td>Discards abundances and keeps only composition.</td></tr>
+      <tr><td colspan="4"><b>Mixed (Gower)</b> · mixed types</td></tr>
+      <tr><td>Gower</td><td><i>d</i> = Σₖ<i>w</i>ₖ<i>d</i>ₖ / Σₖ<i>w</i>ₖ; <i>d</i>ₖ = |<i>x</i> − <i>y</i>|/range (quantitative, ordinal ranks), mismatch (nominal), Jaccard-style (binary)</td><td class="c">0–1</td><td>Each variable contributes 0–1; quantitative variables are scaled by their range internally, so the scaling of Block 2 has no effect here.</td></tr>
+      <tr><td>Euclidean on the working matrix</td><td><i>d</i> = √Σ(<i>x</i>ᵢ − <i>y</i>ᵢ)² over scaled columns and indicators</td><td class="c">0–∞</td><td>The quick alternative: categories become 0/1 columns with weight 1/√2. Less well founded than Gower.</td></tr>
+      <tr><td colspan="4"><b>Supplied matrix</b> · loaded matrix</td></tr>
+      <tr><td>As supplied</td><td><i>d</i> = D</td><td class="c">—</td><td>Your matrix, unchanged.</td></tr>
+      <tr><td>Square root</td><td><i>d</i> = √D</td><td class="c">0–√max</td><td>Makes many non-Euclidean dissimilarities Euclidean (Bray–Curtis, Jaccard), which benefits Ward and PCoA.</td></tr>
+      <tr><td>Squared</td><td><i>d</i> = D²</td><td class="c">0–max²</td><td>When your matrix holds square-rooted distances and you need the original scale.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b3-gower.png" alt="The Gower distance panel"></div>
+    <figcaption><b>Figure 4.3.</b> The Gower panel with the soil profiles: the <span class="ui">Mixed (Gower)</span> tab, the formula, the <span class="ui">Binary variables</span> menu (asymmetric, ignoring shared absences, or symmetric) and, expanded, <span class="ui">Variable weights</span> with one weight per variable (1 by default, from 0 to 10).</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · Gower weights</div>
+    <p>A weight of 2 on a variable makes it count twice; a weight of 0 removes it from the calculation without changing its role in Block 2. This is the clean way to give more importance to a decisive measurement (for example, texture in soil profiles) or to test how much the matrix changes without a doubtful variable. If you use weights, report them in the methods: the automatic paragraph in Block 8 includes them.</p>
+  </div>
+
+  <!-- 4.3 -->
+  <h2 id="s4-3"><span class="num">4.3</span>Metric and Euclidean: why it matters</h2>
+  <p class="lead">Not all dissimilarities behave like distances on a map. Two properties determine which methods you can apply without distortion, and the app checks both on every matrix.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · two properties</div>
+    <p>A dissimilarity is <b>metric</b> when it satisfies the triangle inequality: for any three objects, <i>d</i>(x, z) ≤ <i>d</i>(x, y) + <i>d</i>(y, z). This is what you expect of a real distance: going from x to z via y cannot be shorter than going directly. It is <b>Euclidean</b> (more precisely, Euclidean-embeddable) when the objects can be placed as points in some Euclidean space so that the distances between the points reproduce all the <i>d</i> exactly. Every Euclidean dissimilarity is metric; the converse does not always hold.</p>
+    <p>This matters because <b>Ward, k-means on coordinates and principal coordinates analysis</b> (PCoA, the map in this block) assume Euclidean geometry. On a non-Euclidean matrix they still run, but they distort: the PCoA percentages no longer add up properly, negative eigenvalues appear and Ward may merge clusters in a strange order. The usual remedy is to take the <b>square root</b> of the dissimilarity: √<i>d</i> is Euclidean for Bray–Curtis, Jaccard, Sørensen and simple matching. Single, complete and average linkage and PAM, on the other hand, need only the matrix: any dissimilarity, metric or not, will do.</p>
+  </div>
+
+  <p>The app checks both properties when it computes the matrix:</p>
+  <ul>
+    <li><b>Triangle inequality:</b> all triples of objects are tested (up to 120 objects; beyond that, a sample of 200,000 triples) and the percentage of violations is reported. Zero violations = metric.</li>
+    <li><b>Euclidean embeddability:</b> the double-centred matrix of the PCoA is decomposed and the fraction of the eigenvalue mass that is negative is measured. At 0% the matrix is exactly Euclidean; below 1% it is considered Euclidean; between 1 and 10%, nearly; above 10%, not.</li>
+  </ul>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · what to do according to the diagnosis</div>
+    <table class="compacta">
+      <thead><tr><th style="width:34%">If the matrix…</th><th>then</th></tr></thead>
+      <tbody>
+        <tr><td>is Euclidean (negative mass &lt; 1%)</td><td>Anything goes: Ward, k-means on the PCoA axes, PCoA percentages.</td></tr>
+        <tr><td>is nearly Euclidean (1–10%)</td><td>Ward and PCoA are acceptable; the percentages are approximate.</td></tr>
+        <tr><td>is not Euclidean (≥ 10%)</td><td>Prefer UPGMA, complete linkage or PAM. If you want Ward or k-means, tick <span class="ui">Take the square root of the dissimilarity (√d)</span> on card 1 and recompute (with a loaded matrix, choose <span class="ui">Square root</span> on the <span class="ui">Supplied matrix</span> tab).</td></tr>
+        <tr><td>is not metric (violates the triangle inequality)</td><td>Hierarchical methods work (centroid and median linkage may show inversions); k-means needs coordinates: use PAM or a PCoA.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4.4 -->
+  <h2 id="s4-4"><span class="num">4.4</span>Diagnosing the matrix</h2>
+  <p class="lead">When you click <span class="ui">Compute the dissimilarity matrix →</span>, the second card appears (figure 4.4): seven summary boxes, a list of interpreted checks, the table of each object’s three nearest neighbours and the figures described in section 4.6.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b3-resultados.png" alt="Card 2 · The dissimilarity matrix">
+      <span class="marca" style="left:5%;top:15.5%">1</span>
+      <span class="marca" style="left:4%;top:59%">2</span>
+      <span class="marca" style="left:4%;top:96%">3</span>
+    </div>
+    <figcaption><b>Figure 4.4.</b> The <span class="ui">2 · The dissimilarity matrix</span> card with the Euclidean distance for the maize landraces.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>The seven boxes (table 4.4), with their traffic-light colour on the border.</li>
+    <li><span class="n">2</span>Checks (table 4.5). The first always states which data the matrix was computed from and which variables were included.</li>
+    <li><span class="n">3</span><span class="ui">Nearest neighbours of every object</span>: the neighbours table (figure 4.5), collapsed.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Table 4.4.</b> The diagnostic boxes.</caption>
+    <thead><tr><th style="width:26%">Box</th><th>What it is</th><th style="width:30%">Traffic light</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Coefficient</span></td><td>The coefficient and its parameter (order <i>p</i>, components kept, type of binary variables in Gower).</td><td>—</td></tr>
+      <tr><td><span class="ui">Objects</span></td><td>Objects and number of pairs, <i>n</i>(<i>n</i> − 1)/2.</td><td>—</td></tr>
+      <tr><td><span class="ui">Range of d</span></td><td>Minimum, maximum, mean and median of the dissimilarities.</td><td>—</td></tr>
+      <tr><td><span class="ui">Identical pairs (d = 0)</span></td><td>Pairs of objects at zero distance: duplicates or ties.</td><td>amber if they exceed 5% of the objects</td></tr>
+      <tr><td><span class="ui">Triangle inequality</span></td><td><i>holds</i> (metric) or the percentage of triples that violate it.</td><td>green if it holds, amber if not</td></tr>
+      <tr><td><span class="ui">Euclidean embeddable</span></td><td><i>yes</i>, <i>nearly</i> or <i>no</i>, with the percentage of negative mass.</td><td>green &lt; 1% · amber 1–10% · red ≥ 10%</td></tr>
+      <tr><td><span class="ui">2-D map quality</span></td><td>The stress of the PCoA map and the variance captured by its two axes.</td><td>green &lt; 0.1 · amber 0.1–0.2 · red ≥ 0.2</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 4.5.</b> Checks on the matrix and what they suggest.</caption>
+    <thead><tr><th style="width:36%">Check</th><th style="width:8%" class="c">Level</th><th>What it suggests</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Computed on…</span> / <span class="ui">Variables used</span></td><td class="c">ℹ️</td><td>Which data the matrix came from (working matrix, raw variables, binary variables, counts, the loaded matrix) and which variables were included. Check it: it is easy to compute an ecological coefficient on variables that are not counts.</td></tr>
+      <tr><td><span class="ui">N pairs of objects at distance 0</span></td><td class="c">ℹ️ ⚠️</td><td>Names the identical pairs. They will always be merged first; with many ties the order of the dendrogram becomes arbitrary.</td></tr>
+      <tr><td><span class="ui">The coefficient is not a metric</span></td><td class="c">⚠️</td><td>Percentage of triples that violate the triangle inequality, and which methods to avoid (rule in section 4.3).</td></tr>
+      <tr><td><span class="ui">Euclidean-embeddable</span> / <span class="ui">Nearly Euclidean</span> / <span class="ui">Not Euclidean-embeddable</span></td><td class="c">✅ ℹ️ ⚠️</td><td>According to the negative mass; the red warning suggests the square root.</td></tr>
+      <tr><td><span class="ui">The 2-D map is a poor summary</span></td><td class="c">⚠️</td><td>Stress ≥ 0.2: distant pairs are poorly placed on the plane. Judge similarity from the heat map and the tree, not from the map.</td></tr>
+      <tr><td><span class="ui">Wide spread of dissimilarities</span></td><td class="c">ℹ️</td><td>Coefficient of variation of the dissimilarities &gt; 0.45: some pairs are much closer than others, a good sign. Look for two peaks in the distribution figure.</td></tr>
+      <tr><td><span class="ui">All pairs are about equally dissimilar</span></td><td class="c">⚠️</td><td>Coefficient of variation &lt; 0.15: the objects are evenly spread, which happens with many dimensions or with no structure. Clusters will be fragile.</td></tr>
+      <tr><td><span class="ui">Known groups: between-group distances are N× the within-group ones</span></td><td class="c">✅ ℹ️ ⚠️</td><td>Ratio of the mean dissimilarity between known groups to that within them: &gt; 1.5, the coefficient separates the grouping well; 1.1–1.5, modestly; below that, it barely distinguishes it: try another one in the comparison.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b3-vecinos.png" alt="Nearest-neighbours table"></div>
+    <figcaption><b>Figure 4.5.</b> <span class="ui">Nearest neighbours of every object</span>: for each object, its three nearest neighbours with the dissimilarity in brackets. ACC-001 and ACC-012 are each other’s nearest neighbour (0.712): they will be the first merge in any tree.</figcaption>
+  </figure>
+
+  <div class="caja dato">
+    <div class="dato-cifra">√d</div>
+    <div class="dato-txt">
+      <div class="caja-t">Fact · the square root fixes more than it seems</div>
+      Bray–Curtis, Jaccard, Sørensen and simple matching are not Euclidean, but their square roots are. That is why card 1 has the <span class="ui">Take the square root of the dissimilarity (√d)</span> checkbox, and the <span class="ui">Supplied matrix</span> tab the <span class="ui">Square root</span> option: with a single click, a matrix that produced negative eigenvalues becomes suitable for Ward, k-means on PCoA and reliable percentages. UPGMA and complete-linkage trees are the same with <i>d</i> or with √<i>d</i>, because the square root preserves the order of the distances.
+    </div>
+  </div>
+
+  <!-- 4.5 -->
+  <h2 id="s4-5"><span class="num">4.5</span>Comparing coefficients</h2>
+  <p class="lead">How much does the choice matter for <i>your</i> data? The third card answers with numbers: tick several coefficients, and the app recomputes each matrix and correlates their pairwise dissimilarities. If all the matrices say the same thing, the choice is harmless; if not, your clusters depend on it and you should say so in your paper.</p>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b3-comparar-lista.png" alt="Card 3 · Compare candidate coefficients"></div>
+    <figcaption><b>Figure 4.6.</b> The <span class="ui">3 · Compare candidate coefficients</span> card with the maize landraces. Each checkbox carries the label of its family; the app ticks in advance the coefficient in use and the typical candidates of its family. When you click <span class="ui">Compare</span>, the paragraph interpreting the result, figure 4.7 and the correlation table appear below.</figcaption>
+  </figure>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b3-comparar-fig.png" alt="Correlation matrix between coefficients"></div>
+    <figcaption><b>Figure 4.7.</b> <span class="ui">Agreement between coefficients</span>: the Pearson correlation between the dissimilarities of each pair of coefficients (the editor lets you switch to Spearman). Euclidean and Manhattan almost coincide (0.98); Canberra and the Pearson correlation distance differ the most (0.76).</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 4.6.</b> How the app reads the comparison. The decisive correlation is the lowest one among all the pairs.</caption>
+    <thead><tr><th style="width:28%">Minimum correlation</th><th>App message and consequence</th></tr></thead>
+    <tbody>
+      <tr><td>&gt; 0.90</td><td><span class="ui">All the coefficients agree closely</span>: the choice matters little; the clusters should be stable across coefficients.</td></tr>
+      <tr><td>0.70–0.90</td><td><span class="ui">The coefficients agree moderately</span>: expect some objects to change cluster depending on the coefficient; choose on theoretical grounds (data type, double zeros, scale) and check stability in Block 6.</td></tr>
+      <tr><td>&lt; 0.70</td><td><span class="ui">The coefficients disagree substantially</span>: your clusters depend on this decision. Prefer the coefficient that matches the data type and the question, and report the comparison.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Besides the paragraph and the figure, the table <span class="ui">Pearson correlation between the pairwise dissimilarities of each coefficient</span> repeats the correlations and, if there is a known grouping, adds the column <span class="ui">Between / within (known groups)</span>: the ratio of between-group to within-group distances for each coefficient. The paragraph names the one with the highest ratio. This is a hint, not a verdict: a high ratio says that the coefficient separates <i>your</i> known groups, which are not always the clusters you want to discover.</p>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · comparing is no substitute for choosing</div>
+    <p>The comparison measures agreement, not correctness. Four coefficients can agree on an inappropriate result if they all ignore what matters (for example, four Euclidean-type coefficients on untransformed abundances). Choose first according to the nature of the data (table 4.1) and use the comparison to judge how much caution to apply when interpreting and what to report. And remember that the comparison is made with the current parameters (data source, <i>p</i>, Gower weights).</p>
+  </div>
+
+  <!-- 4.6 -->
+  <h2 id="s4-6"><span class="num">4.6</span>Settings, tables and figures of the block</h2>
+  <p>The block produces five figures of the matrix and a sixth for the comparison, all editable and exportable like those of Block 2 (table 4.7). The first four are read together: the heat map shows the whole matrix, the PCoA summarises it on a plane, the Shepard diagram tells you how far that plane can be trusted, and the distribution tells you whether close and distant pairs are clearly separated.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b3-heat.png" alt="Heat map of the dissimilarity matrix"></div>
+    <figcaption><b>Figure 4.8.</b> <span class="ui">Dissimilarity matrix as a heat map</span>: the Euclidean matrix of the 44 maize landraces with the objects in VAT order (near neighbours together), yellow = close. The colour strips repeat the known grouping; the three light blocks on the diagonal match the three regions. With 18 objects or fewer, the values are printed in the cells.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b3-mds.png" alt="Principal coordinates map"></div>
+    <figcaption><b>Figure 4.9.</b> <span class="ui">Principal coordinates (classical MDS) of the dissimilarity</span>: the best plane for the matrix, with the stress and variance in the subtitle, hulls by known group and automatic labels for up to 60 objects. With the Euclidean distance on the working matrix it coincides with the component map of Block 2; with any other coefficient it is the only way to “see” the matrix on a plane.</figcaption>
+  </figure>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · how to read the stress of the map</div>
+    <table class="compacta">
+      <thead><tr><th style="width:22%">Stress</th><th>Reading</th></tr></thead>
+      <tbody>
+        <tr><td>&lt; 0.10</td><td>The map reproduces the distances well: you can reason from it.</td></tr>
+        <tr><td>0.10–0.20</td><td>Acceptable representation; read distant pairs with caution and confirm on the heat map.</td></tr>
+        <tr><td>≥ 0.20</td><td>Poor two-dimensional representation: trust the matrix (heat map, neighbours table, tree), not the map.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">Stress is computed after linearly rescaling the map distances, because classical PCoA always shrinks them slightly; this way it measures only the distortion, not that harmless shrinkage.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b3-shepard.png" alt="Shepard diagram and distribution of dissimilarities"></div>
+    <figcaption><b>Figure 4.10.</b> On the left, the <span class="ui">Shepard diagram</span>: each point is a pair of objects, with its original dissimilarity on the horizontal axis and its distance on the map on the vertical axis; the closer the points hug the diagonal, the more faithful the map (here r² = 0.942, stress 0.171: acceptable, but distant pairs should be read with caution). On the right, the <span class="ui">Distribution of the pairwise dissimilarities</span> with its density curve, mean and median: two peaks, one of close pairs around 2 and another of distant pairs around 4.5, which is exactly what is expected when there are clusters.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b3-knn.png" alt="Nearest-neighbour network"></div>
+    <figcaption><b>Figure 4.11.</b> <span class="ui">Nearest-neighbour network</span>: on the PCoA map, each object is joined to its <i>k</i> nearest neighbours (3 by default); thick edges are mutual neighbourhoods and grey ones cross between known groups. In the maize data there are no grey edges at all: the three regions form three closed networks, which anticipates that the clusters found in Block 4 will match them.</figcaption>
+  </figure>
+
+
+  <table class="compacta">
+    <caption><b>Table 4.7.</b> The six figures of the block and their specific controls.</caption>
+    <thead><tr><th style="width:26%">Figure</th><th>What it shows</th><th style="width:38%">Specific controls</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Dissimilarity matrix as a heat map</span></td><td>The full matrix as an image (figure 4.8).</td><td><span class="ui">Object order</span> (VAT, UPGMA tree order, by known grouping, table order), <span class="ui">Colour map</span>, <span class="ui">Dark = similar</span>, <span class="ui">Show values (n ≤ 18)</span>, labels, <span class="ui">Known-group strips</span>, palette and legend.</td></tr>
+      <tr><td><span class="ui">Principal coordinates (classical MDS)</span></td><td>The PCoA map (figure 4.9).</td><td>Titles and axes, labels and their size, point size and shape, <span class="ui">Convex hulls per group</span>, colour without groups, palette and legend.</td></tr>
+      <tr><td><span class="ui">Shepard diagram</span></td><td>Faithfulness of the map (figure 4.10, left).</td><td>Title, point colour, palette.</td></tr>
+      <tr><td><span class="ui">Distribution of the pairwise dissimilarities</span></td><td>Histogram and density of the dissimilarities (figure 4.10, right).</td><td>Title, <span class="ui">Bins</span> (0 = automatic), bar and curve colour, palette.</td></tr>
+      <tr><td><span class="ui">Nearest-neighbour network</span></td><td>Network of <i>k</i> neighbours on the PCoA (figure 4.11).</td><td>Title, <span class="ui">Neighbours (k)</span> from 1 to 10, labels, point size, colour of between-group edges, palette and legend.</td></tr>
+      <tr><td><span class="ui">Agreement between coefficients</span></td><td>Correlations between coefficients (figure 4.7).</td><td>Title, <span class="ui">Use Spearman (rank) correlation</span>, <span class="ui">Colour map</span>.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · downloading the matrix</div>
+    <p><span class="ui">⬇ Download the matrix (CSV)</span> saves the full matrix with the object labels in the first row and the first column, to six decimal places. That file can be loaded back into Block 2 as a distance matrix, or taken to another program. The Block 8 report includes the boxes, the checks, the neighbours table and the figures as you edited them.</p>
+  </div>
+
+  <!-- 4.7 -->
+  <h2 id="s4-7"><span class="num">4.7</span>Step by step</h2>
+  <p class="lead">With each example from Block 2 already applied with its proposed values, Block 3 proposes a coefficient and ticks a few candidates for comparison in advance. Table 4.8 summarises what you will obtain; the exercises that follow dwell on what each case teaches.</p>
+
+  <table class="compacta">
+    <caption><b>Table 4.8.</b> The seven examples with the proposed coefficient: diagnosis and comparison.</caption>
+    <thead><tr><th style="width:17%">Example</th><th style="width:14%">Coefficient</th><th class="c" style="width:9%">Pairs</th><th class="c" style="width:13%">Euclidean (negative mass)</th><th class="c" style="width:11%">Stress</th><th class="c" style="width:10%">Between / within</th><th>Comparison: minimum <i>r</i></th></tr></thead>
+    <tbody>
+      <tr><td>Maize landraces</td><td>Euclidean</td><td class="c">946</td><td class="c">yes (0%)</td><td class="c">0.171</td><td class="c">1.94</td><td>0.76 (Canberra vs Pearson): moderate agreement</td></tr>
+      <tr><td>Species presence</td><td>Jaccard</td><td class="c">435</td><td class="c">nearly (4.7%)</td><td class="c">0.279</td><td class="c">1.60</td><td>0.94 (Dice vs simple matching): close agreement</td></tr>
+      <tr><td>Insect abundance</td><td>Bray–Curtis</td><td class="c">276</td><td class="c">nearly (4.1%)</td><td class="c">0.230</td><td class="c">1.89</td><td>0.96 (Ružička vs Morisita–Horn): close agreement</td></tr>
+      <tr><td>Soil profiles</td><td>Gower</td><td class="c">630</td><td class="c">nearly (5.1%)</td><td class="c">0.129</td><td class="c">—</td><td>0.98 (Gower vs Euclidean with indicators)</td></tr>
+      <tr><td>Distance matrix</td><td>As supplied</td><td class="c">66</td><td class="c">nearly (7.2%)</td><td class="c">0.185</td><td class="c">—</td><td>1.00 (as supplied vs square root)</td></tr>
+      <tr><td>Four simulated clusters</td><td>Euclidean</td><td class="c">3,160</td><td class="c">yes (0%)</td><td class="c">0.070</td><td class="c">4.18</td><td>0.90 (Euclidean vs Canberra): moderate agreement</td></tr>
+      <tr><td>Uniform noise</td><td>Euclidean</td><td class="c">1,770</td><td class="c">yes (0%)</td><td class="c">0.319</td><td class="c">—</td><td>0.56 (Euclidean vs Canberra): substantial disagreement</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Exercise 1 · Maize landraces: Euclidean distance and its alternatives</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the maize data applied in Block 2, click <span class="ui">Continue to similarity and distance →</span> or the <span class="ui">3 Distances</span> button on the bar. The recommendation is Euclidean; the active tab is <span class="ui">Quantitative</span> and the coefficient is <span class="ui">Euclidean</span> on the working matrix (figure 4.1).</li>
+      <li>Click <span class="ui">Compute the dissimilarity matrix →</span>. Read the boxes (figure 4.4): 946 pairs, dissimilarities from 0.712 to 7.223, no identical pairs, metric and exactly Euclidean (as expected: the Euclidean distance always is), stress 0.171 with 76% of the variance on two axes.</li>
+      <li>The checks add that the distances between regions are 1.94 times the distances within each region: the coefficient separates the known grouping well.</li>
+      <li>Open the neighbours table (figure 4.5) and scroll down through figures 4.8 to 4.11: three blocks in the heat map, three clouds in the PCoA, two peaks in the distribution and no grey edges in the network.</li>
+      <li>On the third card, leave the four candidates ticked (Euclidean, Manhattan, Canberra, Pearson) and click <span class="ui">Compare</span> (figures 4.6 and 4.7).</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>Euclidean and Manhattan are almost indistinguishable (<i>r</i> = 0.98): with standardised variables and no outliers, choosing between them is a matter of taste. The Pearson correlation distance is a different matter: it compares the <i>shape</i> of each accession’s profile (tall but with a short ear, for example) and ignores its overall level, and even so it separates the regions better (ratio 2.62 versus 1.94). With only eight variables the correlation between profiles is noisy, so the Euclidean distance remains the sensible choice; but the comparison tells you that if a reviewer asked for a “correlation distance”, the clusters would change only in part (<i>r</i> = 0.81 with the Euclidean distance).</p>
+  </div>
+
+  <h3>Exercise 2 · Species presence: Jaccard and double zeros</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the binary example applied, go to Block 3. There are only three tabs: <span class="ui">Binary (0/1)</span>, <span class="ui">Nominal / ordinal</span> and <span class="ui">Mixed (Gower)</span>, because there are no quantitative variables. The proposed coefficient is Jaccard.</li>
+      <li>Compute. Boxes: 435 pairs, dissimilarities from 0 to 1 with a mean of 0.752, <b>2 identical pairs</b> (S02 = S09 and S21 = S24: sites with exactly the same species), metric, nearly Euclidean (4.7% negative mass in 11 eigenvalues) and stress 0.279: the flat map is a poor summary.</li>
+      <li>Look at the heat map (figure 4.12): three blocks that match the habitats, with the Wetland block very sharp. The distances between habitats are 1.60 times those within them.</li>
+      <li>Compare Jaccard, Dice, simple matching and Ochiai: all correlate above 0.94; Dice and Ochiai are almost identical (<i>r</i> = 1.00).</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b3-binario-heat.png" alt="Jaccard heat map for the 30 sites"></div>
+    <figcaption><b>Figure 4.12.</b> The Jaccard matrix of the 30 sites in VAT order. Compare it with the Euclidean VAT of Block 2 (figure 3.12): with a coefficient that ignores shared absences the blocks are sharper, and the two pairs of identical sites appear as yellow cells off the diagonal.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The fact that Jaccard and simple matching correlate at 0.94 here does not contradict the double-zero theory: this table has 22 species and few shared absences between sites from different habitats. With a regional table of 200 species, in which each site has 15, simple matching would declare all sites alike (they share 170 absences) and the correlation would drop. The rule still stands: for species presence/absence, use asymmetric coefficients. And high stress (0.279) is normal with binary data: the dissimilarities take few distinct values and a plane cannot reproduce them; read the heat map and, in Block 4, the tree.</p>
+  </div>
+
+  <h3>Exercise 3 · Insect abundance: Bray–Curtis and company</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the insect data applied (Hellinger in Block 2), go to Block 3. The active tab is <span class="ui">Counts &amp; abundances</span> and the coefficient is Bray–Curtis. Pay attention to the note on the result: it is computed on the <b>raw counts</b>, not on the transformed working matrix.</li>
+      <li>Compute: 276 pairs, dissimilarities from 0.153 to 0.794, metric, nearly Euclidean (4.1%), stress 0.230 (the map is a poor summary, even though it captures 71% of the variance), and the distances between landscapes are 1.89 times those within them.</li>
+      <li>Compare Bray–Curtis, Ružička, Morisita–Horn and Hellinger (figure 4.13): close agreement, minimum correlation 0.96. Morisita–Horn gives the highest between/within ratio (3.26).</li>
+      <li>Go back to Bray–Curtis, tick <span class="ui">Take the square root of the dissimilarity (√d)</span> and compute (figure 4.14): the matrix becomes exactly Euclidean (0% negative mass) with the same order of pairs; on the other hand, the flat map gets worse (stress 0.343) and the between/within ratio drops to 1.37, because the square root compresses large differences.</li>
+      <li>Try <span class="ui">Hellinger distance</span> as the main coefficient and compute again: the matrix becomes exactly Euclidean, which opens the door to Ward and k-means in the following blocks.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b3-insectos-cmp.png" alt="Comparison of ecological coefficients"></div>
+    <figcaption><b>Figure 4.13.</b> The comparison of four ecological coefficients with the 24 insect sites: all correlations lie between 0.96 and 0.99. For these data the choice is harmless and you can make it on geometric grounds: Hellinger if you want Ward or k-means, Bray–Curtis if you are going to use UPGMA or PAM.</figcaption>
+  </figure>
+  <figure>
+    <div class="marco"><img src="../img/b3-insectos-sqrt.png" alt="Bray–Curtis with square root"></div>
+    <figcaption><b>Figure 4.14.</b> Bray–Curtis with the square root: the <span class="ui">Euclidean embeddable</span> box changes to <i>yes</i> with 0% negative mass and the note on the result adds <i>Square root taken</i>. The stress of the map rises to 0.343: the square root evens out the dissimilarities and a plane reproduces them less well, but the UPGMA and complete-linkage trees will be identical to those from the matrix without the square root.</figcaption>
+  </figure>
+
+
+  <h3>Exercise 4 · Soil profiles: Gower</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the soil data applied, go to Block 3. There are five tabs (the quantitative variables also allow derived binary variables and counts) and the active one is <span class="ui">Mixed (Gower)</span>, with asymmetric binary variables and all weights set to 1 (figure 4.3).</li>
+      <li>Compute: 630 pairs, dissimilarities from 0.038 to 0.869, metric, nearly Euclidean (5.1%), stress 0.129 with 86% of the variance on two axes; the spread check reports <span class="ui">Wide spread of dissimilarities</span> (coefficient of variation 0.52): a good sign.</li>
+      <li>Look at the PCoA (figure 4.15): with no known grouping there are no colours, but three clear clouds and one outlying profile (PR-01) can be seen.</li>
+      <li>Compare Gower with <span class="ui">Euclidean on the working matrix</span>: <i>r</i> = 0.98. With six texture categories and a single nominal variable, the indicator coding of Block 2 almost reproduces Gower.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b3-suelos-mds.png" alt="Gower PCoA map for the soil profiles"></div>
+    <figcaption><b>Figure 4.15.</b> PCoA of the Gower distance between the 36 profiles: three clouds (left, centre and right) and profile PR-01 set apart at the bottom. The first axis alone captures 76% of the positive variance.</figcaption>
+  </figure>
+  <p><b>Try it yourself:</b> open <span class="ui">Variable weights</span>, set <i>Texture</i> to 3 and compute again. The stress and the clouds change little, but the neighbours table reorganises itself by texture. Then try <span class="ui">Binary variables</span> = <span class="ui">Symmetric</span>: with a single binary variable (calcareous yes/no) the effect is small, but with a battery of markers absent from most profiles it would be large.</p>
+
+  <h3>Exercise 5 · Distance matrix: as supplied or square-rooted</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Load the genetic matrix in Block 2 and go to Block 3. There is a single tab, <span class="ui">Supplied matrix</span>, with three options: as supplied, square root and squared.</li>
+      <li>Compute with <span class="ui">As supplied</span> (figure 4.16): 66 pairs, dissimilarities from 0.15 to 0.61 with a median of 0.54 (most pairs are distant), metric, nearly Euclidean (7.2% negative mass in 4 eigenvalues), stress 0.185.</li>
+      <li>The heat map prints the values in the cells because there are 12 objects or fewer: three blocks of four cultivars, with distances of 0.15 to 0.22 within blocks and 0.5 to 0.6 between them.</li>
+      <li>Compare <span class="ui">As supplied</span> with <span class="ui">Square root</span>: <i>r</i> = 1.00. Now compute with the square root: the negative mass falls and the Euclidean diagnosis improves, without changing the order of any pair.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b3-matriz-res.png" alt="Diagnosis of the loaded genetic matrix"></div>
+    <figcaption><b>Figure 4.16.</b> The diagnosis of the genetic matrix of 12 cultivars used as supplied: metric, nearly Euclidean (7.2%) and with a map of medium quality (stress 0.185).</figcaption>
+  </figure>
+
+  <h3>Exercise 6 · Four clusters and noise: when the coefficients disagree</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Load and apply <span class="ui">Simulated · four clear clusters</span>; in Block 3 compute the Euclidean distance: 3,160 pairs, stress 0.070 (the map is faithful), coefficient of variation 0.46 and between-group distances 4.18 times the within-group ones. Compare the four candidates: minimum correlation 0.90 (Euclidean vs Canberra).</li>
+      <li>Now load and apply <span class="ui">Simulated · uniform noise</span> and compute the Euclidean distance: stress 0.319 and the poor-map warning (49% of the variance), and a distribution with a single peak (figure 4.17).</li>
+      <li>Compare the same four coefficients: the minimum correlation drops to 0.56 and the app warns <span class="ui">The coefficients disagree substantially</span>.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b3-ruido-hist.png" alt="Shepard diagram and distribution of dissimilarities for the uniform noise"></div>
+    <figcaption><b>Figure 4.17.</b> Uniform noise seen from Block 3: the Shepard diagram fans out (r² = 0.496, stress 0.319) and the distribution of dissimilarities is a single bell centred on 3.0, without the peak of close pairs that clusters produce.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>When there is real structure, reasonable coefficients agree because they all “see” the same gaps between clusters; disagreement appears only in the details. Without structure, each coefficient ranks the pairs in its own way and the matrices are weakly correlated: there is nothing to see, and each one makes up something different. That is why a comparison with low correlations is not only a warning about the choice but also a second signal (after the Hopkins statistic) that there may be no clusters. The distribution of dissimilarities confirms it: a single peak, with all pairs at similar distances.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · what to report from this block</div>
+    <p>In the methods section: the coefficient (with its parameter, if any), the data it was computed on (standardised working matrix, raw counts, declared binary variables), whether it is metric and Euclidean and, if you made a comparison, the minimum correlation between candidates. One sentence is enough: “The Bray–Curtis distance was computed on the raw abundances (metric, nearly Euclidean: 4.1% negative mass); Ružička, Morisita–Horn and Hellinger produced matrices correlated with it above 0.96.” The automatic paragraph in Block 8 writes it with your values.</p>
+  </div>
+
+  <p style="margin-top:0.25in">With the dissimilarity matrix computed and diagnosed, the next chapter uses it to build the trees: the eight linkage rules and the divisive method, cophenetic correlation, how to cut the tree, the dendrogram studio with all its drawing options, the heat map with trees and the comparison of linkages by means of tanglegrams.</p>
+</section>
+
+</body>
+</html>

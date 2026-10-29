@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User's Manual · Block 5: partitioning and advanced methods</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b5" data-pestana="B5" data-orden="6" style="--acento: var(--b5)">
+  <div class="cap-apertura">
+    <div class="cap-num">B5</div>
+    <div class="cap-etiqueta">Chapter six · Block 5 · Partitioning</div>
+    <h1 data-corto="Block 5 · Partitioning and advanced methods">Partitioning and advanced methods</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">A tree offers every partition at once; the methods in this block search for one directly. Here you will find k-means and its tree-seeded version, PAM and CLARA, fuzzy clustering, Gaussian mixtures, DBSCAN and spectral clustering: eight algorithms with different assumptions, all judged by the same silhouette and comparable with one another at the same number of clusters.</p>
+    <div class="cap-franja"><span class="k5"></span><span class="k5" style="opacity:.75"></span><span class="k5" style="opacity:.5"></span><span class="k5" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>6.1</b>k-means and its variants</li>
+      <li><b>6.2</b>PAM and CLARA</li>
+      <li><b>6.3</b>Fuzzy c-means</li>
+      <li><b>6.4</b>Gaussian mixtures</li>
+      <li><b>6.5</b>DBSCAN and spectral clustering</li>
+      <li><b>6.6</b>Coordinates versus matrix</li>
+      <li><b>6.7</b>Settings, tables and figures of the block</li>
+      <li><b>6.8</b>Comparing methods at the same k</li>
+      <li><b>6.9</b>Step by step</li>
+    </ul>
+  </div>
+
+  <p class="lead">Block 5 has three cards. In <span class="ui">1 · Choose the method</span> you choose the algorithm, the number of clusters and their parameters. <span class="ui">2 · The partition</span> shows the result with its tiles, checks, tables and figures. <span class="ui">3 · Compare methods at the same k</span> runs several algorithms with the same <i>k</i> and measures how far they agree. The theory card sums up in three lessons what each method assumes. The block becomes available as soon as Block 3 computes a matrix; if you have also built a tree in Block 4, the initial value of <i>k</i> is that of its cut.</p>
+
+  <table class="compacta">
+    <caption><b>Table 6.1.</b> The eight methods at a glance (the first lesson of the theory card).</caption>
+    <thead><tr><th style="width:20%">Method</th><th style="width:13%">Works with</th><th style="width:24%">Assumes</th><th style="width:12%">Needs <i>k</i>?</th><th>Strength</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">k-means</span></td><td>coordinates</td><td>round, Euclidean clusters of similar size</td><td>yes</td><td>Fast and well known; many starts avoid poor optima.</td></tr>
+      <tr><td><span class="ui">Hierarchical k-means</span></td><td>coordinates</td><td>as k-means</td><td>yes</td><td>Starts from the centroids of the Block 4 tree: reproducible.</td></tr>
+      <tr><td><span class="ui">PAM (k-medoids)</span></td><td>any dissimilarity</td><td>clusters around a central object</td><td>yes</td><td>Resistant to outliers; medoids are real objects; works with Gower, Bray–Curtis and Jaccard.</td></tr>
+      <tr><td><span class="ui">CLARA</span></td><td>any dissimilarity</td><td>as PAM</td><td>yes</td><td>Thousands of objects.</td></tr>
+      <tr><td><span class="ui">Fuzzy c-means</span></td><td>coordinates</td><td>as k-means, with soft boundaries</td><td>yes</td><td>Membership degrees reveal intermediate objects and gradients.</td></tr>
+      <tr><td><span class="ui">Gaussian mixture (EM + BIC)</span></td><td>coordinates</td><td>ellipsoidal Gaussian components</td><td>the BIC chooses</td><td>Probability and uncertainty for each object; the BIC chooses <i>k</i> and the shape.</td></tr>
+      <tr><td><span class="ui">DBSCAN</span></td><td>any dissimilarity</td><td>dense regions separated by empty zones</td><td>no (ε, minPts)</td><td>Arbitrary shapes; flags outliers as noise.</td></tr>
+      <tr><td><span class="ui">Spectral</span></td><td>any dissimilarity</td><td>connected neighbourhood graph</td><td>yes</td><td>Curved, nested or elongated shapes (moons, rings).</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · which method the app proposes</div>
+    <table class="compacta">
+      <thead><tr><th style="width:44%">If…</th><th>it proposes</th></tr></thead>
+      <tbody>
+        <tr><td>the input is a distance matrix</td><td>PAM: it works on the matrix and its medoids are real objects.</td></tr>
+        <tr><td>the data are mixed, nominal, binary or ordinal</td><td>PAM, for the same reason: the Block 3 coefficient is not a Euclidean distance between coordinates.</td></tr>
+        <tr><td>it is a community table</td><td>PAM on Bray–Curtis (or k-means on Hellinger-transformed data).</td></tr>
+        <tr><td>Block 2 flagged extreme outliers</td><td>PAM: medoids resist outliers better than centroids.</td></tr>
+        <tr><td>the data are quantitative and there is a tree in Block 4</td><td>Hierarchical k-means: seeded with the centroids of the cut, reproducible.</td></tr>
+        <tr><td>the data are quantitative and there is no tree</td><td>k-means (Hartigan–Wong, many starts).</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">The coordinate source is set automatically: the working matrix if the Block 3 coefficient is Euclidean (or a matrix was loaded), the PCoA axes in any other case. The initial value of <i>k</i> is the Block 4 cut, or the number of known groups, or 3.</p>
+  </div>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b5-elegir.png" alt="The 1 · Choose the method card">
+      <span class="marca" style="left:1.5%;top:14%">1</span>
+      <span class="marca" style="left:1.5%;top:54.6%">2</span>
+      <span class="marca" style="left:25.4%;top:54.6%">3</span>
+      <span class="marca" style="left:49.3%;top:54.6%">4</span>
+      <span class="marca" style="left:73.2%;top:54.6%">5</span>
+      <span class="marca" style="left:1.5%;top:81.9%">6</span>
+      <span class="marca" style="left:1.5%;top:92.8%">7</span>
+    </div>
+    <figcaption><b>Figure 6.1.</b> The <span class="ui">1 · Choose the method</span> card with the maize races and k-means selected.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Recommendation</span>: proposed method, <i>k</i> to start with and the reason (table 6.2).</li>
+    <li><span class="n">2</span><span class="ui">Method</span>, with a line summing up what the selected one does.</li>
+    <li><span class="n">3</span><span class="ui">Number of clusters k</span> (hidden with DBSCAN, and with mixtures when the BIC chooses).</li>
+    <li><span class="n">4</span><span class="ui">Coordinates</span>: only for coordinate-based methods (section 6.6).</li>
+    <li><span class="n">5</span><span class="ui">Random seed</span>: the same seed always gives the same result.</li>
+    <li><span class="n">6</span>The method's own parameters; here, those of k-means.</li>
+    <li><span class="n">7</span><span class="ui">Run →</span>.</li>
+  </ul>
+
+  <!-- 6.1 -->
+  <h2 id="s6-1"><span class="num">6.1</span>k-means and its variants</h2>
+  <p class="lead">k-means is the most widely used partitioning method. You saw how it works step by step in the demo on the home page (chapter 2); here the focus is on its variants, its parameters and what the app returns.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · what k-means minimises</div>
+    <p>k-means looks for <i>k</i> centres that minimise the <b>within-cluster sum of squares</b> (<i>W</i>): the sum, over all objects, of the squared distance to the centre of their cluster. Since the total sum of squares (<i>T</i>) does not depend on the partition, minimising <i>W</i> is equivalent to maximising the between-cluster sum, <i>B</i> = <i>T</i> − <i>W</i>. The <span class="ui">Between-SS / total-SS</span> tile gives <i>B</i>/<i>T</i>, the percentage of the variation explained by the partition.</p>
+    <p>Finding the exact minimum is impossible except with very few objects; the algorithms reach a <b>local</b> minimum that depends on where they start. That is why the run is repeated from many starts and the one with the lowest <i>W</i> is kept.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Table 6.2.</b> k-means parameters.</caption>
+    <thead><tr><th style="width:28%">Control</th><th>Options and effect</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Algorithm</span></td><td><b>Hartigan–Wong</b> (default): Lloyd iterations followed by <i>optimal-transfer</i> passes, which move an object to another cluster if that lowers <i>W</i>, even when the object is closer to its current centre; it usually gives the lowest <i>W</i>. <b>Lloyd / Forgy</b>: assigns all objects and then moves all centres, until nothing changes. <b>MacQueen</b>: updates the centre after each individual reassignment.</td></tr>
+      <tr><td><span class="ui">Random starts (nstart)</span></td><td>How many times the run is repeated from different initial centres (25 by default, up to 500). The solution with the lowest <i>W</i> is kept.</td></tr>
+      <tr><td><span class="ui">Initial centres</span></td><td><b>k-means++</b>: the first centre at random and each subsequent one with probability proportional to its squared distance to those already chosen, which spreads the centres out. <b>Random objects</b>: <i>k</i> objects at random.</td></tr>
+      <tr><td><span class="ui">Random seed</span></td><td>Fixes the random draw of starts: with the same seed the result is identical.</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>Hierarchical k-means</b> (<span class="ui">Hierarchical k-means</span>) draws nothing at random: it cuts the Block 4 tree into <i>k</i> clusters, computes their centroids and runs a single Hartigan–Wong k-means from them. It combines the best of both worlds: the partition is reproducible, like that of the tree, and is then refined to reduce <i>W</i>, which cutting a tree does not do. It requires a tree to exist; otherwise, the app warns you.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b5-resultados.png" alt="k-means tiles, checks and cluster table">
+      <span class="marca" style="left:1.5%;top:9%">1</span>
+      <span class="marca" style="left:1.5%;top:42%">2</span>
+      <span class="marca" style="left:1.5%;top:72%">3</span>
+    </div>
+    <figcaption><b>Figure 6.2.</b> The <span class="ui">2 · The partition</span> card with k-means on the maize races: silhouette 0.419, 66.4% of the variation explained, two iterations and full agreement with the tree and with the regions.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Tiles (table 6.3). They change with the method: here, those of k-means are shown.</li>
+    <li><span class="n">2</span>Interpreted checks (table 6.4).</li>
+    <li><span class="n">3</span>Cluster table with size, average silhouette, representative (centroid or medoid) and members. Below it, the cross-tabulations with the known grouping and with the tree cut.</li>
+  </ul>
+
+  <table class="compacta">
+    <caption><b>Table 6.3.</b> Partition tiles. The first four appear whenever they apply; the rest depend on the method.</caption>
+    <thead><tr><th style="width:26%">Tile</th><th>What it is</th><th style="width:27%">Traffic light</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Method</span> · <span class="ui">Clusters</span></td><td>Method and working space; number of clusters with their sizes (with DBSCAN, noise objects).</td><td>—</td></tr>
+      <tr><td><span class="ui">Average silhouette</span></td><td>Average silhouette on the Block 3 dissimilarity and how many objects have a negative silhouette. With noise, it is computed without it; with a single cluster, it is undefined.</td><td>green ≥ 0.5 · amber 0.25–0.5 · red &lt; 0.25</td></tr>
+      <tr><td><span class="ui">Between-SS / total-SS</span></td><td>Variation explained (coordinate-based methods).</td><td>green &gt; 60% · amber &gt; 40%</td></tr>
+      <tr><td><span class="ui">Iterations</span></td><td>k-means: iterations, algorithm, starts and type of initialisation.</td><td>—</td></tr>
+      <tr><td><span class="ui">Total cost</span> · <span class="ui">Best sample</span></td><td>PAM: sum of dissimilarities to the medoids, and swaps. CLARA: best sample, its size and cost.</td><td>—</td></tr>
+      <tr><td><span class="ui">Partition coefficient</span></td><td>Fuzzy c-means: partition coefficient, its normalised version and the entropy (section 6.3).</td><td>normalised: green &gt; 0.7 · amber &gt; 0.4 · red</td></tr>
+      <tr><td><span class="ui">Model</span> · <span class="ui">Mean uncertainty</span></td><td>Mixtures: chosen model and <i>k</i>, BIC and log-likelihood; mean uncertainty and objects above 0.25.</td><td>—</td></tr>
+      <tr><td><span class="ui">ε · minPts</span> · <span class="ui">Noise</span></td><td>DBSCAN: parameters and whether ε came from the knee; noise and core points.</td><td>noise: amber &gt; 30%</td></tr>
+      <tr><td><span class="ui">Affinity graph</span></td><td>Spectral: graph type, neighbours and σ.</td><td>—</td></tr>
+      <tr><td><span class="ui">ARI vs Block 4 tree</span> · <span class="ui">ARI vs known groups</span></td><td>Adjusted Rand index with the tree cut and with the known grouping.</td><td>green &gt; 0.7 · amber &gt; 0.4</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 6.4.</b> Partition checks.</caption>
+    <thead><tr><th style="width:38%">Check</th><th style="width:8%" class="c">Level</th><th>What it suggests</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Strong</span> / <span class="ui">Reasonable</span> / <span class="ui">Weak</span> / <span class="ui">No substantial structure</span></td><td class="c">✅ ✅ ⚠️ ⛔</td><td>Average silhouette ≥ 0.7, ≥ 0.5, ≥ 0.25 or lower. With a weak structure, treat the partition as exploratory and check its stability in Block 6.</td></tr>
+      <tr><td><span class="ui">Cluster N is poorly defined</span></td><td class="c">⚠️</td><td>The worst cluster has an average silhouette &lt; 0.2: it may be a superfluous cluster or a gradient split in two.</td></tr>
+      <tr><td><span class="ui">N tiny clusters</span></td><td class="c">⚠️</td><td>Clusters of fewer than 3 objects: probably outliers. PAM or DBSCAN handle them better.</td></tr>
+      <tr><td><span class="ui">Agreement with the hierarchical cut</span></td><td class="c">✅ ℹ️</td><td>With the same <i>k</i> as the tree: if ARI &gt; 0.7, two different algorithms find the same clusters; if not, the objects that switch are the ambiguous ones.</td></tr>
+      <tr><td><span class="ui">Known grouping recovered with ARI</span></td><td class="c">✅ ℹ️ ⚠️</td><td>Agreement with the known grouping (&gt; 0.7, 0.4–0.7, lower).</td></tr>
+      <tr><td><span class="ui">Coordinate method on the working matrix</span></td><td class="c">ℹ️</td><td>A coordinate-based method on the working matrix when Block 3 used another coefficient: choose the PCoA axes or compare with PAM (section 6.6).</td></tr>
+      <tr><td><span class="ui">The silhouette ignores the noise objects</span></td><td class="c">ℹ️</td><td>DBSCAN with more than 20% noise: the silhouette describes only the dense cores.</td></tr>
+      <tr><td><span class="ui">More than 30 % of the objects are noise</span> · <span class="ui">A single dense cluster</span></td><td class="c">⚠️ ℹ️</td><td>DBSCAN: increase ε or decrease minPts; or decrease ε to split the single cluster.</td></tr>
+      <tr><td><span class="ui">Very fuzzy partition</span></td><td class="c">⚠️</td><td>Normalised partition coefficient &lt; 0.4: the clusters overlap heavily or <i>m</i> is too large (try 1.5).</td></tr>
+      <tr><td><span class="ui">BIC chose … with k = …</span></td><td class="c">ℹ️</td><td>How many fits were compared and which model won; prefer the simplest one whose BIC is within a few units of the best.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-mapa.png" alt="k-means cluster map"></div>
+    <figcaption><b>Figure 6.3.</b> k-means <span class="ui">Cluster map</span> with the maize data: the objects on the first two components, coloured by cluster, with the 95% concentration ellipse of each cluster, its centroid (diamond) and the shape of each point given by the known region. The three clusters match the three shapes.</figcaption>
+  </figure>
+
+  <!-- 6.2 -->
+  <h2 id="s6-2"><span class="num">6.2</span>PAM and CLARA</h2>
+  <p class="lead">PAM (<i>partitioning around medoids</i>) is k-means with two decisive changes: the centre of each cluster is a <b>real object</b>, the medoid, and what is minimised is the sum of <b>dissimilarities</b>, not of squares. That is why it accepts any Block 3 matrix and why an outlier carries much less weight.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · BUILD and SWAP</div>
+    <p>PAM works in two phases. <b>BUILD</b> chooses a first medoid, the object with the smallest sum of dissimilarities to all others, and then adds, one at a time, the object that most reduces the total cost. <b>SWAP</b> tries exchanging each medoid for each non-medoid object, applies the swap that lowers the cost the most and repeats until no swap brings an improvement. Finally, each object is assigned to the nearest medoid. The <span class="ui">Total cost</span> tile gives that cost and how many swaps were needed; with clear clusters, BUILD usually gets it right and SWAP changes nothing.</p>
+    <p><b>CLARA</b> applies PAM to several random samples of the data set (5 by default, of 40 + 2<i>k</i> objects each) and assigns all objects to the medoids of each sample; it keeps the medoids with the lowest total cost. It makes it possible to work with thousands of objects; with few, the sample covers them all and CLARA coincides with PAM.</p>
+  </div>
+
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b5-pam-mapa.png" alt="PAM map with medoids"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b5-pam-sil.png" alt="PAM silhouette"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figure 6.4.</b> PAM with the maize data. On the left, the map with the medoids shown as rings (ACC-034, ACC-012 and ACC-021). On the right, the silhouette: ACC-029, a valley accession, ends up in the coastal cluster and is the only negative bar (−0.052). The rest of the partition matches k-means; that is why the ARI with the regions is 0.929 and not 1.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 6.5.</b> PAM and CLARA parameters.</caption>
+    <thead><tr><th style="width:30%">Control</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td>PAM</td><td>Only <i>k</i>. It is deterministic (it uses no seed). Limit in the app: 800 objects; above that, use CLARA.</td></tr>
+      <tr><td><span class="ui">Samples</span> (CLARA)</td><td>Number of samples (1 to 50). The more samples, the more likely it is to find good medoids.</td></tr>
+      <tr><td><span class="ui">Sample size</span> (CLARA)</td><td>Objects per sample; 0 = 40 + 2<i>k</i>. If it is larger than <i>n</i>, all objects are used.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 6.3 -->
+  <h2 id="s6-3"><span class="num">6.3</span>Fuzzy c-means</h2>
+  <p class="lead">In the partitions above, each object belongs to a single cluster. Fuzzy c-means, by contrast, gives it a <b>membership degree</b> in each cluster, between 0 and 1, summing to 1 for each object. An object with 0.95 in one cluster is typical; one with 0.47, 0.30 and 0.23 lies between clusters.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the fuzzifier m and the partition coefficient</div>
+    <p>Like k-means, the algorithm alternates two steps: it computes the memberships of each object from its relative distance to the centres, and moves each centre to the mean of all objects weighted by their membership raised to the power <i>m</i>. The <b>fuzzifier</b> <i>m</i> controls how soft the boundaries are: with <i>m</i> close to 1, memberships approach 0 or 1 (almost k-means); with <i>m</i> = 2, the usual value, they are clearly gradual; with larger <i>m</i>, everything tends towards 1/<i>k</i>. The “hard” partition shown by the map and the silhouette assigns each object to its maximum membership.</p>
+    <p>Dunn's <b>partition coefficient</b> is the average of the sum of squared memberships: it equals 1 if all of them are 0 or 1, and 1/<i>k</i> if all are equal. The <b>normalised</b> version, (<i>k</i>·PC − 1)/(<i>k</i> − 1), ranges from 0 to 1 whatever the value of <i>k</i>. The <b>partition entropy</b> measures the same thing the other way round: 0 is crisp.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-fcm.png" alt="Heat map of fuzzy memberships"></div>
+    <figcaption><b>Figure 6.5.</b> <span class="ui">Membership degrees</span> with the maize data (<i>m</i> = 2): one row per object, sorted by cluster and by membership, and one column per cluster. The partition matches k-means, but the normalised coefficient is only 0.429: the maximum memberships range from 0.93 to 0.47. The rows at the bottom of each block are the intermediate objects: ACC-002, ACC-023, ACC-032 and ACC-029 (0.47, the same one that PAM left with a negative silhouette).</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 6.6.</b> Parameters and outputs specific to fuzzy c-means.</caption>
+    <thead><tr><th style="width:30%">Element</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Fuzzifier m</span></td><td>From 1.1 to 5; 2 by default. The closer to 1, the crisper.</td></tr>
+      <tr><td>Map with <span class="ui">Fade uncertain objects</span></td><td>The opacity of each point follows its maximum membership: intermediate objects, at the edges of the ellipses, appear faded.</td></tr>
+      <tr><td><span class="ui">⬇ Cluster membership (CSV)</span></td><td>Adds one column per cluster, <i>u_C1</i>, <i>u_C2</i>…, in addition to the assigned cluster and the silhouette.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 6.4 -->
+  <h2 id="s6-4"><span class="num">6.4</span>Gaussian mixtures</h2>
+  <p class="lead">Model-based clustering assumes that the data come from a mixture of multivariate normal distributions, one per cluster, each with its own mean, covariance matrix and proportion. Fitting the mixture gives each object a <b>probability</b> of belonging to each component and makes it possible to choose <i>k</i> and the shape of the clusters with a statistical criterion, the BIC.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · EM and BIC</div>
+    <p>The <b>EM</b> algorithm starts from a k-means solution and alternates two steps: the E step computes, with the current parameters, the posterior probability of each object in each component; the M step re-estimates means, covariances and proportions, weighting by those probabilities. Each round increases the likelihood, until it stops changing. The <b>uncertainty</b> of an object is 1 minus its maximum probability.</p>
+    <p>The <b>BIC</b> used by the app is 2·log-likelihood − (number of parameters)·log <i>n</i>: <b>higher is better</b>. It rewards fit and penalises complexity, so a model with free covariances only wins if it improves the likelihood substantially. A component with fewer objects than it needs to estimate its covariance (fewer than <i>p</i> + 2 in VVV, 3 in VVI, 2 in the others) is considered degenerate and the fit is rejected.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-gmm-panel.png" alt="Gaussian mixture parameters"></div>
+    <figcaption><b>Figure 6.6.</b> The mixture parameters: <span class="ui">Number of components</span> (let the BIC choose between 2 and <span class="ui">k max for BIC</span>, or a fixed <i>k</i>) and the five covariance models, of which VII, VVI and VVV are ticked by default.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 6.7.</b> The five covariance models. The first letter refers to volume, the second to shape and the third to orientation: E = equal across clusters, V = variable, I = identity (spherical or aligned with the axes).</caption>
+    <thead><tr><th style="width:12%">Model</th><th style="width:30%">In the app</th><th>Shape of the clusters</th><th class="c" style="width:22%">Covariance parameters</th></tr></thead>
+    <tbody>
+      <tr><td>EII</td><td><span class="ui">spherical, equal volume</span></td><td>Spheres of the same size (what k-means assumes).</td><td class="c">1</td></tr>
+      <tr><td>VII</td><td><span class="ui">spherical, varying volume</span></td><td>Spheres of different sizes.</td><td class="c"><i>k</i></td></tr>
+      <tr><td>VVI</td><td><span class="ui">diagonal, varying</span></td><td>Axis-aligned ellipsoids of free shape and size.</td><td class="c"><i>k</i>·<i>p</i></td></tr>
+      <tr><td>EEE</td><td><span class="ui">ellipsoidal, equal shape &amp; orientation</span></td><td>Rotated ellipsoids, all identical.</td><td class="c"><i>p</i>(<i>p</i> + 1)/2</td></tr>
+      <tr><td>VVV</td><td><span class="ui">ellipsoidal, all varying</span></td><td>Ellipsoids free in every respect.</td><td class="c"><i>k</i>·<i>p</i>(<i>p</i> + 1)/2</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-gmm-bic.png" alt="BIC profile by number of components and model"></div>
+    <figcaption><b>Figure 6.7.</b> <span class="ui">BIC by number of components and model</span> with the maize data (8 variables, 44 objects). The best is VII with <i>k</i> = 4 (BIC −798.7), only just above VII with <i>k</i> = 3 (−809.7). VVV, with 36 covariance parameters per component, could only be fitted with 2 and 3 components and falls far below; with more components the clusters are too small and the app rejects the fit.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · the BIC does not know your groups</div>
+    <p>With the maize data, the BIC prefers four components: it splits the valley accessions into a cluster of 10 and another of 5 (ARI with the regions 0.873). This is not an error: with spherical components, a somewhat elongated cluster is better described by two spheres. Eleven BIC units between <i>k</i> = 3 and <i>k</i> = 4 is a small difference. The rule of thumb from the check applies here: prefer the simplest model whose BIC is within a few units of the best, and let Block 6 decide <i>k</i> with more criteria. To see the three-component solution, choose <span class="ui">Fixed k</span> with <i>k</i> = 3.</p>
+  </div>
+
+  <!-- 6.5 -->
+  <h2 id="s6-5"><span class="num">6.5</span>DBSCAN and spectral clustering</h2>
+  <p class="lead">The two remaining methods do not assume round clusters. DBSCAN defines them by density and leaves out, as noise, whatever is not dense. Spectral clustering defines them by connectivity in a neighbour graph. Both work on the matrix.</p>
+
+  <figure>
+    <svg viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg" font-family="Jost, sans-serif" role="img" aria-label="Core, border and noise points in DBSCAN">
+      <g>
+        <circle cx="150" cy="105" r="46" fill="#d9701f" fill-opacity="0.08" stroke="#d9701f" stroke-dasharray="4 3"/>
+        <line x1="150" y1="105" x2="196" y2="105" stroke="#d9701f" stroke-width="1.4"/>
+        <text x="173" y="99" text-anchor="middle" font-size="12" fill="#d9701f" font-weight="600">ε</text>
+        <g fill="#4f46a5"><circle cx="150" cy="105" r="6"/><circle cx="128" cy="90" r="6"/><circle cx="170" cy="82" r="6"/><circle cx="134" cy="128" r="6"/><circle cx="166" cy="124" r="6"/><circle cx="108" cy="112" r="6"/><circle cx="92" cy="86" r="6"/><circle cx="112" cy="66" r="6"/></g>
+        <circle cx="214" cy="118" r="6" fill="#e0803c"/>
+        <circle cx="244" cy="80" r="0" />
+        <g stroke="#8a8aa0" stroke-width="2.2"><path d="M272 52 l10 10 M282 52 l-10 10"/><path d="M58 170 l10 10 M68 170 l-10 10"/></g>
+        <text x="150" y="195" text-anchor="middle" font-size="10" fill="#5d6472">minPts = 4 (the point itself counts)</text>
+      </g>
+      <g font-size="11" fill="#22252c">
+        <circle cx="340" cy="50" r="6" fill="#4f46a5"/><text x="356" y="54"><tspan font-weight="600">Core</tspan>: at least minPts objects at distance ≤ ε. Forms the cluster.</text>
+        <circle cx="340" cy="92" r="6" fill="#e0803c"/><text x="356" y="96"><tspan font-weight="600">Border</tspan>: not a core point, but within ≤ ε of one. Joins its cluster.</text>
+        <path d="M335 128 l10 10 M345 128 l-10 10" stroke="#8a8aa0" stroke-width="2.2"/><text x="356" y="138"><tspan font-weight="600">Noise</tspan>: neither a core point nor near one. Left unassigned (0).</text>
+        <text x="340" y="178" fill="#5d6472" font-size="10">Core points within ≤ ε of each other are chained into the same cluster;</text>
+        <text x="340" y="192" fill="#5d6472" font-size="10">the number of clusters comes from the data and is not fixed in advance.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 6.8.</b> The three types of object in DBSCAN. Two parameters suffice: the radius ε and the minimum number of objects, minPts, that must lie within that radius for an object to be a core point.</figcaption>
+  </figure>
+
+  <h3>Choosing ε with the neighbour plot</h3>
+  <p>With <span class="ui">ε</span> set to 0, the app chooses it automatically. For each object it computes the distance to its (minPts − 1)-th neighbour, sorts those distances in decreasing order and looks for the <b>knee</b>: the point on the curve farthest from the straight line joining its ends. Objects whose distance lies above ε are not core points; they may end up as border points or as noise. The rule of thumb for minPts is the number of dimensions plus one, and at least 4.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-dbscan-knn.png" alt="Plot of distances to the k-th nearest neighbour"></div>
+    <figcaption><b>Figure 6.9.</b> <span class="ui">k-NN distance plot (choosing ε)</span> with the maize data and minPts = 4: distance from each accession to its third neighbour, sorted. The knee gives ε = 2.045. Only three accessions lie above the line; since they are close to core points, they join as border points, and DBSCAN recovers the three regions with no noise (ARI 1.000, 41 core points).</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · ε returns to 0 when the data change</div>
+    <p>After running DBSCAN, the ε field shows the value chosen by the knee. If you then compute another matrix in Block 3 or load other data, the field returns to 0 so that the knee is recalculated: an ε intended for a different scale of distances would make no sense. If you want a fixed ε, type it in after computing the matrix.</p>
+  </div>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · spectral clustering</div>
+    <p>Spectral clustering turns the matrix into a <b>graph</b>: each object is linked to its nearest neighbours (7 by default) with a Gaussian weight that decreases with distance, exp(−<i>d</i>²/2σ²), where σ is by default the median of the distances to those neighbours. It then normalises the graph, takes the first <i>k</i> eigenvectors, which summarise how it is connected, and runs k-means on them. Two objects that are far apart in a straight line but linked by a chain of neighbours end up together, which is why it recovers moons and rings that k-means breaks apart. The controls are <span class="ui">Affinity graph</span> (<i>k</i>-nearest-neighbour graph or fully connected), <span class="ui">Neighbours</span> and <span class="ui">Kernel width σ</span>. In the app it accepts up to 500 objects.</p>
+  </div>
+
+  <!-- 6.6 -->
+  <h2 id="s6-6"><span class="num">6.6</span>Coordinates versus matrix</h2>
+  <p class="lead">k-means, hierarchical k-means, fuzzy c-means and Gaussian mixtures need <b>coordinates</b>: they compute means of objects. PAM, CLARA, DBSCAN and spectral clustering use the <b>matrix</b> directly. The <span class="ui">Coordinates</span> menu decides where the coordinates come from when they are needed.</p>
+
+  <table class="compacta">
+    <caption><b>Table 6.8.</b> The two coordinate sources.</caption>
+    <thead><tr><th style="width:28%">Source</th><th>What it is</th><th style="width:30%">Use it when</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Working matrix (Block 2)</span></td><td>The working matrix: transformed and scaled variables, with indicator columns for the nominal ones.</td><td>The Block 3 coefficient is the Euclidean distance on those variables.</td></tr>
+      <tr><td><span class="ui">PCoA axes of the Block 3 dissimilarity</span></td><td>All the positive axes of the principal coordinates analysis of the matrix: Euclidean coordinates that reproduce the dissimilarity as closely as possible.</td><td>The coefficient is another one (Bray–Curtis, Jaccard, Gower…): this way the coordinate-based method respects the chosen dissimilarity.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-insectos-mapa.png" alt="k-means on the PCoA axes of Bray–Curtis"></div>
+    <figcaption><b>Figure 6.10.</b> k-means on the PCoA axes of Bray–Curtis with the 24 insect sites: it recovers the three landscapes exactly (8 / 8 / 8, ARI 1.000) with 15 positive axes. The map shows the first two; the ellipse of the conventional-field cluster, which is very elongated, is clipped at the edge of the plot.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · the silhouette is always computed on the Block 3 matrix</div>
+    <p>Whatever the method and the coordinate source, the silhouette is measured with the Block 3 dissimilarity. In this way all methods are judged by the same yardstick and the comparison in card 3 is fair. The <span class="ui">Between-SS / total-SS</span> tile, on the other hand, is computed in the coordinate space used by the method, so it is not comparable across different sources.</p>
+  </div>
+
+  <!-- 6.7 -->
+  <h2 id="s6-7"><span class="num">6.7</span>Settings, tables and figures of the block</h2>
+  <p>The block produces up to five figures, all editable and exportable. The map, the silhouette and the sizes appear with any method; the membership map, with fuzzy c-means and mixtures; the neighbour plot, with DBSCAN; the BIC profile, with mixtures when several fits are compared.</p>
+
+  <table class="compacta">
+    <caption><b>Table 6.9.</b> The figures of the block and their own controls.</caption>
+    <thead><tr><th style="width:26%">Figure</th><th style="width:28%">What it shows</th><th>Specific controls</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cluster map</span></td><td>The objects on two axes, by cluster (figures 6.3, 6.4 and 6.10).</td><td><span class="ui">Cluster region</span> (95% ellipse, convex hull or none) and its opacity; <span class="ui">Centres</span> (centroid ◆, medoid as a ring, or none); cluster numbers; labels (automatic up to 60); point size and shape; <span class="ui">Shape by known group</span>; <span class="ui">Fade uncertain objects</span>; noise colour; palette and legend.</td></tr>
+      <tr><td><span class="ui">Silhouette plot</span></td><td>One bar per object, sorted within each cluster, with the mean in red and the summary by cluster on the right (figure 6.4).</td><td><span class="ui">Object labels (n ≤ 80)</span>, colour of the mean line, palette.</td></tr>
+      <tr><td><span class="ui">Cluster sizes</span></td><td>Objects per cluster with their average silhouette; noise in grey.</td><td>Noise colour, palette.</td></tr>
+      <tr><td><span class="ui">Membership degrees</span> / <span class="ui">Posterior membership probabilities</span></td><td>Memberships or probabilities by object and cluster (figure 6.5).</td><td><span class="ui">Colour map</span>, labels (up to 80), palette.</td></tr>
+      <tr><td><span class="ui">k-NN distance plot</span></td><td>Distances to the (minPts − 1)-th neighbour, sorted, with ε and the knee (figure 6.9).</td><td>Title, palette.</td></tr>
+      <tr><td><span class="ui">BIC by number of components and model</span></td><td>BIC of each fit, with the best one marked (figure 6.7).</td><td>Palette and legend.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · reading the silhouette plot</div>
+    <p>For each object, <i>a</i> is its mean dissimilarity to the other members of its cluster and <i>b</i> its mean dissimilarity to the nearest neighbouring cluster; its silhouette is (<i>b</i> − <i>a</i>)/max(<i>a</i>, <i>b</i>). A long bar to the right is a well-placed object; a bar close to zero, an object on the boundary; a bar to the left, an object that would be better off in the neighbouring cluster. A cluster of short, even bars is a diffuse cluster; a cluster with a few negative bars at the end has misassigned members. The thresholds for the mean are those of section 1.9: 0.7 strong, 0.5 reasonable, 0.25 weak.</p>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · what goes into the report and the download</div>
+    <p><span class="ui">⬇ Cluster membership (CSV)</span> saves, for each object, its label, the known grouping if there is one, the assigned cluster (0 = noise), the memberships or probabilities if the method provides them, and the silhouette. The partition from this block is the one used by Block 6, to validate it, and by Block 7, to describe the clusters; the Block 8 report includes its tiles, tables and figures exactly as you edited them.</p>
+  </div>
+
+  <!-- 6.8 -->
+  <h2 id="s6-8"><span class="num">6.8</span>Comparing methods at the same k</h2>
+  <p class="lead">The third card runs the ticked methods with the <i>k</i> from card 1 and measures their agreement with the adjusted Rand index. DBSCAN does not take part because it chooses its own number of clusters; the Block 4 tree cut, on the other hand, can be included. The cut, k-means, PAM, fuzzy c-means and the Gaussian mixture are ticked by default.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b5-comparar-tabla.png" alt="Method comparison table"></div>
+    <figcaption><b>Figure 6.11.</b> The comparison with the maize data at <i>k</i> = 3: four of the five methods give the same partition (silhouette 0.419, 66.4%); PAM differs by one accession (ACC-029). The paragraph concludes that the clusters are robust to the algorithm.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 6.10.</b> Columns of the comparison and how the app summarises it.</caption>
+    <thead><tr><th style="width:30%">Element</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Mean silhouette</span> · <span class="ui">s &lt; 0</span></td><td>Average silhouette on the Block 3 matrix and objects with a negative silhouette.</td></tr>
+      <tr><td><span class="ui">BSS / TSS</span></td><td>Variation explained, in the coordinate space chosen in card 1.</td></tr>
+      <tr><td><span class="ui">Cluster sizes</span></td><td>Cluster sizes.</td></tr>
+      <tr><td><span class="ui">Mean ARI with the others</span></td><td>Average ARI with the other methods: the highest is the most “central”.</td></tr>
+      <tr><td><span class="ui">ARI vs known groups</span></td><td>Agreement with the known grouping, if there is one.</td></tr>
+      <tr><td>Paragraph</td><td>Names the method with the highest silhouette and reads the minimum pairwise ARI: &gt; 0.8, <span class="ui">All methods essentially agree</span> (clusters robust to the algorithm); 0.5–0.8, <span class="ui">Moderate agreement</span> (a stable core, with the rest depending on the method); lower, <span class="ui">Methods disagree</span> (the partition is not robust: review <i>k</i> in Block 6 or the methods' assumptions).</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · in the comparison the parameters are fixed</div>
+    <p>To keep the comparison fast and reproducible, each method is run with standard values, not with those of card 1: k-means with 10 starts and k-means++, hierarchical k-means from the cut, PAM and CLARA with their default values, fuzzy c-means with <i>m</i> = 2, the mixture with fixed <i>k</i> and the VVI and VVV models, and spectral clustering with 7 neighbours. All of them use the seed and the coordinate source from card 1. That is why the mixture gives three clusters here, even though the BIC preferred four.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-comparar-fig.png" alt="Agreement matrix between methods"></div>
+    <figcaption><b>Figure 6.12.</b> <span class="ui">Agreement between methods</span>: the ARI between each pair of partitions. With the maize data everything is yellow except the PAM row and column (0.93).</figcaption>
+  </figure>
+
+  <!-- 6.9 -->
+  <h2 id="s6-9"><span class="num">6.9</span>Step by step</h2>
+  <p class="lead">With each example prepared in Blocks 2 to 4 using the proposed values (UPGMA in the binary and insect examples, as in chapter 5), table 6.11 summarises the method that Block 5 proposes and other runs that teach something. The exercises go through each case in detail.</p>
+
+  <table class="compacta">
+    <caption><b>Table 6.11.</b> The seven examples in Block 5.</caption>
+    <thead><tr><th style="width:15%">Example</th><th style="width:22%">Method</th><th class="c" style="width:8%"><i>k</i></th><th class="c" style="width:10%">Silhouette</th><th class="c" style="width:12%">ARI groups</th><th>Remark</th></tr></thead>
+    <tbody>
+      <tr><td>Maize races</td><td>Hierarchical k-means*</td><td class="c">3</td><td class="c">0.419</td><td class="c">1.000</td><td>Same as k-means, fuzzy, DBSCAN and spectral.</td></tr>
+      <tr><td></td><td>PAM</td><td class="c">3</td><td class="c">0.415</td><td class="c">0.929</td><td>ACC-029 with a negative silhouette.</td></tr>
+      <tr><td></td><td>Mixture (BIC)</td><td class="c">4</td><td class="c">0.387</td><td class="c">0.873</td><td>VII splits the valleys into 10 and 5.</td></tr>
+      <tr><td>Species presence</td><td>PAM*</td><td class="c">3</td><td class="c">0.334</td><td class="c">1.000</td><td>Places site S05 better than the tree.</td></tr>
+      <tr><td></td><td>DBSCAN</td><td class="c">2</td><td class="c">0.551</td><td class="c">0.462</td><td>57% noise; the silhouette sees only the cores.</td></tr>
+      <tr><td>Insect abundance</td><td>PAM*</td><td class="c">3</td><td class="c">0.294</td><td class="c">0.610</td><td>4 / 8 / 12: splits the organic fields.</td></tr>
+      <tr><td></td><td>k-means on PCoA</td><td class="c">3</td><td class="c">0.288</td><td class="c">1.000</td><td>8 / 8 / 8: the three landscapes.</td></tr>
+      <tr><td>Soil profiles</td><td>PAM*</td><td class="c">2</td><td class="c">0.575</td><td class="c">—</td><td>Same as the tree; fuzzy and mixture move one profile.</td></tr>
+      <tr><td>Distance matrix</td><td>PAM*</td><td class="c">3</td><td class="c">0.665</td><td class="c">—</td><td>DBSCAN (minPts 3) leaves Olotillo as noise.</td></tr>
+      <tr><td>Four simulated clusters</td><td>Hierarchical k-means*</td><td class="c">4</td><td class="c">0.714</td><td class="c">1.000</td><td>Strong structure; DBSCAN with no noise.</td></tr>
+      <tr><td>Uniform noise</td><td>Hierarchical k-means*</td><td class="c">3</td><td class="c">0.174</td><td class="c">—</td><td>Red warning; the methods disagree (minimum ARI 0.19).</td></tr>
+    </tbody>
+  </table>
+  <p class="small">* Method proposed by the app. With a tree in Block 4 and quantitative data it proposes hierarchical k-means, which in these three examples gives the same partition as k-means.</p>
+
+  <h3>Exercise 1 · Maize races: eight methods, one answer</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the maize data and the Ward.D2 tree cut into three clusters, go to Block 5. The recommendation is hierarchical k-means with <i>k</i> = 3 on the working matrix. Click <span class="ui">Run →</span>: silhouette 0.419, 66.4% explained, one iteration, ARI 1.000 with the tree and with the regions.</li>
+      <li>Switch to <span class="ui">k-means</span> and run it (figures 6.2 and 6.3): the same partition, in two iterations with 25 starts.</li>
+      <li>Run <span class="ui">PAM (k-medoids)</span> and <span class="ui">CLARA</span> (figure 6.4): 16 / 14 / 14, silhouette 0.415, with ACC-029 in the coastal cluster. CLARA gives exactly the same result: with 44 objects, its sample of 46 covers them all.</li>
+      <li>Run <span class="ui">Fuzzy c-means</span> (figure 6.5), <span class="ui">DBSCAN</span> (figure 6.9) and <span class="ui">Spectral</span>: all three reproduce the regions.</li>
+      <li>Run <span class="ui">Gaussian mixture (EM + BIC)</span> (figure 6.7): the BIC chooses VII with four components.</li>
+      <li>Go back to k-means and click <span class="ui">Compare</span> (figures 6.11 and 6.12).</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>When the structure is clear, algorithms with very different assumptions (centroids, medoids, memberships, density, graphs) arrive at the same place, and that agreement is the best evidence that the clusters are real. What changes are the <b>details</b>, and they are informative: PAM, fuzzy c-means and the silhouette point to the same doubtful accession, ACC-029, and the Gaussian mixture suggests that the valley cluster has substructure. None of this changes the main conclusion, but these are the objects worth reviewing in the original data. And the “weak” silhouette of 0.42 coexists with perfect agreement: three clusters that touch can be very stable.</p>
+  </div>
+
+  <h3>Exercise 2 · Species presence: PAM, k-means on PCoA and DBSCAN</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Jaccard and the UPGMA tree, the app proposes PAM. Run it: 10 / 10 / 10, silhouette 0.334, ARI 1.000 with the habitats and 0.898 with the tree. PAM places in the forest cluster site S05, which the UPGMA tree left with the grasslands (chapter 5).</li>
+      <li>Switch to k-means with the <span class="ui">Working matrix</span> source: the same partition, but the <span class="ui">Coordinate method on the working matrix</span> check appears. Switch to <span class="ui">PCoA axes</span>: the same partition, and the warning disappears.</li>
+      <li>Run <span class="ui">DBSCAN</span> with the automatic values (figures 6.13 and 6.14): ε = 0.4, two clusters (4 grasslands and 9 wetlands) and 17 noise objects (57%). The silhouette rises to 0.551.</li>
+      <li>Run the Gaussian mixture on the PCoA axes: the BIC chooses VVI with two components, wetlands versus everything else (ARI 0.554).</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b5-binario-dbscan.png" alt="DBSCAN on Jaccard with a lot of noise"></div>
+    <figcaption><b>Figure 6.13.</b> DBSCAN on Jaccard: a “reasonable” silhouette of 0.551 computed on only 13 sites, with the warnings that it ignores the noise and that more than 30% of the objects were left out. The forests, more heterogeneous in their composition, do not reach the density of a core and all end up as noise.</figcaption>
+  </figure>
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-binario-dbscan-mapa.png" alt="DBSCAN map with noise"></div>
+    <figcaption><b>Figure 6.14.</b> The DBSCAN map: noise is drawn as grey crosses. Only the wetlands (on the left) and a core of four grasslands form dense clusters.</figcaption>
+  </figure>
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · do not compare silhouettes with and without noise</div>
+    <p>DBSCAN can “improve” the silhouette simply by leaving out the difficult objects. A silhouette of 0.551 on 13 objects is not better than one of 0.334 on all 30. To compare methods, use card 3, which runs every method on all the objects (which is precisely why DBSCAN is excluded), or compare the ARI with a reference. DBSCAN is valuable here for a different reason: it tells you that the forests do not form a compact core in terms of floristic composition.</p>
+  </div>
+
+  <h3>Exercise 3 · Insect abundance: the matrix and its coordinates</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Bray–Curtis and the UPGMA tree, the app proposes PAM. Run it: 4 / 8 / 12, silhouette 0.294, ARI 0.610 with the landscapes. A cluster of four organic fields (P02, P04, P06, P08) separates; the other four fall in with the hedgerows.</li>
+      <li>Switch to k-means with <span class="ui">PCoA axes</span> (figure 6.10): 8 / 8 / 8, ARI 1.000, silhouette 0.288 and the warning <span class="ui">Cluster 2 is poorly defined</span> (0.19) on the organic fields.</li>
+      <li>Run fuzzy c-means with the same source: the same partition, but a normalised coefficient of 0.292 and the <span class="ui">Very fuzzy partition</span> warning.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The two partitions have almost the same silhouette and describe different things. PAM, which minimises dissimilarities to real objects, recognises that the organic fields are heterogeneous: half of them resemble the hedgerows. k-means on the PCoA, which minimises squares, prefers three clusters of equal size and recovers the landscapes, but the silhouette and the fuzzy memberships warn that the organic-field cluster is the least well defined. With community tables, both routes are legitimate; the difference between them is an ecological result worth reporting.</p>
+  </div>
+
+  <h3>Exercise 4 · Soil profiles: medoids that are real profiles</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Gower and the UPGMA tree cut into two clusters, run PAM (proposed): 24 / 12, silhouette 0.575 (“reasonable”), the same as the tree (ARI 1.000). The medoids are PR-17 and PR-11 (figure 6.15).</li>
+      <li>Run fuzzy c-means on <span class="ui">PCoA axes</span> (20 positive axes): PR-20 moves to the small cluster (13 / 23), normalised coefficient 0.592.</li>
+      <li>Run the Gaussian mixture with the same source: the BIC chooses VVI with two components, and this time it is PR-01 that changes (11 / 25), with two negative silhouettes.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-suelos-pam.png" alt="PAM map on Gower"></div>
+    <figcaption><b>Figure 6.15.</b> PAM on Gower with the 36 profiles. The rings mark the medoids: PR-17 represents the large cluster and PR-11 the small one. Since they are real profiles, you can describe each soil type with the values of its medoid. PR-01, at the bottom right, is the profile that the Gaussian mixture moves to the other cluster.</figcaption>
+  </figure>
+
+  <h3>Exercise 5 · Genetic matrix: the cultivar that DBSCAN leaves out</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the matrix of 12 cultivars and the UPGMA tree in three clusters, the recommendation is PAM because the matrix is used as is. Run it: 4 / 4 / 4, silhouette 0.665, the same as the tree. Medoids: Elotero, Tabloncillo and Azul.</li>
+      <li>Switch to DBSCAN and lower <span class="ui">minPts</span> to 3 (with 12 objects, 4 is demanding): ε = 0.18, three clusters and one noise object, Olotillo (figure 6.16). ARI with the tree 0.879.</li>
+    </ol>
+  </div>
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-matriz-dbscan.png" alt="DBSCAN on the genetic matrix"></div>
+    <figcaption><b>Figure 6.16.</b> DBSCAN on the genetic matrix. The four cultivars in each cluster are so close together in the PCoA that their labels overlap; Olotillo (cross) has no cultivar at 0.18 or less: its distances to the other three in its cluster are 0.19, 0.20 and 0.21. It is left out by a few hundredths, neither a core nor a border point.</figcaption>
+  </figure>
+
+  <h3>Exercise 6 · Four clusters and noise: when the silhouette leaves no doubt</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the four simulated clusters, run k-means with <i>k</i> = 4: silhouette 0.714 (“strong”), 92.5% explained, four clusters of 20 (figure 6.17). DBSCAN with minPts = 6 also finds them, with no noise.</li>
+      <li>With the uniform noise, run k-means with <i>k</i> = 3: red warning <span class="ui">No substantial structure</span> (silhouette 0.174), four objects with a negative silhouette and one “poorly defined” cluster (figure 6.18).</li>
+      <li>Run DBSCAN with minPts = 6 (figure 6.19): a single cluster of 59 objects and one noise object. The silhouette is shown as “—”: with a single cluster it is undefined.</li>
+      <li>Go back to k-means and click <span class="ui">Compare</span> (figure 6.20): <span class="ui">Methods disagree</span>, with a minimum ARI of 0.19 between k-means and the mixture.</li>
+    </ol>
+  </div>
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b5-sim-sil.png" alt="Silhouette of four simulated clusters"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b5-ruido-sil.png" alt="Silhouette of the uniform noise"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figures 6.17 and 6.18.</b> Two extreme silhouettes. On the left, the four simulated clusters: long, even bars, mean 0.714. On the right, the uniform noise in three clusters: short bars, mean 0.174 and an orange block that ends in negative bars.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>This is the fourth sign of absence of structure, after Hopkins (Block 2), the disagreement between coefficients (Block 3) and the disagreement between linkages (Block 4): a low silhouette with warnings of poorly defined clusters, methods that do not agree with one another, and a DBSCAN that finds only one cluster. Of all the methods, DBSCAN is the only one that can answer “there are no clusters”, because it does not need <i>k</i>.</p>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b5-ruido-dbscan.png" alt="DBSCAN on uniform noise"></div>
+    <figcaption><b>Figure 6.19.</b> DBSCAN on the uniform noise: a single dense cluster of 59 objects and one noise object. The silhouette is undefined and the <span class="ui">A single dense cluster</span> check explains why. This is the correct answer: there are no clusters.</figcaption>
+  </figure>
+  <figure class="media">
+    <div class="marco"><img src="../img/b5-ruido-comparar.png" alt="Comparison of methods on noise"></div>
+    <figcaption><b>Figure 6.20.</b> The comparison with the uniform noise: silhouettes between 0.12 and 0.17, different sizes with each method and a mean ARI with the others of 0.31 to 0.39.</figcaption>
+  </figure>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · what to report from this block</div>
+    <p>In the methods section: the algorithm with its parameters (algorithm and number of starts for k-means, <i>m</i> for fuzzy c-means, model and criterion for the mixture, ε and minPts for DBSCAN, graph and σ for spectral clustering), the coordinate source if applicable, <i>k</i>, the average silhouette and the dissimilarity it was computed on, and the <b>seed</b>. If you compared methods, the minimum ARI between them. For example: “k-means (Hartigan–Wong, 25 k-means++ starts, seed 1) on the PCoA axes of Bray–Curtis produced three clusters (average silhouette 0.29) that matched the landscapes (ARI = 1.00)”. The automatic paragraph in Block 8 writes this up with your values.</p>
+  </div>
+
+  <p style="margin-top:0.12in">With a partition in hand, it remains to decide whether that <i>k</i> is the right one and whether the clusters are stable. The next chapter presents the thirteen criteria for choosing the number of clusters and how they vote, the gap statistic, stability by resampling, the support for the branches of the tree, external validation and the comparison of algorithms across <i>k</i>.</p>
+</section>
+
+</body>
+</html>

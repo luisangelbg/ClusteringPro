@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User manual · Block 8: report and export</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b8" data-pestana="B8" data-orden="9" style="--acento: var(--b8)">
+  <div class="cap-apertura">
+    <div class="cap-num">B8</div>
+    <div class="cap-etiqueta">Chapter nine · Block 8 · Report</div>
+    <h1 data-corto="Block 8 · Report and export">Report and export</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">An analysis is finished when it can be communicated. This chapter brings together the tools for doing so: the editor that adapts each figure to a journal’s style, export in the formats and resolutions that publishers require, and Block 8, which gathers all the tables, checks and figures into a self-contained report, drafts the results and a methods paragraph with your values, and packs data, tables and figures into a single file.</p>
+    <div class="cap-franja"><span class="k8"></span><span class="k8" style="opacity:.75"></span><span class="k8" style="opacity:.5"></span><span class="k8" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>9.1</b>The figure editor</li>
+      <li><b>9.2</b>Exporting for publication</li>
+      <li><b>9.3</b>The automatic report</li>
+      <li><b>9.4</b>The methods paragraph and the ZIP package</li>
+      <li><b>9.5</b>Step by step</li>
+    </ul>
+  </div>
+
+  <p class="lead">Sections 9.1 and 9.2 describe tools that are present in every block: each figure in the app has its own <span class="ui">Edit figure</span> panel and download bar. Sections 9.3 and 9.4 describe Block 8, which has two cards: <span class="ui">1 · What goes into the report</span>, where you choose what to include and how to export it, and <span class="ui">2 · Preview</span>, where you see the report exactly as it will be saved. Block 8 is enabled as soon as Block 7 describes the clusters, or earlier if the data are a distance matrix.</p>
+
+  <table class="compacta">
+    <caption><b>Table 9.1.</b> What the app produces to communicate an analysis.</caption>
+    <thead><tr><th style="width:28%">Output</th><th style="width:22%">Where</th><th>What it is for</th></tr></thead>
+    <tbody>
+      <tr><td>Edited figure (PNG, TIFF, SVG, JPG, WEBP)</td><td>Any block</td><td>A single figure for an article, a thesis or a presentation.</td></tr>
+      <tr><td>CSV table</td><td>Blocks 2 to 7</td><td>Memberships, profiles or results for another spreadsheet or program.</td></tr>
+      <tr><td>HTML report</td><td>Block 8</td><td>A document that opens in any browser and holds the whole analysis.</td></tr>
+      <tr><td>PDF report</td><td>Block 8</td><td>The same report printed from the browser, for archiving or sharing.</td></tr>
+      <tr><td>Methods paragraph</td><td>Block 8</td><td>A text in English with the methods and values used, ready to edit.</td></tr>
+      <tr><td>ZIP package</td><td>Block 8</td><td>Report, data, tables and every figure in vector format and at high resolution.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 9.1 -->
+  <h2 id="s9-1"><span class="num">9.1</span>The figure editor</h2>
+  <p class="lead">All ClusteringPro figures are drawn as vector graphics and redrawn instantly with every change. The <span class="ui">Edit figure — titles, colours, fonts, sizes</span> panel, below each figure, has two tabs: one for what is drawn and one for how it looks.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-editor-contenido.png" alt="Content &amp; colours tab of the cluster map"></div>
+    <figcaption><b>Figure 9.1.</b> The <span class="ui">Content &amp; colours</span> tab of the Block 5 cluster map with the maize. Its controls are specific to this figure: title, subtitle and axis titles; cluster regions and their opacity; centres, numbers and labels; point size and shape; shape by known grouping; noise colour, palette and legend position.</figcaption>
+  </figure>
+
+  <p>The first tab differs from figure to figure, and chapters 3 to 8 describe its controls in the figure tables of each block. Nearly all of them have at least a <span class="ui">Title</span> and a <span class="ui">Palette</span>. The text boxes accept any title: clearing an axis title replaces it with the automatic one.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-editor-estilo.png" alt="Style &amp; typography tab"></div>
+    <figcaption><b>Figure 9.2.</b> The <span class="ui">Style &amp; typography</span> tab, the same for every figure.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 9.2.</b> The style and typography controls.</caption>
+    <thead><tr><th style="width:28%">Control</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Theme</span></td><td><span class="ui">Light</span> (default), <span class="ui">Paper</span> (cream background), <span class="ui">Dark</span> (dark background, for presentations), <span class="ui">Minimal</span> (no grid) and <span class="ui">Journal (black &amp; white axes)</span>, with black axes and no grid.</td></tr>
+      <tr><td><span class="ui">Font family</span></td><td><span class="ui">Sans-serif</span> (default), <span class="ui">System interface font</span> (the operating system’s font), <span class="ui">Serif</span> or <span class="ui">Monospace</span>. These are generic families: each computer uses its own.</td></tr>
+      <tr><td><span class="ui">Font size: all</span></td><td>Scales all the text at once, from 0.6 to 2.6 times.</td></tr>
+      <tr><td><span class="ui">Font size: titles</span> · <span class="ui">axes &amp; ticks</span> · <span class="ui">labels &amp; legend</span></td><td>Scale each group of text separately, from 0.6 to 3 times, on top of the overall scale.</td></tr>
+      <tr><td><span class="ui">Bold axis titles</span></td><td>Axis titles in bold.</td></tr>
+      <tr><td><span class="ui">Gridlines</span> · <span class="ui">Dashed gridlines</span></td><td>Shows the grid and draws it dashed.</td></tr>
+      <tr><td><span class="ui">Width (px)</span> · <span class="ui">Height (px)</span></td><td>Figure size, from 400 to 2,400 by 300 to 2,000 pixels. It changes the aspect ratio and the space for labels, not the sharpness.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the style is remembered</div>
+    <p>Theme, typeface, font sizes, bold and grid are shared preferences: changing them in one figure applies them to every figure drawn afterwards, and the browser remembers them for the next session. You therefore only need to set a journal’s style once. Width, height and the controls of the first tab, by contrast, belong to each figure and return to their initial values when the figure is recomputed.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Table 9.3.</b> Available cluster palettes and colour maps.</caption>
+    <thead><tr><th style="width:22%">Type</th><th>Options</th></tr></thead>
+    <tbody>
+      <tr><td>Cluster palettes (<span class="ui">Palette</span>)</td><td>ClusteringPro, Vivid, Harvest, Soil &amp; crop, Soft, Deep, Pastel, Greyscale and two colour-blind-safe ones: Okabe–Ito and Paul Tol.</td></tr>
+      <tr><td>Colour maps (<span class="ui">Colour map</span>)</td><td>Viridis, Magma, Inferno, Plasma and Cividis (colour-blind safe); diverging Red–Yellow–Blue, Red–Blue, Spectral and Blue–White–Red; sequential Greens, Yellow–Green, Browns and Heat.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dos">
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b8-mapa-original.png" alt="Cluster map with the default style"></div>
+    </figure>
+    <figure style="margin:0">
+      <div class="marco"><img src="../img/b8-journal.png" alt="Cluster map with the Journal theme and a serif typeface"></div>
+    </figure>
+  </div>
+  <figure style="margin-top:0.06in">
+    <figcaption><b>Figure 9.3.</b> The same map with the default style (left) and with the <span class="ui">Journal</span> theme, the <span class="ui">Serif</span> family and no grid (right): black axes, a black legend frame and dashed reference lines, as many journals require.</figcaption>
+  </figure>
+
+  <!-- 9.2 -->
+  <h2 id="s9-2"><span class="num">9.2</span>Exporting for publication</h2>
+  <p class="lead">Below the editor, each figure has its download bar: format, resolution, background and the <span class="ui">⬇ Download figure</span> button. On the right, the app calculates the size of the resulting file in pixels and in centimetres at the chosen resolution.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-exportar.png" alt="Download bar with TIFF at 600 dpi"></div>
+    <figcaption><b>Figure 9.4.</b> The download bar of the cluster map set up for a journal: TIFF at 600 dpi, white background. The figure will be 7,280 × 4,880 pixels, 30.8 × 20.7 cm at 600 dpi.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 9.4.</b> The download formats.</caption>
+    <thead><tr><th style="width:24%">Format</th><th>Characteristics</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">PNG</span></td><td>Lossless, with the resolution stored in the file so that other programs place it at the correct size. Supports a transparent background. The general-purpose format.</td></tr>
+      <tr><td><span class="ui">TIFF (journal submission)</span></td><td>Uncompressed RGB with the resolution stored, the format many publishers require. Files are large.</td></tr>
+      <tr><td><span class="ui">SVG (vector, editable)</span></td><td>Vector: it can be enlarged without losing sharpness and edited in vector drawing and presentation programs. Resolution does not apply.</td></tr>
+      <tr><td><span class="ui">JPG</span> · <span class="ui">WEBP</span></td><td>Compressed, for web pages or lightweight presentations. Do not use them for articles.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 9.5.</b> The resolutions: the figure is multiplied by a factor and saved with the corresponding dpi. Sizes for the cluster map, with a base size of 910 × 610 pixels.</caption>
+    <thead><tr><th style="width:36%">Option</th><th class="c">Factor</th><th class="c">dpi</th><th class="c">Pixels</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Screen · 2× (150 dpi)</span></td><td class="c">2</td><td class="c">150</td><td class="c">1,820 × 1,220</td><td>Screen and presentations.</td></tr>
+      <tr><td><span class="ui">High · 4× (300 dpi)</span></td><td class="c">4</td><td class="c">300</td><td class="c">3,640 × 2,440</td><td>Default; theses and reports.</td></tr>
+      <tr><td><span class="ui">Very high · 6× (450 dpi)</span></td><td class="c">6</td><td class="c">450</td><td class="c">5,460 × 3,660</td><td>Posters.</td></tr>
+      <tr><td><span class="ui">Publication · 8× (600 dpi)</span></td><td class="c">8</td><td class="c">600</td><td class="c">7,280 × 4,880</td><td>Line art for journals.</td></tr>
+      <tr><td><span class="ui">Maximum · 12× (900 dpi)</span></td><td class="c">12</td><td class="c">900</td><td class="c">10,920 × 7,320</td><td>When the journal asks for more than 600 dpi.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · which format and resolution to choose</div>
+    <table class="compacta">
+      <thead><tr><th style="width:40%">If the figure is going to…</th><th>download</th></tr></thead>
+      <tbody>
+        <tr><td>a journal that asks for TIFF</td><td>TIFF at 600 dpi, white background, Journal theme if the journal prefers black axes.</td></tr>
+        <tr><td>a journal that accepts vector files (PDF, EPS, SVG)</td><td>SVG: it can be converted to PDF or EPS in a vector drawing program without loss of quality.</td></tr>
+        <tr><td>a thesis or a report in a word processor</td><td>PNG at 300 dpi.</td></tr>
+        <tr><td>a presentation on a coloured background</td><td>PNG with <span class="ui">Transparent (PNG)</span> and, on a dark background, the Dark theme.</td></tr>
+        <tr><td>a figure you will edit later (arrows, labels)</td><td>SVG.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">The chosen resolution is remembered for subsequent figures. A transparent background only has an effect in PNG; JPG and TIFF always have a white background.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · dpi and size on the page</div>
+    <p>What determines sharpness is the number of pixels. The app stores the dpi and calculates the centimetres assuming that the figure is printed at its base size, 910 pixels as 30.8 cm. When it is placed in an 8.5 cm column, the same 3,640-pixel image ends up at more than 1,000 effective dpi. If the journal specifies a column width, adjust the aspect ratio with <span class="ui">Width</span> and <span class="ui">Height</span> before exporting and increase the font sizes: when the figure is reduced, the lettering shrinks with it. An uncompressed TIFF takes about 3 bytes per pixel: the one in figure 9.4 weighs about 100 MB, and at 300 dpi about 27 MB.</p>
+  </div>
+
+  <!-- 9.3 -->
+  <h2 id="s9-3"><span class="num">9.3</span>The automatic report</h2>
+  <p class="lead">Block 8 recomputes nothing: it takes what is already on screen. Each table and each check is copied as it appears in its block, and each figure as you edited it, as a vector graphic. If you change something in another block, simply return to Block 8 and build the report again.</p>
+
+  <table class="compacta">
+    <caption><b>Table 9.6.</b> The sections of the report.</caption>
+    <thead><tr><th style="width:40%">Checkbox</th><th>Content</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Data, preprocessing and clustering tendency</span></td><td>Variable summary, checks, variable table, preparation verdict, Hopkins and figures from Block 2.</td></tr>
+      <tr><td><span class="ui">Similarity and distance</span></td><td>Tiles, checks, figures and coefficient comparison from Block 3.</td></tr>
+      <tr><td><span class="ui">Hierarchical clustering</span></td><td>Tiles, checks, clusters of the cut, cross-tabulation, figures and linkage comparison from Block 4.</td></tr>
+      <tr><td><span class="ui">Partitioning and advanced methods</span></td><td>Tiles, checks, cluster table, cross-tabulations, figures and method comparison from Block 5.</td></tr>
+      <tr><td><span class="ui">Number of clusters and validation</span></td><td>Vote, stability, AU/BP, external validation, algorithm comparison and figures from Block 6.</td></tr>
+      <tr><td><span class="ui">Profiles, discriminant analysis and rules</span></td><td>Cluster summary cards, profiles, indicator species, discriminant analysis, rules, assignments and figures from Block 7.</td></tr>
+      <tr><td><span class="ui">Executive summary</span></td><td>Tiles with the key figures and a draft of the results section.</td></tr>
+      <tr><td><span class="ui">Auto-drafted methods paragraph</span></td><td>The methods paragraph (section 9.4).</td></tr>
+      <tr><td><span class="ui">How to cite the software</span></td><td>The citation with its DOI and the BibTeX entry.</td></tr>
+      <tr><td><span class="ui">Appendix: cluster membership</span></td><td>One row per object with its known group, its cluster in the tree and in the partition, and its silhouette.</td></tr>
+      <tr><td><span class="ui">Appendix: data as loaded</span></td><td>The complete original table; unticked by default.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b8-tarjeta1.png" alt="Card 1 · What goes into the report with the maize">
+      <span class="marca" style="left:1%;top:10%">1</span>
+      <span class="marca" style="left:1%;top:27%">2</span>
+      <span class="marca" style="left:1%;top:40%">3</span>
+      <span class="marca" style="left:1%;top:53%">4</span>
+      <span class="marca" style="left:1%;top:81%">5</span>
+      <span class="marca" style="left:1%;top:92%">6</span>
+    </div>
+    <figcaption><b>Figure 9.5.</b> Card <span class="ui">1 · What goes into the report</span> with the maize analysed in all six blocks: 30 figures and every section ready.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span>Summary: completed blocks, figures to be included and data set.</li>
+    <li><span class="n">2</span><span class="ui">Title</span> and <span class="ui">Author(s)</span>. The title is proposed from the file name and follows the data set until you type your own.</li>
+    <li><span class="n">3</span><span class="ui">Objective / notes</span>: an optional paragraph printed below the title.</li>
+    <li><span class="n">4</span><span class="ui">Sections</span>: the block sections and the extras (table 9.6).</li>
+    <li><span class="n">5</span>Format and resolution of the raster figures in the ZIP package (section 9.4).</li>
+    <li><span class="n">6</span>The export buttons (table 9.7).</li>
+  </ul>
+
+  <p>The six block sections carry a tag: <span class="ui">ready</span> if the block has already been run and <span class="ui">not run yet</span> if not, in which case the checkbox is disabled. A section is only included if it has something to show; cards that you did not run within a block, such as the multiscale bootstrap, simply do not appear.</p>
+
+  <table class="compacta">
+    <caption><b>Table 9.7.</b> The buttons of card 1.</caption>
+    <thead><tr><th style="width:30%">Button</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Build and preview the report</span></td><td>Builds the report and shows it in card 2; on the right it gives its size and how many figures and tables it contains.</td></tr>
+      <tr><td><span class="ui">⬇ Report (HTML)</span></td><td>Downloads the report as a single HTML file, with the styles and figures embedded. It opens in any browser without an internet connection.</td></tr>
+      <tr><td><span class="ui">🖨 Print / save as PDF</span></td><td>Opens the report in a new window and starts printing; choose <span class="ui">Save as PDF</span> in the browser’s dialog. If the browser blocks pop-up windows, a warning asks you to allow them.</td></tr>
+      <tr><td><span class="ui">⬇ Full package (ZIP)</span></td><td>Builds and downloads the package (section 9.4); while it is working, the button reads <span class="ui">Packing…</span>.</td></tr>
+      <tr><td><span class="ui">Copy the methods paragraph</span></td><td>Copies the methods paragraph to the clipboard and shows it in a text box below.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-vista.png" alt="Preview of the maize report"></div>
+    <figcaption><b>Figure 9.6.</b> Card <span class="ui">2 · Preview</span> with the maize report: title, date, data and main methods, a linked table of contents and the executive summary with its coloured tiles. The draft results begin below.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 9.8.</b> The executive summary tiles and their colours.</caption>
+    <thead><tr><th style="width:26%">Tile</th><th style="width:28%">Green</th><th style="width:22%">Amber</th><th>What it says below</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Clustering tendency</span></td><td>Hopkins &gt; 0.75</td><td>&gt; 0.5</td><td>Non-random structure if p &lt; 0.05.</td></tr>
+      <tr><td><span class="ui">Hierarchical tree</span></td><td>cophenetic &gt; 0.75</td><td>&gt; 0.6</td><td>Correlation and sizes.</td></tr>
+      <tr><td><span class="ui">Partition</span></td><td>silhouette &gt; 0.5</td><td>&gt; 0.25</td><td>Silhouette with its qualifier, and sizes.</td></tr>
+      <tr><td><span class="ui">Consensus k</span></td><td>half of the votes or more</td><td>fewer</td><td>Votes for the winner.</td></tr>
+      <tr><td><span class="ui">Stability</span></td><td>mean Jaccard &gt; 0.75</td><td>&gt; 0.6</td><td>highly stable, stable, only partly stable or unstable.</td></tr>
+      <tr><td><span class="ui">Agreement with known groups</span></td><td>ARI &gt; 0.8</td><td>&gt; 0.5</td><td>Only if there is a known grouping.</td></tr>
+      <tr><td><span class="ui">Discriminability</span></td><td>leave-one-out &gt; 90%</td><td>&gt; 70%</td><td>Accuracy of the discriminant analysis.</td></tr>
+      <tr><td><span class="ui">Most discriminant variables</span></td><td colspan="2">no colour</td><td>The three with the highest η².</td></tr>
+    </tbody>
+  </table>
+  <p class="small">Below the amber threshold, the tile is red. The objects and dissimilarity tiles are not coloured.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-informe-seccion.png" alt="Hierarchical clustering section within the report"></div>
+    <figcaption><b>Figure 9.7.</b> The start of section <span class="ui">3. Hierarchical clustering</span> of the maize report: the tiles and checks from Block 4 as they appear in the app, and its tables numbered in sequence throughout the report. Tables that have no title in the app receive a descriptive one. Figures keep their number and a caption that adds the context of the analysis, for example “Ward.D2 linkage on Euclidean dissimilarity, cut at k = 3”.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · how the draft results are written</div>
+    <p>The draft has one paragraph per block that has been run, and each sentence chooses its wording with the same thresholds as the app’s checks: the Hopkins statistic is described as genuine structure above 0.75, structure that is present but weak above 0.5, and a nearly uniform spread below that; the tree is faithful with a cophenetic correlation above 0.8, acceptable above 0.7 and distorted below; the silhouette indicates strong, reasonable, weak or no substantial structure with the cut-offs 0.7, 0.5 and 0.25. The validation paragraph adds, when it happens, that the consensus <i>k</i> lies at the edge of the range or that the gap statistic found no structure, and it flags clusters with a Jaccard below 0.6. The profiles paragraph recalls that the P values of the active variables are descriptive, and warns if the discriminant analysis overfits. The draft is in English and every figure in it comes from the analysis: edit it, but do not change the numbers.</p>
+  </div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · cluster numbers in the appendix</div>
+    <p>The membership appendix places the tree cluster and the partition cluster side by side. Their numbers are independent labels: with the maize, the valleys are cluster 3 of the tree and cluster 2 of hierarchical k-means, although both group exactly the same accessions (ARI = 1.000). Compare clusters by their members, not by their number.</p>
+  </div>
+
+  <!-- 9.4 -->
+  <h2 id="s9-4"><span class="num">9.4</span>The methods paragraph and the ZIP package</h2>
+  <p class="lead">The methods section of a clustering article is long and easy to leave incomplete. Block 8 drafts it from what you actually ran, with the value of every setting, and ends with the citation of the software.</p>
+
+  <table class="compacta">
+    <caption><b>Table 9.9.</b> What the methods paragraph mentions depending on what was run.</caption>
+    <thead><tr><th style="width:22%">Block</th><th>Content</th></tr></thead>
+    <tbody>
+      <tr><td>Data (2)</td><td>Number of objects and of active variables by type, supplementary variables, missing values (removed or imputed), transformation and scaling, Hopkins statistic. With a loaded matrix, only that it was used as supplied, and the Hopkins statistic on its coordinates.</td></tr>
+      <tr><td>Dissimilarity (3)</td><td>Coefficient, the matrix it was computed on, and whether it is Euclidean.</td></tr>
+      <tr><td>Tree (4)</td><td>Linkage (with β if flexible), cophenetic correlation, agglomerative or divisive coefficient, <i>k</i> of the cut, ARI with the known groups and, if they were compared, the number of linkages.</td></tr>
+      <tr><td>Partition (5)</td><td>Method, <i>k</i>, space, algorithm and starts, mixture model or DBSCAN’s ε and minPts, silhouette and ARI with the tree.</td></tr>
+      <tr><td>Validation (6)</td><td>Range of <i>k</i>, the criteria and the votes for the winner; replicates and Jaccard for stability; replicates and scales for AU; external validation indices.</td></tr>
+      <tr><td>Profiles (7)</td><td>Tests used, χ² for the categorical variables, IndVal, and Wilks’ lambda and leave-one-out accuracy for the discriminant analysis, together with the tree.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-informe-metodos.png" alt="Methods and citation within the report"></div>
+    <figcaption><b>Figure 9.8.</b> The <span class="ui">Methods</span> and <span class="ui">How to cite</span> sections of the maize report. The paragraph goes through the blocks in order, from the data and their preprocessing to the discriminant analysis; the citation includes the concept DOI, which always points to the latest version, and a BibTeX entry.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-metodos-copiar.png" alt="Methods paragraph in the text box"></div>
+    <figcaption><b>Figure 9.9.</b> After pressing <span class="ui">Copy the methods paragraph</span>, the text appears in a box below the buttons. If the browser does not allow writing to the clipboard, as here, a message asks you to select it and copy it by hand.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 9.10.</b> The contents of the ZIP package.</caption>
+    <thead><tr><th style="width:36%">File or folder</th><th>Content</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">report.html</span></td><td>The report, identical to the one from <span class="ui">⬇ Report (HTML)</span>.</td></tr>
+      <tr><td><span class="ui">data/data_as_loaded.csv</span></td><td>The table as it was loaded.</td></tr>
+      <tr><td><span class="ui">data/preprocessed_matrix.csv</span></td><td>The Block 2 working matrix (with a loaded matrix, its MDS coordinates), with the known group.</td></tr>
+      <tr><td><span class="ui">data/dissimilarity_…csv</span></td><td>The full dissimilarity matrix, with the coefficient identifier in the file name.</td></tr>
+      <tr><td><span class="ui">tables/cluster_membership.csv</span></td><td>Known group, tree cluster, partition cluster and silhouette of each object.</td></tr>
+      <tr><td><span class="ui">tables/tree_merges.csv</span></td><td>The merges of the tree: step, the two branches and the height.</td></tr>
+      <tr><td><span class="ui">tables/indices_by_k.csv</span></td><td>The Block 6 indices for each <i>k</i>.</td></tr>
+      <tr><td><span class="ui">tables/cluster_profiles.csv</span> · <span class="ui">indicator_values.csv</span></td><td>The Block 7 profiles and, if they were computed, the indicator values.</td></tr>
+      <tr><td><span class="ui">figures/svg/</span> · <span class="ui">figures/png/</span> (or tiff, jpg, webp)</td><td>Every figure shown, in vector form and in the format and resolution chosen in card 1.</td></tr>
+      <tr><td><span class="ui">methods.txt</span> · <span class="ui">README.txt</span></td><td>The methods paragraph in plain text and a guide to the contents.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja dato">
+    <div class="dato-cifra">70</div>
+    <div class="dato-txt"><div class="caja-t">Files in the maize package</div>With all six blocks run, the package contains the report, 3 data files, 4 tables, 30 figures in SVG, 30 in PNG, the methods and the guide. At 150 dpi it takes up about 7 MB; at 600 dpi, several times more. Rasterising so many figures takes anywhere from a few seconds to over a minute, depending on the computer and the resolution.</div>
+  </div>
+
+  <!-- 9.5 -->
+  <h2 id="s9-5"><span class="num">9.5</span>Step by step</h2>
+  <p class="lead">The exercises use the examples prepared as in the previous chapters, with Blocks 2 to 7 run. Table 9.11 summarises the report for each one with the default options.</p>
+
+  <table class="compacta">
+    <caption><b>Table 9.11.</b> The report for five examples with the default sections.</caption>
+    <thead><tr><th style="width:20%">Example</th><th class="c" style="width:12%">Sections</th><th class="c" style="width:10%">Figures</th><th style="width:28%">Tiles in red or amber</th><th>What the draft warns about</th></tr></thead>
+    <tbody>
+      <tr><td>Maize races</td><td class="c">6</td><td class="c">30</td><td>Hopkins, silhouette, consensus</td><td>Structure present but weak; weak silhouette.</td></tr>
+      <tr><td>Species presence</td><td class="c">6</td><td class="c">30</td><td>Hopkins, silhouette, consensus, discriminability</td><td>The discriminant analysis overfits (53% against 100%).</td></tr>
+      <tr><td>Distance matrix</td><td class="c">5</td><td class="c">21</td><td>Hopkins</td><td>Non-Euclidean matrix; the gap statistic found no structure.</td></tr>
+      <tr><td>Four simulated clusters</td><td class="c">6</td><td class="c">30</td><td>none</td><td>Strong structure in every paragraph.</td></tr>
+      <tr><td>Uniform noise</td><td class="c">6</td><td class="c">30</td><td>Hopkins, tree, partition, consensus, stability</td><td>Nearly uniform spread, distorted tree, consensus at the edge, gap at <i>k</i> = 1, partial stability.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Exercise 1 · Maize races: from analysis to complete report</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the maize analysed in Blocks 2 to 7, go to Block 8 (figure 9.5). All six sections are ready and the proposed title is <i>Cluster analysis of maize landraces morphology</i>. Type your name in <span class="ui">Author(s)</span> and the objective in <span class="ui">Objective / notes</span>.</li>
+      <li>Press <span class="ui">Build and preview the report</span> (figure 9.6): about 950 KB, 30 figures and 12 tables. Go through the table of contents and read the draft results.</li>
+      <li>Press <span class="ui">🖨 Print / save as PDF</span> and save the PDF from the browser’s dialog.</li>
+      <li>Press <span class="ui">⬇ Full package (ZIP)</span> and open the package: check that <span class="ui">tables/cluster_membership.csv</span> contains the 44 accessions.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The report is the laboratory notebook of the analysis: it keeps every decision, every check and every figure as you left them, with the date and the data. Even if you do not publish it, archive it with the original data: a year from now it will tell you exactly which coefficient, which linkage and which <i>k</i> you used.</p>
+  </div>
+
+  <h3>Exercise 2 · A figure for a journal</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>In Block 5, open <span class="ui">Edit figure</span> for the cluster map (figure 9.1). In <span class="ui">Content &amp; colours</span> type the axis titles in the journal’s language and choose the <span class="ui">Okabe–Ito</span> palette.</li>
+      <li>In <span class="ui">Style &amp; typography</span> (figure 9.2) choose the <span class="ui">Journal</span> theme and the <span class="ui">Serif</span> family, and remove the grid (figure 9.3). Raise <span class="ui">Font size: all</span> to 1.3.</li>
+      <li>In the download bar choose TIFF and <span class="ui">Publication · 8× (600 dpi)</span> (figure 9.4) and press <span class="ui">⬇ Download figure</span>.</li>
+      <li>Go to Block 6 and press <span class="ui">Evaluate every k →</span> again: the figures that are redrawn already come out with the Journal theme and the Serif family. Those you do not recompute keep their previous style, and that is how they go into the report.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The shared style saves you from repeating settings: once the journal’s look is set, every figure drawn afterwards inherits it, so it is best to set it before running the blocks or to recompute them at the end. What is specific to each figure, such as the titles or the palette, is adjusted in each one. Choose a colour-blind-safe palette when the clusters are distinguished only by colour, and increase the font size if the figure will be reduced to a single column.</p>
+  </div>
+
+  <h3>Exercise 3 · Distance matrix: a report without variables</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the genetic matrix analysed up to Block 6, move from Block 7 to Block 8. The profiles section appears as <span class="ui">not run yet</span>, disabled; the other five are ready.</li>
+      <li>Build the report (figure 9.10). The objects tile reads <span class="ui">dissimilarity matrix supplied</span>, there is no tile for known groups or for the discriminant analysis, and the draft describes the supplied matrix as non-Euclidean.</li>
+      <li>Read the methods paragraph: it begins by stating that the matrix of 12 objects was supplied directly, without mentioning variables, missing values or scaling.</li>
+    </ol>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b8-matriz-resumen.png" alt="Report summary with the distance matrix"></div>
+    <figcaption><b>Figure 9.10.</b> The report summary with the distance matrix. The validation paragraph brings together the broad vote for <i>k</i> = 3, the gap warning and the almost perfect stability: the three facts that chapter 7 asked to be reported together.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The report adapts to what is there: with a distance matrix it describes what was done with it and leaves out what does not apply. Always check that the title matches the data set and that no tile refers to an analysis you did not run.</p>
+  </div>
+
+  <h3>Exercise 4 · Uniform noise: the report does not hide anything</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the 60 uniform objects analysed in every block, build the report and read the summary (figure 9.11).</li>
+      <li>Count the tiles in red and amber: tendency, tree, partition, consensus and stability.</li>
+      <li>Read the draft: a Hopkins statistic close to 0.5, a distorted tree, a silhouette with no substantial structure, the consensus at the edge of the range, the gap at <i>k</i> = 1 and only partial stability.</li>
+      <li>Note the <span class="ui">Discriminability</span> tile in green (91.7%) and the profiles paragraph with four “significant” variables.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b8-ruido-resumen.png" alt="Report summary with the uniform noise"></div>
+    <figcaption><b>Figure 9.11.</b> The report summary with the uniform noise: five tiles in red or amber and a draft that warns, paragraph by paragraph, that there are no clusters to interpret.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>A good report does not merely present results: it says how far to believe them. The green tiles of the discriminant analysis and the P values of the profiles do not contradict the red ones: they measure how well the clusters drawn by the algorithm can be reproduced, not whether they exist. When the summary fills up with amber and red, the honest conclusion is that the data form a continuum.</p>
+  </div>
+
+  <h3>Exercise 5 · Species presence: beware of copying without reading</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the species presence data analysed in every block, build the report and read the draft profiles paragraph: 17 significant indicator taxa and a discriminant analysis that correctly classifies 53.3% under leave-one-out, against 100% on the training sites, with the warning that the rule overfits.</li>
+      <li>Return to Block 7, leave ticked only the 13 species with an IndVal of at least 60%, and profile again.</li>
+      <li>Go back to Block 8 and build the report again: the <span class="ui">Discriminability</span> tile changes from red to amber at 90%, and the warning disappears from the draft.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The draft faithfully reflects the state of the app at the moment it is built. If you improve an analysis, rebuild the report; if you copy the draft into an article, check that its warnings still hold, and do not delete those that do.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · before publishing</div>
+    <p>Read the draft results and the methods paragraph from beginning to end: they are a starting point, not a final text. Check that the title, the authors and the data set are correct; that the sections included match what you are going to report; that the draft’s warnings appear in your discussion; and that the figures use the style, format and resolution the journal requires. Cite the software with its DOI and keep the ZIP package together with your data: it allows anyone to reproduce the analysis.</p>
+  </div>
+
+  <p style="margin-top:0.12in">This chapter completes the tour of the eight blocks. The appendices gather the reference material: the file formats the app accepts, a summary of all the decision rules, a glossary, solutions to the most common problems, the references for the methods and the third-party components.</p>
+</section>
+
+</body>
+</html>

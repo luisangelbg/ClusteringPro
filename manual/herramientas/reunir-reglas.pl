@@ -8,17 +8,21 @@ use strict; use warnings; use utf8;
 use open qw(:std :encoding(UTF-8));
 
 my $dir = shift or die "uso: perl herramientas/reunir-reglas.pl <carpeta del idioma>\n";
-my @caps = (
-  ['01-introduccion.html', 'k0', '1',  'Introducción a ClusteringPro'],
-  ['02-bloque1.html',      'k1', 'B1', 'Inicio y teoría'],
-  ['03-bloque2.html',      'k2', 'B2', 'Datos y análisis exploratorio'],
-  ['04-bloque3.html',      'k3', 'B3', 'Similitud y distancia'],
-  ['05-bloque4.html',      'k4', 'B4', 'Agrupamiento jerárquico'],
-  ['06-bloque5.html',      'k5', 'B5', 'Particionamiento y métodos avanzados'],
-  ['07-bloque6.html',      'k6', 'B6', 'Número de grupos y validación'],
-  ['08-bloque7.html',      'k7', 'B7', 'Perfiles, interpretación y predicción'],
-  ['09-bloque8.html',      'k8', 'B8', 'Informe y exportación'],
+# los nombres de los capítulos y las palabras del índice siguen al idioma de la carpeta
+my %L = (
+  es => { sec => 'Sección', cap => 'Capítulo', quita => qr/^Reglas? (?:de decisión )?· /,
+          caps => ['Introducción a ClusteringPro', 'Inicio y teoría', 'Datos y análisis exploratorio',
+                   'Similitud y distancia', 'Agrupamiento jerárquico', 'Particionamiento y métodos avanzados',
+                   'Número de grupos y validación', 'Perfiles, interpretación y predicción', 'Informe y exportación'] },
+  en => { sec => 'Section', cap => 'Chapter', quita => qr/^(?:Decision )?[Rr]ules? · /,
+          caps => ['Introduction to ClusteringPro', 'Home and theory', 'Data and exploratory analysis',
+                   'Similarity and distance', 'Hierarchical clustering', 'Partitioning and advanced methods',
+                   'Number of clusters and validation', 'Profiles, interpretation and prediction', 'Report and export'] },
 );
+my $L = $L{$dir} or die "no sé los rótulos del idioma «$dir»\n";
+my @archivos = qw(01-introduccion.html 02-bloque1.html 03-bloque2.html 04-bloque3.html 05-bloque4.html
+                  06-bloque5.html 07-bloque6.html 08-bloque7.html 09-bloque8.html);
+my @caps = map { [$archivos[$_], 'k' . $_, $_ ? 'B' . $_ : '1', $L->{caps}[$_]] } 0 .. $#archivos;
 my @indice;
 my $cuerpo = '';
 my $n = 0;
@@ -49,10 +53,10 @@ for my $c (@caps) {
     my ($snum, $tit, $box) = @$r;
     $n++;
     $box =~ s/^<div class="caja regla"[^>]*>/<div class="caja regla">/;
-    $box =~ s{(<div class="caja-t"><span class="ico">✓</span>.*?)</div>}{$1<span class="sec-ref">@{[ $snum =~ /\./ ? "Sección $snum" : "Capítulo $snum" ]}</span></div>}s;
+    $box =~ s{(<div class="caja-t"><span class="ico">✓</span>.*?)</div>}{$1<span class="sec-ref">@{[ $snum =~ /\./ ? "$L->{sec} $snum" : "$L->{cap} $snum" ]}</span></div>}s;
     $box =~ s/\n    /\n  /g;
     $cuerpo .= "\n  $box\n";
-    (my $corto = $tit) =~ s/^Reglas? (?:de decisión )?· //;
+    (my $corto = $tit) =~ s/$L->{quita}//;
     $corto =~ s/<[^>]+>//g;
     $corto = ucfirst $corto;
     $corto =~ s/^¿(\p{Ll})/'¿' . uc $1/e;

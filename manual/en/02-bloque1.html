@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User's Manual · Block 1: Home and theory</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b1" data-pestana="B1" data-orden="2" style="--acento: var(--b1)">
+  <div class="cap-apertura">
+    <div class="cap-num">B1</div>
+    <div class="cap-etiqueta">Chapter two · Block 1 · Home</div>
+    <h1 data-corto="Block 1 · Home and theory">Home and theory</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">The app's home page is at once a map of the program, a laboratory where you can watch k-means and a dendrogram cluster the same points, a catalogue of data types and methods, and a short course in theory in thirteen lessons. This chapter walks through it from top to bottom and proposes five exercises with the demo.</p>
+    <div class="cap-franja"><span class="k1"></span><span class="k1" style="opacity:.75"></span><span class="k1" style="opacity:.5"></span><span class="k1" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>2.1</b>The home page</li>
+      <li><b>2.2</b>The interactive demo: k-means and a dendrogram</li>
+      <li><b>2.3</b>Data types and methods at a glance</li>
+      <li><b>2.4</b>The thirteen theory lessons</li>
+      <li><b>2.5</b>Which method should I use? The choice table</li>
+      <li><b>2.6</b>How to cite</li>
+    </ul>
+  </div>
+
+  <!-- 2.1 -->
+  <h2 id="s2-1"><span class="num">2.1</span>The home page</h2>
+  <p class="lead">When you open <code>index.html</code>, Block 1 appears. It reads like a brochure, from top to bottom: first what the program does, then how to work through it, then the demo to experiment with, the data types and methods, the theory, a table for choosing a method and, finally, how to cite it. Figure 1.1 in the previous chapter shows the top of the page; table 2.1 lists every section in the order in which it appears.</p>
+
+  <table>
+    <caption><b>Table 2.1.</b> Sections of the home page, in the order in which they appear.</caption>
+    <thead><tr><th style="width:30%">Section in the app</th><th>What it contains</th><th style="width:26%">What it is for</th></tr></thead>
+    <tbody>
+      <tr><td><b>Opening section</b><br><span class="small">four buttons and four guarantees</span></td><td><span class="ui">Start with my data →</span>, <span class="ui">Try the live demo</span>, <span class="ui">Read the theory</span> and <span class="ui">How to cite</span>; on the right, an illustration with a dendrogram and a cluster map.</td><td>Going straight to loading data or to a section of the home page.</td></tr>
+      <tr><td><span class="ui">How it works</span></td><td>The six steps of an analysis, from the file to the paper (figure 2.1 and table 2.2).</td><td>Placing each block within the logic of a study.</td></tr>
+      <tr><td><span class="ui">Try it: k-means and a dendrogram on the same points</span></td><td>The interactive demo (section 2.2).</td><td>Understanding, through play, what each family of methods does and why it goes wrong.</td></tr>
+      <tr><td><span class="ui">What's inside</span></td><td>One card per block, with an illustration and a description (figure 1.6).</td><td>Jumping to a block with one click.</td></tr>
+      <tr><td><span class="ui">Every kind of data</span></td><td>Seven types of table and the coefficients suited to each (section 2.3).</td><td>Confirming that your data fit the program.</td></tr>
+      <tr><td><span class="ui">Methods covered</span></td><td>A gallery of fifteen methods in four families (section 2.3).</td><td>Seeing at a glance everything that can be computed.</td></tr>
+      <tr><td><span class="ui">Clustering, explained without the fog</span></td><td>Thirteen expandable lessons with figures (section 2.4).</td><td>Reviewing the theory before interpreting or defending results.</td></tr>
+      <tr><td><span class="ui">Which method should I use?</span></td><td>A choice table by data type (section 2.5).</td><td>Having a reasonable starting point.</td></tr>
+      <tr><td><span class="ui">Why ClusteringPro</span> and <span class="ui">Glossary at a glance</span></td><td>Six arguments and twenty-nine key terms on cards.</td><td>Justifying the use of the program and recognising the vocabulary.</td></tr>
+      <tr><td><span class="ui">How to cite ClusteringPro</span></td><td>The reference, ready to copy in APA or BibTeX format (section 2.6).</td><td>Citing the program correctly in your paper or thesis.</td></tr>
+      <tr><td><span class="ui">Go to Block 2: load your data →</span></td><td>The closing button.</td><td>Starting the analysis.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-flujo.png" alt="The six steps of How it works"></div>
+    <figcaption><b>Figure 2.1.</b> The <span class="ui">How it works</span> section. The six steps follow the order in which the methods section of a paper is written; the dendrogram is the end of the process, not the beginning.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 2.2.</b> The six steps on the home page and the blocks that carry them out.</caption>
+    <thead><tr><th style="width:9%">Step</th><th style="width:25%">In the app</th><th>What is done</th><th style="width:16%">Blocks</th></tr></thead>
+    <tbody>
+      <tr><td class="c">1</td><td><span class="ui">Load &amp; explore</span></td><td>Assign a type to each column, scale, check for outliers and measure the clustering tendency.</td><td><span class="chip k2">2</span></td></tr>
+      <tr><td class="c">2</td><td><span class="ui">Measure similarity</span></td><td>Choose the coefficient that suits the data and compute the matrix.</td><td><span class="chip k3">3</span></td></tr>
+      <tr><td class="c">3</td><td><span class="ui">Cluster</span></td><td>Build the tree or the partition: hierarchical, partitioning, density-based or mixture methods.</td><td><span class="chip k4">4</span> <span class="chip k5">5</span></td></tr>
+      <tr><td class="c">4</td><td><span class="ui">Choose k</span></td><td>Decide how many clusters to keep using the elbow, the silhouette, the gap and the consensus of indices.</td><td><span class="chip k6">6</span></td></tr>
+      <tr><td class="c">5</td><td><span class="ui">Validate</span></td><td>Internal validation, resampling stability and comparison with known groups.</td><td><span class="chip k6">6</span></td></tr>
+      <tr><td class="c">6</td><td><span class="ui">Interpret &amp; publish</span></td><td>Cluster profiles, prediction of new cases, editable figures and the report.</td><td><span class="chip k7">7</span> <span class="chip k8">8</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · navigating from the home page</div>
+    <p>The buttons in the opening section take you to the corresponding section of the same home page, except <span class="ui">Start with my data →</span>, which opens Block 2. The cards in <span class="ui">What's inside</span> open their block; if you have not loaded any data yet, any card from 3 onwards takes you to Block 2 first, because every block reads from there. To return to the home page from anywhere, click the program's name at the top left or the <span class="ui">1 Home</span> button on the bar.</p>
+  </div>
+
+  <!-- 2.2 -->
+  <h2 id="s2-2"><span class="num">2.2</span>The interactive demo: k-means and a dendrogram</h2>
+  <p class="lead">The demo takes a set of points in two dimensions and clusters it in the two classic ways at the same time. On the left, k-means moves its centres step by step; on the right, a real dendrogram, computed with the same engine that Block 4 uses, is recalculated whenever you change the linkage rule and is cut into <i>k</i> clusters. It is not a decorative animation: the numbers on the results line are the same ones you will see in the analysis blocks.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · two ways of clustering the same points</div>
+    <p><b>k-means</b> starts from <i>k</i> centres and repeats two steps until nothing changes: it assigns each point to the nearest centre and moves each centre to the mean of its points. It looks for round clusters of similar size, and it needs <i>k</i> in advance. <b>Hierarchical clustering</b> does not fix <i>k</i>: it starts with each point in its own cluster and merges, again and again, the two closest clusters until only one remains. The result is a tree, and cutting it at a given height produces a partition. What “closest” means is decided by the <b>linkage rule</b>, and that is the point of the demo: with the same points, each rule draws a different tree.</p>
+  </div>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b1-demo.png" alt="The demo with three round clusters after running k-means">
+      <span class="marca" style="left:16.7%;top:7.5%">1</span>
+      <span class="marca" style="left:32.4%;top:7.5%">2</span>
+      <span class="marca" style="left:52.7%;top:7.5%">3</span>
+      <span class="marca" style="left:66%;top:7.5%">4</span>
+      <span class="marca" style="left:81.4%;top:7.5%">5</span>
+      <span class="marca" style="left:36%;top:52%">6</span>
+      <span class="marca" style="left:57.2%;top:44.8%">7</span>
+      <span class="marca" style="left:1.6%;top:94%">8</span>
+    </div>
+    <figcaption><b>Figure 2.2.</b> The demo with the <span class="ui">Three round groups</span> dataset after clicking <span class="ui">▶ Run k-means</span> with <i>k</i> = 3 and Ward.D2 linkage. The two ways of clustering agree completely.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Dataset</span>: six ready-made sets of points (table 2.4).</li>
+    <li><span class="n">2</span><span class="ui">k</span>: the number of clusters, from 2 to 6, for k-means and for the tree cut.</li>
+    <li><span class="n">3</span><span class="ui">Linkage</span>: the linkage rule of the dendrogram; the tree is recalculated instantly.</li>
+    <li><span class="n">4</span><span class="ui">▶ Run k-means</span> runs the algorithm with a pause between iterations so that you can watch the centres move.</li>
+    <li><span class="n">5</span><span class="ui">Step</span> advances one iteration, <span class="ui">Regenerate</span> draws new points and <span class="ui">Reset</span> clears the clusters.</li>
+    <li><span class="n">6</span>Each k-means cluster with its centre (star) and its hull.</li>
+    <li><span class="n">7</span>The tree cut line; the branches below it are coloured by cluster.</li>
+    <li><span class="n">8</span>The results line (table 2.5).</li>
+  </ul>
+
+  <table>
+    <caption><b>Table 2.3.</b> The demo controls.</caption>
+    <thead><tr><th style="width:24%">Control</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Dataset</span></td><td>Changes the set of points. Each set is generated with the same seed, so when you select it you will see exactly the points shown in this manual.</td></tr>
+      <tr><td><span class="ui">k</span></td><td>Sets the number of clusters. If you have already run k-means, it restarts with the new <i>k</i>; the tree cut moves to the height that separates <i>k</i> branches.</td></tr>
+      <tr><td><span class="ui">Linkage</span></td><td>Eight rules: single, complete, average (UPGMA), weighted (WPGMA), centroid, median, Ward.D and Ward.D2. It affects only the tree.</td></tr>
+      <tr><td><span class="ui">▶ Run k-means</span></td><td>Places <i>k</i> centres at random and repeats the iterations until convergence, one every 0.4 s.</td></tr>
+      <tr><td><span class="ui">Step</span></td><td>A single iteration: useful for seeing how the points are reassigned and the centres shift.</td></tr>
+      <tr><td><span class="ui">Regenerate</span></td><td>Draws another set of points of the same kind (another seed). The numbers will change.</td></tr>
+      <tr><td><span class="ui">Reset</span></td><td>Removes the k-means clusters and leaves the points in grey; the tree does not change.</td></tr>
+      <tr><td>Click on the left panel</td><td>Adds a point where you click (up to 150). The tree is recalculated and the k-means clusters are cleared so that you can run it again.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 2.4.</b> The six sets of points and what each one teaches.</caption>
+    <thead><tr><th style="width:26%">Dataset</th><th style="width:8%" class="c">Points</th><th>Shape</th><th style="width:34%">What it shows</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Three round groups</span></td><td class="c">54</td><td>Three well-separated round clouds.</td><td>The ideal case: all methods agree.</td></tr>
+      <tr><td><span class="ui">Four groups</span></td><td class="c">60</td><td>Four clouds in the corners.</td><td>How the indices change when going from <i>k</i> = 3 to <i>k</i> = 4.</td></tr>
+      <tr><td><span class="ui">Elongated groups</span></td><td class="c">58</td><td>Two elongated clouds and a round one.</td><td>k-means cuts the elongated clouds; the tree does not.</td></tr>
+      <tr><td><span class="ui">Two moons</span></td><td class="c">60</td><td>Two interlocking half-moons.</td><td>Curved shapes: only single linkage recovers them.</td></tr>
+      <tr><td><span class="ui">Ring + core</span></td><td class="c">64</td><td>A ring with a core inside.</td><td>One cluster inside another: k-means cannot cope.</td></tr>
+      <tr><td><span class="ui">Uniform noise (no structure)</span></td><td class="c">55</td><td>Random points, with no clusters.</td><td>Algorithms return clusters even when there are none.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>The results line</h3>
+  <p>Below the two panels, a single line summarises the state of the demo. Its numbers will turn up again in Blocks 4, 5 and 6, so it is worth learning to read them here.</p>
+  <table>
+    <caption><b>Table 2.5.</b> The numbers on the results line.</caption>
+    <thead><tr><th style="width:30%">In the app</th><th>What it measures</th><th style="width:26%">How to read it</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Cophenetic correlation</span></td><td>The correlation between the original distances and the heights at which the tree joins each pair of points.</td><td>Above 0.75 the tree summarises the distances well. It changes with the linkage, not with <i>k</i>.</td></tr>
+      <tr><td><span class="ui">k-means iteration</span></td><td>How many times the points have been reassigned and the centres moved.</td><td>Few iterations with clear clusters; many when the clusters overlap.</td></tr>
+      <tr><td><span class="ui">between-SS / total-SS</span></td><td>The percentage of the total variation explained by the differences between clusters.</td><td>It always rises as <i>k</i> increases; use it to look for the elbow, not the maximum.</td></tr>
+      <tr><td><span class="ui">average silhouette</span></td><td>The mean silhouette of all the points (section 1.9).</td><td>0.7 or more, strong structure; 0.5, reasonable; below 0.25, doubtful.</td></tr>
+      <tr><td><span class="ui">converged</span></td><td>Appears when an iteration no longer changes anything.</td><td>Until then the partition is provisional.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the numbers in this manual are reproducible</div>
+    <p>The points of each dataset and the initial k-means centres are drawn with a fixed seed. As long as you do not click <span class="ui">Regenerate</span>, you will obtain exactly the values given in the following exercises. After regenerating, the figures change but the conclusions hold.</p>
+  </div>
+
+  <h3>Exercise 1 · Three round clusters: the ideal case</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>On the home page, click <span class="ui">Try the live demo</span>. The initial dataset is <span class="ui">Three round groups</span>, with <i>k</i> = 3 and Ward.D2 linkage.</li>
+      <li>Click <span class="ui">Step</span> several times and watch: first three stars appear in arbitrary positions, then the points change colour and the stars move towards the centre of each cloud. Click <span class="ui">Reset</span> and then <span class="ui">▶ Run k-means</span> to see it run straight through: it converges in four iterations (figure 2.2).</li>
+      <li>Move <span class="ui">k</span> to 2 and then to 4, running k-means each time, and write down the last two numbers on the results line (table 2.6).</li>
+      <li>Go back to <i>k</i> = 3 and change the rule in <span class="ui">Linkage</span>. Note the cophenetic correlation and whether the tree cut still separates the three clouds (table 2.7).</li>
+    </ol>
+  </div>
+  <div class="dos">
+    <table class="compacta">
+      <caption><b>Table 2.6.</b> k-means on the three round clusters for each <i>k</i>.</caption>
+      <thead><tr><th class="c"><i>k</i></th><th class="c">Iterations</th><th class="c">Between-SS / total</th><th class="c">Average silhouette</th></tr></thead>
+      <tbody>
+        <tr><td class="c">2</td><td class="c">3</td><td class="c">33.1%</td><td class="c">0.398</td></tr>
+        <tr><td class="c"><b>3</b></td><td class="c">4</td><td class="c">87.6%</td><td class="c"><b>0.691</b></td></tr>
+        <tr><td class="c">4</td><td class="c">3</td><td class="c">88.7%</td><td class="c">0.553</td></tr>
+      </tbody>
+    </table>
+    <table class="compacta">
+      <caption><b>Table 2.7.</b> Cophenetic correlation of the eight linkages with the same 54 points.</caption>
+      <thead><tr><th>Linkage</th><th class="c">Cophenetic</th><th>Linkage</th><th class="c">Cophenetic</th></tr></thead>
+      <tbody>
+        <tr><td>Single</td><td class="c">0.800</td><td>Centroid</td><td class="c">0.877</td></tr>
+        <tr><td>Complete</td><td class="c">0.869</td><td>Median</td><td class="c">0.855</td></tr>
+        <tr><td>Average (UPGMA)</td><td class="c"><b>0.883</b></td><td>Ward.D</td><td class="c">0.864</td></tr>
+        <tr><td>Weighted (WPGMA)</td><td class="c">0.862</td><td>Ward.D2</td><td class="c">0.877</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The between-cluster sum of squares <b>always grows</b> with <i>k</i>: going from 2 to 3 clusters makes it jump from 33% to 88%, but going from 3 to 4 barely moves it. That abrupt change of slope is the <b>elbow</b>. The silhouette, by contrast, has a clear maximum at <i>k</i> = 3, because with 4 clusters one cloud is split into two halves that are closer to each other than to anything else. And with such sharp clusters, all eight linkages give trees that are very faithful to the distances (cophenetic correlation from 0.80 to 0.88; average linkage, UPGMA, is the highest, as is usually the case), and all of them except single linkage separate the three clouds when cut at 3. Blocks 4 and 6 apply this same reasoning to your data, with thirteen criteria instead of two.</p>
+  </div>
+
+  <h3>Exercise 2 · Two moons: where k-means goes wrong</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>In <span class="ui">Dataset</span>, choose <span class="ui">Two moons</span> and lower <span class="ui">k</span> to 2.</li>
+      <li>Click <span class="ui">▶ Run k-means</span>. When it converges, look at how each moon has been divided.</li>
+      <li>In <span class="ui">Linkage</span>, choose <span class="ui">Single</span> and compare the tree cut with the k-means clusters (figure 2.3).</li>
+      <li>Then try <span class="ui">Average (UPGMA)</span> and <span class="ui">Ward.D2</span>: the colours of the tree mix the moons again.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b1-lunas.png" alt="Two moons: k-means versus single linkage"></div>
+    <figcaption><b>Figure 2.3.</b> <span class="ui">Two moons</span> with <i>k</i> = 2. k-means (left) splits each moon in half, because it can only draw straight boundaries between centres. Single linkage (right) follows the chain of nearest neighbours and recovers the two moons exactly.</figcaption>
+  </figure>
+  <table class="compacta">
+    <caption><b>Table 2.8.</b> Two moons with <i>k</i> = 2: agreement of each method with the true moons, measured with the adjusted Rand index (ARI; 1 = perfect agreement, 0 = chance).</caption>
+    <thead><tr><th>Method</th><th class="c">ARI with the moons</th><th class="c">Cophenetic</th><th class="c">Average silhouette</th></tr></thead>
+    <tbody>
+      <tr><td>k-means</td><td class="c">0.391</td><td class="c">—</td><td class="c">0.453</td></tr>
+      <tr><td>Tree, single linkage, cut at 2</td><td class="c"><b>1.000</b></td><td class="c">0.651</td><td class="c">—</td></tr>
+      <tr><td>Tree, UPGMA, cut at 2</td><td class="c">0.312</td><td class="c"><b>0.751</b></td><td class="c">—</td></tr>
+      <tr><td>Tree, Ward.D2, cut at 2</td><td class="c">0.312</td><td class="c">0.739</td><td class="c">—</td></tr>
+    </tbody>
+  </table>
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Rule · a high value does not mean correct clusters</div>
+    <p style="margin:0;padding:0.08in 0.16in 0.1in">Single linkage is the only rule that recovers the moons, and yet it has the <b>lowest</b> cophenetic correlation (0.651 against 0.751 for UPGMA). The cophenetic correlation measures how well the tree reproduces the pairwise distances, not whether the clusters are the true ones. Likewise, the k-means silhouette (0.453) is far from negligible even though the partition is absurd: the silhouette rewards compact, round clusters. With curved or elongated shapes, always look at the figure before the index.</p>
+  </div>
+
+  <h3>Exercise 3 · A ring with a core</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Choose <span class="ui">Ring + core</span>, keep <i>k</i> = 2 and <span class="ui">Single</span> as the linkage.</li>
+      <li>Run k-means and compare the two panels (figure 2.4).</li>
+      <li>Switch to <span class="ui">Complete</span>, <span class="ui">Average (UPGMA)</span> and <span class="ui">Ward.D2</span>: none of them separates the core from the ring.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b1-anillo.png" alt="Ring with a core: k-means versus single linkage"></div>
+    <figcaption><b>Figure 2.4.</b> <span class="ui">Ring + core</span> with <i>k</i> = 2. k-means cuts the dataset into two halves (silhouette 0.303, 33.9% of the variation between clusters). Single linkage isolates the core as one cluster and the ring as the other: perfect agreement with the truth (ARI = 1.000) despite a cophenetic correlation of only 0.252. With complete linkage, UPGMA or Ward, the ARI stays close to zero.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>A cluster inside another has no “centre” of its own: the centre of the ring falls in the core. That is why no rule that works with centres or with averages of distances can separate them, and only single linkage, which joins immediate neighbours, chains the points of the ring together. In Block 5 you will find two methods designed for these shapes: <b>DBSCAN</b>, which clusters by density and also recognises noise, and <b>spectral</b> clustering, which uses the nearest-neighbour graph. The practical rule is this: if your scatter plot shows curved, ring-shaped or elongated forms, do not trust k-means or Ward.</p>
+  </div>
+
+  <h3>Exercise 4 · Elongated clusters and the problem of starting points</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Choose <span class="ui">Elongated groups</span>, raise <i>k</i> to 3 and go back to <span class="ui">Ward.D2</span>.</li>
+      <li>Run k-means. Notice how the elongated cloud on the left is shared between two centres, while the tree separates the three clouds correctly (figure 2.5).</li>
+      <li>Click <span class="ui">Regenerate</span> and run k-means again, several times: with other points and other initial centres, it sometimes gets it right and sometimes does not.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b1-alargados.png" alt="Elongated clusters: k-means versus Ward.D2"></div>
+    <figcaption><b>Figure 2.5.</b> <span class="ui">Elongated groups</span> with <i>k</i> = 3. k-means (ARI = 0.385 with the true clusters, silhouette 0.413) split the horizontal cloud on the left and merged its right half with part of the large cloud. The Ward.D2 tree, and the UPGMA tree as well, recovers the three clouds (ARI = 1.000).</figcaption>
+  </figure>
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · k-means depends on where it starts</div>
+    <p>k-means is only guaranteed to reach a <b>local</b> minimum of the sum of squares: the result depends on the initial centres, and with elongated clusters or clusters of different sizes a bad start produces a poor partition that nonetheless “converges”. This is why Block 5 uses the smart <b>k-means++</b> initialisation by default, repeats the algorithm from many starts (<span class="ui">nstart</span>) and keeps the best, and also offers <b>hierarchical k-means</b>, which takes its centres from a Ward tree. The demo deliberately makes no repetitions, so that you can see the problem.</p>
+  </div>
+
+  <h3>Exercise 5 · Uniform noise: clusters where there are none</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>Choose <span class="ui">Uniform noise (no structure)</span> with <i>k</i> = 3 and Ward.D2.</li>
+      <li>Run k-means and look at the results line (figure 2.6).</li>
+      <li>Change <i>k</i> to 4, 5 and 6: the explained variation rises each time, the silhouette barely moves and the tree always delivers as many clusters as you ask for.</li>
+    </ol>
+  </div>
+  <figure>
+    <div class="marco"><img src="../img/b1-uniforme.png" alt="Uniform noise grouped into three clusters"></div>
+    <figcaption><b>Figure 2.6.</b> <span class="ui">Uniform noise (no structure)</span> with <i>k</i> = 3. Both methods produce three reasonable-looking clusters, with 65.1% of the variation between clusters, a silhouette of 0.397 and a cophenetic correlation of 0.658. None of these numbers reveals that the points were drawn at random.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>Every clustering algorithm returns clusters, <b>even when none exist</b>. The indices are of little help: the silhouette of 0.40 for the noise is not far from the 0.45 for the two moons, and the elbow in the sum of squares is gentle but visible. The only defence is to ask, before clustering, whether the data have any structure, and for that Block 2 computes the <b>Hopkins statistic</b> with its P-value against uniform data and draws the <b>VAT image</b> of the distance matrix. A Hopkins value close to 0.5 means “there is nothing to find”, and that is a legitimate conclusion.</p>
+  </div>
+
+  <p><b>Try it yourself.</b> With any dataset, click an empty corner of the left panel to add an isolated point and change the linkage to <span class="ui">Single</span>: the new point forms a cluster of one and all the others merge into the other cluster, because single linkage isolates outliers before anything else. Go back to <span class="ui">Ward.D2</span> and the point joins the nearest cloud. With k-means, run the algorithm and watch how the point pulls the centre of its cluster towards itself. This is why Block 2 detects multivariate outliers before clustering.</p>
+
+  <!-- 2.3 -->
+  <h2 id="s2-3"><span class="num">2.3</span>Data types and methods at a glance</h2>
+  <p class="lead">The next two sections of the home page are catalogues. The first answers “Are my data suitable?” and the second “What can be computed?”. Neither has any controls: they are cards to read.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-tipos.png" alt="The seven data-type cards"></div>
+    <figcaption><b>Figure 2.7.</b> The <span class="ui">Every kind of data</span> section: seven types of table, typical examples and, in colour, the dissimilarity coefficients suited to each.</figcaption>
+  </figure>
+
+  <table>
+    <caption><b>Table 2.9.</b> The seven data types, the coefficients the app suggests and the blocks where they are handled.</caption>
+    <thead><tr><th style="width:20%">Type</th><th style="width:30%">Examples</th><th>Suggested coefficients</th><th style="width:13%">Blocks</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Quantitative</span></td><td>Yield, height, gene expression, soil chemistry, morphometrics.</td><td>Euclidean, Manhattan, correlation, Mahalanobis.</td><td class="c"><span class="chip k3">3</span> <span class="chip k5">5</span></td></tr>
+      <tr><td><span class="ui">Binary (0/1)</span></td><td>Presence or absence of species, alleles, traits, symptoms.</td><td>Jaccard, Dice, simple matching, Ochiai.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td><span class="ui">Nominal</span></td><td>Cultivar, soil type, colour, region, category.</td><td>Simple matching, Hamming, Gower.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td><span class="ui">Ordinal</span></td><td>Damage scales, Likert scales, ordered classes.</td><td>Ranks + Manhattan, Gower.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td><span class="ui">Counts &amp; abundances</span></td><td>Species × sites tables, OTU counts, insect catches.</td><td>Bray–Curtis, Hellinger, chi-square, Morisita–Horn.</td><td class="c"><span class="chip k2">2</span> <span class="chip k3">3</span></td></tr>
+      <tr><td><span class="ui">Mixed</span></td><td>Any combination of the above in a single table.</td><td>Gower distance.</td><td class="c"><span class="chip k3">3</span> <span class="chip k5">5</span></td></tr>
+      <tr><td><span class="ui">Distance matrix</span></td><td>A matrix that has already been computed: genetic, geographic, expert-based.</td><td>Used as it is.</td><td class="c"><span class="chip k2">2</span></td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 2.10.</b> The fifteen methods in the gallery, by family, and the block that computes them.</caption>
+    <thead><tr><th style="width:16%">Family</th><th style="width:30%">Card</th><th>What it is</th><th style="width:10%">Block</th></tr></thead>
+    <tbody>
+      <tr><td><b>Hierarchical</b><br><span class="small">four cards</span></td><td><span class="ui">Agglomerative</span></td><td>Bottom-up merges with eight linkage rules.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td></td><td><span class="ui">Divisive (DIANA)</span></td><td>Top-down splits.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td></td><td><span class="ui">Tree comparison</span></td><td>Tanglegram, entanglement and Baker's γ between two trees.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td></td><td><span class="ui">Clustered heat map</span></td><td>A heat map with rows and columns ordered by their trees.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td><b>Partitioning</b><br><span class="small">four cards</span></td><td><span class="ui">k-means</span></td><td>Centroids; Hartigan–Wong, Lloyd and MacQueen algorithms; k-means++ initialisation.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">k-medoids (PAM)</span></td><td>Centres that are actual observations; accepts any distance.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">CLARA</span></td><td>PAM on repeated samples, for thousands of rows.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">Fuzzy c-means</span></td><td>Membership degrees instead of labels.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td><b>Advanced</b><br><span class="small">three cards</span></td><td><span class="ui">Model-based</span></td><td>Gaussian mixtures fitted by EM; the BIC chooses the model.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">DBSCAN</span></td><td>Density-based clustering: any shape, with noise.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td></td><td><span class="ui">Hierarchical k-means</span></td><td>The tree provides the initial k-means centres.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td><b>Validation</b><br><span class="small">four cards</span></td><td><span class="ui">Clustering tendency</span></td><td>Hopkins statistic and VAT image.</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td></td><td><span class="ui">Optimal number of clusters</span></td><td>Elbow, silhouette, gap and the consensus of indices.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td></td><td><span class="ui">Validation</span></td><td>Silhouette, Dunn, resampling stability, ARI.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td></td><td><span class="ui">Supervised follow-up</span></td><td>Discriminant analysis and classification of new observations.</td><td class="c"><span class="chip k7">7</span></td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-metodos.png" alt="The gallery of fifteen methods"></div>
+    <figcaption><b>Figure 2.8.</b> The <span class="ui">Methods covered</span> gallery. Each card carries the label of its family, an illustration of the method and the keywords that set it apart.</figcaption>
+  </figure>
+
+  <div class="caja dato">
+    <div class="dato-cifra">39</div>
+    <div class="dato-txt">
+      <div class="caja-t">Fact · more than the gallery shows</div>
+      The cards are a summary. Block 3 offers <b>39 dissimilarity coefficients</b>, Block 4 adds flexible linkage with a β parameter, Block 5 includes spectral clustering, and Block 6 takes a vote among thirteen criteria to choose <i>k</i>, resamples variables to give AU and BP values to the branches of the tree, and compares algorithms across <i>k</i>. Each chapter of this manual covers its own block in detail.
+    </div>
+  </div>
+
+  <!-- 2.4 -->
+  <h2 id="s2-4"><span class="num">2.4</span>The thirteen theory lessons</h2>
+  <p class="lead">The <span class="ui">Clustering, explained without the fog</span> section is a short course in cluster analysis in thirteen expandable lessons, each with one or two figures. You do not need to read them in order or all at once: each analysis block repeats, in its theory card, the part that matters at that step. This section introduces the lessons and gathers the rules of thumb they state, so that you have them all in one place.</p>
+
+  <ol class="pasos">
+    <li>Click <span class="ui">Read the theory</span> in the opening section: the page scrolls down to the card and opens the first lesson.</li>
+    <li>Click the title of any lesson to open or close it. Several lessons can be open at the same time.</li>
+    <li>The figures in the lessons are vector graphics: if the browser is on a small screen, they rearrange themselves below the text.</li>
+  </ol>
+
+  <table class="compacta">
+    <caption><b>Table 2.11.</b> The thirteen lessons: the question each one answers and where it applies.</caption>
+    <thead><tr><th style="width:5%" class="c">No.</th><th style="width:34%">Lesson in the app</th><th>What it answers</th><th style="width:11%">Applies in</th></tr></thead>
+    <tbody>
+      <tr><td class="c">1</td><td><span class="ui">What is a cluster, and what is clustering?</span></td><td>What a cluster is (compactness and separation), what “unsupervised” means and which are the four families of methods.</td><td class="c">all</td></tr>
+      <tr><td class="c">2</td><td><span class="ui">Before clustering: are my data clusterable at all?</span></td><td>Hopkins, VAT, principal-component preview, correlations, outliers and missing values.</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td class="c">3</td><td><span class="ui">Similarity, dissimilarity and distance</span></td><td>The coefficients for quantitative, binary, nominal, mixed and ecological variables; the double-zero problem.</td><td class="c"><span class="chip k3">3</span></td></tr>
+      <tr><td class="c">4</td><td><span class="ui">Standardisation: putting variables on the same footing</span></td><td>When to standardise (z, range, robust, logarithm, Hellinger) and when not to.</td><td class="c"><span class="chip k2">2</span></td></tr>
+      <tr><td class="c">5</td><td><span class="ui">Hierarchical clustering and linkage rules</span></td><td>Agglomerative and divisive; the eight linkage rules; cophenetic correlation and agglomerative coefficient; Ward.D versus Ward.D2.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td class="c">6</td><td><span class="ui">Reading (and drawing) a dendrogram</span></td><td>Merge heights, the arbitrary order of the leaves, the cut and what the app draws.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td class="c">7</td><td><span class="ui">Comparing dendrograms</span></td><td>Tanglegram and entanglement, cophenetic correlation between trees, Baker's γ, Fowlkes–Mallows index.</td><td class="c"><span class="chip k4">4</span></td></tr>
+      <tr><td class="c">8</td><td><span class="ui">Partitioning: k-means, PAM, CLARA and fuzzy clustering</span></td><td>How k-means and its variants work, medoids, CLARA, fuzzy membership and the limits of k-means.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td class="c">9</td><td><span class="ui">Density-based and model-based clustering</span></td><td>DBSCAN (ε, minPts, noise) and Gaussian mixtures with EM and BIC.</td><td class="c"><span class="chip k5">5</span></td></tr>
+      <tr><td class="c">10</td><td><span class="ui">How many clusters?</span></td><td>Elbow, silhouette, gap, Calinski–Harabasz, Davies–Bouldin, Dunn and the consensus; BIC for mixtures, the knee for DBSCAN.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td class="c">11</td><td><span class="ui">Validating clusters</span></td><td>Internal validation, resampling stability, AU and BP values, external validation and comparison of algorithms.</td><td class="c"><span class="chip k6">6</span></td></tr>
+      <tr><td class="c">12</td><td><span class="ui">From clusters to meaning: profiles, indicators and supervised follow-up</span></td><td>Profiles, v-tests, ANOVA, indicator species, discriminant analysis, classification tree and assignment of new cases.</td><td class="c"><span class="chip k7">7</span></td></tr>
+      <tr><td class="c">13</td><td><span class="ui">Pitfalls checklist</span></td><td>What to do and what not to do before publishing (table 2.12).</td><td class="c"><span class="chip k8">8</span></td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-teoria.png" alt="The first theory lesson, open"></div>
+    <figcaption><b>Figure 2.9.</b> The beginning of the theory card, with lesson 1 open. Each lesson has a title with its tag on the right, text with the key terms in bold, original figures and, further down, boxes with tips or warnings.</figcaption>
+  </figure>
+
+  <h3>The rules of thumb stated in the lessons</h3>
+  <p>The lessons are rich in thresholds and warnings. The following boxes gather those used most often; each reappears, in more detail, in the chapter on the corresponding block.</p>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Rules · thresholds worth memorising</div>
+    <table class="compacta">
+      <thead><tr><th style="width:24%">Measure</th><th>Thresholds and interpretation</th><th style="width:11%" class="c">Lesson</th></tr></thead>
+      <tbody>
+        <tr><td><b>Hopkins</b></td><td>Close to 0.5 the data look uniform; below 0.75, be cautious; above 0.9 there is clear structure.</td><td class="c">2</td></tr>
+        <tr><td><b>Objects per cluster</b></td><td>At least 5 to 10 objects for each cluster you expect. Many variables are fine, as long as all of them are relevant.</td><td class="c">2</td></tr>
+        <tr><td><b>Cophenetic correlation</b></td><td>Above 0.75 the tree is a faithful summary of the distances. The agglomerative coefficient grows with sample size: compare it only between trees built from the same data.</td><td class="c">5</td></tr>
+        <tr><td><b>Gap</b></td><td>Choose the smallest <i>k</i> whose gap lies within one standard error of the maximum.</td><td class="c">10</td></tr>
+        <tr><td><b>Average silhouette</b></td><td>0.7 or more, strong structure; 0.5, reasonable; below 0.25, no substantial structure. A negative silhouette flags an object that is probably misassigned.</td><td class="c">11</td></tr>
+        <tr><td><b>Jaccard stability</b></td><td>Above 0.75 a cluster is stable; below 0.5 it is doubtful.</td><td class="c">11</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · three mistakes the lessons keep warning about</div>
+    <ul>
+      <li><b>The left–right order of a dendrogram does not mean closeness</b> (lesson 6). Any node can be rotated without changing the tree: there are 2<sup><i>n</i>−1</sup> equivalent drawings. Read the height at which two objects are joined, not whether they are neighbours in the row of leaves.</li>
+      <li><b>Ward and k-means need Euclidean distances</b> (lessons 5 and 13). With Bray–Curtis or Gower, use PAM or UPGMA, or transform first (Hellinger, or the square root of 1 − <i>s</i>).</li>
+      <li><b>The double zero</b> (lesson 3). In species tables almost all cells are zeros; a coefficient that counts “both absent” as a resemblance will group sites by the species they lack. Use asymmetric coefficients: Jaccard, Bray–Curtis, Hellinger.</li>
+    </ul>
+  </div>
+
+  <div class="caja dato">
+    <div class="dato-cifra">D2</div>
+    <div class="dato-txt">
+      <div class="caja-t">Fact · Ward.D and Ward.D2</div>
+      Ward's criterion is defined on <b>squared</b> Euclidean distances. Ward.D2 squares them for you and reports the heights in the original units; Ward.D applies the same formula to whatever you give it. Prefer Ward.D2, unless you are reproducing an older analysis. In the demo you can see that both give almost identical trees but with different heights.
+    </div>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Table 2.12.</b> The list from lesson 13, <span class="ui">Pitfalls checklist</span>.</caption>
+    <thead><tr><th style="width:50%">Do</th><th>Don't</th></tr></thead>
+    <tbody>
+      <tr><td>Check clustering tendency first (Hopkins, VAT).</td><td>Read the left–right order of a dendrogram as proximity.</td></tr>
+      <tr><td>Match the coefficient to the data type; use asymmetric coefficients for presence/absence and abundances.</td><td>Use Ward or k-means on non-Euclidean distances (Bray–Curtis, Gower) without a transformation.</td></tr>
+      <tr><td>Standardise when units differ, and say so in the methods.</td><td>Let one variable in large units decide the clusters.</td></tr>
+      <tr><td>Try several linkages and algorithms and compare them (tanglegram, cophenetic correlation, ARI).</td><td>Take a single k-means run with a single start as the answer.</td></tr>
+      <tr><td>Choose <i>k</i> with several criteria and report them all.</td><td>Use double-zero coefficients (simple matching) on species tables.</td></tr>
+      <tr><td>Report the silhouette and a stability measure with every partition.</td><td>Test differences between clusters with ANOVA on the very variables used to build them and call the result “significant”.</td></tr>
+      <tr><td>Describe each cluster in terms of the variables.</td><td>Present a tree without its cophenetic correlation or a cut without its silhouette.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 2.5 -->
+  <h2 id="s2-5"><span class="num">2.5</span>Which method should I use? The choice table</h2>
+  <p class="lead">The <span class="ui">Which method should I use?</span> section condenses the lessons into a table of eight rows: depending on what your data are like, which dissimilarity to use, which method to try first, which to try next and what to validate with. It is a starting point, not a rule, and Block 2 makes this same recommendation automatically as soon as it assigns types to your columns.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b1-eleccion.png" alt="The Which method should I use table"></div>
+    <figcaption><b>Figure 2.10.</b> The choice table in the app. Table 2.13 reproduces its content.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 2.13.</b> The choice table.</caption>
+    <thead><tr><th style="width:21%">Your data</th><th style="width:17%">Dissimilarity</th><th style="width:22%">First choice</th><th style="width:19%">Also try</th><th>Validate with</th></tr></thead>
+    <tbody>
+      <tr><td>Quantitative traits, similar units</td><td>Euclidean (scaled if needed)</td><td>Ward.D2 tree, then k-means seeded from the tree</td><td>UPGMA, Gaussian mixtures</td><td>Silhouette, gap, resampling stability</td></tr>
+      <tr><td>Quantitative profiles (expression, spectra)</td><td>1 − Pearson correlation</td><td>UPGMA or complete linkage</td><td>PAM, k-means on standardised rows</td><td>Cophenetic correlation, silhouette, AU values</td></tr>
+      <tr><td>Presence/absence (species, markers)</td><td>Jaccard or Dice</td><td>UPGMA</td><td>PAM, Ward on √(1 − <i>s</i>)</td><td>Cophenetic correlation, resampling, indicator species</td></tr>
+      <tr><td>Species abundances</td><td>Bray–Curtis, or Hellinger + Euclidean</td><td>UPGMA (Bray–Curtis) or Ward (Hellinger)</td><td>PAM, k-means on Hellinger</td><td>Silhouette, IndVal, ANOSIM/PERMANOVA</td></tr>
+      <tr><td>Mixed quantitative and categorical</td><td>Gower</td><td>PAM</td><td>UPGMA, hierarchical on Gower</td><td>Silhouette, stability</td></tr>
+      <tr><td>Large tables (thousands of rows)</td><td>Euclidean</td><td>k-means (k-means++, many starts)</td><td>CLARA, DBSCAN</td><td>Silhouette on a sample, CH index</td></tr>
+      <tr><td>Irregular shapes, noise, outliers</td><td>Euclidean</td><td>DBSCAN</td><td>Single linkage, spectral</td><td>Silhouette (with caution), stability</td></tr>
+      <tr><td>Overlapping groups, gradients</td><td>Euclidean</td><td>Fuzzy c-means or Gaussian mixtures</td><td>PAM</td><td>Partition coefficient, BIC</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · how to use the table</div>
+    <p>Find the row that most resembles your data table and take its three middle columns to Blocks 3, 4 and 5. If your data fall into two rows (for example, abundances with thousands of sites), the nature of the variables decides the dissimilarity and the size of the table decides the algorithm. Once Block 2 has assigned types to your columns, compare its <span class="ui">What to do next</span> card with this table: they almost always agree, and when they do not, the card explains why.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b1-porque.png" alt="The six Why ClusteringPro cards"></div>
+    <figcaption><b>Figure 2.11.</b> The <span class="ui">Why ClusteringPro</span> section: six arguments, useful when you have to justify in a project or a thesis why you chose the program.</figcaption>
+  </figure>
+
+  <p>The six <span class="ui">Why ClusteringPro</span> cards summarise what sets the program apart: it is built for life-science data, with the appropriate coefficient and warnings for each data type; it guides as well as computes; its calculations have been checked against reference values; its dendrograms are publication-ready and editable at up to 900 dots per inch; it compares rather than relying on a single tree; and it works offline, without uploading anything. Below them, <span class="ui">Glossary at a glance</span> shows on cards the twenty-nine terms that recur most often in the app, grouped by family: those of hierarchical clustering, those of partitioning, and those of exploration and validation. Appendix A defines them all.</p>
+
+  <!-- 2.6 -->
+  <h2 id="s2-6"><span class="num">2.6</span>How to cite</h2>
+  <p class="lead">If ClusteringPro has helped you with a thesis, a paper or a report, cite it: that way readers know which tool and which version were used for the calculations, and the program can remain free. The <span class="ui">How to cite ClusteringPro</span> section, at the end of the home page, has the reference ready to copy.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b1-cita.png" alt="The How to cite ClusteringPro card">
+      <span class="marca" style="left:9.9%;top:61.8%">1</span>
+      <span class="marca" style="left:21.6%;top:61.8%">2</span>
+      <span class="marca" style="left:34.8%;top:61.8%">3</span>
+      <span class="marca" style="left:51.3%;top:61.8%">4</span>
+      <span class="marca" style="left:9.4%;top:72.5%">5</span>
+    </div>
+    <figcaption><b>Figure 2.12.</b> The citation card.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Copy reference (APA)</span> copies the reference in APA format to the clipboard.</li>
+    <li><span class="n">2</span><span class="ui">Copy BibTeX</span> copies the entry for LaTeX and reference managers.</li>
+    <li><span class="n">3</span><span class="ui">Open the Zenodo record ↗</span> opens the archive record, with all the versions.</li>
+    <li><span class="n">4</span><span class="ui">Source code on GitHub ↗</span> opens the repository with the source code.</li>
+    <li><span class="n">5</span><span class="ui">BibTeX entry</span> expands the entry so that you can see it before copying it.</li>
+  </ul>
+
+  <ol class="pasos">
+    <li>In the opening section, click <span class="ui">How to cite</span>; the page scrolls down to the card.</li>
+    <li>Click <span class="ui">Copy reference (APA)</span> or <span class="ui">Copy BibTeX</span>. A message confirms <i>Reference copied to the clipboard</i>; if the browser blocks the clipboard, select the text and copy it by hand.</li>
+    <li>Paste the reference into your reference manager or your document and adapt it to the journal's style.</li>
+    <li>In the methods section, state the version and the settings you used. The Block 8 report prints this same reference and drafts that paragraph.</li>
+  </ol>
+
+  <div class="cita">Barrera-Guzmán, L. Á. (2026). <i>ClusteringPro: finding, validating and interpreting natural groups in biological, ecological and agronomic data without programming</i> (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22682795</div>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the DOI</div>
+    <p>The identifier in the citation, 10.5281/zenodo.22682795, is the <b>concept DOI</b>: it always resolves to the most recent version of the program. Each version also has its own DOI, shown in its archive record (that of version 1.0.1 is 10.5281/zenodo.22682889). Cite the concept DOI together with the version number; if the journal requires that anyone be able to retrieve exactly the version you used, cite the DOI of that version. The DOIs of every version and the full metadata are in the repository's <code>CITATION.cff</code> file, which GitHub displays under <span class="ui">Cite this repository</span>.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · report the settings as well</div>
+    <p>Citing the program is not enough for another researcher to repeat your analysis. In the methods, state the version of ClusteringPro, the dissimilarity coefficient, the scaling, the linkage rule or the algorithm with its parameters, the number of clusters and the criteria used to choose it, the number of resamples and the <b>random seed</b>. The methods paragraph drafted by Block 8 contains all of this, with the values you actually used.</p>
+  </div>
+
+  <p style="margin-top:0.25in">With the home page, the demo and the theory at hand, the next step is to load your own data. The chapter on Block 2 explains the formats the app accepts, how it assigns a type to each column and what role each column can play, the handling of missing values, transformations and scaling, and the question that must be answered before clustering: whether the data can be clustered at all.</p>
+</section>
+
+</body>
+</html>

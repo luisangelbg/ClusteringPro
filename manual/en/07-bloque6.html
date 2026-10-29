@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClusteringPro · User manual · Block 6: number of clusters and validation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../interior.css">
+<!-- reparte el contenido en hojas tamaño carta, con encabezados y números de página -->
+<script src="../paginar.js"></script>
+</head>
+<body>
+
+<section class="capitulo" id="cap-b6" data-pestana="B6" data-orden="7" style="--acento: var(--b6)">
+  <div class="cap-apertura">
+    <div class="cap-num">B6</div>
+    <div class="cap-etiqueta">Chapter seven · Block 6 · Validation</div>
+    <h1 data-corto="Block 6 · Number of clusters and validation">Number of clusters and validation</h1>
+    <div class="cap-regla"></div>
+    <p class="cap-resumen">Every clustering method returns clusters, even on data with no structure. This block answers the questions that separate a result from an artefact: how many clusters the data support, whether those clusters withstand resampling, which branches of the tree are supported by the variables, how closely they match what you already knew, and which algorithm best describes the data across <i>k</i>.</p>
+    <div class="cap-franja"><span class="k6"></span><span class="k6" style="opacity:.75"></span><span class="k6" style="opacity:.5"></span><span class="k6" style="opacity:.3"></span></div>
+    <ul class="cap-contenido">
+      <li><b>7.1</b>How many clusters? Thirteen criteria and a vote</li>
+      <li><b>7.2</b>The gap statistic</li>
+      <li><b>7.3</b>Bootstrap stability</li>
+      <li><b>7.4</b>Support for the tree clusters (AU and BP)</li>
+      <li><b>7.5</b>External validation</li>
+      <li><b>7.6</b>Comparing algorithms across <i>k</i></li>
+      <li><b>7.7</b>Settings, tables and figures of the block</li>
+      <li><b>7.8</b>Step by step</li>
+    </ul>
+  </div>
+
+  <p class="lead">Block 6 has one theory card and five working cards. <span class="ui">1 · Optimal number of clusters</span> evaluates each <i>k</i> in a range with thirteen criteria and counts their votes. <span class="ui">2 · Stability of the clusters (bootstrap)</span> resamples the objects and measures whether each cluster reappears. <span class="ui">3 · Support of the tree clusters</span> resamples the variables and gives each branch of the tree a support value. <span class="ui">4 · External validation</span> compares two clusterings. <span class="ui">5 · Comparison of algorithms over k</span> pits the tree, k-means and PAM against each other over the same range. The cards are independent: you can run only the ones you need, in any order.</p>
+
+  <p>The block becomes available as soon as Block 3 computes a matrix. Cards 2 and 4 also need a partition: the tree cut from Block 4 or the partition from Block 5. Once card 1 has finished, Block 7 is enabled.</p>
+
+  <table class="compacta">
+    <caption><b>Table 7.1.</b> The four questions of the block and the tool that answers each one.</caption>
+    <thead><tr><th style="width:24%">Question</th><th style="width:28%">Card</th><th style="width:22%">What it resamples or compares</th><th>Main result</th></tr></thead>
+    <tbody>
+      <tr><td>How many clusters?</td><td><span class="ui">1 · Optimal number of clusters</span></td><td>one partition for each <i>k</i></td><td>Consensus <i>k</i>, the vote of each criterion and the gap statistic.</td></tr>
+      <tr><td>Are the clusters stable?</td><td><span class="ui">2 · Stability of the clusters</span></td><td>the objects</td><td>Mean Jaccard per cluster and its verdict.</td></tr>
+      <tr><td>Which branches of the tree are supported?</td><td><span class="ui">3 · Support of the tree clusters</span></td><td>the variables, at several scales</td><td>AU and BP for each branch.</td></tr>
+      <tr><td>Do they match what I already know?</td><td><span class="ui">4 · External validation</span></td><td>two clusterings</td><td>ARI, NMI, purity and χ² test.</td></tr>
+      <tr><td>Which algorithm is best suited?</td><td><span class="ui">5 · Comparison of algorithms over k</span></td><td>three methods over the range of <i>k</i></td><td>Connectivity, Dunn and silhouette.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 7.1 -->
+  <h2 id="s7-1"><span class="num">7.1</span>How many clusters? Thirteen criteria and a vote</h2>
+  <p class="lead">There is no single criterion for the number of clusters. Each index measures something different (compactness, separation, the gain from adding a cluster), and each one fails in different situations. The app computes all of them for every <i>k</i> in the range and lets them vote: the <i>k</i> with the most votes is the consensus.</p>
+
+  <figure>
+    <div class="marco" style="position:relative">
+      <img src="../img/b6-tarjeta1.png" alt="Card 1 · Optimal number of clusters">
+      <span class="marca" style="left:21%;top:33%">1</span>
+      <span class="marca" style="left:35%;top:33%">2</span>
+      <span class="marca" style="left:57%;top:33%">3</span>
+      <span class="marca" style="left:85%;top:56%">4</span>
+      <span class="marca" style="left:1%;top:79%">5</span>
+      <span class="marca" style="left:28%;top:79%">6</span>
+    </div>
+    <figcaption><b>Figure 7.1.</b> Card <span class="ui">1 · Optimal number of clusters</span> before running, with the maize races and the Ward.D2 tree from Block 4.</figcaption>
+  </figure>
+  <ul class="leyenda-marcas">
+    <li><span class="n">1</span><span class="ui">Partitions produced by</span>: how the partition for each <i>k</i> is obtained: by cutting the Block 4 tree, with k-means or with PAM.</li>
+    <li><span class="n">2</span><span class="ui">k from</span>: the first <i>k</i> in the range (at least 2).</li>
+    <li><span class="n">3</span><span class="ui">k to</span>: the last one; it starts at 10, or at <i>n</i> − 1 if there are fewer than 11 objects. The range must contain at least three values.</li>
+    <li><span class="n">4</span><span class="ui">Gap statistic: reference sets B</span>: how many reference sets the gap statistic uses (section 7.2); 0 skips it.</li>
+    <li><span class="n">5</span><span class="ui">Evaluate every k →</span>.</li>
+    <li><span class="n">6</span><span class="ui">Adopt k</span>: carries the consensus <i>k</i> over to Blocks 4 and 5.</li>
+  </ul>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · which partition generator the app proposes</div>
+    <table class="compacta">
+      <thead><tr><th style="width:44%">If…</th><th>it proposes</th></tr></thead>
+      <tbody>
+        <tr><td>you built a tree in Block 4</td><td><span class="ui">Cutting the Block 4 tree</span>: the clusters for each <i>k</i> are cuts of the same tree, nested and reproducible.</td></tr>
+        <tr><td>there is no tree and the coefficient is Euclidean (or a loaded matrix)</td><td><span class="ui">k-means</span>, with 5 starts and seed 1.</td></tr>
+        <tr><td>there is no tree and the coefficient is not Euclidean</td><td><span class="ui">PAM</span>, which works directly on the Block 3 matrix.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">The proposal is updated when you build the tree, as long as you have not yet evaluated a range. You can change it: if you intend to use PAM in Block 5, choose PAM here so that the number of clusters is evaluated with the same method.</p>
+  </div>
+
+  <h3>Two spaces for computing the indices</h3>
+  <p>Some criteria work with dissimilarities and others with coordinates. The silhouette, Dunn, the C-index and McClain–Rao use the Block 3 matrix as it is. Calinski–Harabasz, Davies–Bouldin, PBM, Ratkowsky–Lance, Hartigan, Krzanowski–Lai, Ball–Hall, the elbow and the gap use coordinates: the Block 2 working matrix if the coefficient is Euclidean, the MDS coordinates if you loaded a matrix, and the PCoA axes of the coefficient in any other case. The <span class="ui">Partitions from</span> tile states which one was used.</p>
+
+  <table class="compacta">
+    <caption><b>Table 7.2.</b> The thirteen criteria, the rule by which each one votes and its vote with the maize races (Ward.D2 tree, <i>k</i> from 2 to 10).</caption>
+    <thead><tr><th style="width:19%">Criterion</th><th style="width:44%">What it measures</th><th style="width:20%">Votes for</th><th class="c">Maize</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Silhouette</span></td><td>Cohesion versus separation of each object, averaged (section 6.7).</td><td>the maximum</td><td class="c">3 (0.419)</td></tr>
+      <tr><td><span class="ui">Calinski–Harabasz</span></td><td>Between-cluster sum of squares versus the within-cluster one, each divided by its degrees of freedom.</td><td>the maximum</td><td class="c">3 (40.6)</td></tr>
+      <tr><td><span class="ui">Davies–Bouldin</span></td><td>Spread of each cluster and of its most similar neighbour, relative to the distance between their centroids.</td><td>the minimum</td><td class="c">2 (0.915)</td></tr>
+      <tr><td><span class="ui">Dunn</span></td><td>Minimum distance between clusters divided by the maximum diameter of a cluster.</td><td>the maximum</td><td class="c">5 (0.515)</td></tr>
+      <tr><td><span class="ui">C-index</span></td><td>Sum of within-cluster distances, compared with the smallest and largest possible sums.</td><td>the minimum</td><td class="c">4 (0.026)</td></tr>
+      <tr><td><span class="ui">McClain–Rao</span></td><td>Mean within-cluster distance divided by the mean between-cluster distance.</td><td>the minimum</td><td class="c">10 (0.454)</td></tr>
+      <tr><td><span class="ui">PBM</span></td><td>Product of the reduction in spread and the maximum separation between centroids, penalised by <i>k</i>.</td><td>the maximum</td><td class="c">2 (7.73)</td></tr>
+      <tr><td><span class="ui">Ratkowsky–Lance</span></td><td>Proportion of the variation of each variable explained by the clusters, divided by √<i>k</i>.</td><td>the maximum</td><td class="c">3 (0.469)</td></tr>
+      <tr><td><span class="ui">Ball–Hall</span></td><td>The within-cluster sum of squares per cluster, <i>W</i>/<i>k</i>.</td><td>the largest drop</td><td class="c">2</td></tr>
+      <tr><td><span class="ui">Krzanowski–Lai</span></td><td>How much <i>W</i> improves on reaching <i>k</i>, compared with how much it improves on moving to <i>k</i> + 1.</td><td>the maximum</td><td class="c">3 (4.32)</td></tr>
+      <tr><td><span class="ui">Hartigan</span></td><td>Whether adding a cluster is worthwhile: H = (<i>W<sub>k</sub></i>/<i>W</i><sub><i>k</i>+1</sub> − 1)(<i>n</i> − <i>k</i> − 1).</td><td>the first <i>k</i> with H ≤ 10</td><td class="c">3 (8.21)</td></tr>
+      <tr><td><span class="ui">Gap statistic</span></td><td>How much more compact the clusters are than those of uniform data (section 7.2).</td><td>the first-standard-error rule</td><td class="c">4 (1.104)</td></tr>
+      <tr><td><span class="ui">Elbow (WSS)</span></td><td>The within-cluster sum of squares, <i>W</i>, which always decreases with <i>k</i>.</td><td>the knee of the curve</td><td class="c">4 (95.8)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · why one criterion is not enough</div>
+    <p>The within-cluster sum of squares always decreases as clusters are added, so no criterion can simply look for the minimum of <i>W</i>: each one penalises it or compares it in a different way. Calinski–Harabasz and PBM tend to favour a few large clusters. Dunn and McClain–Rao, which depend on extreme distances or on means that decrease with <i>k</i>, often drift to the upper end of the range. The silhouette often prefers <i>k</i> = 2 when one cluster is far removed from the rest. That is why the vote matters more than any single index, and a split vote is also informative: the data admit several resolutions or have no clear structure.</p>
+  </div>
+
+  <h3>Tiles and checks</h3>
+  <figure>
+    <div class="marco"><img src="../img/b6-resultados.png" alt="Tiles and checks of card 1 with the maize"></div>
+    <figcaption><b>Figure 7.2.</b> The result with the maize: consensus <i>k</i> = 3 with 5 of 13 votes, and runner-up <i>k</i> = 2 with 3. The silhouette votes for 3; the gap and the elbow, for 4. Because the winner does not reach half of the votes, the check describes it as a weak consensus.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 7.3.</b> The tiles of card 1.</caption>
+    <thead><tr><th style="width:24%">Tile</th><th>What it shows</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Consensus k</span></td><td>The <i>k</i> with the most votes and how many of the 13 criteria chose it. Ties are resolved in favour of the smaller <i>k</i>.</td></tr>
+      <tr><td><span class="ui">Runner-up</span></td><td>The <i>k</i> with the second-highest number of votes.</td></tr>
+      <tr><td><span class="ui">Silhouette</span></td><td>The <i>k</i> with the maximum silhouette and its value.</td></tr>
+      <tr><td><span class="ui">Gap statistic</span></td><td>The <i>k</i> given by the first-standard-error rule, the number of reference sets and the <i>k</i> of the global maximum.</td></tr>
+      <tr><td><span class="ui">Elbow (WSS)</span></td><td>The knee of the <i>W</i> curve: the point farthest from the straight line joining its ends.</td></tr>
+      <tr><td><span class="ui">Partitions from</span></td><td>The partition generator and the coordinate space.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 7.4.</b> The checks of card 1 and when they appear.</caption>
+    <thead><tr><th style="width:38%">Check</th><th>Appears when…</th></tr></thead>
+    <tbody>
+      <tr><td>✅ <span class="ui">Clear consensus for k = …</span></td><td>the winner gathers at least half of the votes; it states whether the silhouette agrees.</td></tr>
+      <tr><td>⚠️ <span class="ui">Tie between k = … and k = …</span></td><td>the two most-voted values are tied. It recommends the smaller one, unless the extra cluster is interpretable, and checking both with the stability analysis.</td></tr>
+      <tr><td>ℹ️ <span class="ui">Weak consensus for k = …</span></td><td>the winner does not reach half; the structure may be hierarchical (several valid resolutions) or weak.</td></tr>
+      <tr><td>⚠️ <span class="ui">The consensus k = … is the upper end of the range</span></td><td>the winner is the last <i>k</i>: several criteria keep improving up to the end of the range, which usually indicates that there is no natural number of clusters.</td></tr>
+      <tr><td>⚠️ <span class="ui">Low silhouette at the consensus k</span></td><td>the silhouette at the consensus is below 0.25.</td></tr>
+      <tr><td>⚠️ <span class="ui">The gap statistic finds no cluster structure (k = 1)</span></td><td>the gap chooses <i>k</i> = 1 (section 7.2).</td></tr>
+      <tr><td>ℹ️ <span class="ui">Gap statistic: first-SE rule chooses…</span></td><td>the gap rule and its global maximum disagree.</td></tr>
+      <tr><td>ℹ️ <span class="ui">The silhouette peaks at k = 2</span></td><td>the silhouette prefers two clusters; it suggests looking at 3 and 4 and at the tree.</td></tr>
+      <tr><td>ℹ️ <span class="ui">How the vote works</span></td><td>always: the count is a guide, not a test, and the final <i>k</i> must be interpreted in Block 7.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Below the checks, the <span class="ui">Internal indices by k</span> table gives the value of each criterion for each <i>k</i>. The header of each column indicates the <i>k</i> chosen by that criterion, and its value is highlighted. The Hartigan and Krzanowski–Lai columns are left empty at the last <i>k</i>, because they need <i>W</i> at <i>k</i> + 1.</p>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · the Adopt k button</div>
+    <p><span class="ui">Adopt k = … in Blocks 4 and 5</span> writes the consensus <i>k</i> into the Block 4 tree cut and applies it, and also writes it into the <span class="ui">Number of clusters k</span> field of Block 5. The Block 5 partition is not recomputed automatically: you have to press <span class="ui">Run →</span> there again. If you prefer another <i>k</i> (the runner-up, or the silhouette's choice), change it by hand in those blocks.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-panel.png" alt="Panel with the indices against the number of clusters"></div>
+    <figcaption><b>Figure 7.3.</b> <span class="ui">Every criterion at a glance</span> with the maize: one panel per criterion, with the <i>k</i> it chooses marked in orange. The curves say more than the vote: the silhouette and Calinski–Harabasz have a clear peak at 3, the gap rises up to 4 and then levels off, and McClain–Rao keeps falling until the end of the range.</figcaption>
+  </figure>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-votos.png" alt="Votes of the criteria by k"></div>
+    <figcaption><b>Figure 7.4.</b> <span class="ui">Consensus of the criteria</span>: how many criteria vote for each <i>k</i>, with their names inside the bars. The consensus, in orange, is <i>k</i> = 3: silhouette, Calinski–Harabasz, Ratkowsky–Lance, Krzanowski–Lai and Hartigan.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-codo-sil.png" alt="Elbow curve and silhouette by k"></div>
+    <figcaption><b>Figure 7.5.</b> The two most frequently consulted curves. On the left, the elbow: <i>W</i> falls from 187.6 to 115.5 on going from two to three clusters, and only to 95.8 with four, where the app places the knee. On the right, the average silhouette by <i>k</i>, with its maximum at 3 (0.419), very close to 2 (0.406).</figcaption>
+  </figure>
+
+  <!-- 7.2 -->
+  <h2 id="s7-2"><span class="num">7.2</span>The gap statistic</h2>
+  <p class="lead">The other criteria compare partitions with one another; the gap compares each partition with what would be obtained from data <b>without clusters</b>. It is the only one of the thirteen that can conclude that there is no structure.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the gap relative to uniform data</div>
+    <p>For each <i>k</i>, the app computes log <i>W<sub>k</sub></i> with your data. It then generates <i>B</i> reference sets with the same number of objects, spread uniformly over the box occupied by your coordinates, clusters them with the same method and averages their log <i>W<sub>k</sub></i>. The gap is the difference: Gap(<i>k</i>) = mean of the reference log <i>W<sub>k</sub></i> − log <i>W<sub>k</sub></i>. A large gap indicates clusters that are much more compact than those produced by chance.</p>
+    <p>Because the reference sets vary, each gap has a standard error, <i>s<sub>k</sub></i> = standard deviation × √(1 + 1/<i>B</i>). The <b>first-standard-error</b> rule chooses the smallest <i>k</i> such that Gap(<i>k</i>) ≥ Gap(<i>k</i> + 1) − <i>s</i><sub><i>k</i>+1</sub>: the first <i>k</i> beyond which adding a cluster no longer brings an appreciable improvement. When the range starts at 2, the app also evaluates <i>k</i> = 1; if the rule stops there, the data are no more clustered than uniform data.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-gap.png" alt="Gap statistic with the maize"></div>
+    <figcaption><b>Figure 7.6.</b> <span class="ui">Gap statistic</span> with the maize, with bars of ± 1 standard error. The gap rises from 0.24 at <i>k</i> = 1 to 1.04 at <i>k</i> = 3 and 1.10 at <i>k</i> = 4; from there on it levels off. At <i>k</i> = 3 the rule is not yet satisfied (1.036 &lt; 1.104 − 0.054); at <i>k</i> = 4 it is (1.104 ≥ 1.101 − 0.055).</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 7.5.</b> How to read the gap curve.</caption>
+    <thead><tr><th style="width:38%">Shape of the curve</th><th>Interpretation</th></tr></thead>
+    <tbody>
+      <tr><td>Rises and levels off (maize, figure 7.6)</td><td>The knee is the number of clusters; the rule finds it.</td></tr>
+      <tr><td>Sharp peak followed by a decline (four simulated clusters)</td><td>Strong structure: the rule, the maximum and the vote agree.</td></tr>
+      <tr><td>Flat or declining from <i>k</i> = 1 (uniform noise)</td><td>There are no clusters: the rule chooses <i>k</i> = 1.</td></tr>
+      <tr><td>Keeps rising to the end of the range</td><td>Nested structure or many PCoA axes; the rule gives the coarsest resolution and the maximum the finest.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · when to distrust the gap</div>
+    <p>The uniform reference box is built on the coordinates. With few objects and many dimensions (a matrix of 12 cultivars has up to 11 MDS axes) the reference sets vary widely, the standard errors grow and the rule becomes conservative: it may stop at <i>k</i> = 1 even when the silhouette and the stability show clear clusters. The gap check warns about this when there are fewer than 30 objects. With 50 reference sets the computation is fast; raise it to 100 or more when reporting the result.</p>
+  </div>
+
+  <!-- 7.3 -->
+  <h2 id="s7-3"><span class="num">7.3</span>Bootstrap stability</h2>
+  <p class="lead">A real cluster should reappear if you repeat the analysis with a slightly different sample of objects. Card 2 does exactly that: it resamples, clusters again and looks for each original cluster among the new ones.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · the Jaccard of each cluster</div>
+    <p>In each of the <i>B</i> replicates, <i>n</i> objects are drawn with replacement and the distinct ones are kept, about 63% of them. With these, the partition is recomputed with the same type of method and the same <i>k</i>. Each original cluster, restricted to the drawn objects, is compared with every new cluster by means of the Jaccard index (objects in common divided by objects in either of the two), and the best value is kept. In the end, each cluster has <i>B</i> Jaccard values. Their mean summarises the stability; a replicate with Jaccard below 0.5 counts as <b>dissolved</b> and one above 0.75 as <b>recovered</b>.</p>
+  </div>
+
+  <table class="compacta">
+    <caption><b>Table 7.6.</b> Controls of card 2 and how each partition is reclustered.</caption>
+    <thead><tr><th style="width:26%">Element</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Partition</span></td><td><span class="ui">Block 5 partition</span> (if it exists) or <span class="ui">Tree cut (Block 4)</span>.</td></tr>
+      <tr><td><span class="ui">Bootstrap samples B</span></td><td>From 10 to 500; 50 by default. The seed is fixed, so the result is reproducible.</td></tr>
+      <tr><td>Method for the replicates</td><td>PAM and CLARA are reclustered with PAM; k-means and hierarchical k-means, with k-means; the tree cut and the other Block 5 methods (fuzzy, mixtures, DBSCAN, spectral), with the Block 4 linkage.</td></tr>
+      <tr><td>DBSCAN noise</td><td>It is treated as one more cluster during resampling, and a notice says so.</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-estab-tabla.png" alt="Stability table with the insects"></div>
+    <figcaption><b>Figure 7.7.</b> The stability of PAM with <i>k</i> = 3 on Bray–Curtis with the 24 insect sites. The cluster of four organic fields (cluster 1) dissolves in 26 of the 50 replicates: mean Jaccard 0.538, “doubtful”. The other two are stable.</figcaption>
+  </figure>
+
+  <div class="caja regla">
+    <div class="caja-t"><span class="ico">✓</span>Decision rule · the verdict for each cluster</div>
+    <table class="compacta">
+      <thead><tr><th style="width:26%">Mean Jaccard</th><th style="width:22%">Verdict</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td>≥ 0.85</td><td>highly stable</td><td>Interpret it with confidence.</td></tr>
+        <tr><td>0.75 to 0.85</td><td>stable</td><td>Interpret it.</td></tr>
+        <tr><td>0.60 to 0.75</td><td>some pattern</td><td>There is something there, but its boundaries depend on the sample.</td></tr>
+        <tr><td>0.50 to 0.60</td><td>doubtful</td><td>Do not describe it as a cluster without further evidence.</td></tr>
+        <tr><td>&lt; 0.50</td><td>dissolved</td><td>It is not a cluster: it depends on a few objects.</td></tr>
+      </tbody>
+    </table>
+    <p class="regla-pie">The check above the table counts the stable clusters (≥ 0.75), those that only show some pattern, and the doubtful or dissolved ones (&lt; 0.6). It becomes a warning if there are any of the latter.</p>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-estab-fig.png" alt="Cluster stability chart"></div>
+    <figcaption><b>Figure 7.8.</b> <span class="ui">Bootstrap stability of the clusters</span> with the insects: the bar is the mean Jaccard and the whisker extends down to the minimum. The lines mark 0.75 (stable) and 0.5 (dissolved). The cluster of four organic fields is shown in orange, one step away from dissolving, and its minimum reaches 0.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · stability is not truth</div>
+    <p>A very stable cluster can be a systematic artefact: if the method always splits the data at the same place, the split is repeated in every replicate. That is why stability complements, but does not replace, the number of clusters and the interpretation. The converse, however, is conclusive: a cluster that dissolves is almost never a real cluster.</p>
+  </div>
+
+  <!-- 7.4 -->
+  <h2 id="s7-4"><span class="num">7.4</span>Support for the tree clusters (AU and BP)</h2>
+  <p class="lead">Card 3 answers a different question: if you measured other variables of the same kind, would the same branch appear? It resamples the <b>variables</b>, not the objects, at several scales, and gives each branch of the tree two values: BP and AU.</p>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · multiscale bootstrap</div>
+    <p>In the ordinary bootstrap, as many variables as there are are drawn with replacement, the tree is rebuilt, and the number of replicates in which each branch appears is counted: this is its bootstrap probability, <b>BP</b>. BP is biased and underestimates the support for real branches. The multiscale bootstrap repeats the draw with 10 sample sizes, from 0.5 to 1.4 times the number of variables, and observes how the frequency of each branch changes with the proportion <i>r</i> of variables drawn. Using the scales at which the branch appears neither always nor never, it fits by weighted least squares the model z(<i>r</i>) = <i>v</i>√<i>r</i> + <i>c</i>/√<i>r</i>, where z is the normal quantile of 1 − BP(<i>r</i>), and extrapolates: <b>AU</b> = 1 − Φ(<i>v</i> − <i>c</i>) is the approximately unbiased probability, and BP = 1 − Φ(<i>v</i> + <i>c</i>). A branch with AU ≥ 95% is strongly supported by the data.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-pv.png" alt="Card 3 with the maize"></div>
+    <figcaption><b>Figure 7.9.</b> Card 3 with the maize and 30 replicates per scale. Because there are only 8 variables, the warning that the method is liberal appears. The table, of which the first three rows are visible, lists the 12 branches with AU ≥ 95%, from the most to the least supported. Among them are the three regional clusters: highlands (14 accessions, AU 100, BP 61), coast (15, AU 99, BP 34) and valleys (15, AU 95, BP 38).</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 7.7.</b> Controls, conditions and messages of card 3.</caption>
+    <thead><tr><th style="width:26%">Element</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Resamples per scale</span></td><td>From 10 to 500; 30 by default. 10 × <i>B</i> trees are built; 30 is fast, but use 200 or more when reporting the values.</td></tr>
+      <tr><td><span class="ui">AU threshold</span></td><td>The minimum AU for a branch to enter the table and receive a box in the figure; 0.95 by default.</td></tr>
+      <tr><td>Variables and distance</td><td>The numeric variables of the working matrix (without the indicator columns of the nominal variables), with Euclidean distance and the Block 4 linkage.</td></tr>
+      <tr><td>When it is not available</td><td>It is hidden with a loaded matrix (there are no variables); it refuses to run with more than 200 objects or fewer than 3 variables.</td></tr>
+      <tr><td>ℹ️ Different distance</td><td>If your coefficient is not Euclidean, it warns that this tree differs from yours.</td></tr>
+      <tr><td>⚠️ <span class="ui">Only … variables</span></td><td>With fewer than 15 variables the method is liberal: even with random data many branches reach AU ≥ 95%. Use the AU as a guide and judge the clusters with card 2.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · the number of variables is decisive</div>
+    <p>The multiscale bootstrap assumes that the variables are many and exchangeable. When this was tested with uniform data on 40 objects, the proportion of branches with AU ≥ 95% was over half with 6 variables, one third with 8, one in five with 10 and one in ten with 15; with 30 or more variables it approaches the expected value. That is why, with the maize or the soils (8 numeric variables), the 12 and 19 “supported” branches include many uninteresting pairs. With tens or hundreds of variables (expression, markers, species) the AU is the right tool.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-pv-fig.png" alt="Tree with AU values"></div>
+    <figcaption><b>Figure 7.10.</b> <span class="ui">Tree with bootstrap support</span>: the Ward.D2 tree of the maize with the AU (%) of each branch in red and a box around those that reach the threshold. A branch with AU 0 did not appear in any replicate at any scale.</figcaption>
+  </figure>
+
+  <!-- 7.5 -->
+  <h2 id="s7-5"><span class="num">7.5</span>External validation</h2>
+  <p class="lead">If you have a known grouping (species, regions, treatments) or two partitions you want to contrast, card 4 measures how closely they agree. The clusters need not have the same names or the same number: the indices compare how the pairs of objects are distributed.</p>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-externa-tiles.png" alt="External validation tiles with the insects"></div>
+    <figcaption><b>Figure 7.11.</b> PAM with <i>k</i> = 3 against the insect landscapes: ARI 0.610, NMI 0.740, purity 83.3% and χ² = 32 with 4 degrees of freedom (p &lt; 0.001). The paragraph describes it as substantial agreement.</figcaption>
+  </figure>
+
+  <table class="compacta">
+    <caption><b>Table 7.8.</b> The indices of card 4.</caption>
+    <thead><tr><th style="width:22%">Tile</th><th>What it measures</th><th style="width:24%">Scale</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Adjusted Rand</span></td><td>Proportion of pairs of objects treated alike by the two clusterings (together in both or apart in both), corrected for the agreement expected by chance.</td><td>1 identical, 0 chance; green &gt; 0.7, amber &gt; 0.4.</td></tr>
+      <tr><td><span class="ui">Rand</span></td><td>The same proportion without correction; it becomes inflated with many clusters.</td><td>0 to 1.</td></tr>
+      <tr><td><span class="ui">NMI</span></td><td>Normalised mutual information: how much one clustering tells you about the other.</td><td>0 to 1; green &gt; 0.7.</td></tr>
+      <tr><td><span class="ui">Variation of information</span></td><td>Information lost and gained in moving from one clustering to the other.</td><td>0 identical; lower is better.</td></tr>
+      <tr><td><span class="ui">Jaccard · FM</span></td><td>Pairs together in both divided by pairs together in at least one (Jaccard), and the geometric mean of the two proportions (Fowlkes–Mallows).</td><td>0 to 1.</td></tr>
+      <tr><td><span class="ui">Purity</span></td><td>Proportion of objects that belong to the majority class of their cluster.</td><td>Increases with the number of clusters.</td></tr>
+      <tr><td><span class="ui">χ² test</span></td><td>Independence of the cross-table, with Cramér's V.</td><td>Green if p &lt; 0.05.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 7.9.</b> The card 4 paragraph according to the ARI.</caption>
+    <thead><tr><th style="width:18%">ARI</th><th>Sentence</th></tr></thead>
+    <tbody>
+      <tr><td>&gt; 0.8</td><td><span class="ui">The two labellings are essentially the same partition.</span></td></tr>
+      <tr><td>0.5 to 0.8</td><td><span class="ui">Substantial agreement</span>: most objects are clustered the same way, with a minority elsewhere.</td></tr>
+      <tr><td>0.2 to 0.5</td><td><span class="ui">Partial agreement</span>: related but different structures.</td></tr>
+      <tr><td>≤ 0.2</td><td><span class="ui">The labellings are unrelated</span>: what random labels would give.</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-externa-fig.png" alt="Cross-table of PAM and the landscapes"></div>
+    <figcaption><b>Figure 7.12.</b> <span class="ui">Cross-table</span>: each cell gives the number of objects and the row percentage, and is coloured by that percentage. Clusters 1 and 2 are pure (organic and conventional fields); cluster 3 brings together the 8 hedgerows and the other 4 organic fields.</figcaption>
+  </figure>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · what to compare with what</div>
+    <p>The <span class="ui">Compare</span> and <span class="ui">with</span> selectors offer the tree cut, the Block 5 partition and the known grouping (the group column from Block 1). By default they compare the Block 5 partition with the known grouping or, if there is none, with the tree. Do not choose the same one twice. With DBSCAN, noise counts as one more cluster, cluster 0. Purity favours the partition with more clusters; the ARI is the index you should report.</p>
+  </div>
+
+  <!-- 7.6 -->
+  <h2 id="s7-6"><span class="num">7.6</span>Comparing algorithms across k</h2>
+  <p class="lead">Card 5 compares algorithms: instead of fixing one <i>k</i> and one method, it runs through the card 1 range with the tree (with the Block 4 linkage), k-means (5 starts, seed 1) and PAM, and scores each combination with three measures.</p>
+
+  <table class="compacta">
+    <caption><b>Table 7.10.</b> The three measures of the comparison.</caption>
+    <thead><tr><th style="width:18%">Measure</th><th>What it measures</th><th style="width:20%">Best</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Connectivity</span></td><td>For each object, how many of its 10 nearest neighbours ended up in another cluster; the <i>j</i>-th neighbour has weight 1/<i>j</i>. It measures whether the clusters respect neighbourhoods.</td><td>the minimum (0 to ∞)</td></tr>
+      <tr><td><span class="ui">Dunn</span></td><td>Minimum distance between clusters divided by the maximum diameter.</td><td>the maximum</td></tr>
+      <tr><td><span class="ui">Silhouette</span></td><td>The average silhouette on the Block 3 matrix.</td><td>the maximum</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>Theory in brief · why the three measures disagree</div>
+    <p>Connectivity is almost always lowest with two clusters: the fewer the clusters, the fewer neighbours end up on the other side. Dunn depends on two extreme distances and fluctuates a great deal; it tends to reward a high <i>k</i> in which a small, isolated cluster raises the minimum separation. The silhouette is the most balanced of the three. That is why the table of optima rarely gives a single winner: read it as a map of trade-offs, and use the silhouette curve to decide on the method, not on <i>k</i>, which you already decided in card 1.</p>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-algoritmos.png" alt="Algorithm comparison tables with the maize"></div>
+    <figcaption><b>Figure 7.13.</b> The comparison with the maize. At the top, the best method and <i>k</i> for each measure: connectivity is lowest with two clusters, Dunn is highest with k-means at ten, and the silhouette with the tree at three. At the bottom, all the measures by method and <i>k</i>, in a table that scrolls horizontally to the PAM columns; the tree and k-means give the same partitions up to <i>k</i> = 5.</figcaption>
+  </figure>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-algoritmos-fig.png" alt="Silhouette by method and k"></div>
+    <figcaption><b>Figure 7.14.</b> <span class="ui">Comparison of algorithms over k</span> with the silhouette: one line per method and a circle at the best value. PAM drops earlier than the other two from <i>k</i> = 4 onwards.</figcaption>
+  </figure>
+
+  <!-- 7.7 -->
+  <h2 id="s7-7"><span class="num">7.7</span>Settings, tables and figures of the block</h2>
+  <p>The block produces up to nine figures, all of them editable and exportable with the figure editor (section 9.1). The five figures of card 1 appear together; the gap figure appears only if <span class="ui">B</span> is greater than zero.</p>
+
+  <table class="compacta">
+    <caption><b>Table 7.11.</b> The figures of the block and their own controls.</caption>
+    <thead><tr><th style="width:28%">Figure</th><th style="width:30%">What it shows</th><th>Own controls</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Every criterion at a glance</span></td><td>One panel per criterion against <i>k</i> (figure 7.3).</td><td>Title and palette.</td></tr>
+      <tr><td><span class="ui">Consensus of the criteria</span></td><td>Votes by <i>k</i> (figure 7.4). If the gap votes for <i>k</i> = 1, a line says so.</td><td><span class="ui">Show index names inside the bars</span>, title and palette.</td></tr>
+      <tr><td><span class="ui">Elbow</span> · <span class="ui">Average silhouette by k</span></td><td>The <i>W</i> and silhouette curves (figure 7.5).</td><td>Title and palette.</td></tr>
+      <tr><td><span class="ui">Gap statistic</span></td><td>The gap with ± 1 standard error, from <i>k</i> = 1 (figure 7.6).</td><td>Title and palette.</td></tr>
+      <tr><td><span class="ui">Bootstrap stability of the clusters</span></td><td>Mean and minimum Jaccard per cluster (figure 7.8).</td><td><span class="ui">Dissolved colour</span>, title and palette.</td></tr>
+      <tr><td><span class="ui">Tree with bootstrap support</span></td><td>The tree with AU and BP (figure 7.10).</td><td>Threshold for the boxes; show AU and BP; size of the values; leaf labels and their size; branch width; colours of AU, BP and boxes.</td></tr>
+      <tr><td><span class="ui">Cross-table</span></td><td>The coloured cross-table (figure 7.12).</td><td><span class="ui">Colour map</span> and <span class="ui">Show row percentages</span>.</td></tr>
+      <tr><td><span class="ui">Comparison of algorithms over k</span></td><td>One measure by method and <i>k</i> (figure 7.14).</td><td><span class="ui">Measure</span> (silhouette, Dunn or connectivity), palette and legend position.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="compacta">
+    <caption><b>Table 7.12.</b> Fixed values of the block, for reproducing or reporting an analysis.</caption>
+    <thead><tr><th style="width:36%">Computation</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Partitions with k-means (cards 1 and 5)</td><td>5 starts, seed 1.</td></tr>
+      <tr><td>Gap reference sets</td><td>Seed 2026. With more than 150 objects, or with k-means as the generator, they are clustered with k-means with 2 starts.</td></tr>
+      <tr><td>Stability</td><td>Seed 77.</td></tr>
+      <tr><td>Multiscale bootstrap</td><td>Scales 0.5, 0.6, …, 1.4 of the number of variables; seed 13.</td></tr>
+      <tr><td>Connectivity</td><td>10 nearest neighbours.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja nota">
+    <div class="caja-t"><span class="ico">i</span>Note · what happens to the results when the data change</div>
+    <p>Every time Block 3 recomputes the matrix, the results of this block are cleared and Block 7 is disabled. The Block 8 report includes whatever you have run here: the consensus <i>k</i> with its votes, the stability of each cluster, the multiscale bootstrap and the external agreement.</p>
+  </div>
+
+  <!-- 7.8 -->
+  <h2 id="s7-8"><span class="num">7.8</span>Step by step</h2>
+  <p class="lead">With each example prepared as in the previous chapters (UPGMA in Block 4 for the species presence and the insects, and the proposed method in Block 5), table 7.13 summarises what Block 6 reports with its default values. The exercises go through each case in detail.</p>
+
+  <table class="compacta">
+    <caption><b>Table 7.13.</b> The seven examples in Block 6 (<i>k</i> from 2 to 10, partitions from the tree).</caption>
+    <thead><tr><th style="width:17%">Example</th><th class="c" style="width:12%">Consensus</th><th class="c" style="width:11%">Silhouette</th><th class="c" style="width:6%">Gap</th><th style="width:22%">Mean Jaccard</th><th>Remark</th></tr></thead>
+    <tbody>
+      <tr><td>Maize races</td><td class="c">3 (5/13)</td><td class="c">3 · 0.419</td><td class="c">4</td><td>1.00 · 0.99 · 0.99</td><td>Weak consensus; three very stable clusters.</td></tr>
+      <tr><td>Species presence</td><td class="c">2 = 3 (4/13)</td><td class="c">3 · 0.333</td><td class="c">3</td><td>0.98 · 1.00 · 0.98</td><td>Tie; the three habitats are interpretable.</td></tr>
+      <tr><td>Insect abundance</td><td class="c">2 (10/13)</td><td class="c">2 · 0.494</td><td class="c">2</td><td>0.54 · 0.92 · 0.80</td><td>Conventional fields versus the rest.</td></tr>
+      <tr><td>Soil profiles</td><td class="c">3 (7/13)</td><td class="c">3 · 0.607</td><td class="c">3</td><td>0.93 · 0.89 (<i>k</i> = 2)</td><td>The vote corrects the two-cluster cut.</td></tr>
+      <tr><td>Distance matrix</td><td class="c">3 (8/13)</td><td class="c">3 · 0.665</td><td class="c">1</td><td>0.98 · 0.98 · 0.99</td><td>The gap is conservative with 12 objects.</td></tr>
+      <tr><td>Four simulated clusters</td><td class="c">4 (10/13)</td><td class="c">4 · 0.714</td><td class="c">4</td><td>1.00 for all four</td><td>Everything agrees.</td></tr>
+      <tr><td>Uniform noise</td><td class="c">10 (5/13)</td><td class="c">10 · 0.197</td><td class="c">1</td><td>0.56 · 0.60 · 0.64</td><td>Consensus at the edge; there are no clusters.</td></tr>
+    </tbody>
+  </table>
+  <p class="small">The mean Jaccard is that of the Block 5 partition with 50 replicates and the <i>k</i> of the previous chapters (3, except for the soils and the four simulated clusters).</p>
+
+  <h3>Exercise 1 · Maize races: a weak consensus and very stable clusters</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the maize, the Ward.D2 tree cut into three clusters and hierarchical k-means in Block 5, go to Block 6. The proposed generator is the tree. Press <span class="ui">Evaluate every k →</span> (figures 7.2 to 7.6): consensus 3 with 5 votes, silhouette 3, gap and elbow 4.</li>
+      <li>In card 2, press <span class="ui">Run the bootstrap</span>: mean Jaccard 1.000, 0.988 and 0.988, with all 50 replicates recovered in the three clusters. Switch to <span class="ui">Tree cut (Block 4)</span>: 1.000, 0.998 and 0.997.</li>
+      <li>In card 3, press <span class="ui">Compute AU / BP</span> (figures 7.9 and 7.10) and read the warning about the 8 variables.</li>
+      <li>In card 4, compare the Block 5 partition with the known grouping: ARI, NMI and purity are all 1; χ² = 88 with 4 degrees of freedom.</li>
+      <li>In card 5, press <span class="ui">Compare over the k range above</span> (figures 7.13 and 7.14).</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>A split vote does not mean weak clusters. With the maize, five criteria choose 3, three choose 2 and three choose 4: the tree has a first split into two (highlands versus the rest), and the gap and the elbow suggest a fourth cluster, as did the Gaussian mixture in chapter 6. Yet the three regional clusters reappear in every replicate and match the regions exactly. The number of clusters is decided on the whole body of evidence: the vote, the shape of the curves, the stability and the meaning.</p>
+  </div>
+
+  <h3>Exercise 2 · Species presence: a tie settled by interpretation</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Jaccard, the UPGMA tree and PAM in Block 5, evaluate the range: 4 votes for <i>k</i> = 2 and 4 for <i>k</i> = 3 (figure 7.15). The consensus tile shows 2, because of the smaller-<i>k</i> rule, and the warning <span class="ui">Tie between k = 2 and k = 3</span> appears.</li>
+      <li>Look at who votes for what: for 2, Calinski–Harabasz, PBM, Ball–Hall and Hartigan; for 3, the silhouette (0.333), Krzanowski–Lai, the gap and the elbow. The coordinates are the PCoA axes of Jaccard.</li>
+      <li>Run the stability of PAM with <i>k</i> = 3: 0.977, 0.997 and 0.976.</li>
+      <li>Run card 3: with 22 variables the warning does not appear. The forests (AU 98) and the grasslands (AU 97) are supported; the complete wetlands stay at 84, and without S22 they rise to 97.</li>
+    </ol>
+  </div>
+
+  <figure class="media" style="width:68%">
+    <div class="marco"><img src="../img/b6-votos-binario.png" alt="Votes with the species presence data"></div>
+    <figcaption><b>Figure 7.15.</b> The tie with the species presence data. The criteria that reward a few large clusters vote for 2; the silhouette, the gap and the elbow, for 3. Dunn, the C-index, Davies–Bouldin, McClain–Rao and Ratkowsky–Lance are spread over 7, 9 and 10.</figcaption>
+  </figure>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The smaller-<i>k</i> rule is a convention, not a blind recommendation; the check says so: prefer the smaller one unless the extra cluster is interpretable. Here it is: three habitats and three stable clusters that match them (ARI 1.000, chapter 6). When the vote is tied, stability and knowledge of the system decide. And the AU is a reminder that in card 3 the branches are evaluated with Euclidean distance on zeros and ones, not with your Jaccard: the blue notice points this out.</p>
+  </div>
+
+  <h3>Exercise 3 · Insect abundance: the clearest vote is not the most useful</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Bray–Curtis, the UPGMA tree and PAM with <i>k</i> = 3, evaluate the range: consensus <i>k</i> = 2 with 10 of 13 votes, silhouette 0.494, and the check <span class="ui">The silhouette peaks at k = 2</span> (figure 7.16).</li>
+      <li>Run the stability of PAM with <i>k</i> = 3 (figures 7.7 and 7.8): the cluster of four organic fields is doubtful (0.538). Switch to <span class="ui">Tree cut (Block 4)</span>: clusters of 16, 3 and 5 objects with Jaccard 0.868, 0.643 and 0.815.</li>
+      <li>Compare in card 4 (figures 7.11 and 7.12): PAM against the landscapes gives ARI 0.610; the tree against the landscapes, 0.419.</li>
+      <li>Press <span class="ui">Adopt k = 2 in Blocks 4 and 5</span>, go back to Block 5, run PAM and return. The mean Jaccard rises to 0.998 and 0.997, and the ARI with the landscapes is 0.549: the two clusters are the conventional fields (8) versus the organic fields and hedgerows together (16).</li>
+    </ol>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-insectos-panel.png" alt="Panel of indices with the insects"></div>
+    <figcaption><b>Figure 7.16.</b> The indices with the insects: almost all of them point to <i>k</i> = 2 at the left edge. The gap has its maximum at 7 (0.316), but the rule stops at 2.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The dominant structure of this community is management: the conventional fields are very different from everything else, and that division is the one seen by almost all the criteria and the one that withstands every replicate. The three landscapes do exist, but the organic fields resemble the hedgerows and their cluster is fragile. Neither answer is wrong: <i>k</i> = 2 describes the strongest structure and <i>k</i> = 3 that of the sampling design. Report it that way, with the stability of each cluster, instead of forcing a single figure.</p>
+  </div>
+
+  <h3>Exercise 4 · Soil profiles: the vote corrects the cut</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With Gower, the UPGMA tree cut into two and PAM with <i>k</i> = 2, evaluate the range: consensus <i>k</i> = 3 with 7 votes and <span class="ui">Clear consensus</span>. The silhouette rises from 0.575 with two clusters to 0.607 with three (figure 7.17).</li>
+      <li>Run the stability with the current partition (<i>k</i> = 2): 0.925 and 0.887, although the cluster of 12 profiles dissolves in 5 of the 50 replicates.</li>
+      <li>Press <span class="ui">Adopt k = 3 in Blocks 4 and 5</span>: a green message confirms that the tree cut has already been applied. In card 2, choose <span class="ui">Tree cut (Block 4)</span> and run: the three clusters, of 12 profiles each, have Jaccard 1.000.</li>
+      <li>Go back to Block 5, run PAM with <i>k</i> = 3 and return: 12 / 12 / 12, also with Jaccard 1.000. The two-cluster cut merged profiles PR-13 to PR-24 with PR-25 to PR-36.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-suelos-sil.png" alt="Elbow and silhouette with the soils"></div>
+    <figcaption><b>Figure 7.17.</b> The soils: the knee of the elbow and the maximum of the silhouette are at <i>k</i> = 3. The <i>W</i> curve falls to less than half on going from two to three clusters.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The cut suggestion in Block 4 is based on the jumps in height of the tree, and the largest jump does not always mark the most useful number of clusters. Here two clusters were “reasonable” and stable, but the vote, the elbow, the silhouette and the gap pointed to three, and with three the stability becomes perfect. Evaluating the full range before interpreting keeps you from settling for the first plausible partition.</p>
+  </div>
+
+  <h3>Exercise 5 · Distance matrix: when the gap falls short</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the genetic matrix of 12 cultivars, the UPGMA tree and PAM with <i>k</i> = 3, evaluate the range. The coordinates are those of the MDS of your matrix.</li>
+      <li>Consensus 3 with 8 votes and silhouette 0.665; but the gap chooses <i>k</i> = 1 and the warning <span class="ui">The gap statistic finds no cluster structure</span> appears, with the clarification that with only 12 objects the rule is conservative (figure 7.18).</li>
+      <li>Run the stability: 0.980, 0.975 and 0.990. Card 3 does not appear: a matrix has no variables to resample.</li>
+    </ol>
+  </div>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-matriz-gap.png" alt="Gap with the distance matrix"></div>
+    <figcaption><b>Figure 7.18.</b> The gap with the matrix: the maximum is at <i>k</i> = 3 (0.09), but the gap at <i>k</i> = 1 (−0.67) lies within one standard error of that at <i>k</i> = 2 (−0.62 ± 0.19), and the rule stops at 1.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>The gap applies its rule honestly, but with 12 objects spread over 11 dimensions the reference sets are highly variable and the standard errors enormous. A single dissenting criterion does not invalidate the rest: the high silhouette, the broad vote and the almost perfect stability support the three clusters. The right thing to do is to report that the gap was inconclusive with so few objects, not to hide it.</p>
+  </div>
+
+  <h3>Exercise 6 · Four simulated clusters: the textbook case</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the 80 simulated objects, Ward.D2 and hierarchical k-means with <i>k</i> = 4, evaluate the range: consensus 4 with 10 votes, silhouette 0.714, gap and elbow 4. In the gap, the jump from 0.88 to 2.06 between <i>k</i> = 3 and 4 is unmistakable.</li>
+      <li>Stability: all four clusters with Jaccard 1.000. External validation against the simulated groups: ARI 1.000 and χ² = 240 with 9 degrees of freedom.</li>
+      <li>Comparison of algorithms: the maximum silhouette (0.714) and the maximum Dunn (0.896) coincide for the tree with <i>k</i> = 4.</li>
+      <li>Run card 3: 36 branches with AU ≥ 95% and the warning about the 5 variables. The four clusters of 20 have AU from 97 to 100, but many meaningless pairs also receive that support.</li>
+    </ol>
+  </div>
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>When the structure is strong, all the tools in the block say the same thing, and that agreement is what you should look for in your own data. Even here, with only 5 variables, the multiscale bootstrap inflates the support for small branches: its warning does not depend on whether the clusters are good, but on how many variables there are.</p>
+  </div>
+
+  <h3>Exercise 7 · Uniform noise: recognising that there are no clusters</h3>
+  <div class="caja ejemplo">
+    <div class="caja-t"><span class="ico">▸</span>Step by step</div>
+    <ol class="pasos" style="margin-bottom:0">
+      <li>With the 60 uniform objects, Ward.D2 and hierarchical k-means with <i>k</i> = 3, evaluate the range (figure 7.19). The “consensus” is <i>k</i> = 10 with 5 votes, and four checks appear: weak consensus, consensus at the edge of the range, low silhouette (0.20) and gap without structure.</li>
+      <li>Look at the gap (figure 7.20): negative over the whole range, with its maximum at <i>k</i> = 1.</li>
+      <li>Run the stability: mean Jaccard 0.558, 0.604 and 0.640, with between 12 and 22 dissolved replicates per cluster. No cluster is stable; two show some pattern and one is doubtful. With the tree cut, 0.558, 0.529 and 0.486: one dissolves.</li>
+      <li>Run the comparison of algorithms: the best silhouette, 0.209, belongs to k-means with <i>k</i> = 7.</li>
+    </ol>
+  </div>
+
+  <figure>
+    <div class="marco"><img src="../img/b6-ruido-resultados.png" alt="Tiles and checks with the uniform noise"></div>
+    <figcaption><b>Figure 7.19.</b> The uniform noise in card 1. The tiles seem to give an answer (<i>k</i> = 10), but the checks take it apart: the vote is split, it stops at the edge of the range, the silhouette is low and the gap chooses a single cluster.</figcaption>
+  </figure>
+
+  <figure class="media">
+    <div class="marco"><img src="../img/b6-ruido-gap.png" alt="Gap with the uniform noise"></div>
+    <figcaption><b>Figure 7.20.</b> The gap with the noise: −0.03 at <i>k</i> = 1 and lower at every other value, within one standard error. The data are no more clustered than the reference data.</figcaption>
+  </figure>
+
+  <div class="caja teoria">
+    <div class="caja-t"><span class="ico">θ</span>What you learned</div>
+    <p>Block 6 exists for this case. All the methods of Blocks 4 and 5 produced clusters, and the card 1 criteria, forced to choose a <i>k</i> ≥ 2, chose one. Only the combination of evidence reveals what is going on: low silhouette, a vote at the edge, a gap at 1 and clusters that fall apart under resampling. When you see that pattern in your data, the correct conclusion is a continuous gradient, not a typology.</p>
+  </div>
+
+  <div class="caja importante">
+    <div class="caja-t"><span class="ico">!</span>Important · what to report from this block</div>
+    <p>In the methods section: the range of <i>k</i>, the partition generator and the criteria used; the number of gap reference sets; the number of stability replicates and the reclustering method; if you used the multiscale bootstrap, the replicates per scale and the number of variables; and the external agreement indices. In the results: the chosen <i>k</i> with its votes and those of the runner-up, the mean Jaccard of each cluster and the ARI with the known grouping. For example: “<i>k</i> = 2–10 was evaluated with 13 criteria; <i>k</i> = 3 received 5 votes (<i>k</i> = 2 and <i>k</i> = 4, 3 each). The three clusters were highly stable over 50 bootstrap replicates (mean Jaccard 0.99–1.00) and matched the regions of origin (ARI = 1.00)”. The Block 8 paragraph writes this with your values.</p>
+  </div>
+
+  <p style="margin-top:0.12in">With a justified number of clusters and clusters that withstand resampling, what remains is the part that gives the analysis its meaning: describing each cluster. The next chapter presents the cluster profiles, the variables, categories and species that characterise each one, the classification rules of discriminant analysis and the assignment of new objects.</p>
+</section>
+
+</body>
+</html>
